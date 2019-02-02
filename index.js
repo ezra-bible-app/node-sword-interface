@@ -16,7 +16,7 @@
    along with ezra-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
-const ezraSwordInterfaceModule = require('./build/Release/ezra-sword-interface.node');
+const ezraSwordInterfaceModule = require('./build/Release/ezra_sword_interface.node');
 const ezraSwordInterface = new ezraSwordInterfaceModule.EzraSwordInterface();
 
 module.exports = ezraSwordInterface;
