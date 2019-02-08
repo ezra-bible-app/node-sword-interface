@@ -26,8 +26,12 @@
 #include <algorithm>
 #include <future>
 
+#ifdef __linux__
 #include <sys/types.h>
 #include <sys/stat.h>
+#elif _WIN32
+#include <direct.h>
+#endif
 
 #include <installmgr.h>
 #include <swmodule.h>
@@ -74,8 +78,13 @@ void SwordStatusReporter::preStatus(long totalBytes, long completedBytes, const 
 EzraSwordInterface::EzraSwordInterface()
 {
     // TODO: Do this conditionally
+#ifdef __linux__
     mkdir(this->getSwordDir().c_str(), 0700);
     mkdir(this->getModuleDir().c_str(), 0700);
+#elif _WIN32
+    _mkdir(this->getSwordDir().c_str());
+    _mkdir(this->getModuleDir().c_str());
+#endif
 
     // TODO: Do this conditionally, only if file is not existing yet
     this->_swConfig = new SWConfig(this->getSwordConfPath().c_str());
