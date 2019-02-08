@@ -74,8 +74,12 @@ private:
     int refreshIndividualRemoteSource(std::string remoteSourceName);
     std::thread getRemoteSourceRefreshThread(std::string remoteSourceName);
 
-    std::string stringReplace(const std::string& str, const std::string& match, 
-            const std::string& replacement, unsigned int max_replacements = UINT_MAX);
+    std::string getPathSeparator();
+    std::string getUserDir();
+    std::string getSwordDir();
+    std::string getInstallMgrDir();
+    std::string getModuleDir();
+    std::string getSwordConfPath();
 
     std::string rtrim(const std::string& s);
 

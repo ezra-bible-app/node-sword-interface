@@ -73,30 +73,19 @@ void SwordStatusReporter::preStatus(long totalBytes, long completedBytes, const 
 
 EzraSwordInterface::EzraSwordInterface()
 {
-    stringstream baseDir;
-    stringstream installMgrDir;
-    stringstream moduleDir;
-    stringstream configPath;
-    string home = string(getenv("HOME"));
-
-    baseDir << home << "/.sword/";
-    installMgrDir << home << "/.sword/InstallMgr/";
-    moduleDir << home << "/.sword/mods.d/";
-    configPath << home << "/.sword/sword.conf";
-
     // TODO: Do this conditionally
-    mkdir(baseDir.str().c_str(), 0700);
-    mkdir(moduleDir.str().c_str(), 0700);
+    mkdir(this->getSwordDir().c_str(), 0700);
+    mkdir(this->getModuleDir().c_str(), 0700);
 
     // TODO: Do this conditionally, only if file is not existing yet
-    this->_swConfig = new SWConfig(configPath.str().c_str());
+    this->_swConfig = new SWConfig(this->getSwordConfPath().c_str());
     this->_swConfig->Sections.clear();
-    (*this->_swConfig)["Install"].insert(std::make_pair(SWBuf("DataPath"), moduleDir.str().c_str()));
+    (*this->_swConfig)["Install"].insert(std::make_pair(SWBuf("DataPath"), this->getModuleDir().c_str()));
     this->_swConfig->Save();
 
     this->_mgr = new SWMgr();
     this->_statusReporter = new SwordStatusReporter();
-    this->_installMgr = new InstallMgr(installMgrDir.str().c_str(), this->_statusReporter);
+    this->_installMgr = new InstallMgr(this->getInstallMgrDir().c_str(), this->_statusReporter);
     this->_installMgr->setUserDisclaimerConfirmed(true);
 }
 
@@ -106,6 +95,58 @@ EzraSwordInterface::~EzraSwordInterface()
     delete this->_installMgr;
     delete this->_swConfig;
     delete this->_statusReporter;
+}
+
+string EzraSwordInterface::getPathSeparator()
+{
+#ifdef __linux__
+    string pathSeparator = "/";
+#elif _WIN32
+    string pathSeparator = "\\";
+#endif
+    return pathSeparator;
+}
+
+string EzraSwordInterface::getUserDir()
+{
+#ifdef __linux__
+    string userDir = string(getenv("HOME"));
+#elif _WIN32
+    string userDir = string(getenv("AppData"));
+#endif
+    return userDir;
+}
+
+string EzraSwordInterface::getSwordDir()
+{
+    stringstream swordDir;
+    swordDir << this->getUserDir() << this->getPathSeparator();
+#ifdef __linux__
+    swordDir << ".";
+#endif
+    swordDir << "sword" << this->getPathSeparator();
+    return swordDir.str();
+}
+
+string EzraSwordInterface::getInstallMgrDir()
+{
+    stringstream installMgrDir;
+    installMgrDir << this->getSwordDir() << this->getPathSeparator() << "InstallMgr" << this->getPathSeparator();
+    return installMgrDir.str();
+}
+
+string EzraSwordInterface::getModuleDir()
+{
+    stringstream moduleDir;
+    moduleDir << this->getSwordDir() << this->getPathSeparator() << "mods.d" << this->getPathSeparator();
+    return moduleDir.str();
+}
+
+string EzraSwordInterface::getSwordConfPath()
+{
+    stringstream configPath;
+    configPath << this->getSwordDir() << this->getPathSeparator() << "sword.conf";
+    return configPath.str();
 }
 
 int EzraSwordInterface::refreshRepositoryConfig()
@@ -323,22 +364,6 @@ vector<SWModule*> EzraSwordInterface::getAllLocalModules()
 SWModule* EzraSwordInterface::getLocalModule(string moduleName)
 {
     return this->_mgr->getModule(moduleName.c_str());
-}
-
-std::string EzraSwordInterface::stringReplace(const std::string& str, const std::string& match, 
-        const std::string& replacement, unsigned int max_replacements)
-{
-    size_t pos = 0;
-    std::string newstr = str;
-    unsigned int replacements = 0;
-    while ((pos = newstr.find(match, pos)) != std::string::npos
-            && replacements < max_replacements)
-    {
-         newstr.replace(pos, match.length(), replacement);
-         pos += replacement.length();
-         replacements++;
-    }
-    return newstr;
 }
 
 std::string EzraSwordInterface::rtrim(const std::string& s)
