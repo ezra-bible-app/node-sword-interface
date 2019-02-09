@@ -41,7 +41,7 @@ public:
 
     void OnOK() {
         Napi::HandleScope scope(Env());
-        Callback().Call({Env().Null()});
+        //Callback().Call({Env().Null()});
     }
 
 private:
