@@ -1,6 +1,6 @@
 {
   "name": "ezra-sword-interface",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Javascript interface to SWORD library",
   "main": "index.js",
   "gypfile": true,
