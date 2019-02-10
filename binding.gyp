@@ -25,7 +25,7 @@
 					"F:\dev\sword-dep\sword\include"
 				],
 				"libraries": [
-          '-lF:/dev/sword-libs/libsword.lib',
+                    '-lF:/dev/sword-libs/libsword.lib',
 					'-lF:/dev/sword-libs/icuuc.lib',
 					'-lF:/dev/sword-libs/icuin.lib',
 					'-lF:/dev/sword-libs/icudt.lib',

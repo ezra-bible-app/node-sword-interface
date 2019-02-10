@@ -121,7 +121,7 @@ string EzraSwordInterface::getUserDir()
 #ifdef __linux__
     string userDir = string(getenv("HOME"));
 #elif _WIN32
-    string userDir = string(getenv("AppData"));
+    string userDir = string(getenv("AllUsersProfile"));
 #endif
     return userDir;
 }
@@ -130,24 +130,27 @@ string EzraSwordInterface::getSwordDir()
 {
     stringstream swordDir;
     swordDir << this->getUserDir() << this->getPathSeparator();
-#ifdef __linux__
-    swordDir << ".";
-#endif
+
+#ifdef _WIN32
     swordDir << "sword" << this->getPathSeparator();
+#elif __linux__
+    swordDir << ".sword" << this->getPathSeparator();
+#endif
+
     return swordDir.str();
 }
 
 string EzraSwordInterface::getInstallMgrDir()
 {
     stringstream installMgrDir;
-    installMgrDir << this->getSwordDir() << this->getPathSeparator() << "InstallMgr" << this->getPathSeparator();
+    installMgrDir << this->getSwordDir() << this->getPathSeparator() << "installMgr";
     return installMgrDir.str();
 }
 
 string EzraSwordInterface::getModuleDir()
 {
     stringstream moduleDir;
-    moduleDir << this->getSwordDir() << this->getPathSeparator() << "mods.d" << this->getPathSeparator();
+    moduleDir << this->getSwordDir() << this->getPathSeparator() << "mods.d";
     return moduleDir.str();
 }
 
@@ -434,9 +437,9 @@ int EzraSwordInterface::installModule(string repoName, string moduleName)
         return -1;
     }
 
-	SWMgr *remoteMgr = remoteSource->getMgr();
-	SWModule *module;
-	ModMap::iterator it = remoteMgr->Modules.find(moduleName.c_str());
+    SWMgr *remoteMgr = remoteSource->getMgr();
+    SWModule *module;
+    ModMap::iterator it = remoteMgr->Modules.find(moduleName.c_str());
 
     if (it == remoteMgr->Modules.end()) {
         cout << "Did not find module " << moduleName << " in repository " << repoName << endl;
