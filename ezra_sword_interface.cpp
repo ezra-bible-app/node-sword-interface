@@ -132,7 +132,7 @@ string EzraSwordInterface::getSwordDir()
     swordDir << this->getUserDir() << this->getPathSeparator();
 
 #ifdef _WIN32
-    swordDir << "sword" << this->getPathSeparator();
+    swordDir << "Application Data" << this->getPathSeparator() << "sword" << this->getPathSeparator();
 #elif __linux__
     swordDir << ".sword" << this->getPathSeparator();
 #endif
@@ -395,7 +395,9 @@ vector<string> EzraSwordInterface::getBibleText(std::string moduleName)
     char key[255];
     memset(key, 0, sizeof(key));
 
-    if (module != 0) {
+    if (module == 0) {
+      cout << "getLocalModule returned zero pointer for " << moduleName << endl;
+    } else {
         module->setKey("Gen 1:1");
         for (;;) {
             stringstream currentVerse;
