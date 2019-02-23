@@ -32,11 +32,15 @@ public:
 
     // This code will be executed on the worker thread
     void Execute() {
-        if (this->_operation == "refreshRemoteSources") {
-            this->_interface->refreshRemoteSources();
-        } else if (this->_operation == "installModule") {
-            this->_interface->installModule(this->_args[0]);
-        }
+      if (this->_operation == "refreshRepositoryConfig") {
+        this->_interface->refreshRepositoryConfig();
+      } else if (this->_operation == "refreshRemoteSources") {
+        this->_interface->refreshRemoteSources();
+      } else if (this->_operation == "installModule") {
+        this->_interface->installModule(this->_args[0]);
+      } else if (this->_operation == "uninstallModule") {
+        this->_interface->uninstallModule(this->_args[0]);
+      }
     }
 
     void OnOK() {

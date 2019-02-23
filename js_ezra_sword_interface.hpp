@@ -45,7 +45,7 @@ private:
     Napi::Value getBibleText(const Napi::CallbackInfo& info);
 
     Napi::Value installModule(const Napi::CallbackInfo& info);
-    void uninstallModule(const Napi::CallbackInfo& info);
+    Napi::Value uninstallModule(const Napi::CallbackInfo& info);
 
     EzraSwordInterface* _ezraSwordInterface;
 
