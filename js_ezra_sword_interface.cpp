@@ -70,8 +70,14 @@ Napi::Value JsEzraSwordInterface::refreshRepositoryConfig(const Napi::CallbackIn
   Napi::Env env = info.Env();
   Napi::HandleScope scope(env);
 
-  int ret = this->_ezraSwordInterface->refreshRepositoryConfig();
-  return Napi::Number::New(env, ret);
+  if (info.Length() != 1 || !info[0].IsFunction()) {
+      Napi::TypeError::New(env, "Function expected as first argument").ThrowAsJavaScriptException();
+  }
+
+  Napi::Function callback = info[0].As<Napi::Function>();
+  JsEzraSwordInterfaceWorker* worker = new JsEzraSwordInterfaceWorker(this->_ezraSwordInterface, "refreshRepositoryConfig", {}, callback);
+  worker->Queue();
+  return info.Env().Undefined();
 }
 
 Napi::Value JsEzraSwordInterface::refreshRemoteSources(const Napi::CallbackInfo& info)
@@ -305,12 +311,24 @@ Napi::Value JsEzraSwordInterface::installModule(const Napi::CallbackInfo& info)
     return info.Env().Undefined();
 }
 
-void JsEzraSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
+Napi::Value JsEzraSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
-    Napi::String moduleName = info[0].As<Napi::String>();
 
-    this->_ezraSwordInterface->uninstallModule(moduleName);
+    if (info.Length() != 2) {
+      Napi::TypeError::New(env, "Expected 2 parameters!").ThrowAsJavaScriptException();
+    } else if (!info[0].IsString()) {
+        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
+    } else if (!info[1].IsFunction()) {
+        Napi::TypeError::New(env, "Function expected as second argument").ThrowAsJavaScriptException();
+    }
+
+    Napi::String moduleName = info[0].As<Napi::String>();
+    Napi::Function callback = info[1].As<Napi::Function>();
+
+    JsEzraSwordInterfaceWorker* worker = new JsEzraSwordInterfaceWorker(this->_ezraSwordInterface, "uninstallModule", { moduleName }, callback);
+    worker->Queue();
+    return info.Env().Undefined();
 }
 

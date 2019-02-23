@@ -407,9 +407,12 @@ vector<string> EzraSwordInterface::getBibleText(std::string moduleName)
                 break;
             }
 
-            currentVerse << module->getKey()->getShortText() << "|" << module->stripText();
-            string trimmedVerse = rtrim(currentVerse.str());
-            bibleText.push_back(trimmedVerse);
+            string currentVerseText = rtrim(string(module->stripText()));
+
+            if (currentVerseText.length() > 0) {
+              currentVerse << module->getKey()->getShortText() << "|" << currentVerseText;
+              bibleText.push_back(currentVerse.str());
+            }
 
             strcpy(key, module->getKey()->getShortText());
             module->increment();
