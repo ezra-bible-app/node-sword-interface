@@ -37,7 +37,6 @@
 #include <swmodule.h>
 #include <swmgr.h>
 #include <remotetrans.h>
-//#include <gbfplain.h>
 
 #include "ezra_sword_interface.hpp"
 
@@ -388,8 +387,6 @@ std::string EzraSwordInterface::rtrim(const std::string& s)
 vector<string> EzraSwordInterface::getBibleText(std::string moduleName)
 {
     SWModule* module = this->getLocalModule(moduleName);
-	//SWFilter *gbfplain = new GBFPlain();
-    //module->addStripFilter(gbfplain);
 
     vector<string> bibleText;
     char key[255];

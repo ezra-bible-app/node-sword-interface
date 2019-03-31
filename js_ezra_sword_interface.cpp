@@ -174,6 +174,21 @@ void JsEzraSwordInterface::swordModuleToNapiObject(SWModule* swModule, Napi::Obj
     object["name"] = swModule->getName();
     object["description"] = swModule->getDescription();
     object["language"] = swModule->getLanguage();
+    object["version"] = swModule->getConfigEntry("Version");
+    object["locked"] = swModule->getConfigEntry("CipherKey") ? "true" : "false";
+    object["about"] = swModule->getConfigEntry("About");
+
+    if (swModule->getConfigEntry("InstallSize")) {
+      object["size"] = swModule->getConfigEntry("InstallSize");
+    } else {
+      object["size"] = "-1";
+    }
+
+    if (swModule->getConfigEntry("Abbreviation")) {
+      object["abbreviation"] = swModule->getConfigEntry("Abbreviation");
+    } else {
+      object["abbreviation"] = "";
+    }
 }
 
 Napi::Value JsEzraSwordInterface::getRepoLanguages(const Napi::CallbackInfo& info)
