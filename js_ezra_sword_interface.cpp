@@ -19,6 +19,7 @@
 #include <time.h>
 #include <sstream>
 #include <thread>
+#include <iostream>
 
 #include "swmodule.h"
 #include "js_ezra_sword_interface.hpp"
@@ -171,6 +172,11 @@ Napi::Value JsEzraSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo&
 
 void JsEzraSwordInterface::swordModuleToNapiObject(SWModule* swModule, Napi::Object& object)
 {
+    if (swModule == 0) {
+        cerr << "swModule is 0! Cannot run conversion to napi object!" << endl;
+        return;
+    }
+
     object["name"] = swModule->getName();
     object["description"] = swModule->getDescription();
     object["language"] = swModule->getLanguage();
@@ -261,8 +267,12 @@ Napi::Value JsEzraSwordInterface::getModuleDescription(const Napi::CallbackInfo&
 
     Napi::String moduleName = info[0].As<Napi::String>();
     SWModule* swordModule = this->_ezraSwordInterface->getRepoModule(moduleName);
-    string moduleDescription = string(swordModule->getDescription());
 
+    if (swordModule == 0) {
+        Napi::TypeError::New(env, "getRepoModule returned 0!").ThrowAsJavaScriptException();
+    }
+
+    string moduleDescription = string(swordModule->getDescription());
     Napi::String napiModuleDescription = Napi::String::New(env, moduleDescription);
     return napiModuleDescription;
 }
@@ -277,7 +287,11 @@ Napi::Value JsEzraSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
     }
 
     Napi::String moduleName = info[0].As<Napi::String>();
-    SWModule* swordModule = this->_ezraSwordInterface->getRepoModule(moduleName);
+    SWModule* swordModule = this->_ezraSwordInterface->getLocalModule(moduleName);
+
+    if (swordModule == 0) {
+        Napi::TypeError::New(env, "getLocalModule returned 0!").ThrowAsJavaScriptException();
+    }
 
     Napi::Object napiObject = Napi::Object::New(env);
     this->swordModuleToNapiObject(swordModule, napiObject);
