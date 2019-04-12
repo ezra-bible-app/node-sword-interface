@@ -29,8 +29,11 @@
 #ifdef __linux__
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #elif _WIN32
 #include <direct.h>
+#include  <io.h>  
+#include  <stdio.h>  
 #endif
 
 #include <installmgr.h>
@@ -76,20 +79,21 @@ void SwordStatusReporter::preStatus(long totalBytes, long completedBytes, const 
 
 EzraSwordInterface::EzraSwordInterface()
 {
-    // TODO: Do this conditionally
-#ifdef __linux__
-    mkdir(this->getSwordDir().c_str(), 0700);
-    mkdir(this->getModuleDir().c_str(), 0700);
-#elif _WIN32
-    _mkdir(this->getSwordDir().c_str());
-    _mkdir(this->getModuleDir().c_str());
-#endif
+    if (!this->fileExists(this->getSwordDir())) {
+        this->makeDirectory(this->getSwordDir());
+    }
 
-    // TODO: Do this conditionally, only if file is not existing yet
+    if (!this->fileExists(this->getModuleDir())) {
+        this->makeDirectory(this->getModuleDir());
+    }
+
     this->_swConfig = new SWConfig(this->getSwordConfPath().c_str());
-    this->_swConfig->Sections.clear();
-    (*this->_swConfig)["Install"].insert(std::make_pair(SWBuf("DataPath"), this->getModuleDir().c_str()));
-    this->_swConfig->Save();
+
+    if (!this->fileExists(this->getSwordConfPath())) {
+        this->_swConfig->Sections.clear();
+        (*this->_swConfig)["Install"].insert(std::make_pair(SWBuf("DataPath"), this->getModuleDir().c_str()));
+        this->_swConfig->Save();
+    }
 
     this->_mgr = new SWMgr();
     this->_statusReporter = new SwordStatusReporter();
@@ -158,6 +162,30 @@ string EzraSwordInterface::getSwordConfPath()
     stringstream configPath;
     configPath << this->getSwordDir() << this->getPathSeparator() << "sword.conf";
     return configPath.str();
+}
+
+bool EzraSwordInterface::fileExists(string fileName)
+{
+    bool exists = false;
+
+#ifdef _WIN32
+    if( (_access(fileName.c_str(), 0 )) != -1 ) {
+#elif __linux__
+    if (access(fileName.c_str(), F_OK) != -1 ) {
+#endif
+        exists = true;
+    }
+
+    return exists;
+}
+
+int EzraSwordInterface::makeDirectory(string dirName)
+{
+#ifdef __linux__
+    return mkdir(dirName.c_str(), 0700);
+#elif _WIN32
+    return _mkdir(dirName.c_str());
+#endif
 }
 
 int EzraSwordInterface::refreshRepositoryConfig()

@@ -80,6 +80,8 @@ private:
     std::string getInstallMgrDir();
     std::string getModuleDir();
     std::string getSwordConfPath();
+    bool fileExists(std::string fileName);
+    int makeDirectory(std::string dirName);
 
     std::string rtrim(const std::string& s);
 
