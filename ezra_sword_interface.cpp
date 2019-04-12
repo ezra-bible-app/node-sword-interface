@@ -25,6 +25,7 @@
 #include <utility>
 #include <algorithm>
 #include <future>
+#include <regex>
 
 #ifdef __linux__
 #include <sys/types.h>
@@ -419,6 +420,7 @@ vector<string> EzraSwordInterface::getBibleText(std::string moduleName)
     vector<string> bibleText;
     char key[255];
     memset(key, 0, sizeof(key));
+    regex markupFilterRegex = regex("<H.*> ");
 
     if (module == 0) {
       cout << "getLocalModule returned zero pointer for " << moduleName << endl;
@@ -432,10 +434,11 @@ vector<string> EzraSwordInterface::getBibleText(std::string moduleName)
                 break;
             }
 
-            string currentVerseText = rtrim(string(module->stripText()));
+            string rawVerseText = rtrim(string(module->stripText()));
+            string filteredText = regex_replace(rawVerseText, markupFilterRegex, "");
 
-            if (currentVerseText.length() > 0) {
-              currentVerse << module->getKey()->getShortText() << "|" << currentVerseText;
+            if (filteredText.length() > 0) {
+              currentVerse << module->getKey()->getShortText() << "|" << filteredText;
               bibleText.push_back(currentVerse.str());
             }
 
