@@ -42,7 +42,7 @@
 #include <swmgr.h>
 #include <remotetrans.h>
 
-#include "ezra_sword_interface.hpp"
+#include "sword_facade.hpp"
 
 using namespace std;
 using namespace sword;
@@ -78,7 +78,7 @@ void SwordStatusReporter::preStatus(long totalBytes, long completedBytes, const 
     cout << "\n" << message << "\n";
 }
 
-EzraSwordInterface::EzraSwordInterface()
+SwordFacade::SwordFacade()
 {
     if (!this->fileExists(this->getSwordDir())) {
         this->makeDirectory(this->getSwordDir());
@@ -102,7 +102,7 @@ EzraSwordInterface::EzraSwordInterface()
     this->_installMgr->setUserDisclaimerConfirmed(true);
 }
 
-EzraSwordInterface::~EzraSwordInterface()
+SwordFacade::~SwordFacade()
 {
     delete this->_mgr;
     delete this->_installMgr;
@@ -110,7 +110,7 @@ EzraSwordInterface::~EzraSwordInterface()
     delete this->_statusReporter;
 }
 
-string EzraSwordInterface::getPathSeparator()
+string SwordFacade::getPathSeparator()
 {
 #ifdef __linux__
     string pathSeparator = "/";
@@ -120,7 +120,7 @@ string EzraSwordInterface::getPathSeparator()
     return pathSeparator;
 }
 
-string EzraSwordInterface::getUserDir()
+string SwordFacade::getUserDir()
 {
 #ifdef __linux__
     string userDir = string(getenv("HOME"));
@@ -130,7 +130,7 @@ string EzraSwordInterface::getUserDir()
     return userDir;
 }
 
-string EzraSwordInterface::getSwordDir()
+string SwordFacade::getSwordDir()
 {
     stringstream swordDir;
     swordDir << this->getUserDir() << this->getPathSeparator();
@@ -144,28 +144,28 @@ string EzraSwordInterface::getSwordDir()
     return swordDir.str();
 }
 
-string EzraSwordInterface::getInstallMgrDir()
+string SwordFacade::getInstallMgrDir()
 {
     stringstream installMgrDir;
     installMgrDir << this->getSwordDir() << this->getPathSeparator() << "installMgr";
     return installMgrDir.str();
 }
 
-string EzraSwordInterface::getModuleDir()
+string SwordFacade::getModuleDir()
 {
     stringstream moduleDir;
     moduleDir << this->getSwordDir() << this->getPathSeparator() << "mods.d";
     return moduleDir.str();
 }
 
-string EzraSwordInterface::getSwordConfPath()
+string SwordFacade::getSwordConfPath()
 {
     stringstream configPath;
     configPath << this->getSwordDir() << this->getPathSeparator() << "sword.conf";
     return configPath.str();
 }
 
-bool EzraSwordInterface::fileExists(string fileName)
+bool SwordFacade::fileExists(string fileName)
 {
     bool exists = false;
 
@@ -180,7 +180,7 @@ bool EzraSwordInterface::fileExists(string fileName)
     return exists;
 }
 
-int EzraSwordInterface::makeDirectory(string dirName)
+int SwordFacade::makeDirectory(string dirName)
 {
 #ifdef __linux__
     return mkdir(dirName.c_str(), 0700);
@@ -189,7 +189,7 @@ int EzraSwordInterface::makeDirectory(string dirName)
 #endif
 }
 
-int EzraSwordInterface::refreshRepositoryConfig()
+int SwordFacade::refreshRepositoryConfig()
 {
     cout << "Refreshing repository configuration ... ";
 
@@ -204,7 +204,7 @@ int EzraSwordInterface::refreshRepositoryConfig()
     return 0;
 }
 
-void EzraSwordInterface::refreshRemoteSources(bool force)
+void SwordFacade::refreshRemoteSources(bool force)
 {
     vector<thread> refreshThreads;
 
@@ -224,7 +224,7 @@ void EzraSwordInterface::refreshRemoteSources(bool force)
     }
 }
 
-int EzraSwordInterface::refreshIndividualRemoteSource(string remoteSourceName)
+int SwordFacade::refreshIndividualRemoteSource(string remoteSourceName)
 {
     //cout << "Refreshing source " << remoteSourceName << endl << flush;
     InstallSource* source = this->getRemoteSource(remoteSourceName);
@@ -236,12 +236,12 @@ int EzraSwordInterface::refreshIndividualRemoteSource(string remoteSourceName)
     return result;
 }
 
-thread EzraSwordInterface::getRemoteSourceRefreshThread(std::string remoteSourceName)
+thread SwordFacade::getRemoteSourceRefreshThread(std::string remoteSourceName)
 {
-    return thread(&EzraSwordInterface::refreshIndividualRemoteSource, this, remoteSourceName);
+    return thread(&SwordFacade::refreshIndividualRemoteSource, this, remoteSourceName);
 }
 
-vector<string> EzraSwordInterface::getRepoNames()
+vector<string> SwordFacade::getRepoNames()
 {
     vector<string> sourceNames;
 
@@ -256,7 +256,7 @@ vector<string> EzraSwordInterface::getRepoNames()
     return sourceNames;
 }
 
-InstallSource* EzraSwordInterface::getRemoteSource(string remoteSourceName)
+InstallSource* SwordFacade::getRemoteSource(string remoteSourceName)
 {
     InstallSourceMap::iterator source = this->_installMgr->sources.find(remoteSourceName.c_str());
     if (source == this->_installMgr->sources.end()) {
@@ -268,7 +268,7 @@ InstallSource* EzraSwordInterface::getRemoteSource(string remoteSourceName)
     return 0;
 }
 
-vector<SWModule*> EzraSwordInterface::getAllRemoteModules()
+vector<SWModule*> SwordFacade::getAllRemoteModules()
 {
     vector<string> repoNames = this->getRepoNames();
     vector<SWModule*> allModules;
@@ -285,7 +285,7 @@ vector<SWModule*> EzraSwordInterface::getAllRemoteModules()
     return allModules;
 }
 
-SWModule* EzraSwordInterface::getRepoModule(string moduleName)
+SWModule* SwordFacade::getRepoModule(string moduleName)
 {
     vector<SWModule*> allModules = this->getAllRemoteModules();
     for (unsigned int i = 0; i < allModules.size(); i++) {
@@ -298,7 +298,7 @@ SWModule* EzraSwordInterface::getRepoModule(string moduleName)
     return 0;
 }
 
-vector<SWModule*> EzraSwordInterface::getAllRepoModules(string repoName)
+vector<SWModule*> SwordFacade::getAllRepoModules(string repoName)
 {
     vector<SWModule*> modules;
     InstallSource* remoteSource = this->getRemoteSource(repoName);
@@ -320,7 +320,7 @@ vector<SWModule*> EzraSwordInterface::getAllRepoModules(string repoName)
     return modules;
 }
 
-vector<SWModule*> EzraSwordInterface::getRepoModulesByLang(string repoName, string languageCode)
+vector<SWModule*> SwordFacade::getRepoModulesByLang(string repoName, string languageCode)
 {
     vector<SWModule*> allModules = this->getAllRepoModules(repoName);
     vector<SWModule*> selectedLanguageModules;
@@ -335,19 +335,19 @@ vector<SWModule*> EzraSwordInterface::getRepoModulesByLang(string repoName, stri
     return selectedLanguageModules;
 }
 
-unsigned int EzraSwordInterface::getRepoTranslationCount(string repoName)
+unsigned int SwordFacade::getRepoTranslationCount(string repoName)
 {
     vector<SWModule*> allModules = this->getAllRepoModules(repoName);
     return (unsigned int)allModules.size();
 }
 
-unsigned int EzraSwordInterface::getRepoLanguageTranslationCount(std::string repoName, std::string languageCode)
+unsigned int SwordFacade::getRepoLanguageTranslationCount(std::string repoName, std::string languageCode)
 {
     vector<SWModule*> allModules = this->getRepoModulesByLang(repoName, languageCode);
     return (unsigned int)allModules.size();
 }
 
-vector<string> EzraSwordInterface::getRepoLanguages(string repoName)
+vector<string> SwordFacade::getRepoLanguages(string repoName)
 {
     vector<SWModule*> modules;
     vector<string> languages;
@@ -367,7 +367,7 @@ vector<string> EzraSwordInterface::getRepoLanguages(string repoName)
     return languages;
 }
 
-string EzraSwordInterface::getModuleRepo(string moduleName)
+string SwordFacade::getModuleRepo(string moduleName)
 {
     vector<string> repositories = this->getRepoNames();
 
@@ -386,7 +386,7 @@ string EzraSwordInterface::getModuleRepo(string moduleName)
     return "";
 }
 
-vector<SWModule*> EzraSwordInterface::getAllLocalModules()
+vector<SWModule*> SwordFacade::getAllLocalModules()
 {
     vector<SWModule*> allLocalModules;
 
@@ -401,19 +401,19 @@ vector<SWModule*> EzraSwordInterface::getAllLocalModules()
     return allLocalModules;
 }
 
-SWModule* EzraSwordInterface::getLocalModule(string moduleName)
+SWModule* SwordFacade::getLocalModule(string moduleName)
 {
     return this->_mgr->getModule(moduleName.c_str());
 }
 
-std::string EzraSwordInterface::rtrim(const std::string& s)
+std::string SwordFacade::rtrim(const std::string& s)
 {
     static const std::string WHITESPACE = " \n\r\t\f\v";
 	  size_t end = s.find_last_not_of(WHITESPACE);
 	  return (end == std::string::npos) ? "" : s.substr(0, end + 1);
 } 
 
-vector<string> EzraSwordInterface::getBibleText(std::string moduleName)
+vector<string> SwordFacade::getBibleText(std::string moduleName)
 {
     SWModule* module = this->getLocalModule(moduleName);
 
@@ -450,7 +450,7 @@ vector<string> EzraSwordInterface::getBibleText(std::string moduleName)
     return bibleText;
 }
 
-int EzraSwordInterface::installModule(string moduleName)
+int SwordFacade::installModule(string moduleName)
 {
     string repoName = this->getModuleRepo(moduleName);
 
@@ -462,7 +462,7 @@ int EzraSwordInterface::installModule(string moduleName)
     return this->installModule(repoName, moduleName);
 }
 
-int EzraSwordInterface::installModule(string repoName, string moduleName)
+int SwordFacade::installModule(string repoName, string moduleName)
 {
     InstallSource* remoteSource = this->getRemoteSource(repoName);
     if (remoteSource == 0) {
@@ -493,7 +493,7 @@ int EzraSwordInterface::installModule(string repoName, string moduleName)
     }
 }
 
-int EzraSwordInterface::uninstallModule(string moduleName)
+int SwordFacade::uninstallModule(string moduleName)
 {
     int error = this->_installMgr->removeModule(this->_mgr, moduleName.c_str());
 

@@ -17,7 +17,7 @@
    If not, see <http://www.gnu.org/licenses/>. */
 
 #include <napi.h>
-#include "ezra_sword_interface.hpp"
+#include "sword_facade.hpp"
 
 class JsEzraSwordInterface : public Napi::ObjectWrap<JsEzraSwordInterface> {
 public:
@@ -47,7 +47,7 @@ private:
     Napi::Value installModule(const Napi::CallbackInfo& info);
     Napi::Value uninstallModule(const Napi::CallbackInfo& info);
 
-    EzraSwordInterface* _ezraSwordInterface;
+    SwordFacade* _swordFacade;
 
     // Functions not exported to js
     void swordModuleToNapiObject(sword::SWModule* swModule, Napi::Object& object);

@@ -16,8 +16,8 @@
    along with ezra-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
-#ifndef _EZRA_SWORD_INTERFACE
-#define _EZRA_SWORD_INTERFACE
+#ifndef _SWORD_FACADE
+#define _SWORD_FACADE
 
 #include <vector>
 #include <string>
@@ -42,11 +42,11 @@ public:
     virtual void preStatus(long totalBytes, long completedBytes, const char *message);
 };
 
-class EzraSwordInterface
+class SwordFacade
 {
 public:
-    EzraSwordInterface();
-    virtual ~EzraSwordInterface();
+    SwordFacade();
+    virtual ~SwordFacade();
 
     int refreshRepositoryConfig();
     void refreshRemoteSources(bool force=false);
@@ -91,5 +91,5 @@ private:
     SwordStatusReporter* _statusReporter = 0;
 };
 
-#endif // _EZRA_SWORD_INTERFACE
+#endif // _SWORD_FACADE
 

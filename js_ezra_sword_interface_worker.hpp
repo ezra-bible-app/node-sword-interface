@@ -21,25 +21,25 @@
 
 using namespace std;
 
-class EzraSwordInterface;
+class SwordFacade;
 
 class JsEzraSwordInterfaceWorker : public Napi::AsyncWorker {
 public:
-    JsEzraSwordInterfaceWorker(EzraSwordInterface* interface, std::string operation, std::vector<std::string> args, const Napi::Function& callback)
-        : Napi::AsyncWorker(callback), _interface(interface), _operation(operation), _args(args) {}
+    JsEzraSwordInterfaceWorker(SwordFacade* facade, std::string operation, std::vector<std::string> args, const Napi::Function& callback)
+        : Napi::AsyncWorker(callback), _facade(facade), _operation(operation), _args(args) {}
 
     ~JsEzraSwordInterfaceWorker() {}
 
     // This code will be executed on the worker thread
     void Execute() {
       if (this->_operation == "refreshRepositoryConfig") {
-        this->_interface->refreshRepositoryConfig();
+        this->_facade->refreshRepositoryConfig();
       } else if (this->_operation == "refreshRemoteSources") {
-        this->_interface->refreshRemoteSources();
+        this->_facade->refreshRemoteSources();
       } else if (this->_operation == "installModule") {
-        this->_interface->installModule(this->_args[0]);
+        this->_facade->installModule(this->_args[0]);
       } else if (this->_operation == "uninstallModule") {
-        this->_interface->uninstallModule(this->_args[0]);
+        this->_facade->uninstallModule(this->_args[0]);
       }
     }
 
@@ -49,7 +49,7 @@ public:
     }
 
 private:
-    EzraSwordInterface* _interface = 0;
+    SwordFacade* _facade = 0;
     std::string _operation;
     std::vector<std::string> _args;
 };

@@ -63,7 +63,7 @@ JsEzraSwordInterface::JsEzraSwordInterface(const Napi::CallbackInfo& info) : Nap
   Napi::Env env = info.Env();
   Napi::HandleScope scope(env);
 
-  this->_ezraSwordInterface = new EzraSwordInterface();
+  this->_swordFacade = new SwordFacade();
 }
 
 Napi::Value JsEzraSwordInterface::refreshRepositoryConfig(const Napi::CallbackInfo& info)
@@ -76,7 +76,7 @@ Napi::Value JsEzraSwordInterface::refreshRepositoryConfig(const Napi::CallbackIn
   }
 
   Napi::Function callback = info[0].As<Napi::Function>();
-  JsEzraSwordInterfaceWorker* worker = new JsEzraSwordInterfaceWorker(this->_ezraSwordInterface, "refreshRepositoryConfig", {}, callback);
+  JsEzraSwordInterfaceWorker* worker = new JsEzraSwordInterfaceWorker(this->_swordFacade, "refreshRepositoryConfig", {}, callback);
   worker->Queue();
   return info.Env().Undefined();
 }
@@ -91,7 +91,7 @@ Napi::Value JsEzraSwordInterface::refreshRemoteSources(const Napi::CallbackInfo&
     }
 
     Napi::Function callback = info[0].As<Napi::Function>();
-    JsEzraSwordInterfaceWorker* worker = new JsEzraSwordInterfaceWorker(this->_ezraSwordInterface, "refreshRemoteSources", {}, callback);
+    JsEzraSwordInterfaceWorker* worker = new JsEzraSwordInterfaceWorker(this->_swordFacade, "refreshRemoteSources", {}, callback);
     worker->Queue();
     return info.Env().Undefined();
 }
@@ -101,7 +101,7 @@ Napi::Value JsEzraSwordInterface::repositoryConfigExisting(const Napi::CallbackI
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    bool configExisting = (this->_ezraSwordInterface->getRepoNames().size() > 0);
+    bool configExisting = (this->_swordFacade->getRepoNames().size() > 0);
     return Napi::Boolean::New(env, configExisting);
 }
 
@@ -110,7 +110,7 @@ Napi::Value JsEzraSwordInterface::getRepoNames(const Napi::CallbackInfo& info)
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    vector<string> repoNames = this->_ezraSwordInterface->getRepoNames();
+    vector<string> repoNames = this->_swordFacade->getRepoNames();
     Napi::Array repoNameArray = Napi::Array::New(env, repoNames.size());
 
     for (unsigned int i = 0; i < repoNames.size(); i++) {
@@ -130,7 +130,7 @@ Napi::Value JsEzraSwordInterface::getAllRepoModules(const Napi::CallbackInfo& in
     }
 
     Napi::String repoName = info[0].As<Napi::String>();
-    vector<SWModule*> modules = this->_ezraSwordInterface->getAllRepoModules(std::string(repoName));
+    vector<SWModule*> modules = this->_swordFacade->getAllRepoModules(std::string(repoName));
     Napi::Array moduleArray = Napi::Array::New(env, modules.size());
 
     for (unsigned int i = 0; i < modules.size(); i++) {
@@ -158,7 +158,7 @@ Napi::Value JsEzraSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo&
     Napi::String repoName = info[0].As<Napi::String>();
     Napi::String languageCode = info[1].As<Napi::String>();
 
-    vector<SWModule*> modules = this->_ezraSwordInterface->getRepoModulesByLang(std::string(repoName), std::string(languageCode));
+    vector<SWModule*> modules = this->_swordFacade->getRepoModulesByLang(std::string(repoName), std::string(languageCode));
     Napi::Array moduleArray = Napi::Array::New(env, modules.size());
 
     for (unsigned int i = 0; i < modules.size(); i++) {
@@ -207,7 +207,7 @@ Napi::Value JsEzraSwordInterface::getRepoLanguages(const Napi::CallbackInfo& inf
     }
 
     Napi::String repoName = info[0].As<Napi::String>();
-    vector<string> repoLanguages = this->_ezraSwordInterface->getRepoLanguages(std::string(repoName));
+    vector<string> repoLanguages = this->_swordFacade->getRepoLanguages(std::string(repoName));
     Napi::Array languageArray = Napi::Array::New(env, repoLanguages.size());
 
     for (unsigned int i = 0; i < repoLanguages.size(); i++) {
@@ -228,7 +228,7 @@ Napi::Value JsEzraSwordInterface::getRepoTranslationCount(const Napi::CallbackIn
 
     Napi::String repoName = info[0].As<Napi::String>();
 
-    unsigned int translationCount = this->_ezraSwordInterface->getRepoTranslationCount(std::string(repoName));
+    unsigned int translationCount = this->_swordFacade->getRepoTranslationCount(std::string(repoName));
     Napi::Number jsTranslationCount = Napi::Number::New(env, translationCount);
 
     return jsTranslationCount;
@@ -250,7 +250,7 @@ Napi::Value JsEzraSwordInterface::getRepoLanguageTranslationCount(const Napi::Ca
     Napi::String repoName = info[0].As<Napi::String>();
     Napi::String languageCode = info[1].As<Napi::String>();
 
-    unsigned int translationCount = this->_ezraSwordInterface->getRepoLanguageTranslationCount(std::string(repoName), std::string(languageCode));
+    unsigned int translationCount = this->_swordFacade->getRepoLanguageTranslationCount(std::string(repoName), std::string(languageCode));
     Napi::Number jsTranslationCount = Napi::Number::New(env, translationCount);
 
     return jsTranslationCount;
@@ -266,7 +266,7 @@ Napi::Value JsEzraSwordInterface::getModuleDescription(const Napi::CallbackInfo&
     }
 
     Napi::String moduleName = info[0].As<Napi::String>();
-    SWModule* swordModule = this->_ezraSwordInterface->getRepoModule(moduleName);
+    SWModule* swordModule = this->_swordFacade->getRepoModule(moduleName);
 
     if (swordModule == 0) {
         Napi::TypeError::New(env, "getRepoModule returned 0!").ThrowAsJavaScriptException();
@@ -287,7 +287,7 @@ Napi::Value JsEzraSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
     }
 
     Napi::String moduleName = info[0].As<Napi::String>();
-    SWModule* swordModule = this->_ezraSwordInterface->getLocalModule(moduleName);
+    SWModule* swordModule = this->_swordFacade->getLocalModule(moduleName);
 
     if (swordModule == 0) {
         Napi::TypeError::New(env, "getLocalModule returned 0!").ThrowAsJavaScriptException();
@@ -309,7 +309,7 @@ Napi::Value JsEzraSwordInterface::getBibleText(const Napi::CallbackInfo& info)
     }
 
     Napi::String moduleName = info[0].As<Napi::String>();
-    vector<string> bibleText = this->_ezraSwordInterface->getBibleText(std::string(moduleName));
+    vector<string> bibleText = this->_swordFacade->getBibleText(std::string(moduleName));
     Napi::Array versesArray = Napi::Array::New(env, bibleText.size());
 
     for (unsigned int i = 0; i < bibleText.size(); i++) {
@@ -335,7 +335,7 @@ Napi::Value JsEzraSwordInterface::installModule(const Napi::CallbackInfo& info)
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Function callback = info[1].As<Napi::Function>();
 
-    JsEzraSwordInterfaceWorker* worker = new JsEzraSwordInterfaceWorker(this->_ezraSwordInterface, "installModule", { moduleName }, callback);
+    JsEzraSwordInterfaceWorker* worker = new JsEzraSwordInterfaceWorker(this->_swordFacade, "installModule", { moduleName }, callback);
     worker->Queue();
     return info.Env().Undefined();
 }
@@ -356,7 +356,7 @@ Napi::Value JsEzraSwordInterface::uninstallModule(const Napi::CallbackInfo& info
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Function callback = info[1].As<Napi::Function>();
 
-    JsEzraSwordInterfaceWorker* worker = new JsEzraSwordInterfaceWorker(this->_ezraSwordInterface, "uninstallModule", { moduleName }, callback);
+    JsEzraSwordInterfaceWorker* worker = new JsEzraSwordInterfaceWorker(this->_swordFacade, "uninstallModule", { moduleName }, callback);
     worker->Queue();
     return info.Env().Undefined();
 }
