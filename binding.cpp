@@ -17,10 +17,11 @@
    If not, see <http://www.gnu.org/licenses/>. */
 
 #include <napi.h>
-#include "js_ezra_sword_interface.hpp"
+#include "node_sword_interface.hpp"
 
 Napi::Object InitAll(Napi::Env env, Napi::Object exports) {
-  return JsEzraSwordInterface::Init(env, exports);
+  return NodeSwordInterface::Init(env, exports);
 }
 
 NODE_API_MODULE(NODE_GYP_MODULE_NAME, InitAll)
+

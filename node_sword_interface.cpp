@@ -22,33 +22,33 @@
 #include <iostream>
 
 #include "swmodule.h"
-#include "js_ezra_sword_interface.hpp"
+#include "node_sword_interface.hpp"
 #include "js_ezra_sword_interface_worker.hpp"
 
 using namespace std;
 using namespace sword;
 
-Napi::FunctionReference JsEzraSwordInterface::constructor;
+Napi::FunctionReference NodeSwordInterface::constructor;
 
-Napi::Object JsEzraSwordInterface::Init(Napi::Env env, Napi::Object exports)
+Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
 {
     Napi::HandleScope scope(env);
 
     Napi::Function func = DefineClass(env, "EzraSwordInterface", {
-        InstanceMethod("refreshRepositoryConfig", &JsEzraSwordInterface::refreshRepositoryConfig),
-        InstanceMethod("refreshRemoteSources", &JsEzraSwordInterface::refreshRemoteSources),
-        InstanceMethod("repositoryConfigExisting", &JsEzraSwordInterface::repositoryConfigExisting),
-        InstanceMethod("getRepoNames", &JsEzraSwordInterface::getRepoNames),
-        InstanceMethod("getAllRepoModules", &JsEzraSwordInterface::getAllRepoModules),
-        InstanceMethod("getRepoModulesByLang", &JsEzraSwordInterface::getRepoModulesByLang),
-        InstanceMethod("getRepoLanguages", &JsEzraSwordInterface::getRepoLanguages),
-        InstanceMethod("getRepoTranslationCount", &JsEzraSwordInterface::getRepoTranslationCount),
-        InstanceMethod("getRepoLanguageTranslationCount", &JsEzraSwordInterface::getRepoLanguageTranslationCount),
-        InstanceMethod("getModuleDescription", &JsEzraSwordInterface::getModuleDescription),
-        InstanceMethod("getLocalModule", &JsEzraSwordInterface::getLocalModule),
-        InstanceMethod("getBibleText", &JsEzraSwordInterface::getBibleText),
-        InstanceMethod("installModule", &JsEzraSwordInterface::installModule),
-        InstanceMethod("uninstallModule", &JsEzraSwordInterface::uninstallModule)
+        InstanceMethod("refreshRepositoryConfig", &NodeSwordInterface::refreshRepositoryConfig),
+        InstanceMethod("refreshRemoteSources", &NodeSwordInterface::refreshRemoteSources),
+        InstanceMethod("repositoryConfigExisting", &NodeSwordInterface::repositoryConfigExisting),
+        InstanceMethod("getRepoNames", &NodeSwordInterface::getRepoNames),
+        InstanceMethod("getAllRepoModules", &NodeSwordInterface::getAllRepoModules),
+        InstanceMethod("getRepoModulesByLang", &NodeSwordInterface::getRepoModulesByLang),
+        InstanceMethod("getRepoLanguages", &NodeSwordInterface::getRepoLanguages),
+        InstanceMethod("getRepoTranslationCount", &NodeSwordInterface::getRepoTranslationCount),
+        InstanceMethod("getRepoLanguageTranslationCount", &NodeSwordInterface::getRepoLanguageTranslationCount),
+        InstanceMethod("getModuleDescription", &NodeSwordInterface::getModuleDescription),
+        InstanceMethod("getLocalModule", &NodeSwordInterface::getLocalModule),
+        InstanceMethod("getBibleText", &NodeSwordInterface::getBibleText),
+        InstanceMethod("installModule", &NodeSwordInterface::installModule),
+        InstanceMethod("uninstallModule", &NodeSwordInterface::uninstallModule)
     });
 
     constructor = Napi::Persistent(func);
@@ -58,7 +58,7 @@ Napi::Object JsEzraSwordInterface::Init(Napi::Env env, Napi::Object exports)
     return exports;
 }
 
-JsEzraSwordInterface::JsEzraSwordInterface(const Napi::CallbackInfo& info) : Napi::ObjectWrap<JsEzraSwordInterface>(info)
+NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::ObjectWrap<NodeSwordInterface>(info)
 {
   Napi::Env env = info.Env();
   Napi::HandleScope scope(env);
@@ -66,7 +66,7 @@ JsEzraSwordInterface::JsEzraSwordInterface(const Napi::CallbackInfo& info) : Nap
   this->_swordFacade = new SwordFacade();
 }
 
-Napi::Value JsEzraSwordInterface::refreshRepositoryConfig(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::refreshRepositoryConfig(const Napi::CallbackInfo& info)
 {
   Napi::Env env = info.Env();
   Napi::HandleScope scope(env);
@@ -81,7 +81,7 @@ Napi::Value JsEzraSwordInterface::refreshRepositoryConfig(const Napi::CallbackIn
   return info.Env().Undefined();
 }
 
-Napi::Value JsEzraSwordInterface::refreshRemoteSources(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::refreshRemoteSources(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
@@ -96,7 +96,7 @@ Napi::Value JsEzraSwordInterface::refreshRemoteSources(const Napi::CallbackInfo&
     return info.Env().Undefined();
 }
 
-Napi::Value JsEzraSwordInterface::repositoryConfigExisting(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::repositoryConfigExisting(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
@@ -105,7 +105,7 @@ Napi::Value JsEzraSwordInterface::repositoryConfigExisting(const Napi::CallbackI
     return Napi::Boolean::New(env, configExisting);
 }
 
-Napi::Value JsEzraSwordInterface::getRepoNames(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::getRepoNames(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
@@ -120,7 +120,7 @@ Napi::Value JsEzraSwordInterface::getRepoNames(const Napi::CallbackInfo& info)
     return repoNameArray;
 }
 
-Napi::Value JsEzraSwordInterface::getAllRepoModules(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::getAllRepoModules(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
@@ -142,7 +142,7 @@ Napi::Value JsEzraSwordInterface::getAllRepoModules(const Napi::CallbackInfo& in
     return moduleArray;
 }
 
-Napi::Value JsEzraSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
@@ -170,7 +170,7 @@ Napi::Value JsEzraSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo&
     return moduleArray;
 }
 
-void JsEzraSwordInterface::swordModuleToNapiObject(SWModule* swModule, Napi::Object& object)
+void NodeSwordInterface::swordModuleToNapiObject(SWModule* swModule, Napi::Object& object)
 {
     if (swModule == 0) {
         cerr << "swModule is 0! Cannot run conversion to napi object!" << endl;
@@ -197,7 +197,7 @@ void JsEzraSwordInterface::swordModuleToNapiObject(SWModule* swModule, Napi::Obj
     }
 }
 
-Napi::Value JsEzraSwordInterface::getRepoLanguages(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::getRepoLanguages(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
@@ -217,7 +217,7 @@ Napi::Value JsEzraSwordInterface::getRepoLanguages(const Napi::CallbackInfo& inf
     return languageArray;
 }
 
-Napi::Value JsEzraSwordInterface::getRepoTranslationCount(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::getRepoTranslationCount(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
@@ -234,7 +234,7 @@ Napi::Value JsEzraSwordInterface::getRepoTranslationCount(const Napi::CallbackIn
     return jsTranslationCount;
 }
 
-Napi::Value JsEzraSwordInterface::getRepoLanguageTranslationCount(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::getRepoLanguageTranslationCount(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
@@ -256,7 +256,7 @@ Napi::Value JsEzraSwordInterface::getRepoLanguageTranslationCount(const Napi::Ca
     return jsTranslationCount;
 }
 
-Napi::Value JsEzraSwordInterface::getModuleDescription(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::getModuleDescription(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
@@ -277,7 +277,7 @@ Napi::Value JsEzraSwordInterface::getModuleDescription(const Napi::CallbackInfo&
     return napiModuleDescription;
 }
 
-Napi::Value JsEzraSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
@@ -299,7 +299,7 @@ Napi::Value JsEzraSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
     return napiObject;
 }
 
-Napi::Value JsEzraSwordInterface::getBibleText(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::getBibleText(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
@@ -319,7 +319,7 @@ Napi::Value JsEzraSwordInterface::getBibleText(const Napi::CallbackInfo& info)
     return versesArray;
 }
 
-Napi::Value JsEzraSwordInterface::installModule(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
@@ -340,7 +340,7 @@ Napi::Value JsEzraSwordInterface::installModule(const Napi::CallbackInfo& info)
     return info.Env().Undefined();
 }
 
-Napi::Value JsEzraSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);

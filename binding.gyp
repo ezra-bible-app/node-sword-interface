@@ -5,7 +5,7 @@
         "cflags_cc!": [ "-fno-exceptions -std=c++11 -pthread" ],
         "sources": [
             "sword_facade.cpp",
-            "js_ezra_sword_interface.cpp",
+            "node_sword_interface.cpp",
             "binding.cpp"
         ],
 		"conditions":[

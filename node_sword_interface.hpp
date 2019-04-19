@@ -16,13 +16,16 @@
    along with ezra-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
+#ifndef _NODE_SWORD_INTERFACE
+#define _NODE_SWORD_INTERFACE
+
 #include <napi.h>
 #include "sword_facade.hpp"
 
-class JsEzraSwordInterface : public Napi::ObjectWrap<JsEzraSwordInterface> {
+class NodeSwordInterface : public Napi::ObjectWrap<NodeSwordInterface> {
 public:
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
-    JsEzraSwordInterface(const Napi::CallbackInfo& info);
+    NodeSwordInterface(const Napi::CallbackInfo& info);
 
 private:
     static Napi::FunctionReference constructor;
@@ -52,4 +55,6 @@ private:
     // Functions not exported to js
     void swordModuleToNapiObject(sword::SWModule* swModule, Napi::Object& object);
 };
+
+#endif // _NODE_SWORD_INTERFACE
 
