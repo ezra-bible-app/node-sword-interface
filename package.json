@@ -1,7 +1,7 @@
 {
-  "name": "ezra-sword-interface",
-  "version": "0.6.0",
-  "description": "Javascript (N-API) interface to SWORD library for the integration in Ezra Project, an Electron-based bible study software",
+  "name": "node-sword-interface",
+  "version": "0.7.0",
+  "description": "Javascript (N-API) interface to SWORD library",
   "main": "index.js",
   "gypfile": true,
   "scripts": {
