@@ -23,7 +23,7 @@
 
 #include "swmodule.h"
 #include "node_sword_interface.hpp"
-#include "js_ezra_sword_interface_worker.hpp"
+#include "node_sword_interface_worker.hpp"
 
 using namespace std;
 using namespace sword;
@@ -34,7 +34,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
 {
     Napi::HandleScope scope(env);
 
-    Napi::Function func = DefineClass(env, "EzraSwordInterface", {
+    Napi::Function func = DefineClass(env, "NodeSwordInterface", {
         InstanceMethod("refreshRepositoryConfig", &NodeSwordInterface::refreshRepositoryConfig),
         InstanceMethod("refreshRemoteSources", &NodeSwordInterface::refreshRemoteSources),
         InstanceMethod("repositoryConfigExisting", &NodeSwordInterface::repositoryConfigExisting),
@@ -54,7 +54,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
 
-    exports.Set("EzraSwordInterface", func);
+    exports.Set("NodeSwordInterface", func);
     return exports;
 }
 
@@ -76,7 +76,7 @@ Napi::Value NodeSwordInterface::refreshRepositoryConfig(const Napi::CallbackInfo
   }
 
   Napi::Function callback = info[0].As<Napi::Function>();
-  JsEzraSwordInterfaceWorker* worker = new JsEzraSwordInterfaceWorker(this->_swordFacade, "refreshRepositoryConfig", {}, callback);
+  NodeSwordInterfaceWorker* worker = new NodeSwordInterfaceWorker(this->_swordFacade, "refreshRepositoryConfig", {}, callback);
   worker->Queue();
   return info.Env().Undefined();
 }
@@ -91,7 +91,7 @@ Napi::Value NodeSwordInterface::refreshRemoteSources(const Napi::CallbackInfo& i
     }
 
     Napi::Function callback = info[0].As<Napi::Function>();
-    JsEzraSwordInterfaceWorker* worker = new JsEzraSwordInterfaceWorker(this->_swordFacade, "refreshRemoteSources", {}, callback);
+    NodeSwordInterfaceWorker* worker = new NodeSwordInterfaceWorker(this->_swordFacade, "refreshRemoteSources", {}, callback);
     worker->Queue();
     return info.Env().Undefined();
 }
@@ -335,7 +335,7 @@ Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Function callback = info[1].As<Napi::Function>();
 
-    JsEzraSwordInterfaceWorker* worker = new JsEzraSwordInterfaceWorker(this->_swordFacade, "installModule", { moduleName }, callback);
+    NodeSwordInterfaceWorker* worker = new NodeSwordInterfaceWorker(this->_swordFacade, "installModule", { moduleName }, callback);
     worker->Queue();
     return info.Env().Undefined();
 }
@@ -356,7 +356,7 @@ Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Function callback = info[1].As<Napi::Function>();
 
-    JsEzraSwordInterfaceWorker* worker = new JsEzraSwordInterfaceWorker(this->_swordFacade, "uninstallModule", { moduleName }, callback);
+    NodeSwordInterfaceWorker* worker = new NodeSwordInterfaceWorker(this->_swordFacade, "uninstallModule", { moduleName }, callback);
     worker->Queue();
     return info.Env().Undefined();
 }

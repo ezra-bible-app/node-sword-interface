@@ -1,6 +1,6 @@
 {
     "targets": [{
-        "target_name": "ezra_sword_interface",
+        "target_name": "node_sword_interface",
         "cflags!": [ "-fno-exceptions" ],
         "cflags_cc!": [ "-fno-exceptions -std=c++11 -pthread" ],
         "sources": [

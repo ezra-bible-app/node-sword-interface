@@ -1,4 +1,4 @@
-#include "ezra_sword_interface.hpp"
+#include "sword_facade.hpp"
 
 #include <vector>
 #include <iostream>
@@ -9,19 +9,19 @@ using namespace sword;
 
 int main(int argc, char** argv)
 {
-  EzraSwordInterface ezra_sword_interface;
+  SwordFacade sword_facade;
 
-  //ezra_sword_interface.refreshRemoteSources(true);
+  //sword_facade.refreshRemoteSources(true);
 
   cout << "REPOSITORIES:" << endl;
-  vector<string> repoNames = ezra_sword_interface.getRepoNames();
+  vector<string> repoNames = sword_facade.getRepoNames();
   for (unsigned int i = 0; i < repoNames.size(); i++) {
     cout << repoNames[i] << endl;
   }
   cout << endl;
 
   cout << "German MODULES of CrossWire:" << endl;
-  vector<SWModule*> germanModules = ezra_sword_interface.getRepoModulesByLang("CrossWire", "de");
+  vector<SWModule*> germanModules = sword_facade.getRepoModulesByLang("CrossWire", "de");
   for (unsigned int i = 0; i < germanModules.size(); i++) {
     SWModule* currentModule = germanModules[i];
 

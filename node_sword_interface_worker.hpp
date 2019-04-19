@@ -16,6 +16,9 @@
    along with ezra-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
+#ifndef _NODE_SWORD_INTERFACE_WORKER
+#define _NODE_SWORD_INTERFACE_WORKER
+
 #include <napi.h>
 #include <iostream>
 
@@ -23,12 +26,12 @@ using namespace std;
 
 class SwordFacade;
 
-class JsEzraSwordInterfaceWorker : public Napi::AsyncWorker {
+class NodeSwordInterfaceWorker : public Napi::AsyncWorker {
 public:
-    JsEzraSwordInterfaceWorker(SwordFacade* facade, std::string operation, std::vector<std::string> args, const Napi::Function& callback)
+    NodeSwordInterfaceWorker(SwordFacade* facade, std::string operation, std::vector<std::string> args, const Napi::Function& callback)
         : Napi::AsyncWorker(callback), _facade(facade), _operation(operation), _args(args) {}
 
-    ~JsEzraSwordInterfaceWorker() {}
+    ~NodeSwordInterfaceWorker() {}
 
     // This code will be executed on the worker thread
     void Execute() {
@@ -53,4 +56,6 @@ private:
     std::string _operation;
     std::vector<std::string> _args;
 };
+
+#endif // _NODE_SWORD_INTERFACE_WORKER
 
