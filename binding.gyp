@@ -12,11 +12,11 @@
 			["OS=='linux'", {
 			    'include_dirs': [
 					"<!@(node -p \"require('node-addon-api').include\")",
-					"/usr/include/sword"
+					"<!@(pkg-config --cflags-only-I sword | sed s/-I//g)"
 				],
 				"libraries": [
-					'-lsword',
-					'/usr/lib/x86_64-linux-gnu/libcurl.so.4'
+					'<!@(pkg-config --libs sword)',
+					'<!@(pkg-config --libs libcurl)'
 				]
 			}],
 			["OS=='win'", {
