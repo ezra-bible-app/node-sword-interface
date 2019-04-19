@@ -16,7 +16,7 @@
 				],
 				"libraries": [
 					'<!@(pkg-config --libs sword)',
-					'<!@(pkg-config --libs curl)'
+					'<!@(pkg-config --libs libcurl)'
 				]
 			}],
 			["OS=='win'", {
