@@ -27,16 +27,6 @@
 #include <future>
 #include <regex>
 
-#ifdef __linux__
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#elif _WIN32
-#include <direct.h>
-#include  <io.h>  
-#include  <stdio.h>  
-#endif
-
 #include <installmgr.h>
 #include <swmodule.h>
 #include <swmgr.h>
