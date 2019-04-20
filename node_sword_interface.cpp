@@ -86,12 +86,24 @@ Napi::Value NodeSwordInterface::refreshRemoteSources(const Napi::CallbackInfo& i
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    if (info.Length() != 1 || !info[0].IsFunction()) {
-        Napi::TypeError::New(env, "Function expected as first argument").ThrowAsJavaScriptException();
+    if (info.Length() != 2) {
+      Napi::TypeError::New(env, "Expected 2 parameters!").ThrowAsJavaScriptException();
+    } else if (!info[0].IsBoolean()) {
+        Napi::TypeError::New(env, "Boolean expected as first argument").ThrowAsJavaScriptException();
+    } else if (!info[1].IsFunction()) {
+        Napi::TypeError::New(env, "Function expected as second argument").ThrowAsJavaScriptException();
     }
 
-    Napi::Function callback = info[0].As<Napi::Function>();
-    NodeSwordInterfaceWorker* worker = new NodeSwordInterfaceWorker(this->_swordFacade, "refreshRemoteSources", {}, callback);
+    Napi::Boolean force = info[0].As<Napi::Boolean>();
+    Napi::Function callback = info[1].As<Napi::Function>();
+
+    bool isForced = force.Value();
+    string isForcedArg = "false";
+    if (isForced) {
+        isForcedArg = "true";
+    }
+
+    NodeSwordInterfaceWorker* worker = new NodeSwordInterfaceWorker(this->_swordFacade, "refreshRemoteSources", { isForcedArg }, callback);
     worker->Queue();
     return info.Env().Undefined();
 }

@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 {
   SwordFacade sword_facade;
 
-  //sword_facade.refreshRemoteSources(true);
+  sword_facade.refreshRemoteSources(true);
 
   cout << "REPOSITORIES:" << endl;
   vector<string> repoNames = sword_facade.getRepoNames();
@@ -20,10 +20,10 @@ int main(int argc, char** argv)
   }
   cout << endl;
 
-  cout << "German MODULES of CrossWire:" << endl;
-  vector<SWModule*> germanModules = sword_facade.getRepoModulesByLang("CrossWire", "de");
-  for (unsigned int i = 0; i < germanModules.size(); i++) {
-    SWModule* currentModule = germanModules[i];
+  cout << "English MODULES of CrossWire:" << endl;
+  vector<SWModule*> modules = sword_facade.getRepoModulesByLang("CrossWire", "en");
+  for (unsigned int i = 0; i < modules.size(); i++) {
+    SWModule* currentModule = modules[i];
 
     cout << currentModule->getName();
 

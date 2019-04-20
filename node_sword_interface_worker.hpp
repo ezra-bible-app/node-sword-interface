@@ -38,7 +38,8 @@ public:
       if (this->_operation == "refreshRepositoryConfig") {
         this->_facade->refreshRepositoryConfig();
       } else if (this->_operation == "refreshRemoteSources") {
-        this->_facade->refreshRemoteSources();
+        bool force = (this->_args[0] == "true");
+        this->_facade->refreshRemoteSources(force);
       } else if (this->_operation == "installModule") {
         this->_facade->installModule(this->_args[0]);
       } else if (this->_operation == "uninstallModule") {
