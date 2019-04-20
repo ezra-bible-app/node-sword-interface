@@ -59,17 +59,17 @@ class NodeSwordInterface {
     return this.nativeInterface.getRepoLanguageTranslationCount(repositoryName, language);
   }
 
-  installTranslation(translationCode) {
+  installModule(moduleCode) {
     return new Promise(resolve => {
-      this.nativeInterface.installModule(translationCode, function() {
+      this.nativeInterface.installModule(moduleCode, function() {
         resolve();
       });
     });
   }
 
-  uninstallTranslation(translationCode) {
+  uninstallModule(moduleCode) {
     return new Promise(resolve => {
-      this.nativeInterface.uninstallModule(translationCode, function() {
+      this.nativeInterface.uninstallModule(moduleCode, function() {
         resolve();
       });
     });
@@ -79,8 +79,8 @@ class NodeSwordInterface {
     return this.nativeInterface.getBibleText(translationCode);
   }
 
-  getLocalModule(translationCode) {
-    return this.nativeInterface.getLocalModule(translationCode);
+  getLocalModule(moduleCode) {
+    return this.nativeInterface.getLocalModule(moduleCode);
   }
 }
 
