@@ -26,6 +26,8 @@
 
 #include <remotetrans.h>
 
+#include "file_system_helper.hpp"
+
 namespace sword {
     class InstallMgr;
     class InstallSource;
@@ -74,21 +76,13 @@ private:
     int refreshIndividualRemoteSource(std::string remoteSourceName);
     std::thread getRemoteSourceRefreshThread(std::string remoteSourceName);
 
-    std::string getPathSeparator();
-    std::string getUserDir();
-    std::string getSwordDir();
-    std::string getInstallMgrDir();
-    std::string getModuleDir();
-    std::string getSwordConfPath();
-    bool fileExists(std::string fileName);
-    int makeDirectory(std::string dirName);
-
     std::string rtrim(const std::string& s);
 
     sword::SWMgr* _mgr = 0;
     sword::SWConfig* _swConfig = 0;
     sword::InstallMgr* _installMgr = 0;
     SwordStatusReporter* _statusReporter = 0;
+    FileSystemHelper _fileSystemHelper;
 };
 
 #endif // _SWORD_FACADE

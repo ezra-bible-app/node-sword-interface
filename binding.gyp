@@ -4,6 +4,7 @@
         "cflags!": [ "-fno-exceptions" ],
         "cflags_cc!": [ "-fno-exceptions -std=c++11 -pthread" ],
         "sources": [
+            "file_system_helper.cpp",
             "sword_facade.cpp",
             "node_sword_interface.cpp",
             "binding.cpp"

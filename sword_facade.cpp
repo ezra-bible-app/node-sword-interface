@@ -80,25 +80,18 @@ void SwordStatusReporter::preStatus(long totalBytes, long completedBytes, const 
 
 SwordFacade::SwordFacade()
 {
-    if (!this->fileExists(this->getSwordDir())) {
-        this->makeDirectory(this->getSwordDir());
-    }
+    this->_fileSystemHelper.createBasicDirectories();
+    this->_swConfig = new SWConfig(this->_fileSystemHelper.getSwordConfPath().c_str());
 
-    if (!this->fileExists(this->getModuleDir())) {
-        this->makeDirectory(this->getModuleDir());
-    }
-
-    this->_swConfig = new SWConfig(this->getSwordConfPath().c_str());
-
-    if (!this->fileExists(this->getSwordConfPath())) {
+    if (!this->_fileSystemHelper.isSwordConfExisting()) {
         this->_swConfig->Sections.clear();
-        (*this->_swConfig)["Install"].insert(std::make_pair(SWBuf("DataPath"), this->getModuleDir().c_str()));
+        (*this->_swConfig)["Install"].insert(std::make_pair(SWBuf("DataPath"), this->_fileSystemHelper.getModuleDir().c_str()));
         this->_swConfig->Save();
     }
 
     this->_mgr = new SWMgr();
     this->_statusReporter = new SwordStatusReporter();
-    this->_installMgr = new InstallMgr(this->getInstallMgrDir().c_str(), this->_statusReporter);
+    this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), this->_statusReporter);
     this->_installMgr->setUserDisclaimerConfirmed(true);
 }
 
@@ -108,85 +101,6 @@ SwordFacade::~SwordFacade()
     delete this->_installMgr;
     delete this->_swConfig;
     delete this->_statusReporter;
-}
-
-string SwordFacade::getPathSeparator()
-{
-#ifdef __linux__
-    string pathSeparator = "/";
-#elif _WIN32
-    string pathSeparator = "\\";
-#endif
-    return pathSeparator;
-}
-
-string SwordFacade::getUserDir()
-{
-#ifdef __linux__
-    string userDir = string(getenv("HOME"));
-#elif _WIN32
-    string userDir = string(getenv("AllUsersProfile"));
-#endif
-    return userDir;
-}
-
-string SwordFacade::getSwordDir()
-{
-    stringstream swordDir;
-    swordDir << this->getUserDir() << this->getPathSeparator();
-
-#ifdef _WIN32
-    swordDir << "Application Data" << this->getPathSeparator() << "sword" << this->getPathSeparator();
-#elif __linux__
-    swordDir << ".sword" << this->getPathSeparator();
-#endif
-
-    return swordDir.str();
-}
-
-string SwordFacade::getInstallMgrDir()
-{
-    stringstream installMgrDir;
-    installMgrDir << this->getSwordDir() << this->getPathSeparator() << "installMgr";
-    return installMgrDir.str();
-}
-
-string SwordFacade::getModuleDir()
-{
-    stringstream moduleDir;
-    moduleDir << this->getSwordDir() << this->getPathSeparator() << "mods.d";
-    return moduleDir.str();
-}
-
-string SwordFacade::getSwordConfPath()
-{
-    stringstream configPath;
-    configPath << this->getSwordDir() << this->getPathSeparator() << "sword.conf";
-    return configPath.str();
-}
-
-bool SwordFacade::fileExists(string fileName)
-{
-    bool exists = false;
-
-#ifdef _WIN32
-    if( (_access(fileName.c_str(), 0 )) != -1 ) {
-#elif __linux__
-    if (access(fileName.c_str(), F_OK) != -1 ) {
-#endif
-        exists = true;
-    }
-
-    return exists;
-}
-
-int SwordFacade::makeDirectory(string dirName)
-{
-#ifdef __linux__
-    return mkdir(dirName.c_str(), 0700);
-#elif _WIN32
-    return _mkdir(dirName.c_str());
-#endif
 }
 
 int SwordFacade::refreshRepositoryConfig()

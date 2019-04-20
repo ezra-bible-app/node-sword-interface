@@ -1,6 +1,6 @@
 {
   "name": "node-sword-interface",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Javascript (N-API) interface to SWORD library",
   "main": "index.js",
   "gypfile": true,
