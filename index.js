@@ -17,7 +17,72 @@
    If not, see <http://www.gnu.org/licenses/>. */
 
 const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.node');
-const nodeSwordInterface = new nodeSwordInterfaceModule.NodeSwordInterface();
 
-module.exports = nodeSwordInterface;
+class NodeSwordInterface {
+  constructor() {
+    this.nativeInterface = new nodeSwordInterfaceModule.NodeSwordInterface();
+  }
+
+  repositoryConfigExisting() {
+    return this.nativeInterface.repositoryConfigExisting();
+  }
+
+  refreshRemoteSources() {
+    return new Promise(resolve => {
+      this.nativeInterface.refreshRemoteSources(true, function() {
+        resolve();
+      });
+    });
+  }
+
+  getModuleDescription(translationCode) {
+    return this.nativeInterface.getModuleDescription(translationCode);
+  }
+
+  getRepoNames() {
+    return this.nativeInterface.getRepoNames();
+  }
+
+  getRepoLanguages(repositoryName) {
+    return this.nativeInterface.getRepoLanguages(repositoryName);
+  }
+
+  getAllRepoModules(repositoryName) {
+    return this.nativeInterface.getAllRepoModules(repositoryName);
+  }
+
+  getRepoModulesByLang(repositoryName, language) {
+    return this.nativeInterface.getRepoModulesByLang(repositoryName, language);
+  }
+
+  getRepoLanguageTranslationCount(repositoryName, language) {
+    return this.nativeInterface.getRepoLanguageTranslationCount(repositoryName, language);
+  }
+
+  installTranslation(translationCode) {
+    return new Promise(resolve => {
+      this.nativeInterface.installModule(translationCode, function() {
+        resolve();
+      });
+    });
+  }
+
+  uninstallTranslation(translationCode) {
+    return new Promise(resolve => {
+      this.nativeInterface.uninstallModule(translationCode, function() {
+        resolve();
+      });
+    });
+  }
+
+  getBibleText(translationCode) {
+    return this.nativeInterface.getBibleText(translationCode);
+  }
+
+  getLocalModule(translationCode) {
+    return this.nativeInterface.getLocalModule(translationCode);
+  }
+}
+
+module.exports = NodeSwordInterface;
 
