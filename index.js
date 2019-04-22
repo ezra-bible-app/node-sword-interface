@@ -75,8 +75,12 @@ class NodeSwordInterface {
     });
   }
 
-  getBibleText(translationCode) {
-    return this.nativeInterface.getBibleText(translationCode);
+  getBibleText(moduleCode) {
+    return this.nativeInterface.getBibleText(moduleCode);
+  }
+
+  getBookText(moduleCode, bookCode) {
+    return this.nativeInterface.getBookText(moduleCode, bookCode);
   }
 
   getLocalModule(moduleCode) {

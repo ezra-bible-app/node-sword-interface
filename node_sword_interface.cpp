@@ -47,6 +47,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getModuleDescription", &NodeSwordInterface::getModuleDescription),
         InstanceMethod("getLocalModule", &NodeSwordInterface::getLocalModule),
         InstanceMethod("getBibleText", &NodeSwordInterface::getBibleText),
+        InstanceMethod("getBookText", &NodeSwordInterface::getBookText),
         InstanceMethod("installModule", &NodeSwordInterface::installModule),
         InstanceMethod("uninstallModule", &NodeSwordInterface::uninstallModule)
     });
@@ -142,7 +143,7 @@ Napi::Value NodeSwordInterface::getAllRepoModules(const Napi::CallbackInfo& info
     }
 
     Napi::String repoName = info[0].As<Napi::String>();
-    vector<SWModule*> modules = this->_swordFacade->getAllRepoModules(std::string(repoName));
+    vector<SWModule*> modules = this->_swordFacade->getAllRepoModules(string(repoName));
     Napi::Array moduleArray = Napi::Array::New(env, modules.size());
 
     for (unsigned int i = 0; i < modules.size(); i++) {
@@ -170,7 +171,7 @@ Napi::Value NodeSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo& i
     Napi::String repoName = info[0].As<Napi::String>();
     Napi::String languageCode = info[1].As<Napi::String>();
 
-    vector<SWModule*> modules = this->_swordFacade->getRepoModulesByLang(std::string(repoName), std::string(languageCode));
+    vector<SWModule*> modules = this->_swordFacade->getRepoModulesByLang(string(repoName), string(languageCode));
     Napi::Array moduleArray = Napi::Array::New(env, modules.size());
 
     for (unsigned int i = 0; i < modules.size(); i++) {
@@ -209,6 +210,43 @@ void NodeSwordInterface::swordModuleToNapiObject(SWModule* swModule, Napi::Objec
     }
 }
 
+void NodeSwordInterface::verseTextToNapiObject(string& rawVerse, unsigned int absoluteVerseNr, Napi::Object& object)
+{
+    vector<string> splittedVerse = this->split(rawVerse, '|');
+    string reference = splittedVerse[0];
+    string verseText = splittedVerse[1];
+
+    vector<string> splittedReference = this->split(reference, ' ');
+    string book = splittedReference[0];
+    string chapterVerseReference = splittedReference[1];
+
+    vector<string> splittedChapterVerseReference = this->split(chapterVerseReference, ':');
+    string chapter = splittedChapterVerseReference[0];
+    string verseNr = splittedChapterVerseReference[1];
+
+    object["bibleBookShortTitle"] = book;
+    object["chapter"] = chapter;
+    object["verseNr"] = verseNr;
+    object["absoluteVerseNr"] = absoluteVerseNr;
+    object["content"] = verseText;
+}
+
+vector<string> NodeSwordInterface::split(const string& s, char separator)
+{
+    vector<string> output;
+    string::size_type prev_pos = 0, pos = 0;
+
+    while((pos = s.find(separator, pos)) != string::npos)
+    {
+        string substring( s.substr(prev_pos, pos-prev_pos) );
+        output.push_back(substring);
+        prev_pos = ++pos;
+    }
+
+    output.push_back(s.substr(prev_pos, pos-prev_pos)); // Last word
+    return output;
+}
+
 Napi::Value NodeSwordInterface::getRepoLanguages(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
@@ -219,7 +257,7 @@ Napi::Value NodeSwordInterface::getRepoLanguages(const Napi::CallbackInfo& info)
     }
 
     Napi::String repoName = info[0].As<Napi::String>();
-    vector<string> repoLanguages = this->_swordFacade->getRepoLanguages(std::string(repoName));
+    vector<string> repoLanguages = this->_swordFacade->getRepoLanguages(string(repoName));
     Napi::Array languageArray = Napi::Array::New(env, repoLanguages.size());
 
     for (unsigned int i = 0; i < repoLanguages.size(); i++) {
@@ -240,7 +278,7 @@ Napi::Value NodeSwordInterface::getRepoTranslationCount(const Napi::CallbackInfo
 
     Napi::String repoName = info[0].As<Napi::String>();
 
-    unsigned int translationCount = this->_swordFacade->getRepoTranslationCount(std::string(repoName));
+    unsigned int translationCount = this->_swordFacade->getRepoTranslationCount(string(repoName));
     Napi::Number jsTranslationCount = Napi::Number::New(env, translationCount);
 
     return jsTranslationCount;
@@ -262,7 +300,7 @@ Napi::Value NodeSwordInterface::getRepoLanguageTranslationCount(const Napi::Call
     Napi::String repoName = info[0].As<Napi::String>();
     Napi::String languageCode = info[1].As<Napi::String>();
 
-    unsigned int translationCount = this->_swordFacade->getRepoLanguageTranslationCount(std::string(repoName), std::string(languageCode));
+    unsigned int translationCount = this->_swordFacade->getRepoLanguageTranslationCount(string(repoName), string(languageCode));
     Napi::Number jsTranslationCount = Napi::Number::New(env, translationCount);
 
     return jsTranslationCount;
@@ -311,6 +349,23 @@ Napi::Value NodeSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
     return napiObject;
 }
 
+Napi::Array NodeSwordInterface::getNapiVerseObjectsFromRawList(const Napi::CallbackInfo& info, vector<string> verses)
+{
+    Napi::Env env = info.Env();
+    Napi::Array versesArray = Napi::Array::New(env, verses.size());
+
+    for (unsigned int i = 0; i < verses.size(); i++) {
+        string currentRawVerse = verses[i];
+        unsigned int currentAbsoluteVerseNr = i + 1;
+
+        Napi::Object verseObject = Napi::Object::New(env);
+        this->verseTextToNapiObject(currentRawVerse, currentAbsoluteVerseNr, verseObject);
+        versesArray.Set(i, verseObject); 
+    }
+
+    return versesArray;
+}
+
 Napi::Value NodeSwordInterface::getBibleText(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
@@ -321,12 +376,30 @@ Napi::Value NodeSwordInterface::getBibleText(const Napi::CallbackInfo& info)
     }
 
     Napi::String moduleName = info[0].As<Napi::String>();
-    vector<string> bibleText = this->_swordFacade->getBibleText(std::string(moduleName));
-    Napi::Array versesArray = Napi::Array::New(env, bibleText.size());
+    vector<string> bibleText = this->_swordFacade->getBibleText(string(moduleName));
+    Napi::Array versesArray = this->getNapiVerseObjectsFromRawList(info, bibleText);
 
-    for (unsigned int i = 0; i < bibleText.size(); i++) {
-        versesArray.Set(i, bibleText[i]); 
+    return versesArray;
+}
+
+Napi::Value NodeSwordInterface::getBookText(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() != 2) {
+      Napi::TypeError::New(env, "Expected 2 parameters!").ThrowAsJavaScriptException();
+    } else if (!info[0].IsString()) {
+        Napi::TypeError::New(env, "String expected as first argument (moduleName)").ThrowAsJavaScriptException();
+    } else if (!info[1].IsString()) {
+        Napi::TypeError::New(env, "String expected as second argument (bookCode)").ThrowAsJavaScriptException();
     }
+
+    Napi::String moduleName = info[0].As<Napi::String>();
+    Napi::String bookCode = info[1].As<Napi::String>();
+
+    vector<string> bookText = this->_swordFacade->getBookText(string(moduleName), string(bookCode));
+    Napi::Array versesArray = this->getNapiVerseObjectsFromRawList(info, bookText);
 
     return versesArray;
 }

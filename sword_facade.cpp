@@ -31,6 +31,7 @@
 #include <swmodule.h>
 #include <swmgr.h>
 #include <remotetrans.h>
+#include <versekey.h>
 
 #include "sword_facade.hpp"
 
@@ -352,6 +353,60 @@ vector<string> SwordFacade::getBibleText(std::string moduleName)
     }
 
     return bibleText;
+}
+
+vector<string> SwordFacade::getBookText(string moduleName, string bookCode)
+{
+    regex markupFilterRegex = regex("<H.*> ");
+    SWModule* module = this->getLocalModule(moduleName);
+    vector<string> bookText;
+
+    cout << module->getName() << endl;
+    cout << module->getLanguage() << endl;
+
+    char lastKey[255];
+    unsigned int index = 0;
+    string lastBookName;
+    stringstream key;
+    key << bookCode;
+    key << " 1:1";
+
+    if (module == 0) {
+      cout << "getLocalModule returned zero pointer for " << moduleName << endl;
+    } else {
+        module->setKey(key.str().c_str());
+    }
+
+    for (;;) {
+        stringstream currentVerse;
+        VerseKey currentVerseKey(module->getKey());
+        string currentBookName(currentVerseKey.getBookAbbrev());
+
+        // Stop, once the newly read key is the same as the previously read key
+        if (strcmp(module->getKey()->getShortText(), lastKey) == 0) {
+            break;
+        }
+
+        // Stop, once the newly ready key is a different book than the previously read key
+        if ((index > 0) && (currentBookName != lastBookName)) {
+            break;
+        }
+
+        string rawVerseText = rtrim(string(module->stripText()));
+        string filteredText = regex_replace(rawVerseText, markupFilterRegex, "");
+
+        if (filteredText.length() > 0) {
+          currentVerse << module->getKey()->getShortText() << "|" << filteredText;
+          bookText.push_back(currentVerse.str());
+        }
+
+        strcpy(lastKey, module->getKey()->getShortText());
+        lastBookName = currentBookName;
+        module->increment();
+        index++;
+    }
+
+    return bookText;
 }
 
 int SwordFacade::installModule(string moduleName)

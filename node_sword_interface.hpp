@@ -46,6 +46,7 @@ private:
     Napi::Value getLocalModule(const Napi::CallbackInfo& info);
 
     Napi::Value getBibleText(const Napi::CallbackInfo& info);
+    Napi::Value getBookText(const Napi::CallbackInfo& info);
 
     Napi::Value installModule(const Napi::CallbackInfo& info);
     Napi::Value uninstallModule(const Napi::CallbackInfo& info);
@@ -53,7 +54,10 @@ private:
     SwordFacade* _swordFacade;
 
     // Functions not exported to js
+    Napi::Array getNapiVerseObjectsFromRawList(const Napi::CallbackInfo& info, std::vector<std::string> verses);
     void swordModuleToNapiObject(sword::SWModule* swModule, Napi::Object& object);
+    void verseTextToNapiObject(std::string& rawVerse, unsigned int absoluteVerseNr, Napi::Object& object);
+    std::vector<std::string> split(const std::string& s, char separator);
 };
 
 #endif // _NODE_SWORD_INTERFACE
