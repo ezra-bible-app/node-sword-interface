@@ -18,3 +18,7 @@ node-sword-interface focusses on discovery, installation and uninstallation of S
 The following command installs the latest published release from [npmjs.com](https://www.npmjs.com/package/node-sword-interface):
 
     npm install node-sword-interface
+
+## API
+
+The Javascript API of node-sword-interface is documented [here](API.md).
