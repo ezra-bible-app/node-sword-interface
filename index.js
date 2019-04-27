@@ -43,7 +43,7 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
  * @property {String} abbreviation - The abbreviation of the SWORD module.
  */
 
-/** This class provides a set of "static" methods that wrap SWORD library functionality. */
+/** This is the main class of node-sword-interface and it provides a set of static functions that wrap SWORD library functionality. */
 class NodeSwordInterface {
   constructor() {
     this.nativeInterface = new nodeSwordInterfaceModule.NodeSwordInterface();
