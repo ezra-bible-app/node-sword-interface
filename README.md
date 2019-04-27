@@ -3,18 +3,21 @@ node-sword-interface is a Javascript nodejs library (using [N-API](https://nodej
 
 ## Features
 
-node-sword-interface focusses on discovery, installation and uninstallation of SWORD modules and on bible text loading for individual modules. It currently covers the following usecases:
+node-sword-interface focusses on discovery, installation and uninstallation of SWORD bible modules and on text loading for individual bible modules. It currently covers the following usecases:
 
 - List SWORD repositories
-- List modules within a given SWORD repository
-- Install a module
-- Uninstall a module
-- Retrieve information about a local module
-- Load the text of the whole bible
-- Load the text of a bible book
+- List bible modules within a given SWORD repository
+- Install a bible module
+- Uninstall a bible module
+- Retrieve information about a local bible module
+- Get the text of the whole bible
+- Get the text of a bible book
 
 ## Installation
 
+### Linux
+
+This installation instructions are working with Debian/Ubuntu based Linux distributions.
 Before installing node-sword-interface you need to make sure that the following dependencies are installed:
 
 - C++ compiler toolchain
@@ -30,6 +33,10 @@ To install the dependencies issue the following command on a Debian/Ubuntu based
 Once the dependencies are available you can install and build the latest node-sword-interface release from [npmjs.com](https://www.npmjs.com/package/node-sword-interface) by issuing the following command:
 
     npm install node-sword-interface
+
+### Windows
+
+_Instructions to be added_
 
 ## API
 
