@@ -27,7 +27,7 @@ To install the dependencies issue the following command on a Debian/Ubuntu based
     
     sudo apt-get install build-essential nodejs libsword-dev libsqlite3-0 libcurl4-gnutls-dev
 
-The following command installs the latest published node-sword-interface release from [npmjs.com](https://www.npmjs.com/package/node-sword-interface) and compiles it directly:
+Once the dependencies are available you can install and build the latest node-sword-interface release from [npmjs.com](https://www.npmjs.com/package/node-sword-interface) by issuing the following command:
 
     npm install node-sword-interface
 
