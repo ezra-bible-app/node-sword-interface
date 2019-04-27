@@ -17,7 +17,7 @@ node-sword-interface focusses on discovery, installation and uninstallation of S
 
 ### Linux
 
-This installation instructions are working with Debian/Ubuntu based Linux distributions.
+These installation instructions are working on Debian/Ubuntu based Linux distributions.
 Before installing node-sword-interface you need to make sure that the following dependencies are installed:
 
 - C++ compiler toolchain
