@@ -15,7 +15,19 @@ node-sword-interface focusses on discovery, installation and uninstallation of S
 
 ## Installation
 
-The following command installs the latest published release from [npmjs.com](https://www.npmjs.com/package/node-sword-interface):
+Before installing node-sword-interface you need to make sure that the following dependencies are installed:
+
+- C++ compiler toolchain
+- nodejs
+- SWORD library with development headers
+- SQLite 3 library
+- CURL library with development headers
+
+To install the dependencies issue the following command on a Debian/Ubuntu based distribution:
+    
+    sudo apt-get install build-essential nodejs libsword-dev libsqlite3-0 libcurl4-gnutls-dev
+
+The following command installs the latest published node-sword-interface release from [npmjs.com](https://www.npmjs.com/package/node-sword-interface) and compiles it directly:
 
     npm install node-sword-interface
 
