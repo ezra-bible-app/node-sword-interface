@@ -2,7 +2,7 @@
 
 <dl>
 <dt><a href="#NodeSwordInterface">NodeSwordInterface</a></dt>
-<dd><p>This class provides a set of &quot;static&quot; methods that wrap SWORD library functionality.</p>
+<dd><p>This is the main class of node-sword-interface and it provides a set of static functions that wrap SWORD library functionality.</p>
 </dd>
 </dl>
 
@@ -20,7 +20,7 @@
 <a name="NodeSwordInterface"></a>
 
 ## NodeSwordInterface
-This class provides a set of "static" methods that wrap SWORD library functionality.
+This is the main class of node-sword-interface and it provides a set of static functions that wrap SWORD library functionality.
 
 **Kind**: global class  
 
