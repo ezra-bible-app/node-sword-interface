@@ -1,8 +1,14 @@
 {
   "name": "node-sword-interface",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "Javascript (N-API) interface to SWORD library",
-  "keywords": ["C++", "SWORD", "Bible study", "Bible", "Wrapper"],
+  "keywords": [
+    "C++",
+    "SWORD",
+    "Bible study",
+    "Bible",
+    "Wrapper"
+  ],
   "main": "index.js",
   "gypfile": true,
   "scripts": {
@@ -19,7 +25,7 @@
     "node-addon-api": "^1.6.2"
   },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/tobias-klein/node-sword-interface.git"
+    "type": "git",
+    "url": "https://github.com/tobias-klein/node-sword-interface.git"
   }
 }

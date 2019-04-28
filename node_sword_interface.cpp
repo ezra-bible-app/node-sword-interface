@@ -316,13 +316,13 @@ Napi::Value NodeSwordInterface::getModuleDescription(const Napi::CallbackInfo& i
     }
 
     Napi::String moduleName = info[0].As<Napi::String>();
-    SWModule* swordModule = this->_swordFacade->getRepoModule(moduleName);
+    SWModule* swordModule = this->_swordFacade->getRepoModule(std::string(moduleName));
 
     if (swordModule == 0) {
-        Napi::TypeError::New(env, "getRepoModule returned 0!").ThrowAsJavaScriptException();
+        Napi::Error::New(env, "getRepoModule returned 0!").ThrowAsJavaScriptException();
     }
 
-    string moduleDescription = string(swordModule->getDescription());
+    string moduleDescription = std::string(swordModule->getDescription());
     Napi::String napiModuleDescription = Napi::String::New(env, moduleDescription);
     return napiModuleDescription;
 }
@@ -336,15 +336,17 @@ Napi::Value NodeSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
         Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
     }
 
+    Napi::Object napiObject = Napi::Object::New(env);
     Napi::String moduleName = info[0].As<Napi::String>();
-    SWModule* swordModule = this->_swordFacade->getLocalModule(string(moduleName));
+    SWModule* swordModule = this->_swordFacade->getLocalModule(std::string(moduleName));
 
     if (swordModule == 0) {
-        Napi::TypeError::New(env, "getLocalModule returned 0!").ThrowAsJavaScriptException();
+        stringstream errorMessage;
+        errorMessage << "getLocalModule returned 0 for '" << std::string(moduleName) << "'" << endl;
+        Napi::Error::New(env, errorMessage.str().c_str()).ThrowAsJavaScriptException();
+    } else {
+        this->swordModuleToNapiObject(swordModule, napiObject);
     }
-
-    Napi::Object napiObject = Napi::Object::New(env);
-    this->swordModuleToNapiObject(swordModule, napiObject);
 
     return napiObject;
 }

@@ -80,7 +80,6 @@ SwordFacade::SwordFacade()
         this->_swConfig->Save();
     }
 
-    this->_mgr = new SWMgr();
     this->_statusReporter = new SwordStatusReporter();
     this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), this->_statusReporter);
     this->_installMgr->setUserDisclaimerConfirmed(true);
@@ -88,10 +87,18 @@ SwordFacade::SwordFacade()
 
 SwordFacade::~SwordFacade()
 {
-    delete this->_mgr;
     delete this->_installMgr;
     delete this->_swConfig;
     delete this->_statusReporter;
+}
+
+void SwordFacade::resetMgr()
+{
+    if (this->_mgr != 0) {
+        delete this->_mgr;
+    }
+
+    this->_mgr = new SWMgr();
 }
 
 int SwordFacade::refreshRepositoryConfig()
@@ -141,7 +148,7 @@ int SwordFacade::refreshIndividualRemoteSource(string remoteSourceName)
     return result;
 }
 
-thread SwordFacade::getRemoteSourceRefreshThread(std::string remoteSourceName)
+thread SwordFacade::getRemoteSourceRefreshThread(string remoteSourceName)
 {
     return thread(&SwordFacade::refreshIndividualRemoteSource, this, remoteSourceName);
 }
@@ -246,7 +253,7 @@ unsigned int SwordFacade::getRepoTranslationCount(string repoName)
     return (unsigned int)allModules.size();
 }
 
-unsigned int SwordFacade::getRepoLanguageTranslationCount(std::string repoName, std::string languageCode)
+unsigned int SwordFacade::getRepoLanguageTranslationCount(string repoName, string languageCode)
 {
     vector<SWModule*> allModules = this->getRepoModulesByLang(repoName, languageCode);
     return (unsigned int)allModules.size();
@@ -294,6 +301,7 @@ string SwordFacade::getModuleRepo(string moduleName)
 vector<SWModule*> SwordFacade::getAllLocalModules()
 {
     vector<SWModule*> allLocalModules;
+    this->resetMgr();
 
     for (ModMap::iterator modIterator = this->_mgr->Modules.begin();
          modIterator != this->_mgr->Modules.end();
@@ -308,17 +316,18 @@ vector<SWModule*> SwordFacade::getAllLocalModules()
 
 SWModule* SwordFacade::getLocalModule(string moduleName)
 {
+    this->resetMgr();
     return this->_mgr->getModule(moduleName.c_str());
 }
 
-std::string SwordFacade::rtrim(const std::string& s)
+string SwordFacade::rtrim(const string& s)
 {
-    static const std::string WHITESPACE = " \n\r\t\f\v";
+    static const string WHITESPACE = " \n\r\t\f\v";
 	  size_t end = s.find_last_not_of(WHITESPACE);
-	  return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+	  return (end == string::npos) ? "" : s.substr(0, end + 1);
 } 
 
-vector<string> SwordFacade::getBibleText(std::string moduleName)
+vector<string> SwordFacade::getBibleText(string moduleName)
 {
     SWModule* module = this->getLocalModule(moduleName);
 
@@ -423,6 +432,8 @@ int SwordFacade::installModule(string moduleName)
 
 int SwordFacade::installModule(string repoName, string moduleName)
 {
+    this->resetMgr();
+
     InstallSource* remoteSource = this->getRemoteSource(repoName);
     if (remoteSource == 0) {
         cout << "Couldn't find remote source " << repoName << endl;
@@ -444,8 +455,6 @@ int SwordFacade::installModule(string repoName, string moduleName)
             cout << "Error installing module: [" << module->getName() << "] (write permissions?)\n";
             return -1;
         } else {
-            // Reload the library of SWORD modules after making this change
-            this->_mgr->Load();
             cout << "Installed module: [" << module->getName() << "]\n";
             return 0;
         }
@@ -454,14 +463,14 @@ int SwordFacade::installModule(string repoName, string moduleName)
 
 int SwordFacade::uninstallModule(string moduleName)
 {
+    this->resetMgr();
     int error = this->_installMgr->removeModule(this->_mgr, moduleName.c_str());
 
     if (error) {
         cout << "Error uninstalling module: [" << moduleName << "] (write permissions?)\n";
         return -1;
     } else {
-        // Reload the library of SWORD modules after making this change
-        this->_mgr->Load();
+        this->_mgr->deleteModule(moduleName.c_str());
         cout << "Uninstalled module: [" << moduleName << "]\n";
         return 0;
     }

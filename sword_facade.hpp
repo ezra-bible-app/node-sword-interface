@@ -76,6 +76,7 @@ private:
     std::string getModuleRepo(std::string moduleName);
     int refreshIndividualRemoteSource(std::string remoteSourceName);
     std::thread getRemoteSourceRefreshThread(std::string remoteSourceName);
+    void resetMgr();
 
     std::string rtrim(const std::string& s);
 
