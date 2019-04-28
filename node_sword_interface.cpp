@@ -337,7 +337,7 @@ Napi::Value NodeSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
     }
 
     Napi::String moduleName = info[0].As<Napi::String>();
-    SWModule* swordModule = this->_swordFacade->getLocalModule(moduleName);
+    SWModule* swordModule = this->_swordFacade->getLocalModule(string(moduleName));
 
     if (swordModule == 0) {
         Napi::TypeError::New(env, "getLocalModule returned 0!").ThrowAsJavaScriptException();
@@ -420,7 +420,7 @@ Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Function callback = info[1].As<Napi::Function>();
 
-    NodeSwordInterfaceWorker* worker = new NodeSwordInterfaceWorker(this->_swordFacade, "installModule", { moduleName }, callback);
+    NodeSwordInterfaceWorker* worker = new NodeSwordInterfaceWorker(this->_swordFacade, "installModule", { string(moduleName) }, callback);
     worker->Queue();
     return info.Env().Undefined();
 }
