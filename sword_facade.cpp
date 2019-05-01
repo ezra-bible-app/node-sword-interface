@@ -16,23 +16,23 @@
    along with node-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
+// System includes
 #include <stdlib.h>
 
+// STD C++ includes
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <map>
-#include <utility>
-#include <algorithm>
-#include <future>
 #include <regex>
 
+// Sword includes
 #include <installmgr.h>
 #include <swmodule.h>
 #include <swmgr.h>
 #include <remotetrans.h>
 #include <versekey.h>
 
+// Own includes
 #include "sword_facade.hpp"
 
 using namespace std;
@@ -327,95 +327,91 @@ string SwordFacade::rtrim(const string& s)
 	  return (end == string::npos) ? "" : s.substr(0, end + 1);
 } 
 
+string SwordFacade::getFilteredVerseText(const string& verseText)
+{
+    static regex markupFilter = regex("<H.*> ");
+    static regex divFilter = regex("<div.*/>");
+    static regex chapterFilter = regex("<chapter.*/>");
+
+    string filteredText = verseText;
+    filteredText = regex_replace(filteredText, markupFilter, "");
+    filteredText = regex_replace(filteredText, divFilter, "");
+    filteredText = regex_replace(filteredText, chapterFilter, "");
+
+    return filteredText;
+}
+
 vector<string> SwordFacade::getBibleText(string moduleName)
 {
-    SWModule* module = this->getLocalModule(moduleName);
-
-    vector<string> bibleText;
-    char key[255];
-    memset(key, 0, sizeof(key));
-    regex markupFilterRegex = regex("<H.*> ");
-
-    if (module == 0) {
-      cout << "getLocalModule returned zero pointer for " << moduleName << endl;
-    } else {
-        module->setKey("Gen 1:1");
-        for (;;) {
-            stringstream currentVerse;
-
-            // Stop, once the newly read key is the same as the previously read key
-            if (strcmp(module->getKey()->getShortText(), key) == 0) {
-                break;
-            }
-
-            string rawVerseText = rtrim(string(module->stripText()));
-            string filteredText = regex_replace(rawVerseText, markupFilterRegex, "");
-
-            if (filteredText.length() > 0) {
-              currentVerse << module->getKey()->getShortText() << "|" << filteredText;
-              bibleText.push_back(currentVerse.str());
-            }
-
-            strcpy(key, module->getKey()->getShortText());
-            module->increment();
-        }
-    }
-
-    return bibleText;
+    string key = "Gen 1:1";
+    return this->getText(moduleName, key, false);
 }
 
 vector<string> SwordFacade::getBookText(string moduleName, string bookCode)
 {
-    regex markupFilterRegex = regex("<H.*> ");
-    SWModule* module = this->getLocalModule(moduleName);
-    vector<string> bookText;
-
-    cout << module->getName() << endl;
-    cout << module->getLanguage() << endl;
-
-    char lastKey[255];
-    unsigned int index = 0;
-    string lastBookName;
     stringstream key;
     key << bookCode;
     key << " 1:1";
 
+    return this->getText(moduleName, key.str());
+}
+
+vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurrentBook)
+{
+    SWModule* module = this->getLocalModule(moduleName);
+    char lastKey[255];
+    unsigned int index = 0;
+    string lastBookName;
+
+    // This holds the text that we will return
+    vector<string> text;
+
     if (module == 0) {
       cout << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
-        module->setKey(key.str().c_str());
+        module->setKey(key.c_str());
+        // Filter used to get rid of some tags appearing in the GerSchm module
+
+        for (;;) {
+            stringstream currentVerse;
+            VerseKey currentVerseKey(module->getKey());
+            string currentBookName(currentVerseKey.getBookAbbrev());
+
+            // Stop, once the newly read key is the same as the previously read key
+            if (strcmp(module->getKey()->getShortText(), lastKey) == 0) {
+                break;
+            }
+
+            if (onlyCurrentBook) {
+                // Stop, once the newly ready key is a different book than the previously read key
+                if ((index > 0) && (currentBookName != lastBookName)) {
+                    break;
+                }
+            }
+
+            string verseText;
+
+            if (this->markupEnabled) {
+                verseText = rtrim(string(module->getRawEntry()));
+            } else {
+                verseText = rtrim(string(module->stripText()));
+            }
+
+            string filteredText = this->getFilteredVerseText(verseText);
+
+            if (filteredText.length() > 0) {
+              currentVerse << module->getKey()->getShortText() << "|" << filteredText;
+              text.push_back(currentVerse.str());
+            }
+
+            strcpy(lastKey, module->getKey()->getShortText());
+            lastBookName = currentBookName;
+            module->increment();
+            index++;
+        }
     }
 
-    for (;;) {
-        stringstream currentVerse;
-        VerseKey currentVerseKey(module->getKey());
-        string currentBookName(currentVerseKey.getBookAbbrev());
-
-        // Stop, once the newly read key is the same as the previously read key
-        if (strcmp(module->getKey()->getShortText(), lastKey) == 0) {
-            break;
-        }
-
-        // Stop, once the newly ready key is a different book than the previously read key
-        if ((index > 0) && (currentBookName != lastBookName)) {
-            break;
-        }
-
-        string rawVerseText = rtrim(string(module->stripText()));
-        string filteredText = regex_replace(rawVerseText, markupFilterRegex, "");
-
-        if (filteredText.length() > 0) {
-          currentVerse << module->getKey()->getShortText() << "|" << filteredText;
-          bookText.push_back(currentVerse.str());
-        }
-
-        strcpy(lastKey, module->getKey()->getShortText());
-        lastBookName = currentBookName;
-        module->increment();
-        index++;
-    }
-
-    return bookText;
+    return text;
 }
 
 int SwordFacade::installModule(string moduleName)

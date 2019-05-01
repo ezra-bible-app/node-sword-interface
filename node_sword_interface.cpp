@@ -46,8 +46,9 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getRepoLanguageTranslationCount", &NodeSwordInterface::getRepoLanguageTranslationCount),
         InstanceMethod("getModuleDescription", &NodeSwordInterface::getModuleDescription),
         InstanceMethod("getLocalModule", &NodeSwordInterface::getLocalModule),
-        InstanceMethod("getBibleText", &NodeSwordInterface::getBibleText),
+        InstanceMethod("enableMarkup", &NodeSwordInterface::enableMarkup),
         InstanceMethod("getBookText", &NodeSwordInterface::getBookText),
+        InstanceMethod("getBibleText", &NodeSwordInterface::getBibleText),
         InstanceMethod("installModule", &NodeSwordInterface::installModule),
         InstanceMethod("uninstallModule", &NodeSwordInterface::uninstallModule)
     });
@@ -223,6 +224,7 @@ void NodeSwordInterface::swordModuleToNapiObject(const Napi::Env& env, SWModule*
     object["hasStrongs"] = Napi::Boolean::New(env, moduleHasStrongs);
 }
 
+// FIXME: This lacks the bibleTranslationId
 void NodeSwordInterface::verseTextToNapiObject(string& rawVerse, unsigned int absoluteVerseNr, Napi::Object& object)
 {
     vector<string> splittedVerse = this->split(rawVerse, '|');
@@ -370,6 +372,7 @@ Napi::Array NodeSwordInterface::getNapiVerseObjectsFromRawList(const Napi::Env& 
 
     for (unsigned int i = 0; i < verses.size(); i++) {
         string currentRawVerse = verses[i];
+        // FIXME: This only works within one bible book, not for the whole bible
         unsigned int currentAbsoluteVerseNr = i + 1;
 
         Napi::Object verseObject = Napi::Object::New(env);
@@ -380,20 +383,13 @@ Napi::Array NodeSwordInterface::getNapiVerseObjectsFromRawList(const Napi::Env& 
     return versesArray;
 }
 
-Napi::Value NodeSwordInterface::getBibleText(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::enableMarkup(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    if (info.Length() != 1 || !info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
-    }
-
-    Napi::String moduleName = info[0].As<Napi::String>();
-    vector<string> bibleText = this->_swordFacade->getBibleText(string(moduleName));
-    Napi::Array versesArray = this->getNapiVerseObjectsFromRawList(env, bibleText);
-
-    return versesArray;
+    this->_swordFacade->enableMarkup();
+    return info.Env().Undefined();
 }
 
 Napi::Value NodeSwordInterface::getBookText(const Napi::CallbackInfo& info)
@@ -414,6 +410,22 @@ Napi::Value NodeSwordInterface::getBookText(const Napi::CallbackInfo& info)
 
     vector<string> bookText = this->_swordFacade->getBookText(string(moduleName), string(bookCode));
     Napi::Array versesArray = this->getNapiVerseObjectsFromRawList(env, bookText);
+
+    return versesArray;
+}
+
+Napi::Value NodeSwordInterface::getBibleText(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() != 1 || !info[0].IsString()) {
+        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
+    }
+
+    Napi::String moduleName = info[0].As<Napi::String>();
+    vector<string> bibleText = this->_swordFacade->getBibleText(string(moduleName));
+    Napi::Array versesArray = this->getNapiVerseObjectsFromRawList(env, bibleText);
 
     return versesArray;
 }

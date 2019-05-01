@@ -177,13 +177,11 @@ class NodeSwordInterface {
   }
 
   /**
-   * Returns the bible text of a module.
-   *
-   * @param {String} moduleCode - The module code of the SWORD module.
-   * @return {VerseObject[]} An array of verse objects.
+   * Enables available markup (like Strongs, foot notes, etc.)
+   * This influences the output for getBookText and getBibleText.
    */
-  getBibleText(moduleCode) {
-    return this.nativeInterface.getBibleText(moduleCode);
+  enableMarkup() {
+    return this.nativeInterface.enableMarkup();
   }
 
   /**
@@ -195,6 +193,16 @@ class NodeSwordInterface {
    */
   getBookText(moduleCode, bookCode) {
     return this.nativeInterface.getBookText(moduleCode, bookCode);
+  }
+
+  /**
+   * Returns the bible text of a module.
+   *
+   * @param {String} moduleCode - The module code of the SWORD module.
+   * @return {VerseObject[]} An array of verse objects.
+   */
+  getBibleText(moduleCode) {
+    return this.nativeInterface.getBibleText(moduleCode);
   }
 
   /**

@@ -48,7 +48,9 @@ int main(int argc, char** argv)
     cout << endl;
 
     cout << "Text of 1 John:" << endl;
-    vector<string> verses = sword_facade.getBookText("GerSch", "1John");
+    //sword_facade.enableMarkup();
+    vector<string> verses = sword_facade.getBookText("GerNeUe", "1John");
+    //vector<string> verses = sword_facade.getBibleText("deu1912eb");
     cout << "Got " << verses.size() << " verses!" << endl;
     for (int i = 0; i < verses.size(); i++) {
         cout << verses[i] << endl;

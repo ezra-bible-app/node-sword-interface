@@ -71,13 +71,17 @@ public:
     int installModule(std::string repoName, std::string moduleName);
     int uninstallModule(std::string moduleName);
 
+    void enableMarkup() { this->markupEnabled = true; }
+
 private:
+    std::vector<std::string> getText(std::string moduleName, std::string key, bool onlyCurrentBook=true);
     sword::InstallSource* getRemoteSource(std::string remoteSourceName);
     std::string getModuleRepo(std::string moduleName);
     int refreshIndividualRemoteSource(std::string remoteSourceName);
     std::thread getRemoteSourceRefreshThread(std::string remoteSourceName);
     void resetMgr();
 
+    std::string getFilteredVerseText(const std::string& verseText);
     std::string rtrim(const std::string& s);
 
     sword::SWMgr* _mgr = 0;
@@ -85,6 +89,8 @@ private:
     sword::InstallMgr* _installMgr = 0;
     SwordStatusReporter* _statusReporter = 0;
     FileSystemHelper _fileSystemHelper;
+
+    bool markupEnabled = false;
 };
 
 #endif // _SWORD_FACADE

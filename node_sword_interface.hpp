@@ -45,8 +45,9 @@ private:
     Napi::Value getModuleDescription(const Napi::CallbackInfo& info);
     Napi::Value getLocalModule(const Napi::CallbackInfo& info);
 
-    Napi::Value getBibleText(const Napi::CallbackInfo& info);
+    Napi::Value enableMarkup(const Napi::CallbackInfo& info);
     Napi::Value getBookText(const Napi::CallbackInfo& info);
+    Napi::Value getBibleText(const Napi::CallbackInfo& info);
 
     Napi::Value installModule(const Napi::CallbackInfo& info);
     Napi::Value uninstallModule(const Napi::CallbackInfo& info);
