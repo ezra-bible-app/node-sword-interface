@@ -35,8 +35,9 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.installModule(moduleCode)](#NodeSwordInterface+installModule) ⇒ <code>Promise</code>
     * [.uninstallModule(moduleCode)](#NodeSwordInterface+uninstallModule) ⇒ <code>Promise</code>
     * [.getModuleDescription(moduleCode)](#NodeSwordInterface+getModuleDescription) ⇒ <code>String</code>
-    * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
+    * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
     * [.getBookText(moduleCode, bookCode)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
+    * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getLocalModule(moduleCode)](#NodeSwordInterface+getLocalModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
 
 <a name="NodeSwordInterface+repositoryConfigExisting"></a>
@@ -158,18 +159,13 @@ Returns the description of a module.
 | --- | --- | --- |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
 
-<a name="NodeSwordInterface+getBibleText"></a>
+<a name="NodeSwordInterface+enableMarkup"></a>
 
-### nodeSwordInterface.getBibleText(moduleCode) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
-Returns the bible text of a module.
+### nodeSwordInterface.enableMarkup()
+Enables available markup (like Strongs, foot notes, etc.)
+This influences the output for getBookText and getBibleText.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
-**Returns**: [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject) - An array of verse objects.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| moduleCode | <code>String</code> | The module code of the SWORD module. |
-
 <a name="NodeSwordInterface+getBookText"></a>
 
 ### nodeSwordInterface.getBookText(moduleCode, bookCode) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
@@ -182,6 +178,18 @@ Returns the text of a book for the given module.
 | --- | --- | --- |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
 | bookCode | <code>String</code> | The book code of the SWORD module. |
+
+<a name="NodeSwordInterface+getBibleText"></a>
+
+### nodeSwordInterface.getBibleText(moduleCode) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
+Returns the bible text of a module.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject) - An array of verse objects.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleCode | <code>String</code> | The module code of the SWORD module. |
 
 <a name="NodeSwordInterface+getLocalModule"></a>
 
