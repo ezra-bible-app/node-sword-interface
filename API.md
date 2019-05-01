@@ -224,7 +224,8 @@ An object representation of a SWORD module.
 | description | <code>String</code> | The description of the SWORD module. |
 | language | <code>String</code> | The language code of the SWORD module. |
 | version | <code>String</code> | The version of the SWORD module. |
-| locked | <code>String</code> | Information on whether the module is locked or not (Values: 'true' / 'false') |
+| locked | <code>Boolean</code> | Information on whether the module is locked |
+| hasStrongs | <code>Boolean</code> | Information on whether the module has Strong's numbers |
 | about | <code>String</code> | Extended description of the SWORD module. |
 | size | <code>String</code> | The file size of the SWORD module (in KB). |
 | abbreviation | <code>String</code> | The abbreviation of the SWORD module. |
