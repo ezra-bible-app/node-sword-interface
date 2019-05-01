@@ -148,7 +148,7 @@ Napi::Value NodeSwordInterface::getAllRepoModules(const Napi::CallbackInfo& info
 
     for (unsigned int i = 0; i < modules.size(); i++) {
         Napi::Object napiObject = Napi::Object::New(env);
-        this->swordModuleToNapiObject(modules[i], napiObject);
+        this->swordModuleToNapiObject(env, modules[i], napiObject);
         moduleArray.Set(i, napiObject); 
     }
 
@@ -176,14 +176,14 @@ Napi::Value NodeSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo& i
 
     for (unsigned int i = 0; i < modules.size(); i++) {
         Napi::Object napiObject = Napi::Object::New(env);
-        this->swordModuleToNapiObject(modules[i], napiObject);
+        this->swordModuleToNapiObject(env, modules[i], napiObject);
         moduleArray.Set(i, napiObject); 
     }
 
     return moduleArray;
 }
 
-void NodeSwordInterface::swordModuleToNapiObject(SWModule* swModule, Napi::Object& object)
+void NodeSwordInterface::swordModuleToNapiObject(const Napi::Env& env, SWModule* swModule, Napi::Object& object)
 {
     if (swModule == 0) {
         cerr << "swModule is 0! Cannot run conversion to napi object!" << endl;
@@ -194,8 +194,10 @@ void NodeSwordInterface::swordModuleToNapiObject(SWModule* swModule, Napi::Objec
     object["description"] = swModule->getDescription();
     object["language"] = swModule->getLanguage();
     object["version"] = swModule->getConfigEntry("Version");
-    object["locked"] = swModule->getConfigEntry("CipherKey") ? "true" : "false";
     object["about"] = swModule->getConfigEntry("About");
+
+    bool moduleIsLocked = swModule->getConfigEntry("CipherKey");
+    object["locked"] = Napi::Boolean::New(env, moduleIsLocked);
 
     if (swModule->getConfigEntry("InstallSize")) {
       object["size"] = swModule->getConfigEntry("InstallSize");
@@ -208,6 +210,17 @@ void NodeSwordInterface::swordModuleToNapiObject(SWModule* swModule, Napi::Objec
     } else {
       object["abbreviation"] = "";
     }
+
+    bool moduleHasStrongs = false;
+    if (swModule->getConfigEntry("Feature")) {
+        string feature = string(swModule->getConfigEntry("Feature"));
+
+        if (feature.find("StrongsNumbers") != string::npos) {
+            moduleHasStrongs = true;
+        }
+    }
+
+    object["hasStrongs"] = Napi::Boolean::New(env, moduleHasStrongs);
 }
 
 void NodeSwordInterface::verseTextToNapiObject(string& rawVerse, unsigned int absoluteVerseNr, Napi::Object& object)
@@ -345,15 +358,14 @@ Napi::Value NodeSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
         errorMessage << "getLocalModule returned 0 for '" << std::string(moduleName) << "'" << endl;
         Napi::Error::New(env, errorMessage.str().c_str()).ThrowAsJavaScriptException();
     } else {
-        this->swordModuleToNapiObject(swordModule, napiObject);
+        this->swordModuleToNapiObject(env, swordModule, napiObject);
     }
 
     return napiObject;
 }
 
-Napi::Array NodeSwordInterface::getNapiVerseObjectsFromRawList(const Napi::CallbackInfo& info, vector<string> verses)
+Napi::Array NodeSwordInterface::getNapiVerseObjectsFromRawList(const Napi::Env& env, vector<string> verses)
 {
-    Napi::Env env = info.Env();
     Napi::Array versesArray = Napi::Array::New(env, verses.size());
 
     for (unsigned int i = 0; i < verses.size(); i++) {
@@ -379,7 +391,7 @@ Napi::Value NodeSwordInterface::getBibleText(const Napi::CallbackInfo& info)
 
     Napi::String moduleName = info[0].As<Napi::String>();
     vector<string> bibleText = this->_swordFacade->getBibleText(string(moduleName));
-    Napi::Array versesArray = this->getNapiVerseObjectsFromRawList(info, bibleText);
+    Napi::Array versesArray = this->getNapiVerseObjectsFromRawList(env, bibleText);
 
     return versesArray;
 }
@@ -401,7 +413,7 @@ Napi::Value NodeSwordInterface::getBookText(const Napi::CallbackInfo& info)
     Napi::String bookCode = info[1].As<Napi::String>();
 
     vector<string> bookText = this->_swordFacade->getBookText(string(moduleName), string(bookCode));
-    Napi::Array versesArray = this->getNapiVerseObjectsFromRawList(info, bookText);
+    Napi::Array versesArray = this->getNapiVerseObjectsFromRawList(env, bookText);
 
     return versesArray;
 }

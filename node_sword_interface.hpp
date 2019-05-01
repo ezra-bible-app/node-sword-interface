@@ -54,8 +54,8 @@ private:
     SwordFacade* _swordFacade;
 
     // Functions not exported to js
-    Napi::Array getNapiVerseObjectsFromRawList(const Napi::CallbackInfo& info, std::vector<std::string> verses);
-    void swordModuleToNapiObject(sword::SWModule* swModule, Napi::Object& object);
+    Napi::Array getNapiVerseObjectsFromRawList(const Napi::Env& env, std::vector<std::string> verses);
+    void swordModuleToNapiObject(const Napi::Env& env, sword::SWModule* swModule, Napi::Object& object);
     void verseTextToNapiObject(std::string& rawVerse, unsigned int absoluteVerseNr, Napi::Object& object);
     std::vector<std::string> split(const std::string& s, char separator);
 };
