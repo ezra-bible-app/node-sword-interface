@@ -17,7 +17,7 @@
     "doc": "jsdoc2md index.js > API.md"
   },
   "author": "Tobias Klein",
-  "license": "GPL",
+  "license": "GPL-3.0",
   "devDependencies": {
     "node-gyp": "^3.8.0"
   },
