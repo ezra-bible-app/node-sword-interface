@@ -332,11 +332,15 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     static regex markupFilter = regex("<H.*> ");
     static regex divFilter = regex("<div.*/>");
     static regex chapterFilter = regex("<chapter.*/>");
+    static regex titleFilter = regex("<title.*/title>");
+    static regex lbFilter = regex("<lb.*/lb>");
 
     string filteredText = verseText;
     filteredText = regex_replace(filteredText, markupFilter, "");
     filteredText = regex_replace(filteredText, divFilter, "");
     filteredText = regex_replace(filteredText, chapterFilter, "");
+    filteredText = regex_replace(filteredText, titleFilter, "");
+    filteredText = regex_replace(filteredText, lbFilter, "");
 
     return filteredText;
 }
