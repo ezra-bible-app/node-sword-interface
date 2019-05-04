@@ -222,6 +222,7 @@ void NodeSwordInterface::swordModuleToNapiObject(const Napi::Env& env, SWModule*
     }
 
     object["hasStrongs"] = Napi::Boolean::New(env, moduleHasStrongs);
+    // TODO: Add attribute hasFootnotes
 }
 
 // FIXME: This lacks the bibleTranslationId
