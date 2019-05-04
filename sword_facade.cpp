@@ -330,7 +330,6 @@ string SwordFacade::rtrim(const string& s)
 string SwordFacade::getFilteredVerseText(const string& verseText)
 {
     static regex schlachterMarkupFilter = regex("<H.*> ");
-    static regex divFilter = regex("<div.*/>");
     static regex chapterFilter = regex("<chapter.*/>");
     static regex lbBeginParagraph = regex("<lb type=\"x-begin-paragraph\"/>");
     static regex lbEndParagraph = regex("<lb type=\"x-end-paragraph\"/>");
@@ -338,10 +337,12 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     static regex noteEndElementFilter = regex("</note>");
     static regex titleStartElementFilter = regex("<title ");
     static regex titleEndElementFilter = regex("</title>");
+    static regex divMilestoneFilter = regex("<div type=\"x-milestone\"");
+    static regex divSIDFilter = regex("<div sID=");
+    static regex divEIDFilter = regex("<div eID=");
 
     string filteredText = verseText;
     filteredText = regex_replace(filteredText, schlachterMarkupFilter, "");
-    filteredText = regex_replace(filteredText, divFilter, "");
     filteredText = regex_replace(filteredText, chapterFilter, "");
     filteredText = regex_replace(filteredText, lbBeginParagraph, "");
     filteredText = regex_replace(filteredText, lbEndParagraph, "&nbsp;<div class=\"sword-paragraph-end\"><br/></div>");
@@ -349,6 +350,9 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     filteredText = regex_replace(filteredText, noteEndElementFilter, "</div>");
     filteredText = regex_replace(filteredText, titleStartElementFilter, "<div class=\"sword-section-title\" ");
     filteredText = regex_replace(filteredText, titleEndElementFilter, "</div>");
+    filteredText = regex_replace(filteredText, divMilestoneFilter, "<div class=\"sword-milestone\"");
+    filteredText = regex_replace(filteredText, divSIDFilter, "<div class=\"sword-sid\" sID=");
+    filteredText = regex_replace(filteredText, divEIDFilter, "<div class=\"sword-eid\" eID=");
 
     return filteredText;
 }
