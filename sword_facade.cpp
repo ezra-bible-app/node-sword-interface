@@ -329,18 +329,26 @@ string SwordFacade::rtrim(const string& s)
 
 string SwordFacade::getFilteredVerseText(const string& verseText)
 {
-    static regex markupFilter = regex("<H.*> ");
+    static regex schlachterMarkupFilter = regex("<H.*> ");
     static regex divFilter = regex("<div.*/>");
     static regex chapterFilter = regex("<chapter.*/>");
-    static regex titleFilter = regex("<title.*/title>");
-    static regex lbFilter = regex("<lb.*/lb>");
+    static regex lbBeginParagraph = regex("<lb type=\"x-begin-paragraph\"/>");
+    static regex lbEndParagraph = regex("<lb type=\"x-end-paragraph\"/>");
+    static regex noteStartElementFilter = regex("<note ");
+    static regex noteEndElementFilter = regex("</note>");
+    static regex titleStartElementFilter = regex("<title ");
+    static regex titleEndElementFilter = regex("</title>");
 
     string filteredText = verseText;
-    filteredText = regex_replace(filteredText, markupFilter, "");
+    filteredText = regex_replace(filteredText, schlachterMarkupFilter, "");
     filteredText = regex_replace(filteredText, divFilter, "");
     filteredText = regex_replace(filteredText, chapterFilter, "");
-    filteredText = regex_replace(filteredText, titleFilter, "");
-    filteredText = regex_replace(filteredText, lbFilter, "");
+    filteredText = regex_replace(filteredText, lbBeginParagraph, "");
+    filteredText = regex_replace(filteredText, lbEndParagraph, "&nbsp;<div class=\"sword-paragraph-end\"><br/></div>");
+    filteredText = regex_replace(filteredText, noteStartElementFilter, "<div class=\"sword-note\" ");
+    filteredText = regex_replace(filteredText, noteEndElementFilter, "</div>");
+    filteredText = regex_replace(filteredText, titleStartElementFilter, "<div class=\"sword-section-title\" ");
+    filteredText = regex_replace(filteredText, titleEndElementFilter, "</div>");
 
     return filteredText;
 }
