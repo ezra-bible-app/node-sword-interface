@@ -201,9 +201,10 @@ void NodeSwordInterface::swordModuleToNapiObject(const Napi::Env& env, SWModule*
     object["locked"] = Napi::Boolean::New(env, moduleIsLocked);
 
     if (swModule->getConfigEntry("InstallSize")) {
-      object["size"] = swModule->getConfigEntry("InstallSize");
+      int moduleSize = std::stoi(string(swModule->getConfigEntry("InstallSize")));
+      object["size"] = Napi::Number::New(env, moduleSize);
     } else {
-      object["size"] = "-1";
+      object["size"] = Napi::Number::New(env, -1);
     }
 
     if (swModule->getConfigEntry("Abbreviation")) {
@@ -212,17 +213,28 @@ void NodeSwordInterface::swordModuleToNapiObject(const Napi::Env& env, SWModule*
       object["abbreviation"] = "";
     }
 
-    bool moduleHasStrongs = false;
-    if (swModule->getConfigEntry("Feature")) {
-        string feature = string(swModule->getConfigEntry("Feature"));
+    object["hasStrongs"] = Napi::Boolean::New(env, this->moduleHasGlobalOption(swModule, "Strongs"));
+    object["hasFootnotes"] = Napi::Boolean::New(env, this->moduleHasGlobalOption(swModule, "Footnotes"));
+    object["hasHeadings"] = Napi::Boolean::New(env, this->moduleHasGlobalOption(swModule, "Headings"));
+    object["hasRedLetterWords"] = Napi::Boolean::New(env, this->moduleHasGlobalOption(swModule, "RedLetter"));
+    object["hasCrossReferences"] = Napi::Boolean::New(env, this->moduleHasGlobalOption(swModule, "Scripref"));
+}
 
-        if (feature.find("StrongsNumbers") != string::npos) {
-            moduleHasStrongs = true;
+bool NodeSwordInterface::moduleHasGlobalOption(SWModule* module, string globalOption)
+{
+    bool hasGlobalOption = false;
+    ConfigEntMap::const_iterator it = module->getConfig().lower_bound("GlobalOptionFilter");
+    ConfigEntMap::const_iterator end = module->getConfig().upper_bound("GlobalOptionFilter");
+
+    for(; it !=end; ++it) {
+        string currentOption = string(it->second.c_str());
+        if (currentOption.find(globalOption) != string::npos) {
+            hasGlobalOption = true;
+            break;
         }
     }
 
-    object["hasStrongs"] = Napi::Boolean::New(env, moduleHasStrongs);
-    // TODO: Add attribute hasFootnotes
+    return hasGlobalOption;
 }
 
 // FIXME: This lacks the bibleTranslationId

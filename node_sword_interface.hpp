@@ -55,6 +55,7 @@ private:
     SwordFacade* _swordFacade;
 
     // Functions not exported to js
+    bool moduleHasGlobalOption(sword::SWModule* module, std::string globalOption);
     Napi::Array getNapiVerseObjectsFromRawList(const Napi::Env& env, std::vector<std::string> verses);
     void swordModuleToNapiObject(const Napi::Env& env, sword::SWModule* swModule, Napi::Object& object);
     void verseTextToNapiObject(std::string& rawVerse, unsigned int absoluteVerseNr, Napi::Object& object);
