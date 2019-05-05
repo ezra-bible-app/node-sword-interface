@@ -38,8 +38,8 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
  * @property {String} language - The language code of the SWORD module.
  * @property {String} version - The version of the SWORD module.
  * @property {String} about - Extended description of the SWORD module.
- * @property {String} size - The file size of the SWORD module (in KB).
  * @property {String} abbreviation - The abbreviation of the SWORD module.
+ * @property {Number} size - The file size of the SWORD module (in KB).
  * @property {Boolean} locked - Information on whether the module is locked
  * @property {Boolean} hasStrongs - Information on whether the module has Strong's numbers
  * @property {Boolean} hasFootnotes - Information on whether the module has footnotes
