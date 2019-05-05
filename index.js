@@ -37,11 +37,15 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
  * @property {String} description - The description of the SWORD module.
  * @property {String} language - The language code of the SWORD module.
  * @property {String} version - The version of the SWORD module.
- * @property {Boolean} locked - Information on whether the module is locked
- * @property {Boolean} hasStrongs - Information on whether the module has Strong's numbers
  * @property {String} about - Extended description of the SWORD module.
  * @property {String} size - The file size of the SWORD module (in KB).
  * @property {String} abbreviation - The abbreviation of the SWORD module.
+ * @property {Boolean} locked - Information on whether the module is locked
+ * @property {Boolean} hasStrongs - Information on whether the module has Strong's numbers
+ * @property {Boolean} hasFootnotes - Information on whether the module has footnotes
+ * @property {Boolean} hasHeadings - Information on whether the module has headings
+ * @property {Boolean} hasRedLetterWords - Information on whether the module has red letter words
+ * @property {Boolean} hasCrossReferences - Information on whether the module has cross references
  */
 
 /** This is the main class of node-sword-interface and it provides a set of static functions that wrap SWORD library functionality. */
