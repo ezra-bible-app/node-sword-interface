@@ -103,7 +103,7 @@ void SwordFacade::resetMgr()
 
 int SwordFacade::refreshRepositoryConfig()
 {
-    cout << "Refreshing repository configuration ... ";
+    //cout << "Refreshing repository configuration ... ";
 
     int ret = this->_installMgr->refreshRemoteSourceConfiguration();
     if (ret != 0) {
@@ -112,7 +112,7 @@ int SwordFacade::refreshRepositoryConfig()
     }
 
     this->_installMgr->saveInstallConf();
-    cout << "done." << endl;
+    //cout << "done." << endl;
     return 0;
 }
 
@@ -335,6 +335,7 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     static regex lbEndParagraph = regex("<lb type=\"x-end-paragraph\"/>");
     static regex noteStartElementFilter = regex("<note ");
     static regex noteEndElementFilter = regex("</note>");
+    static regex quoteElementFilter = regex("<q ");
     static regex titleStartElementFilter = regex("<title");
     static regex titleEndElementFilter = regex("</title>");
     static regex divMilestoneFilter = regex("<div type=\"x-milestone\"");
@@ -345,14 +346,15 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     filteredText = regex_replace(filteredText, schlachterMarkupFilter, "");
     filteredText = regex_replace(filteredText, chapterFilter, "");
     filteredText = regex_replace(filteredText, lbBeginParagraph, "");
-    filteredText = regex_replace(filteredText, lbEndParagraph, "&nbsp;<div class=\"sword-paragraph-end\"><br/></div>");
-    filteredText = regex_replace(filteredText, noteStartElementFilter, "<div class=\"sword-note\" ");
+    filteredText = regex_replace(filteredText, lbEndParagraph, "&nbsp;<div class=\"sword-markup sword-paragraph-end\"><br/></div>");
+    filteredText = regex_replace(filteredText, noteStartElementFilter, "<div class=\"sword-markup sword-note\" ");
     filteredText = regex_replace(filteredText, noteEndElementFilter, "</div>");
-    filteredText = regex_replace(filteredText, titleStartElementFilter, "<div class=\"sword-section-title\"");
+    filteredText = regex_replace(filteredText, titleStartElementFilter, "<div class=\"sword-markup sword-section-title\"");
     filteredText = regex_replace(filteredText, titleEndElementFilter, "</div>");
-    filteredText = regex_replace(filteredText, divMilestoneFilter, "<div class=\"sword-milestone\"");
-    filteredText = regex_replace(filteredText, divSIDFilter, "<div class=\"sword-sid\" sID=");
-    filteredText = regex_replace(filteredText, divEIDFilter, "<div class=\"sword-eid\" eID=");
+    filteredText = regex_replace(filteredText, divMilestoneFilter, "<div class=\"sword-markup sword-milestone\"");
+    filteredText = regex_replace(filteredText, divSIDFilter, "<div class=\"sword-markup sword-sid\" sID=");
+    filteredText = regex_replace(filteredText, divEIDFilter, "<div class=\"sword-markup sword-eid\" eID=");
+    filteredText = regex_replace(filteredText, quoteElementFilter, "&quot;<div class=\"sword-markup sword-quote\" ");
 
     return filteredText;
 }
