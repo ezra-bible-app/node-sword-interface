@@ -336,7 +336,7 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     static regex lbElementFilter = regex("<lb ");
     static regex lElementFilter = regex("<l ");
     static regex lgElementFilter = regex("<lg ");
-    static regex noteStartElementFilter = regex("<note ");
+    static regex noteStartElementFilter = regex("<note");
     static regex noteEndElementFilter = regex("</note>");
     static regex quoteJesusElementFilter = regex("<q marker=\"\" who=\"Jesus\">");
     static regex quoteElementFilter = regex("<q ");
