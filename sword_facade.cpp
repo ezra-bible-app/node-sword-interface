@@ -72,13 +72,15 @@ void SwordStatusReporter::preStatus(long totalBytes, long completedBytes, const 
 SwordFacade::SwordFacade()
 {
     this->_fileSystemHelper.createBasicDirectories();
-    this->_swConfig = new SWConfig(this->_fileSystemHelper.getSwordConfPath().c_str());
 
-    if (!this->_fileSystemHelper.isSwordConfExisting()) {
+    /* Creating a swConfig is not necessary (at least on Linux) */
+    /* Windows: to be tested */
+    //this->_swConfig = new SWConfig(this->_fileSystemHelper.getSwordConfPath().c_str());
+    /*if (!this->_fileSystemHelper.isSwordConfExisting()) {
         this->_swConfig->Sections.clear();
         (*this->_swConfig)["Install"].insert(std::make_pair(SWBuf("DataPath"), this->_fileSystemHelper.getModuleDir().c_str()));
         this->_swConfig->Save();
-    }
+    }*/
 
     this->_statusReporter = new SwordStatusReporter();
     this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), this->_statusReporter);
@@ -88,7 +90,7 @@ SwordFacade::SwordFacade()
 SwordFacade::~SwordFacade()
 {
     delete this->_installMgr;
-    delete this->_swConfig;
+    //delete this->_swConfig;
     delete this->_statusReporter;
 }
 
