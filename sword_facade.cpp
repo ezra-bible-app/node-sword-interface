@@ -349,6 +349,13 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     static regex divineNameStartElement = regex("<divineName>");
     static regex divineNameEndElement = regex("</divineName>");
 
+    static regex fullStopWithoutSpace = regex("[.]<");
+    static regex questionMarkWithoutSpace = regex("[?]<");
+    static regex exclamationMarkWithoutSpace = regex("!<");
+    static regex commaWithoutSpace = regex(",<");
+    static regex semiColonWithoutSpace = regex(";<");
+    static regex colonWithoutSpace = regex(":<");
+
     string filteredText = verseText;
     filteredText = regex_replace(filteredText, schlachterMarkupFilter, "");
     filteredText = regex_replace(filteredText, chapterFilter, "");
@@ -369,6 +376,13 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     filteredText = regex_replace(filteredText, quoteElementFilter, "&quot;<div class=\"sword-markup sword-quote\" ");
     filteredText = regex_replace(filteredText, divineNameStartElement, "");
     filteredText = regex_replace(filteredText, divineNameEndElement, "");
+
+    filteredText = regex_replace(filteredText, fullStopWithoutSpace, ". <");
+    filteredText = regex_replace(filteredText, questionMarkWithoutSpace, "? <");
+    filteredText = regex_replace(filteredText, exclamationMarkWithoutSpace, "! <");
+    filteredText = regex_replace(filteredText, commaWithoutSpace, ", <");
+    filteredText = regex_replace(filteredText, semiColonWithoutSpace, "; <");
+    filteredText = regex_replace(filteredText, colonWithoutSpace, ": <");
 
     return filteredText;
 }
