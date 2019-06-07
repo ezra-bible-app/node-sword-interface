@@ -20,6 +20,16 @@
 					'<!@(pkg-config --libs libcurl)'
 				]
 			}],
+			["OS=='mac'", {
+			    'include_dirs': [
+					"<!@(node -p \"require('node-addon-api').include\")",
+					"sword/include"
+				],
+				"libraries": [
+					'<(module_root_dir)/cmake_build/sword/libsword.dylib',
+					'<!@(pkg-config --libs libcurl)'
+				]
+			}],
 			["OS=='win'", {
 			    'include_dirs': [
 					"<!@(node -p \"require('node-addon-api').include\")",
