@@ -16,7 +16,7 @@
    along with node-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
-#ifdef __linux__ || __APPLE__
+#if defined(__linux__) || defined(__APPLE__)
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -87,10 +87,10 @@ bool FileSystemHelper::fileExists(string fileName)
 {
     bool exists = false;
 
-#ifdef _WIN32
-    if( (_access(fileName.c_str(), 0 )) != -1 ) {
-#elif __linux__ || __APPLE__
+#if defined(__linux__) || defined(__APPLE__)
     if (access(fileName.c_str(), F_OK) != -1 ) {
+#elif _WIN32
+    if( (_access(fileName.c_str(), 0 )) != -1 ) {
 #endif
         exists = true;
     }
@@ -100,7 +100,7 @@ bool FileSystemHelper::fileExists(string fileName)
 
 int FileSystemHelper::makeDirectory(string dirName)
 {
-#ifdef __linux__ || __APPLE__
+#if defined(__linux__) || defined(__APPLE__)
     return mkdir(dirName.c_str(), 0700);
 #elif _WIN32
     return _mkdir(dirName.c_str());
@@ -109,7 +109,7 @@ int FileSystemHelper::makeDirectory(string dirName)
 
 string FileSystemHelper::getPathSeparator()
 {
-#ifdef __linux__ || __APPLE__
+#if defined(__linux__) || defined(__APPLE__)
     string pathSeparator = "/";
 #elif _WIN32
     string pathSeparator = "\\";
@@ -119,7 +119,7 @@ string FileSystemHelper::getPathSeparator()
 
 string FileSystemHelper::getUserDir()
 {
-#ifdef __linux__ || __APPLE__
+#if defined(__linux__) || defined(__APPLE__)
     string userDir = string(getenv("HOME"));
 #elif _WIN32
     string userDir = string(getenv("AllUsersProfile"));
@@ -132,10 +132,10 @@ string FileSystemHelper::getSwordDir()
     stringstream swordDir;
     swordDir << this->getUserDir() << this->getPathSeparator();
 
-#ifdef _WIN32
-    swordDir << "Application Data" << this->getPathSeparator() << "sword" << this->getPathSeparator();
-#elif __linux__ || __APPLE__
+#if defined(__linux__) || defined(__APPLE__)
     swordDir << ".sword" << this->getPathSeparator();
+#elif _WIN32
+    swordDir << "Application Data" << this->getPathSeparator() << "sword" << this->getPathSeparator();
 #endif
 
     return swordDir.str();
