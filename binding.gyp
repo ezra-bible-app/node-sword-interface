@@ -55,5 +55,16 @@
             "<!(node -p \"require('node-addon-api').gyp\")"
         ],
         'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ]
+    },
+    {
+        'target_name': 'sword',
+        'type': 'none',
+        'actions': [
+            {
+                'action_name': 'build_sword',
+                'message': 'Building sword library...',
+                'action': [''eval', 'svn co http://crosswire.org/svn/sword/trunk sword && mkdir sword/build && cd sword/build && cmake .. && make''],
+            },
+        ],
     }]
 }
