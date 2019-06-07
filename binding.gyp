@@ -51,6 +51,11 @@
 					 "<!(node -p \"require('node-addon-api').gyp\")",
 					 'sword'
 				 ],
+                "link_settings": {
+                    "libraries": [
+                        "-Wl,-rpath,@loader_path<(module_root_dir)/sword_build/"
+                    ],
+                },
 			}],
 			["OS=='win'", {
 			    'include_dirs': [
