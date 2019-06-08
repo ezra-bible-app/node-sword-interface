@@ -6,3 +6,4 @@ mkdir -p sword_build
 cd sword_build
 cmake ../sword
 make -j2 sword
+rm -rf ../sword
