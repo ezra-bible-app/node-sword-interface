@@ -2,16 +2,15 @@
     "targets": [
     {
         'target_name': 'sword',
-        'product_prefix': 'lib',
-        'type': 'shared_library',
-		"conditions":[
+        'type': 'none',
+		"conditions": [
 			["OS=='mac'", {
                 'actions': [
                     {
                         'action_name': 'build_sword',
                         'message': 'Building sword library...',
                         'inputs': [],
-                        'outputs': ['sword_build/libsword.dylib'],
+                        'outputs': ['sword_build/libsword.a'],
                         'action': ['./build_sword.sh'],
                     },
                 ]
@@ -37,7 +36,7 @@
 				"libraries": [
 					'<!@(pkg-config --libs sword)',
 					'<!@(pkg-config --libs libcurl)'
-				]
+				]	
 			}],
 			["OS=='mac'", {
 			    'include_dirs': [
@@ -45,18 +44,14 @@
 					"sword/include"
 				],
 				"libraries": [
-					'<(module_root_dir)/sword_build/libsword.dylib',
+					'-L<(module_root_dir)/sword_build',
+					'-lsword',
 					'<!@(pkg-config --libs libcurl)'
 				],
 				"dependencies": [
 					 "<!(node -p \"require('node-addon-api').gyp\")",
 					 'sword'
-				 ],
-                "link_settings": {
-                    "libraries": [
-                        "-Wl,-rpath,<(module_root_dir)/sword_build/"
-                    ],
-                },
+				 ]
 			}],
 			["OS=='win'", {
 			    'include_dirs': [
