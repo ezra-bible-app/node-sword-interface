@@ -3,18 +3,14 @@
     {
         'target_name': 'sword',
         'type': 'none',
-		"conditions": [
-			["OS=='mac'", {
-                'actions': [
-                    {
-                        'action_name': 'build_sword',
-                        'message': 'Building sword library...',
-                        'inputs': [],
-                        'outputs': ['sword_build/libsword.a'],
-                        'action': ['./build_sword.sh'],
-                    },
-                ]
-            }]
+        'actions': [
+            {
+                'action_name': 'build_sword',
+                'message': 'Building sword library...',
+                'inputs': [],
+                'outputs': ['sword_build/libsword.a'],
+                'action': ['./build_sword.sh'],
+            },
         ]
     },
     {
@@ -31,12 +27,16 @@
 			["OS=='linux'", {
 			    'include_dirs': [
 					"<!@(node -p \"require('node-addon-api').include\")",
-					"<!@(pkg-config --cflags-only-I sword | sed s/-I//g)"
+					"sword/include"
 				],
 				"libraries": [
-					'<!@(pkg-config --libs sword)',
+					'<(module_root_dir)/sword_build/libsword.a',
 					'<!@(pkg-config --libs libcurl)'
-				]	
+				],
+				"dependencies": [
+					 "<!(node -p \"require('node-addon-api').gyp\")",
+					 'sword'
+				 ]
 			}],
 			["OS=='mac'", {
 			    'include_dirs': [
