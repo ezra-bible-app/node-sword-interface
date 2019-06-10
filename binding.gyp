@@ -44,8 +44,7 @@
 					"sword/include"
 				],
 				"libraries": [
-					'-L<(module_root_dir)/sword_build',
-					'-lsword',
+					'<(module_root_dir)/sword_build/libsword.a',
 					'<!@(pkg-config --libs libcurl)'
 				],
 				"dependencies": [
