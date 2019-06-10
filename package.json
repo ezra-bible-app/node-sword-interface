@@ -1,6 +1,6 @@
 {
   "name": "node-sword-interface",
-  "version": "0.28.0",
+  "version": "0.29.0",
   "description": "Javascript (N-API) interface to SWORD library",
   "keywords": [
     "C++",
