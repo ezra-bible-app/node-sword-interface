@@ -1,7 +1,6 @@
 #!/bin/sh
 
-svn co http://crosswire.org/svn/sword/trunk sword
-sed -i -e "s/1.8.900/1.8.0.0/g" sword/CMakeLists.txt
+svn co http://crosswire.org/svn/sword/tags/sword-1-8-1/ sword
 mkdir -p sword_build
 cd sword_build
 cmake -DLIBSWORD_LIBRARY_TYPE=Static ../sword
