@@ -32,7 +32,7 @@
 				"libraries": [
 					'<(module_root_dir)/sword_build/libsword.a',
 					'<!@(pkg-config --libs libcurl)',
-                    '<!@(icu-config --ldflags)'
+                    '<!@(pkg-config --libs icu-uc icu-io)'
 				],
 				"dependencies": [
 					 "<!(node -p \"require('node-addon-api').gyp\")",
