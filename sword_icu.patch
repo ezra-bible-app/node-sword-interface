@@ -1,0 +1,53 @@
+Index: include/utf8transliterator.h
+===================================================================
+--- include/utf8transliterator.h	(revision 3662)
++++ include/utf8transliterator.h	(working copy)
+@@ -45,6 +45,8 @@
+ #include <defs.h>
+ #include <map>
+ 
++using namespace icu;
++
+ SWORD_NAMESPACE_START
+ 
+ class SWModule;
+Index: src/modules/filters/scsuutf8.cpp
+===================================================================
+--- src/modules/filters/scsuutf8.cpp	(revision 3662)
++++ src/modules/filters/scsuutf8.cpp	(working copy)
+@@ -35,8 +35,8 @@
+ #include <unicode/unistr.h>
+ #endif
+ 
++using namespace icu;
+ 
+-
+ SWORD_NAMESPACE_START
+ 
+ 
+Index: src/modules/filters/utf8nfc.cpp
+===================================================================
+--- src/modules/filters/utf8nfc.cpp	(revision 3662)
++++ src/modules/filters/utf8nfc.cpp	(working copy)
+@@ -30,6 +30,8 @@
+ #include <utf8nfc.h>
+ #include <swbuf.h>
+ 
++using namespace icu;
++
+ SWORD_NAMESPACE_START
+ 
+ UTF8NFC::UTF8NFC() {
+Index: src/modules/filters/utf8scsu.cpp
+===================================================================
+--- src/modules/filters/utf8scsu.cpp	(revision 3662)
++++ src/modules/filters/utf8scsu.cpp	(working copy)
+@@ -25,6 +25,8 @@
+ #include <utf8scsu.h>
+ #include <swbuf.h>
+ 
++using namespace icu;
++
+ SWORD_NAMESPACE_START
+ 
+ 
