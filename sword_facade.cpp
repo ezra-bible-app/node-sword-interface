@@ -308,9 +308,13 @@ vector<SWModule*> SwordFacade::getAllLocalModules()
     for (ModMap::iterator modIterator = this->_mgr->Modules.begin();
          modIterator != this->_mgr->Modules.end();
          modIterator++) {
-
+        
         SWModule* currentModule = (SWModule*)modIterator->second;
-        allLocalModules.push_back(currentModule);
+        string moduleType = string(currentModule->getType());
+
+        if (moduleType == string("Biblical Texts")) {
+            allLocalModules.push_back(currentModule);
+        }
     }
 
     return allLocalModules;

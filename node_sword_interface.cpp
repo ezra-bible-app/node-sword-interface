@@ -41,6 +41,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getRepoNames", &NodeSwordInterface::getRepoNames),
         InstanceMethod("getAllRepoModules", &NodeSwordInterface::getAllRepoModules),
         InstanceMethod("getRepoModulesByLang", &NodeSwordInterface::getRepoModulesByLang),
+        InstanceMethod("getAllLocalModules", &NodeSwordInterface::getAllLocalModules),
         InstanceMethod("getRepoLanguages", &NodeSwordInterface::getRepoLanguages),
         InstanceMethod("getRepoTranslationCount", &NodeSwordInterface::getRepoTranslationCount),
         InstanceMethod("getRepoLanguageTranslationCount", &NodeSwordInterface::getRepoLanguageTranslationCount),
@@ -145,6 +146,23 @@ Napi::Value NodeSwordInterface::getAllRepoModules(const Napi::CallbackInfo& info
 
     Napi::String repoName = info[0].As<Napi::String>();
     vector<SWModule*> modules = this->_swordFacade->getAllRepoModules(string(repoName));
+    Napi::Array moduleArray = Napi::Array::New(env, modules.size());
+
+    for (unsigned int i = 0; i < modules.size(); i++) {
+        Napi::Object napiObject = Napi::Object::New(env);
+        this->swordModuleToNapiObject(env, modules[i], napiObject);
+        moduleArray.Set(i, napiObject); 
+    }
+
+    return moduleArray;
+}
+
+Napi::Value NodeSwordInterface::getAllLocalModules(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    vector<SWModule*> modules = this->_swordFacade->getAllLocalModules();
     Napi::Array moduleArray = Napi::Array::New(env, modules.size());
 
     for (unsigned int i = 0; i < modules.size(); i++) {

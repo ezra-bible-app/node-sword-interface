@@ -125,6 +125,15 @@ class NodeSwordInterface {
   }
 
   /**
+   * Returns all bible modules installed locally.
+   *
+   * @return {String[]} An array of strings with the module codes for the locally installed bible modules.
+   */
+  getAllLocalModules() {
+    return this.nativeInterface.getAllLocalModules();
+  }
+
+  /**
    * Returns the number of bible modules for a given repository and language.
    *
    * @param {String} repositoryName - The name of the given repository.
