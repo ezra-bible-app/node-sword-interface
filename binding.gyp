@@ -3,14 +3,18 @@
     {
         'target_name': 'sword',
         'type': 'none',
-        'actions': [
-            {
-                'action_name': 'build_sword',
-                'message': 'Building sword library...',
-                'inputs': [],
-                'outputs': ['sword_build/libsword.a'],
-                'action': ['./build_sword.sh'],
-            },
+        'conditions': [
+            [ "OS != 'win'", {
+                'actions': [
+                    {
+                        'action_name': 'build_sword',
+                        'message': 'Building sword library...',
+                        'inputs': [],
+                        'outputs': ['sword_build/libsword.a'],
+                        'action': ['./build_sword.sh'],
+                    }
+                ]
+            }]
         ]
     },
     {
