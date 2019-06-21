@@ -15,6 +15,32 @@ node-sword-interface focusses on discovery, installation and uninstallation of S
 - Get the text of the whole bible
 - Get the text of a bible book
 
+## Example
+
+```javascript
+const NodeSwordInterface = require('node-sword-interface');
+var interface = new NodeSwordInterface();
+
+interface.updateRepositoryConfig();
+
+// Install the King James Version
+interface.installModule('KJV');
+
+// Get the verses of the Gospel of Matthew
+var verses = interface.getBookText('KJV', 'Mat');
+
+// Do something with the verses
+for (var i = 0; i < verses.length; i++) {
+    var currentVerse = verses[i];
+    var verseReference = currentVerse.chapter + ':' + currentVerse.verseNr;
+    console.log(verseReference + ' '  + currentVerse.content);
+}
+```
+
+## API Docs
+
+The Javascript API of node-sword-interface is documented [here](API.md).
+
 ## Installation
 
 ### Linux
@@ -39,7 +65,3 @@ Once the dependencies are available you can install and build the latest node-sw
 ### Windows
 
 _Instructions to be added_
-
-## API
-
-The Javascript API of node-sword-interface is documented [here](API.md).
