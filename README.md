@@ -5,8 +5,10 @@ node-sword-interface is a Javascript nodejs library (using [N-API](https://nodej
 
 node-sword-interface focusses on discovery, installation and uninstallation of SWORD bible modules and on text loading for individual bible modules. It currently covers the following usecases:
 
+- Update SWORD repository config
 - List SWORD repositories
-- List bible modules within a given SWORD repository
+- List remote bible modules
+- List local bible modules
 - Install a bible module
 - Uninstall a bible module
 - Retrieve information about a local bible module
