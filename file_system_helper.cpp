@@ -46,8 +46,8 @@ FileSystemHelper::~FileSystemHelper()
 
 void FileSystemHelper::createBasicDirectories()
 {
-    if (!this->fileExists(this->getSwordDir())) {
-        this->makeDirectory(this->getSwordDir());
+    if (!this->fileExists(this->getUserSwordDir())) {
+        this->makeDirectory(this->getUserSwordDir());
     }
 
     if (!this->fileExists(this->getModuleDir())) {
@@ -63,22 +63,50 @@ bool FileSystemHelper::isSwordConfExisting()
 string FileSystemHelper::getModuleDir()
 {
     stringstream moduleDir;
-    moduleDir << this->getSwordDir() << this->getPathSeparator() << "mods.d";
+    moduleDir << this->getUserSwordDir() << this->getPathSeparator() << "mods.d";
     return moduleDir.str();
 }
 
 string FileSystemHelper::getSwordConfPath()
 {
     stringstream configPath;
-    configPath << this->getSwordDir() << this->getPathSeparator() << "sword.conf";
+    configPath << this->getUserSwordDir() << this->getPathSeparator() << "sword.conf";
     return configPath.str();
 }
 
 string FileSystemHelper::getInstallMgrDir()
 {
     stringstream installMgrDir;
-    installMgrDir << this->getSwordDir() << this->getPathSeparator() << "installMgr";
+    installMgrDir << this->getUserSwordDir() << this->getPathSeparator() << "installMgr";
     return installMgrDir.str();
+}
+
+string FileSystemHelper::getUserSwordDir()
+{
+    stringstream swordDir;
+    swordDir << this->getUserDir() << this->getPathSeparator();
+
+#if defined(__linux__) || defined(__APPLE__)
+    swordDir << ".sword" << this->getPathSeparator();
+#elif _WIN32
+    swordDir << this->getPathSeparator() << "sword" << this->getPathSeparator();
+#endif
+
+    return swordDir.str();
+}
+
+string FileSystemHelper::getSystemSwordDir()
+{
+    stringstream swordDir;
+    swordDir << this->getSystemDir() << this->getPathSeparator();
+
+#if defined(__linux__) || defined(__APPLE__)
+    swordDir << this->getPathSeparator() << "sword" << this->getPathSeparator();
+#elif _WIN32
+    swordDir << "Application Data" << this->getPathSeparator() << "sword" << this->getPathSeparator();
+#endif
+
+    return swordDir.str();
 }
 
 // PRIVATE METHODS
@@ -122,23 +150,19 @@ string FileSystemHelper::getUserDir()
 #if defined(__linux__) || defined(__APPLE__)
     string userDir = string(getenv("HOME"));
 #elif _WIN32
-    string userDir = string(getenv("AllUsersProfile"));
+    string userDir = string(getenv("APPDATA"));
 #endif
     return userDir;
 }
 
-string FileSystemHelper::getSwordDir()
+string FileSystemHelper::getSystemDir()
 {
-    stringstream swordDir;
-    swordDir << this->getUserDir() << this->getPathSeparator();
-
 #if defined(__linux__) || defined(__APPLE__)
-    swordDir << ".sword" << this->getPathSeparator();
+    string systemDir = "/usr/share";
 #elif _WIN32
-    swordDir << "Application Data" << this->getPathSeparator() << "sword" << this->getPathSeparator();
+    string systemDir = string(getenv("AllUsersProfile"));
 #endif
-
-    return swordDir.str();
+    return systemDir;
 }
 
 

@@ -75,8 +75,8 @@ SwordFacade::SwordFacade()
 
     /* Creating a swConfig is not necessary (at least on Linux) */
     /* Windows: to be tested */
-    //this->_swConfig = new SWConfig(this->_fileSystemHelper.getSwordConfPath().c_str());
-    /*if (!this->_fileSystemHelper.isSwordConfExisting()) {
+    /*this->_swConfig = new SWConfig(this->_fileSystemHelper.getSwordConfPath().c_str());
+    if (!this->_fileSystemHelper.isSwordConfExisting()) {
         this->_swConfig->Sections.clear();
         (*this->_swConfig)["Install"].insert(std::make_pair(SWBuf("DataPath"), this->_fileSystemHelper.getModuleDir().c_str()));
         this->_swConfig->Save();
@@ -100,7 +100,10 @@ void SwordFacade::resetMgr()
         delete this->_mgr;
     }
 
-    this->_mgr = new SWMgr();
+    this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());    
+#ifdef _WIN32
+    this->_mgr->augmentModules(this->_fileSystemHelper.getSystemSwordDir().c_str());
+#endif
 }
 
 int SwordFacade::refreshRepositoryConfig()

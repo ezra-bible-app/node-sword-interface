@@ -30,13 +30,15 @@ public:
     std::string getModuleDir();
     std::string getSwordConfPath();
     std::string getInstallMgrDir();
+    std::string getUserSwordDir();
+    std::string getSystemSwordDir();
 
 private:
     bool fileExists(std::string fileName);
     int makeDirectory(std::string dirName);
     std::string getPathSeparator();
     std::string getUserDir();
-    std::string getSwordDir();
+    std::string getSystemDir();
 };
 
 #endif // _FILE_SYSTEM_HELPER
