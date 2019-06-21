@@ -50,9 +50,11 @@ Before installing node-sword-interface you need to make sure that the following 
 
 - C++ compiler toolchain
 - nodejs
-- SWORD library with development headers
 - SQLite 3 library
+- ICU library with development headers
 - CURL library with development headers
+- CMake (for building the SWORD library)
+- Subversion (for retrieving the SWORD sources)
 
 To install the dependencies issue the following command on a Debian/Ubuntu based distribution:
     
