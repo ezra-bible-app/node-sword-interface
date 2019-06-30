@@ -31,6 +31,7 @@
 #include <swmgr.h>
 #include <remotetrans.h>
 #include <versekey.h>
+#include <swlog.h>
 
 // Own includes
 #include "sword_facade.hpp"
@@ -71,6 +72,7 @@ void SwordStatusReporter::preStatus(long totalBytes, long completedBytes, const 
 
 SwordFacade::SwordFacade()
 {
+    //SWLog::getSystemLog()->setLogLevel(SWLog::LOG_DEBUG);
     this->_fileSystemHelper.createBasicDirectories();
 
     /* Creating a swConfig is not necessary (at least on Linux) */
