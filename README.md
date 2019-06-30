@@ -15,6 +15,32 @@ node-sword-interface focusses on discovery, installation and uninstallation of S
 - Get the text of the whole bible
 - Get the text of a bible book
 
+## Example
+
+```javascript
+const NodeSwordInterface = require('node-sword-interface');
+var interface = new NodeSwordInterface();
+
+interface.updateRepositoryConfig();
+
+// Install the King James Version
+interface.installModule('KJV');
+
+// Get the verses of the Gospel of Matthew
+var verses = interface.getBookText('KJV', 'Mat');
+
+// Do something with the verses
+for (var i = 0; i < verses.length; i++) {
+    var currentVerse = verses[i];
+    var verseReference = currentVerse.chapter + ':' + currentVerse.verseNr;
+    console.log(verseReference + ' '  + currentVerse.content);
+}
+```
+
+## API Docs
+
+The Javascript API of node-sword-interface is documented [here](API.md).
+
 ## Installation
 
 ### Linux
@@ -24,13 +50,15 @@ Before installing node-sword-interface you need to make sure that the following 
 
 - C++ compiler toolchain
 - nodejs
-- SWORD library with development headers
 - SQLite 3 library
+- ICU library with development headers
 - CURL library with development headers
+- CMake (for building the SWORD library)
+- Subversion (for retrieving the SWORD sources)
 
 To install the dependencies issue the following command on a Debian/Ubuntu based distribution:
     
-    sudo apt-get install build-essential nodejs libsword-dev libsqlite3-0 libcurl4-gnutls-dev pkg-config
+    sudo apt-get install build-essential nodejs libsqlite3-0 libcurl4-gnutls-dev libicu-dev pkg-config cmake subversion
 
 Once the dependencies are available you can install and build the latest node-sword-interface release from [npmjs.com](https://www.npmjs.com/package/node-sword-interface) by issuing the following command:
 
@@ -39,7 +67,3 @@ Once the dependencies are available you can install and build the latest node-sw
 ### Windows
 
 _Instructions to be added_
-
-## API
-
-The Javascript API of node-sword-interface is documented [here](API.md).
