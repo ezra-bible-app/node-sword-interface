@@ -4,3 +4,4 @@
 /sword
 package-lock.json
 /.vscode
+*.code-workspace
