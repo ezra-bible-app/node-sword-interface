@@ -4,9 +4,12 @@
 svn co http://crosswire.org/svn/sword/tags/sword-1-8-1/ sword
 
 # PATCHES
-ifeq ($(uname_S),Linux)
-    patch --batch -d sword -p 0 < sword_icu.patch
-endif
+case "$(uname -s)" in
+    Linux)
+    # We only apply the Sword ICU patch on Linux
+        patch --batch -d sword -p 0 < sword_icu.patch
+    ;;
+esac
 
 patch --batch -d sword -p 0 < sword_globconf.patch
 
