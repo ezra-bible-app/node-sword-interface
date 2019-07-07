@@ -1,25 +1,13 @@
-Index: CMakeLists.txt
-===================================================================
---- CMakeLists.txt	(Revision 3673)
-+++ CMakeLists.txt	(Arbeitskopie)
-@@ -119,7 +119,7 @@
- ################################################################################################
- # Some random user settings
- #
--ADD_DEFINITIONS(-DGLOBCONFPATH="${SYSCONF_INSTALL_DIR}/sword.conf")
-+#ADD_DEFINITIONS(-DGLOBCONFPATH="${SYSCONF_INSTALL_DIR}/sword.conf")
- SET(CONFFILE "[Install]
- DataPath=${SHARE_INSTALL_PREFIX}/sword")
- FILE(WRITE "${CMAKE_CURRENT_BINARY_DIR}/sword.conf" "${CONFFILE}")
 Index: include/utf8transliterator.h
 ===================================================================
 --- include/utf8transliterator.h	(Revision 3673)
 +++ include/utf8transliterator.h	(Arbeitskopie)
-@@ -45,6 +45,8 @@
+@@ -45,6 +45,9 @@
  #include <defs.h>
  #include <map>
  
 +using icu::UnicodeString;
++using icu::Transliterator;
 +
  SWORD_NAMESPACE_START
  
