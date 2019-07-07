@@ -7,11 +7,11 @@ svn co http://crosswire.org/svn/sword/tags/sword-1-8-1/ sword
 case "$(uname -s)" in
     Linux)
     # We only apply the Sword ICU patch on Linux
-        patch --batch -d sword -p 0 < sword_icu.patch
+        patch --batch --forward -d sword -p 0 < sword_icu.patch
     ;;
 esac
 
-patch --batch -d sword -p 0 < sword_globconf.patch
+patch --batch --forward -d sword -p 0 < sword_globconf.patch
 
 # BUILD
 mkdir -p sword_build
