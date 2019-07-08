@@ -71,7 +71,7 @@ public:
     int installModule(std::string repoName, std::string moduleName);
     int uninstallModule(std::string moduleName);
 
-    void enableMarkup() { this->markupEnabled = true; }
+    void enableMarkup() { this->_markupEnabled = true; }
 
 private:
     std::vector<std::string> getText(std::string moduleName, std::string key, bool onlyCurrentBook=true);
@@ -86,12 +86,11 @@ private:
 
     sword::SWMgr* _mgr = 0;
     sword::SWMgr* _mgrForInstall = 0;
-    sword::SWConfig* _swConfig = 0;
     sword::InstallMgr* _installMgr = 0;
     SwordStatusReporter* _statusReporter = 0;
     FileSystemHelper _fileSystemHelper;
 
-    bool markupEnabled = false;
+    bool _markupEnabled = false;
 };
 
 #endif // _SWORD_FACADE

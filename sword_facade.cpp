@@ -75,15 +75,6 @@ SwordFacade::SwordFacade()
     //SWLog::getSystemLog()->setLogLevel(SWLog::LOG_DEBUG);
     this->_fileSystemHelper.createBasicDirectories();
 
-    /* Creating a swConfig is not necessary (at least on Linux) */
-    /* Windows: to be tested */
-    /*this->_swConfig = new SWConfig(this->_fileSystemHelper.getSwordConfPath().c_str());
-    if (!this->_fileSystemHelper.isSwordConfExisting()) {
-        this->_swConfig->Sections.clear();
-        (*this->_swConfig)["Install"].insert(std::make_pair(SWBuf("DataPath"), this->_fileSystemHelper.getModuleDir().c_str()));
-        this->_swConfig->Save();
-    }*/
-
     this->_statusReporter = new SwordStatusReporter();
     this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), this->_statusReporter);
     this->_installMgr->setUserDisclaimerConfirmed(true);
@@ -92,7 +83,6 @@ SwordFacade::SwordFacade()
 SwordFacade::~SwordFacade()
 {
     delete this->_installMgr;
-    //delete this->_swConfig;
     delete this->_statusReporter;
 }
 
@@ -109,11 +99,11 @@ void SwordFacade::resetMgr()
 #ifdef _WIN32
     this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
     this->_mgr->augmentModules(this->_fileSystemHelper.getSystemSwordDir().c_str());
-    this->_mgrForInstall = this->_mgr;
 #else
     this->_mgr = new SWMgr();
-    this->_mgrForInstall = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
 #endif
+
+    this->_mgrForInstall = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
 }
 
 int SwordFacade::refreshRepositoryConfig()
@@ -342,8 +332,8 @@ SWModule* SwordFacade::getLocalModule(string moduleName)
 string SwordFacade::rtrim(const string& s)
 {
     static const string WHITESPACE = " \n\r\t\f\v";
-	  size_t end = s.find_last_not_of(WHITESPACE);
-	  return (end == string::npos) ? "" : s.substr(0, end + 1);
+    size_t end = s.find_last_not_of(WHITESPACE);
+    return (end == string::npos) ? "" : s.substr(0, end + 1);
 } 
 
 string SwordFacade::getFilteredVerseText(const string& verseText)
@@ -456,7 +446,7 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
 
             string verseText;
 
-            if (this->markupEnabled) {
+            if (this->_markupEnabled) {
                 verseText = rtrim(string(module->getRawEntry()));
             } else {
                 verseText = rtrim(string(module->stripText()));
@@ -531,7 +521,6 @@ int SwordFacade::uninstallModule(string moduleName)
         cout << "Error uninstalling module: [" << moduleName << "] (write permissions?)\n";
         return -1;
     } else {
-        this->_mgr->deleteModule(moduleName.c_str());
         cout << "Uninstalled module: [" << moduleName << "]\n";
         return 0;
     }
