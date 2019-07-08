@@ -102,11 +102,17 @@ void SwordFacade::resetMgr()
         delete this->_mgr;
     }
 
+    if (this->_mgrForInstall != 0) {
+        delete this->_mgrForInstall;
+    }
+
 #ifdef _WIN32
     this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
     this->_mgr->augmentModules(this->_fileSystemHelper.getSystemSwordDir().c_str());
+    this->_mgrForInstall = this->_mgr;
 #else
     this->_mgr = new SWMgr();
+    this->_mgrForInstall = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
 #endif
 }
 
@@ -505,7 +511,7 @@ int SwordFacade::installModule(string repoName, string moduleName)
     } else {
         module = it->second;
 
-        int error = this->_installMgr->installModule(this->_mgr, 0, module->getName(), remoteSource);
+        int error = this->_installMgr->installModule(this->_mgrForInstall, 0, module->getName(), remoteSource);
         if (error) {
             cout << "Error installing module: [" << module->getName() << "] (write permissions?)\n";
             return -1;
@@ -519,7 +525,7 @@ int SwordFacade::installModule(string repoName, string moduleName)
 int SwordFacade::uninstallModule(string moduleName)
 {
     this->resetMgr();
-    int error = this->_installMgr->removeModule(this->_mgr, moduleName.c_str());
+    int error = this->_installMgr->removeModule(this->_mgrForInstall, moduleName.c_str());
 
     if (error) {
         cout << "Error uninstalling module: [" << moduleName << "] (write permissions?)\n";

@@ -87,9 +87,9 @@ string FileSystemHelper::getUserSwordDir()
     swordDir << this->getUserDir() << this->getPathSeparator();
 
 #if defined(__linux__) || defined(__APPLE__)
-    swordDir << ".sword" << this->getPathSeparator();
+    swordDir << ".sword";
 #elif _WIN32
-    swordDir << this->getPathSeparator() << "sword" << this->getPathSeparator();
+    swordDir << this->getPathSeparator() << "sword";
 #endif
 
     return swordDir.str();

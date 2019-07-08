@@ -85,6 +85,7 @@ private:
     std::string rtrim(const std::string& s);
 
     sword::SWMgr* _mgr = 0;
+    sword::SWMgr* _mgrForInstall = 0;
     sword::SWConfig* _swConfig = 0;
     sword::InstallMgr* _installMgr = 0;
     SwordStatusReporter* _statusReporter = 0;
