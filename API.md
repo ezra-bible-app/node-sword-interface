@@ -220,11 +220,11 @@ An object representation of a bible verse.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| bibleBookShortTitle | <code>String</code> | The short title of the verses's bible book. |
-| chapter | <code>String</code> | The chapter number. |
-| verseNr | <code>String</code> | The verse number. |
+| bibleBookShortTitle | <code>String</code> | The short title of the verses's bible book |
+| chapter | <code>String</code> | The chapter number |
+| verseNr | <code>String</code> | The verse number |
 | absoluteVerseNr | <code>Number</code> | The absolute number of the verse within the book (independent of chapters, starting from 1) |
-| content | <code>String</code> | The verse content. |
+| content | <code>String</code> | The verse content |
 
 <a name="ModuleObject"></a>
 
@@ -236,12 +236,13 @@ An object representation of a SWORD module.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| name | <code>String</code> | The name/code of the SWORD module. |
-| description | <code>String</code> | The description of the SWORD module. |
-| language | <code>String</code> | The language code of the SWORD module. |
-| version | <code>String</code> | The version of the SWORD module. |
-| about | <code>String</code> | Extended description of the SWORD module. |
-| abbreviation | <code>String</code> | The abbreviation of the SWORD module. |
+| name | <code>String</code> | The name/code of the SWORD module |
+| description | <code>String</code> | The description of the SWORD module |
+| language | <code>String</code> | The language code of the SWORD module |
+| version | <code>String</code> | The version of the SWORD module |
+| about | <code>String</code> | Extended description of the SWORD module |
+| abbreviation | <code>String</code> | The abbreviation of the SWORD module |
+| location | <code>String</code> | The filesystem location where the module is stored |
 | size | <code>Number</code> | The file size of the SWORD module (in KB). |
 | locked | <code>Boolean</code> | Information on whether the module is locked |
 | hasStrongs | <code>Boolean</code> | Information on whether the module has Strong's numbers |
@@ -249,4 +250,5 @@ An object representation of a SWORD module.
 | hasHeadings | <code>Boolean</code> | Information on whether the module has headings |
 | hasRedLetterWords | <code>Boolean</code> | Information on whether the module has red letter words |
 | hasCrossReferences | <code>Boolean</code> | Information on whether the module has cross references |
+| isRightToLeft | <code>Boolean</code> | Information on whether the module has right to left text direction |
 
