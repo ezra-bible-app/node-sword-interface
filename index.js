@@ -22,23 +22,24 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
 * An object representation of a bible verse.
 * @typedef VerseObject
 * @type {Object}
-* @property {String} bibleBookShortTitle - The short title of the verses's bible book.
-* @property {String} chapter - The chapter number.
-* @property {String} verseNr - The verse number.
+* @property {String} bibleBookShortTitle - The short title of the verses's bible book
+* @property {String} chapter - The chapter number
+* @property {String} verseNr - The verse number
 * @property {Number} absoluteVerseNr - The absolute number of the verse within the book (independent of chapters, starting from 1)
-* @property {String} content - The verse content.
+* @property {String} content - The verse content
 */
 
 /**
  * An object representation of a SWORD module.
  * @typedef ModuleObject
  * @type {Object}
- * @property {String} name - The name/code of the SWORD module.
- * @property {String} description - The description of the SWORD module.
- * @property {String} language - The language code of the SWORD module.
- * @property {String} version - The version of the SWORD module.
- * @property {String} about - Extended description of the SWORD module.
- * @property {String} abbreviation - The abbreviation of the SWORD module.
+ * @property {String} name - The name/code of the SWORD module
+ * @property {String} description - The description of the SWORD module
+ * @property {String} language - The language code of the SWORD module
+ * @property {String} version - The version of the SWORD module
+ * @property {String} about - Extended description of the SWORD module
+ * @property {String} abbreviation - The abbreviation of the SWORD module
+ * @property {String} location - The filesystem location where the module is stored
  * @property {Number} size - The file size of the SWORD module (in KB).
  * @property {Boolean} locked - Information on whether the module is locked
  * @property {Boolean} hasStrongs - Information on whether the module has Strong's numbers
@@ -46,6 +47,7 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
  * @property {Boolean} hasHeadings - Information on whether the module has headings
  * @property {Boolean} hasRedLetterWords - Information on whether the module has red letter words
  * @property {Boolean} hasCrossReferences - Information on whether the module has cross references
+ * @property {Boolean} isRightToLeft - Information on whether the module has right to left text direction
  */
 
 /** This is the main class of node-sword-interface and it provides a set of static functions that wrap SWORD library functionality. */
