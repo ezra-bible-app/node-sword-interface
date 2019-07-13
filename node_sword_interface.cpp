@@ -42,6 +42,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getAllRepoModules", &NodeSwordInterface::getAllRepoModules),
         InstanceMethod("getRepoModulesByLang", &NodeSwordInterface::getRepoModulesByLang),
         InstanceMethod("getAllLocalModules", &NodeSwordInterface::getAllLocalModules),
+        InstanceMethod("isModuleInUserDir", &NodeSwordInterface::isModuleInUserDir),
         InstanceMethod("getRepoLanguages", &NodeSwordInterface::getRepoLanguages),
         InstanceMethod("getRepoTranslationCount", &NodeSwordInterface::getRepoTranslationCount),
         InstanceMethod("getRepoLanguageTranslationCount", &NodeSwordInterface::getRepoLanguageTranslationCount),
@@ -155,6 +156,21 @@ Napi::Value NodeSwordInterface::getAllRepoModules(const Napi::CallbackInfo& info
     }
 
     return moduleArray;
+}
+
+Napi::Value NodeSwordInterface::isModuleInUserDir(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() != 1 || !info[0].IsString()) {
+        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
+    }
+
+    Napi::String moduleName = info[0].As<Napi::String>();
+
+    bool moduleInUserDir = this->_swordFacade->isModuleInUserDir(std::string(moduleName));
+    return Napi::Boolean::New(env, moduleInUserDir);
 }
 
 Napi::Value NodeSwordInterface::getAllLocalModules(const Napi::CallbackInfo& info)

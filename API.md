@@ -40,6 +40,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getBookText(moduleCode, bookCode)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getLocalModule(moduleCode)](#NodeSwordInterface+getLocalModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
+    * [.isModuleInUserDir(moduleCode)](#NodeSwordInterface+isModuleInUserDir) ⇒ <code>Boolean</code>
 
 <a name="NodeSwordInterface+repositoryConfigExisting"></a>
 
@@ -203,6 +204,17 @@ Returns the bible text of a module.
 
 ### nodeSwordInterface.getLocalModule(moduleCode) ⇒ [<code>ModuleObject</code>](#ModuleObject)
 Returns an object representation of a locally installed SWORD module.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleCode | <code>String</code> | The module code of the SWORD module. |
+
+<a name="NodeSwordInterface+isModuleInUserDir"></a>
+
+### nodeSwordInterface.isModuleInUserDir(moduleCode) ⇒ <code>Boolean</code>
+Checks whether the modules resides in the user directory.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 

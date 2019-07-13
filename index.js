@@ -229,6 +229,16 @@ class NodeSwordInterface {
   getLocalModule(moduleCode) {
     return this.nativeInterface.getLocalModule(moduleCode);
   }
+
+  /**
+   * Checks whether the modules resides in the user directory.
+   *
+   * @param {String} moduleCode - The module code of the SWORD module.
+   * @return {Boolean}
+   */
+  isModuleInUserDir(moduleCode) {
+    return this.nativeInterface.isModuleInUserDir(moduleCode);
+  }
 }
 
 module.exports = NodeSwordInterface;

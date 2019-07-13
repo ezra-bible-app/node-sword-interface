@@ -329,6 +329,13 @@ SWModule* SwordFacade::getLocalModule(string moduleName)
     return this->_mgr->getModule(moduleName.c_str());
 }
 
+bool SwordFacade::isModuleInUserDir(string moduleName) {
+    SWModule* module = this->getLocalModule(moduleName);
+    string dataPath = string(module->getConfigEntry("AbsoluteDataPath"));
+    string userDir = this->_fileSystemHelper.getUserSwordDir();
+    return dataPath.find(userDir) != string::npos;
+}
+
 string SwordFacade::rtrim(const string& s)
 {
     static const string WHITESPACE = " \n\r\t\f\v";
