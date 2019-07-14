@@ -11,6 +11,7 @@ node-sword-interface focusses on discovery, installation and uninstallation of S
 - List local bible modules
 - Install a bible module
 - Uninstall a bible module
+- Retrieve information about a remote bible module
 - Retrieve information about a local bible module
 - Get the text of the whole bible
 - Get the text of a bible book
