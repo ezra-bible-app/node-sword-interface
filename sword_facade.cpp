@@ -329,11 +329,25 @@ SWModule* SwordFacade::getLocalModule(string moduleName)
     return this->_mgr->getModule(moduleName.c_str());
 }
 
-bool SwordFacade::isModuleInUserDir(string moduleName) {
+bool SwordFacade::isModuleInUserDir(sword::SWModule* module)
+{
+    if (module == 0) {
+        return false;
+    } else {
+        if (module->getConfigEntry("AbsoluteDataPath")) {
+            string dataPath = string(module->getConfigEntry("AbsoluteDataPath"));
+            string userDir = this->_fileSystemHelper.getUserSwordDir();
+            return (dataPath.find(userDir) != string::npos);
+        } else {
+            return false;
+        }
+    }
+}
+
+bool SwordFacade::isModuleInUserDir(string moduleName)
+{
     SWModule* module = this->getLocalModule(moduleName);
-    string dataPath = string(module->getConfigEntry("AbsoluteDataPath"));
-    string userDir = this->_fileSystemHelper.getUserSwordDir();
-    return dataPath.find(userDir) != string::npos;
+    return this->isModuleInUserDir(module);
 }
 
 string SwordFacade::rtrim(const string& s)
