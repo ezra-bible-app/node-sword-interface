@@ -254,8 +254,9 @@ An object representation of a SWORD module.
 | version | <code>String</code> | The version of the SWORD module |
 | about | <code>String</code> | Extended description of the SWORD module |
 | abbreviation | <code>String</code> | The abbreviation of the SWORD module |
+| size | <code>Number</code> | The file size of the SWORD module (in KB) |
 | location | <code>String</code> | The filesystem location where the module is stored |
-| size | <code>Number</code> | The file size of the SWORD module (in KB). |
+| inUserDir | <code>Boolean</code> | Information on whether the module is located in the user's directory |
 | locked | <code>Boolean</code> | Information on whether the module is locked |
 | hasStrongs | <code>Boolean</code> | Information on whether the module has Strong's numbers |
 | hasFootnotes | <code>Boolean</code> | Information on whether the module has footnotes |

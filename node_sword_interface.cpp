@@ -231,12 +231,13 @@ void NodeSwordInterface::swordModuleToNapiObject(const Napi::Env& env, SWModule*
     object["version"] = swModule->getConfigEntry("Version");
     object["about"] = swModule->getConfigEntry("About");
     object["location"] = swModule->getConfigEntry("AbsoluteDataPath");
+    object["inUserDir"] = Napi::Boolean::New(env, this->_swordFacade->isModuleInUserDir(swModule->getName()));
 
     if (swModule->getConfigEntry("Direction")) {
         string direction = string(swModule->getConfigEntry("Direction"));
         object["isRightToLeft"] = Napi::Boolean::New(env, direction == "RtoL");
     } else {
-        object["isRightToLeft"] = false;
+        object["isRightToLeft"] = Napi::Boolean::New(env, false);
     }
 
     bool moduleIsLocked = swModule->getConfigEntry("CipherKey");
