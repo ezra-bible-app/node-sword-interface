@@ -31,6 +31,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getRepoLanguages(repositoryName)](#NodeSwordInterface+getRepoLanguages) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getAllRepoModules(repositoryName)](#NodeSwordInterface+getAllRepoModules) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoModulesByLang(repositoryName, language)](#NodeSwordInterface+getRepoModulesByLang) ⇒ <code>Array.&lt;String&gt;</code>
+    * [.getRepoModule(moduleCode)](#NodeSwordInterface+getRepoModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
     * [.getAllLocalModules()](#NodeSwordInterface+getAllLocalModules) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoLanguageTranslationCount(repositoryName, language)](#NodeSwordInterface+getRepoLanguageTranslationCount) ⇒ <code>Number</code>
     * [.installModule(moduleCode)](#NodeSwordInterface+installModule) ⇒ <code>Promise</code>
@@ -106,6 +107,17 @@ Returns all bible modules for the given repository and language
 | --- | --- | --- |
 | repositoryName | <code>String</code> | The name of the given repository. |
 | language | <code>String</code> | The language code that shall be used as a filter. |
+
+<a name="NodeSwordInterface+getRepoModule"></a>
+
+### nodeSwordInterface.getRepoModule(moduleCode) ⇒ [<code>ModuleObject</code>](#ModuleObject)
+Returns an object representation of a SWORD module from a repository.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleCode | <code>String</code> | The module code of the SWORD module. |
 
 <a name="NodeSwordInterface+getAllLocalModules"></a>
 
