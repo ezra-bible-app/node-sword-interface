@@ -65,6 +65,7 @@ public:
     std::vector<sword::SWModule*> getAllLocalModules();
     sword::SWModule* getLocalModule(std::string moduleName);
     bool isModuleInUserDir(std::string moduleName);
+    bool isModuleInUserDir(sword::SWModule* module);
     std::vector<std::string> getBibleText(std::string moduleName);
     std::vector<std::string> getBookText(std::string moduleName, std::string bookCode);
 

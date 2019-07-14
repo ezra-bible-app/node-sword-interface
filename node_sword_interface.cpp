@@ -170,7 +170,7 @@ Napi::Value NodeSwordInterface::isModuleInUserDir(const Napi::CallbackInfo& info
 
     Napi::String moduleName = info[0].As<Napi::String>();
 
-    bool moduleInUserDir = this->_swordFacade->isModuleInUserDir(std::string(moduleName));
+    bool moduleInUserDir = this->_swordFacade->isModuleInUserDir(string(moduleName));
     return Napi::Boolean::New(env, moduleInUserDir);
 }
 
@@ -232,11 +232,13 @@ void NodeSwordInterface::swordModuleToNapiObject(const Napi::Env& env, SWModule*
     object["version"] = swModule->getConfigEntry("Version");
     object["about"] = swModule->getConfigEntry("About");
     object["location"] = swModule->getConfigEntry("AbsoluteDataPath");
-    object["inUserDir"] = Napi::Boolean::New(env, this->_swordFacade->isModuleInUserDir(swModule->getName()));
+    
+    bool moduleInUserDir = this->_swordFacade->isModuleInUserDir(swModule);
+    object["inUserDir"] = Napi::Boolean::New(env, false);
 
     if (swModule->getConfigEntry("Direction")) {
         string direction = string(swModule->getConfigEntry("Direction"));
-        object["isRightToLeft"] = Napi::Boolean::New(env, direction == "RtoL");
+        object["isRightToLeft"] = Napi::Boolean::New(env, (direction == "RtoL"));
     } else {
         object["isRightToLeft"] = Napi::Boolean::New(env, false);
     }
@@ -412,13 +414,13 @@ Napi::Value NodeSwordInterface::getModuleDescription(const Napi::CallbackInfo& i
     }
 
     Napi::String moduleName = info[0].As<Napi::String>();
-    SWModule* swordModule = this->_swordFacade->getRepoModule(std::string(moduleName));
+    SWModule* swordModule = this->_swordFacade->getRepoModule(string(moduleName));
 
     if (swordModule == 0) {
         Napi::Error::New(env, "getRepoModule returned 0!").ThrowAsJavaScriptException();
     }
 
-    string moduleDescription = std::string(swordModule->getDescription());
+    string moduleDescription = string(swordModule->getDescription());
     Napi::String napiModuleDescription = Napi::String::New(env, moduleDescription);
     return napiModuleDescription;
 }
@@ -434,11 +436,11 @@ Napi::Value NodeSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
 
     Napi::Object napiObject = Napi::Object::New(env);
     Napi::String moduleName = info[0].As<Napi::String>();
-    SWModule* swordModule = this->_swordFacade->getLocalModule(std::string(moduleName));
+    SWModule* swordModule = this->_swordFacade->getLocalModule(string(moduleName));
 
     if (swordModule == 0) {
         stringstream errorMessage;
-        errorMessage << "getLocalModule returned 0 for '" << std::string(moduleName) << "'" << endl;
+        errorMessage << "getLocalModule returned 0 for '" << string(moduleName) << "'" << endl;
         Napi::Error::New(env, errorMessage.str().c_str()).ThrowAsJavaScriptException();
     } else {
         this->swordModuleToNapiObject(env, swordModule, napiObject);
