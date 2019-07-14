@@ -31,7 +31,6 @@ private:
     static Napi::FunctionReference constructor;
 
     Napi::Value refreshRepositoryConfig(const Napi::CallbackInfo& info);
-
     Napi::Value refreshRemoteSources(const Napi::CallbackInfo& info);
     Napi::Value repositoryConfigExisting(const Napi::CallbackInfo& info);
 
@@ -40,7 +39,8 @@ private:
     Napi::Value getRepoModulesByLang(const Napi::CallbackInfo& info);
     Napi::Value getRepoLanguages(const Napi::CallbackInfo& info);
     Napi::Value getRepoTranslationCount(const Napi::CallbackInfo& info);
-    
+    Napi::Value getRepoModule(const Napi::CallbackInfo& info);
+
     Napi::Value getRepoLanguageTranslationCount(const Napi::CallbackInfo& info);
     Napi::Value getAllLocalModules(const Napi::CallbackInfo& info);
     Napi::Value isModuleInUserDir(const Napi::CallbackInfo& info);

@@ -46,6 +46,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getRepoLanguages", &NodeSwordInterface::getRepoLanguages),
         InstanceMethod("getRepoTranslationCount", &NodeSwordInterface::getRepoTranslationCount),
         InstanceMethod("getRepoLanguageTranslationCount", &NodeSwordInterface::getRepoLanguageTranslationCount),
+        InstanceMethod("getRepoModule", &NodeSwordInterface::getRepoModule),
         InstanceMethod("getModuleDescription", &NodeSwordInterface::getModuleDescription),
         InstanceMethod("getLocalModule", &NodeSwordInterface::getLocalModule),
         InstanceMethod("enableMarkup", &NodeSwordInterface::enableMarkup),
@@ -375,6 +376,30 @@ Napi::Value NodeSwordInterface::getRepoLanguageTranslationCount(const Napi::Call
     Napi::Number jsTranslationCount = Napi::Number::New(env, translationCount);
 
     return jsTranslationCount;
+}
+
+Napi::Value NodeSwordInterface::getRepoModule(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() != 1 || !info[0].IsString()) {
+        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
+    }
+
+    Napi::Object napiObject = Napi::Object::New(env);
+    Napi::String moduleName = info[0].As<Napi::String>();
+    SWModule* swordModule = this->_swordFacade->getRepoModule(std::string(moduleName));
+
+    if (swordModule == 0) {
+        stringstream errorMessage;
+        errorMessage << "getRepoModule returned 0 for '" << std::string(moduleName) << "'" << endl;
+        Napi::Error::New(env, errorMessage.str().c_str()).ThrowAsJavaScriptException();
+    } else {
+        this->swordModuleToNapiObject(env, swordModule, napiObject);
+    }
+
+    return napiObject;
 }
 
 Napi::Value NodeSwordInterface::getModuleDescription(const Napi::CallbackInfo& info)

@@ -128,6 +128,16 @@ class NodeSwordInterface {
   }
 
   /**
+   * Returns an object representation of a SWORD module from a repository.
+   *
+   * @param {String} moduleCode - The module code of the SWORD module.
+   * @return {ModuleObject}
+   */
+  getRepoModule(moduleCode) {
+    return this.nativeInterface.getRepoModule(moduleCode);
+  }
+
+  /**
    * Returns all bible modules installed locally.
    *
    * @return {String[]} An array of strings with the module codes for the locally installed bible modules.
