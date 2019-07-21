@@ -234,7 +234,7 @@ void NodeSwordInterface::swordModuleToNapiObject(const Napi::Env& env, SWModule*
     object["location"] = swModule->getConfigEntry("AbsoluteDataPath");
     
     bool moduleInUserDir = this->_swordFacade->isModuleInUserDir(swModule);
-    object["inUserDir"] = Napi::Boolean::New(env, false);
+    object["inUserDir"] = Napi::Boolean::New(env, moduleInUserDir);
 
     if (swModule->getConfigEntry("Direction")) {
         string direction = string(swModule->getConfigEntry("Direction"));
