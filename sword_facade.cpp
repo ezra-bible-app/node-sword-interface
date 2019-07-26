@@ -550,5 +550,5 @@ int SwordFacade::uninstallModule(string moduleName)
 
 string SwordFacade::getSwordVersion()
 {
-    return string(SWVersion::currentVersion.getText());
+    return string(SWORD_VERSION_STR);
 }
