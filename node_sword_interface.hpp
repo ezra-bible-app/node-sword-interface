@@ -54,6 +54,8 @@ private:
     Napi::Value installModule(const Napi::CallbackInfo& info);
     Napi::Value uninstallModule(const Napi::CallbackInfo& info);
 
+    Napi::Value getSwordVersion(const Napi::CallbackInfo& info);
+
     SwordFacade* _swordFacade;
 
     // Functions not exported to js

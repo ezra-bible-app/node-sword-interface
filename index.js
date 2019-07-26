@@ -250,6 +250,13 @@ class NodeSwordInterface {
   isModuleInUserDir(moduleCode) {
     return this.nativeInterface.isModuleInUserDir(moduleCode);
   }
+
+  /**
+   * Returns the version of the SWORD library
+   */  
+  getSwordVersion() {
+    return this.nativeInterface.getSwordVersion();
+  }
 }
 
 module.exports = NodeSwordInterface;

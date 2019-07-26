@@ -73,6 +73,8 @@ public:
     int installModule(std::string repoName, std::string moduleName);
     int uninstallModule(std::string moduleName);
 
+    std::string getSwordVersion();
+
     void enableMarkup() { this->_markupEnabled = true; }
 
 private:

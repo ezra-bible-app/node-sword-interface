@@ -32,6 +32,7 @@
 #include <remotetrans.h>
 #include <versekey.h>
 #include <swlog.h>
+#include <swversion.h>
 
 // Own includes
 #include "sword_facade.hpp"
@@ -547,3 +548,7 @@ int SwordFacade::uninstallModule(string moduleName)
     }
 }
 
+string SwordFacade::getSwordVersion()
+{
+    return string(SWVersion::currentVersion.getText());
+}

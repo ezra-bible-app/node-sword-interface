@@ -53,7 +53,8 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getBookText", &NodeSwordInterface::getBookText),
         InstanceMethod("getBibleText", &NodeSwordInterface::getBibleText),
         InstanceMethod("installModule", &NodeSwordInterface::installModule),
-        InstanceMethod("uninstallModule", &NodeSwordInterface::uninstallModule)
+        InstanceMethod("uninstallModule", &NodeSwordInterface::uninstallModule),
+        InstanceMethod("getSwordVersion", &NodeSwordInterface::getSwordVersion)
     });
 
     constructor = Napi::Persistent(func);
@@ -553,5 +554,13 @@ Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
     NodeSwordInterfaceWorker* worker = new NodeSwordInterfaceWorker(this->_swordFacade, "uninstallModule", { moduleName }, callback);
     worker->Queue();
     return info.Env().Undefined();
+}
+
+Napi::Value NodeSwordInterface::getSwordVersion(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    Napi::String swVersion = Napi::String::New(env, string(this->_swordFacade->getSwordVersion()));
 }
 
