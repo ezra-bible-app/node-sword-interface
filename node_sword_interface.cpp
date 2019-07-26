@@ -562,5 +562,6 @@ Napi::Value NodeSwordInterface::getSwordVersion(const Napi::CallbackInfo& info)
     Napi::HandleScope scope(env);
 
     Napi::String swVersion = Napi::String::New(env, string(this->_swordFacade->getSwordVersion()));
+    return swVersion;
 }
 
