@@ -42,7 +42,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getLocalModule(moduleCode)](#NodeSwordInterface+getLocalModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
     * [.isModuleInUserDir(moduleCode)](#NodeSwordInterface+isModuleInUserDir) ⇒ <code>Boolean</code>
-    * [.getSwordVersion()](#NodeSwordInterface+getSwordVersion)
+    * [.getSwordVersion()](#NodeSwordInterface+getSwordVersion) ⇒ <code>String</code>
 
 <a name="NodeSwordInterface+repositoryConfigExisting"></a>
 
@@ -237,10 +237,11 @@ Checks whether the modules resides in the user directory.
 
 <a name="NodeSwordInterface+getSwordVersion"></a>
 
-### nodeSwordInterface.getSwordVersion()
+### nodeSwordInterface.getSwordVersion() ⇒ <code>String</code>
 Returns the version of the SWORD library
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: <code>String</code> - SWORD library version.  
 <a name="VerseObject"></a>
 
 ## VerseObject : <code>Object</code>

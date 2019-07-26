@@ -253,6 +253,7 @@ class NodeSwordInterface {
 
   /**
    * Returns the version of the SWORD library
+   * @return {String} SWORD library version.
    */  
   getSwordVersion() {
     return this.nativeInterface.getSwordVersion();
