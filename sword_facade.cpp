@@ -550,5 +550,5 @@ int SwordFacade::uninstallModule(string moduleName)
 
 string SwordFacade::getSwordVersion()
 {
-    return string(SWORD_VERSION_STR);
+    return string("1.8.1");
 }
