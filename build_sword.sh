@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # CHECKOUT
-svn co http://crosswire.org/svn/sword/tags/sword-1-8-1/ sword
+git clone https://github.com/bibletime/crosswire-sword-mirror sword
+git -C sword checkout tags/sword-1-8-1
 
 # PATCHES
 case "$(uname -s)" in
