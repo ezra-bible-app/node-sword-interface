@@ -78,6 +78,7 @@ public:
     void enableMarkup() { this->_markupEnabled = true; }
 
 private:
+    int getRepoCount();
     std::vector<std::string> getText(std::string moduleName, std::string key, bool onlyCurrentBook=true);
     sword::InstallSource* getRemoteSource(std::string remoteSourceName);
     std::string getModuleRepo(std::string moduleName);

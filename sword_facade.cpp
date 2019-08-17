@@ -75,15 +75,11 @@ SwordFacade::SwordFacade()
 {
     //SWLog::getSystemLog()->setLogLevel(SWLog::LOG_DEBUG);
     this->_fileSystemHelper.createBasicDirectories();
-
     this->_statusReporter = new SwordStatusReporter();
-    this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), this->_statusReporter);
-    this->_installMgr->setUserDisclaimerConfirmed(true);
 }
 
 SwordFacade::~SwordFacade()
 {
-    delete this->_installMgr;
     delete this->_statusReporter;
 }
 
@@ -97,6 +93,10 @@ void SwordFacade::resetMgr()
         delete this->_mgrForInstall;
     }
 
+    if (this->_installMgr != 0) {
+        delete this->_installMgr;
+    }
+
 #ifdef _WIN32
     this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
     this->_mgr->augmentModules(this->_fileSystemHelper.getSystemSwordDir().c_str());
@@ -105,6 +105,8 @@ void SwordFacade::resetMgr()
 #endif
 
     this->_mgrForInstall = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
+    this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), this->_statusReporter);
+    this->_installMgr->setUserDisclaimerConfirmed(true);
 }
 
 int SwordFacade::refreshRepositoryConfig()
@@ -159,8 +161,28 @@ thread SwordFacade::getRemoteSourceRefreshThread(string remoteSourceName)
     return thread(&SwordFacade::refreshIndividualRemoteSource, this, remoteSourceName);
 }
 
+int SwordFacade::getRepoCount()
+{
+    int repoCount = 0;
+
+    if (this->_installMgr != 0) {
+        for (InstallSourceMap::iterator it = this->_installMgr->sources.begin();
+             it != this->_installMgr->sources.end();
+             ++it) {
+
+            repoCount++;
+        }
+    }
+
+    return repoCount;
+}
+
 vector<string> SwordFacade::getRepoNames()
 {
+    if (this->getRepoCount() == 0) {
+        this->resetMgr();
+    }
+
     vector<string> sourceNames;
 
     for (InstallSourceMap::iterator it = this->_installMgr->sources.begin();
@@ -206,10 +228,17 @@ vector<SWModule*> SwordFacade::getAllRemoteModules()
 SWModule* SwordFacade::getRepoModule(string moduleName)
 {
     vector<SWModule*> allModules = this->getAllRemoteModules();
+    //cout << "Got " << allModules.size() << " modules!" << endl;
+
     for (unsigned int i = 0; i < allModules.size(); i++) {
       SWModule* currentModule = allModules[i];
-      if (string(currentModule->getName()) == moduleName) {
-          return currentModule;
+      if (currentModule != 0 && currentModule->getName() != 0) {
+          string currentModuleName = string(currentModule->getName());
+          if (currentModuleName == moduleName) {
+              return currentModule;
+          }
+      } else {
+          cout << "Could not access module at index " << i << endl;
       }
     }
 
