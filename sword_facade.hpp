@@ -86,6 +86,7 @@ private:
     std::thread getRemoteSourceRefreshThread(std::string remoteSourceName);
     void resetMgr();
 
+    std::string getVerseText(sword::SWModule* module);
     std::string getFilteredVerseText(const std::string& verseText);
     std::string rtrim(const std::string& s);
 

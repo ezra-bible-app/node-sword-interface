@@ -385,7 +385,7 @@ string SwordFacade::rtrim(const string& s)
     static const string WHITESPACE = " \n\r\t\f\v";
     size_t end = s.find_last_not_of(WHITESPACE);
     return (end == string::npos) ? "" : s.substr(0, end + 1);
-} 
+}
 
 string SwordFacade::getFilteredVerseText(const string& verseText)
 {
@@ -447,6 +447,19 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     return filteredText;
 }
 
+string SwordFacade::getVerseText(sword::SWModule* module)
+{
+    string verseText;
+    if (this->_markupEnabled) {
+        verseText = rtrim(string(module->getRawEntry()));
+    } else {
+        verseText = rtrim(string(module->stripText()));
+    }
+
+    string filteredText = this->getFilteredVerseText(verseText);
+    return filteredText;
+}
+
 vector<string> SwordFacade::getBibleText(string moduleName)
 {
     string key = "Gen 1:1";
@@ -486,40 +499,22 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
             bool firstVerseInBook = false;
 
             // Stop, once the newly read key is the same as the previously read key
-            if (strcmp(module->getKey()->getShortText(), lastKey) == 0) {
-                break;
-            }
+            if (strcmp(module->getKey()->getShortText(), lastKey) == 0) { break; }
+            // Stop, once the newly ready key is a different book than the previously read key
+            if (onlyCurrentBook && (index > 0) && (currentBookName != lastBookName)) { break; }
 
             if (currentBookName != lastBookName) {
                 currentBookExisting = true;
                 firstVerseInBook = true;
             }
 
-            if (onlyCurrentBook) {
-                // Stop, once the newly ready key is a different book than the previously read key
-                if ((index > 0) && (currentBookName != lastBookName)) {
-                    break;
-                }
-            }
-
-            string verseText;
-
-            if (this->_markupEnabled) {
-                verseText = rtrim(string(module->getRawEntry()));
-            } else {
-                verseText = rtrim(string(module->stripText()));
-            }
-
-            string filteredText = this->getFilteredVerseText(verseText);
-
+            string verseText = this->getVerseText(module);
             // If the current verse does not have any content and if it is the first verse in this book
             // we assume that the book is not existing.
-            if (filteredText.length() == 0 && firstVerseInBook) {
-                currentBookExisting = false;
-            }
+            if (verseText.length() == 0 && firstVerseInBook) { currentBookExisting = false; }
 
             if (currentBookExisting) {
-              currentVerse << module->getKey()->getShortText() << "|" << filteredText;
+              currentVerse << module->getKey()->getShortText() << "|" << verseText;
               text.push_back(currentVerse.str());
             }
 
