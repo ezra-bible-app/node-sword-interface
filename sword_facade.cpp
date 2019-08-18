@@ -468,6 +468,7 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
     char lastKey[255];
     unsigned int index = 0;
     string lastBookName;
+    bool currentBookExisting = true;
 
     // This holds the text that we will return
     vector<string> text;
@@ -482,10 +483,16 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
             stringstream currentVerse;
             VerseKey currentVerseKey(module->getKey());
             string currentBookName(currentVerseKey.getBookAbbrev());
+            bool firstVerseInBook = false;
 
             // Stop, once the newly read key is the same as the previously read key
             if (strcmp(module->getKey()->getShortText(), lastKey) == 0) {
                 break;
+            }
+
+            if (currentBookName != lastBookName) {
+                currentBookExisting = true;
+                firstVerseInBook = true;
             }
 
             if (onlyCurrentBook) {
@@ -504,8 +511,17 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
             }
 
             string filteredText = this->getFilteredVerseText(verseText);
-            currentVerse << module->getKey()->getShortText() << "|" << filteredText;
-            text.push_back(currentVerse.str());
+
+            // If the current verse does not have any content and if it is the first verse in this book
+            // we assume that the book is not existing.
+            if (filteredText.length() == 0 && firstVerseInBook) {
+                currentBookExisting = false;
+            }
+
+            if (currentBookExisting) {
+              currentVerse << module->getKey()->getShortText() << "|" << filteredText;
+              text.push_back(currentVerse.str());
+            }
 
             strcpy(lastKey, module->getKey()->getShortText());
             lastBookName = currentBookName;
