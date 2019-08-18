@@ -504,11 +504,8 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
             }
 
             string filteredText = this->getFilteredVerseText(verseText);
-
-            if (filteredText.length() > 0) {
-              currentVerse << module->getKey()->getShortText() << "|" << filteredText;
-              text.push_back(currentVerse.str());
-            }
+            currentVerse << module->getKey()->getShortText() << "|" << filteredText;
+            text.push_back(currentVerse.str());
 
             strcpy(lastKey, module->getKey()->getShortText());
             lastBookName = currentBookName;
