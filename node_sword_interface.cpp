@@ -562,18 +562,22 @@ Napi::Value NodeSwordInterface::getSwordTranslation(const Napi::CallbackInfo& in
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    if (info.Length() != 2) {
+    if (info.Length() != 3) {
       Napi::TypeError::New(env, "Expected 2 parameters!").ThrowAsJavaScriptException();
     } else if (!info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument (originalString)").ThrowAsJavaScriptException();
+        Napi::TypeError::New(env, "String expected as first argument (configDir)").ThrowAsJavaScriptException();
     } else if (!info[1].IsString()) {
-        Napi::TypeError::New(env, "String expected as second argument (localeCode)").ThrowAsJavaScriptException();
+        Napi::TypeError::New(env, "String expected as second argument (originalString)").ThrowAsJavaScriptException();
+    } else if (!info[2].IsString()) {
+        Napi::TypeError::New(env, "String expected as third argument (localeCode)").ThrowAsJavaScriptException();
     }
 
-    Napi::String originalString = info[0].As<Napi::String>();
-    Napi::String localeCode = info[1].As<Napi::String>();
+    Napi::String configDir = info[0].As<Napi::String>();
+    Napi::String originalString = info[1].As<Napi::String>();
+    Napi::String localeCode = info[2].As<Napi::String>();
 
     Napi::String translation = Napi::String::New(env, this->_swordFacade->getSwordTranslation(
+        string(configDir),
         string(originalString),
         string(localeCode)
     ));

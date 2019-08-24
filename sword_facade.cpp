@@ -586,10 +586,10 @@ int SwordFacade::uninstallModule(string moduleName)
     }
 }
 
-string SwordFacade::getSwordTranslation(string originalString, string localeCode)
+string SwordFacade::getSwordTranslation(string configPath, string originalString, string localeCode)
 {
-    LocaleMgr* localeMgr = LocaleMgr::getSystemLocaleMgr();
-    string translation = string(localeMgr->translate(originalString.c_str(), localeCode.c_str()));
+    LocaleMgr localeMgr(configPath.c_str());
+    string translation = string(localeMgr.translate(originalString.c_str(), localeCode.c_str()));
     return translation;
 }
 

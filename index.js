@@ -16,6 +16,7 @@
    along with node-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
+const path = require('path');
 const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.node');
 
 /**
@@ -258,7 +259,8 @@ class NodeSwordInterface {
    * @param {String} localeCode 
    */
   getSwordTranslation(originalString, localeCode) {
-    return this.nativeInterface.getSwordTranslation(originalString, localeCode);
+    var localesDir = path.join(__dirname, './locales.d');
+    return this.nativeInterface.getSwordTranslation(localesDir, originalString, localeCode);
   }
 
   /**
