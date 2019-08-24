@@ -59,11 +59,10 @@ Before installing node-sword-interface you need to make sure that the following 
 - ICU library with development headers
 - CURL library with development headers
 - CMake (for building the SWORD library)
-- Subversion (for retrieving the SWORD sources)
 
 To install the dependencies issue the following command on a Debian/Ubuntu based distribution:
     
-    sudo apt-get install build-essential nodejs libsqlite3-0 libcurl4-gnutls-dev libicu-dev pkg-config cmake subversion
+    sudo apt-get install build-essential nodejs libsqlite3-0 libcurl4-gnutls-dev libicu-dev pkg-config cmake
 
 Once the dependencies are available you can install and build the latest node-sword-interface release from [npmjs.com](https://www.npmjs.com/package/node-sword-interface) by issuing the following command:
 
