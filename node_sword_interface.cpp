@@ -54,6 +54,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getBibleText", &NodeSwordInterface::getBibleText),
         InstanceMethod("installModule", &NodeSwordInterface::installModule),
         InstanceMethod("uninstallModule", &NodeSwordInterface::uninstallModule),
+        InstanceMethod("getSwordTranslation", &NodeSwordInterface::getSwordTranslation),
         InstanceMethod("getSwordVersion", &NodeSwordInterface::getSwordVersion)
     });
 
@@ -556,12 +557,36 @@ Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
     return info.Env().Undefined();
 }
 
+Napi::Value NodeSwordInterface::getSwordTranslation(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() != 2) {
+      Napi::TypeError::New(env, "Expected 2 parameters!").ThrowAsJavaScriptException();
+    } else if (!info[0].IsString()) {
+        Napi::TypeError::New(env, "String expected as first argument (originalString)").ThrowAsJavaScriptException();
+    } else if (!info[1].IsString()) {
+        Napi::TypeError::New(env, "String expected as second argument (localeCode)").ThrowAsJavaScriptException();
+    }
+
+    Napi::String originalString = info[0].As<Napi::String>();
+    Napi::String localeCode = info[1].As<Napi::String>();
+
+    Napi::String translation = Napi::String::New(env, this->_swordFacade->getSwordTranslation(
+        string(originalString),
+        string(localeCode)
+    ));
+
+    return translation;
+}
+
 Napi::Value NodeSwordInterface::getSwordVersion(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    Napi::String swVersion = Napi::String::New(env, string(this->_swordFacade->getSwordVersion()));
+    Napi::String swVersion = Napi::String::New(env, this->_swordFacade->getSwordVersion());
     return swVersion;
 }
 

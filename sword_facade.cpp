@@ -33,6 +33,7 @@
 #include <versekey.h>
 #include <swlog.h>
 #include <swversion.h>
+#include <localemgr.h>
 
 // Own includes
 #include "sword_facade.hpp"
@@ -585,7 +586,15 @@ int SwordFacade::uninstallModule(string moduleName)
     }
 }
 
+string SwordFacade::getSwordTranslation(string originalString, string localeCode)
+{
+    LocaleMgr* localeMgr = LocaleMgr::getSystemLocaleMgr();
+    string translation = string(localeMgr->translate(originalString.c_str(), localeCode.c_str()));
+    return translation;
+}
+
 string SwordFacade::getSwordVersion()
 {
     return string("1.8.1");
 }
+

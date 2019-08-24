@@ -42,6 +42,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getLocalModule(moduleCode)](#NodeSwordInterface+getLocalModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
     * [.isModuleInUserDir(moduleCode)](#NodeSwordInterface+isModuleInUserDir) ⇒ <code>Boolean</code>
+    * [.getSwordTranslation(originalString, localeCode)](#NodeSwordInterface+getSwordTranslation)
     * [.getSwordVersion()](#NodeSwordInterface+getSwordVersion) ⇒ <code>String</code>
 
 <a name="NodeSwordInterface+repositoryConfigExisting"></a>
@@ -234,6 +235,18 @@ Checks whether the modules resides in the user directory.
 | Param | Type | Description |
 | --- | --- | --- |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
+
+<a name="NodeSwordInterface+getSwordTranslation"></a>
+
+### nodeSwordInterface.getSwordTranslation(originalString, localeCode)
+Uses the Sword LocaleMgr to translate a string. This can be used to translate book names for example.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+
+| Param | Type |
+| --- | --- |
+| originalString | <code>String</code> | 
+| localeCode | <code>String</code> | 
 
 <a name="NodeSwordInterface+getSwordVersion"></a>
 

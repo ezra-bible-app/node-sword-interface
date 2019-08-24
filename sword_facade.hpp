@@ -34,6 +34,7 @@ namespace sword {
     class SWModule;
     class SWMgr;
     class SWConfig;
+    class LocaleMgr;
 };
 
 class SwordStatusReporter : public sword::StatusReporter
@@ -72,6 +73,8 @@ public:
     int installModule(std::string moduleName);
     int installModule(std::string repoName, std::string moduleName);
     int uninstallModule(std::string moduleName);
+
+    std::string getSwordTranslation(std::string originalString, std::string localeCode);
 
     std::string getSwordVersion();
 

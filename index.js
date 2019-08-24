@@ -252,6 +252,16 @@ class NodeSwordInterface {
   }
 
   /**
+   * Uses the Sword LocaleMgr to translate a string. This can be used to translate book names for example.
+   * 
+   * @param {String} originalString 
+   * @param {String} localeCode 
+   */
+  getSwordTranslation(originalString, localeCode) {
+    return this.nativeInterface.getSwordTranslation(originalString, localeCode);
+  }
+
+  /**
    * Returns the version of the SWORD library
    * @return {String} SWORD library version.
    */  
