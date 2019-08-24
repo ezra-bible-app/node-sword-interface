@@ -96,6 +96,7 @@ private:
     sword::SWMgr* _mgr = 0;
     sword::SWMgr* _mgrForInstall = 0;
     sword::InstallMgr* _installMgr = 0;
+    sword::LocaleMgr* _localeMgr = 0;
     SwordStatusReporter* _statusReporter = 0;
     FileSystemHelper _fileSystemHelper;
 
