@@ -38,59 +38,59 @@
             "node_sword_interface.cpp",
             "binding.cpp"
         ],
-		"conditions":[
-			["OS=='linux'", {
-			    'include_dirs': [
-					"<!@(node -p \"require('node-addon-api').include\")",
-					"sword/include"
-				],
-				"libraries": [
-					'<(module_root_dir)/sword_build/libsword.a',
-					'<!@(pkg-config --libs libcurl)',
+        "conditions":[
+            ["OS=='linux'", {
+                'include_dirs': [
+                    "<!@(node -p \"require('node-addon-api').include\")",
+                    "sword/include"
+                ],
+                "libraries": [
+                    '<(module_root_dir)/sword_build/libsword.a',
+                    '<!@(pkg-config --libs libcurl)',
                     '<!@(pkg-config --libs icu-uc icu-io)'
-				],
-				"dependencies": [
-					 "<!(node -p \"require('node-addon-api').gyp\")",
-					 'sword'
-				 ]
-			}],
-			["OS=='mac'", {
-			    'include_dirs': [
-					"<!@(node -p \"require('node-addon-api').include\")",
-					"sword/include"
-				],
-				"libraries": [
-					'<(module_root_dir)/sword_build/libsword.a',
-					'<!@(pkg-config --libs libcurl)'
-				],
-				"dependencies": [
-					 "<!(node -p \"require('node-addon-api').gyp\")",
-					 'sword'
-				]
-			}],
-			["OS=='win'", {
-			    'include_dirs': [
-					"<!@(node -p \"require('node-addon-api').include\")",
-					"<(module_root_dir)/build/sword-win32/include"
-				],
-				"libraries": [
+                ],
+                "dependencies": [
+                    "<!(node -p \"require('node-addon-api').gyp\")",
+                    'sword'
+                ]
+            }],
+            ["OS=='mac'", {
+                'include_dirs': [
+                    "<!@(node -p \"require('node-addon-api').include\")",
+                    "sword/include"
+                ],
+                "libraries": [
+                    '<(module_root_dir)/sword_build/libsword.a',
+                    '<!@(pkg-config --libs libcurl)'
+                ],
+                "dependencies": [
+                    "<!(node -p \"require('node-addon-api').gyp\")",
+                    'sword'
+                ]
+            }],
+            ["OS=='win'", {
+                'include_dirs': [
+                    "<!@(node -p \"require('node-addon-api').include\")",
+                    "<(module_root_dir)/build/sword-win32/include"
+                ],
+                "libraries": [
                     '-l<(module_root_dir)/build/sword-win32/lib/libsword.lib',
-					'-l<(module_root_dir)/build/sword-win32/lib/icuuc.lib',
-					'-l<(module_root_dir)/build/sword-win32/lib/icuin.lib',
-					'-l<(module_root_dir)/build/sword-win32/lib/icudt.lib',
-					'-l<(module_root_dir)/build/sword-win32/lib/libbz2.lib',
-					'-l<(module_root_dir)/build/sword-win32/lib/liblzma.lib',
-					'-l<(module_root_dir)/build/sword-win32/lib/libcurl_imp.lib',
-					'-lWldap32.lib',
-					'-lWs2_32.lib',
-					'-lcrypt32.lib',
-					'-lNormaliz.lib'
-				],
-				"dependencies": [
-					 'sword'
-				],
-				'defines': [ '_HAS_EXCEPTIONS=1' ]
-			}]
+                    '-l<(module_root_dir)/build/sword-win32/lib/icuuc.lib',
+                    '-l<(module_root_dir)/build/sword-win32/lib/icuin.lib',
+                    '-l<(module_root_dir)/build/sword-win32/lib/icudt.lib',
+                    '-l<(module_root_dir)/build/sword-win32/lib/libbz2.lib',
+                    '-l<(module_root_dir)/build/sword-win32/lib/liblzma.lib',
+                    '-l<(module_root_dir)/build/sword-win32/lib/libcurl_imp.lib',
+                    '-lWldap32.lib',
+                    '-lWs2_32.lib',
+                    '-lcrypt32.lib',
+                    '-lNormaliz.lib'
+                ],
+                "dependencies": [
+                    'sword'
+                ],
+                'defines': [ '_HAS_EXCEPTIONS=1' ]
+            }]
         ], 
         'dependencies': [
             "<!(node -p \"require('node-addon-api').gyp\")"
