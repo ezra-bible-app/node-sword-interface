@@ -77,6 +77,7 @@ SwordFacade::SwordFacade()
     //SWLog::getSystemLog()->setLogLevel(SWLog::LOG_DEBUG);
     this->_fileSystemHelper.createBasicDirectories();
     this->_statusReporter = new SwordStatusReporter();
+    this->resetMgr();
 }
 
 SwordFacade::~SwordFacade()
