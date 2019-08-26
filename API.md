@@ -40,6 +40,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
     * [.getBookText(moduleCode, bookCode)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
+    * [.getModuleSearchResults(moduleCode, searchTerm)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
     * [.getLocalModule(moduleCode)](#NodeSwordInterface+getLocalModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
     * [.isModuleInUserDir(moduleCode)](#NodeSwordInterface+isModuleInUserDir) ⇒ <code>Boolean</code>
     * [.getSwordTranslation(originalString, localeCode)](#NodeSwordInterface+getSwordTranslation)
@@ -214,6 +215,18 @@ Returns the bible text of a module.
 | --- | --- | --- |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
 
+<a name="NodeSwordInterface+getModuleSearchResults"></a>
+
+### nodeSwordInterface.getModuleSearchResults(moduleCode, searchTerm) ⇒ <code>Promise</code>
+Returns the results of a module search.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleCode | <code>String</code> | The module code of the SWORD module. |
+| searchTerm | <code>String</code> | The term to search for. |
+
 <a name="NodeSwordInterface+getLocalModule"></a>
 
 ### nodeSwordInterface.getLocalModule(moduleCode) ⇒ [<code>ModuleObject</code>](#ModuleObject)
@@ -265,6 +278,7 @@ An object representation of a bible verse.
 
 | Name | Type | Description |
 | --- | --- | --- |
+| moduleCode | <code>String</code> | The name/code of the SWORD module |
 | bibleBookShortTitle | <code>String</code> | The short title of the verses's bible book |
 | chapter | <code>String</code> | The chapter number |
 | verseNr | <code>String</code> | The verse number |

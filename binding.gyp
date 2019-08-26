@@ -35,6 +35,7 @@
         "sources": [
             "file_system_helper.cpp",
             "sword_facade.cpp",
+            "napi_sword_helper.cpp",
             "node_sword_interface.cpp",
             "binding.cpp"
         ],

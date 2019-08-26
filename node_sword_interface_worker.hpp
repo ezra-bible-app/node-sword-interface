@@ -22,40 +22,88 @@
 #include <napi.h>
 #include <iostream>
 
+#include "napi_sword_helper.hpp"
+#include "sword_facade.hpp"
+
 using namespace std;
 
-class SwordFacade;
-
-class NodeSwordInterfaceWorker : public Napi::AsyncWorker {
+class BaseNodeSwordInterfaceWorker : public Napi::AsyncWorker {
 public:
-    NodeSwordInterfaceWorker(SwordFacade* facade, std::string operation, std::vector<std::string> args, const Napi::Function& callback)
-        : Napi::AsyncWorker(callback), _facade(facade), _operation(operation), _args(args) {}
+    BaseNodeSwordInterfaceWorker(SwordFacade* facade, const Napi::Function& callback)
+        : Napi::AsyncWorker(callback), _facade(facade) {}
 
-    ~NodeSwordInterfaceWorker() {}
+    virtual ~BaseNodeSwordInterfaceWorker() {}
 
-    // This code will be executed on the worker thread
-    void Execute() {
-      if (this->_operation == "refreshRepositoryConfig") {
-        this->_facade->refreshRepositoryConfig();
-      } else if (this->_operation == "refreshRemoteSources") {
-        bool force = (this->_args[0] == "true");
-        this->_facade->refreshRemoteSources(force);
-      } else if (this->_operation == "installModule") {
-        this->_facade->installModule(this->_args[0]);
-      } else if (this->_operation == "uninstallModule") {
-        this->_facade->uninstallModule(this->_args[0]);
-      }
-    }
-
-    void OnOK() {
+    virtual void OnOK() {
         Napi::HandleScope scope(Env());
         Callback().Call({Env().Null()});
     }
 
+protected:
+    SwordFacade* _facade;
+};
+
+class RefreshRepositoryConfigWorker : public BaseNodeSwordInterfaceWorker {
+public:
+    RefreshRepositoryConfigWorker(SwordFacade* facade, const Napi::Function& callback)
+        : BaseNodeSwordInterfaceWorker(facade, callback) {}
+
+    void Execute() { this->_facade->refreshRepositoryConfig(); }
+};
+
+class RefreshRemoteSourcesWorker : public BaseNodeSwordInterfaceWorker {
+public:
+    RefreshRemoteSourcesWorker(SwordFacade* facade, const Napi::Function& callback, bool forced)
+        : BaseNodeSwordInterfaceWorker(facade, callback), _forced(forced) {}
+
+    void Execute() { this->_facade->refreshRemoteSources(this->_forced); }
 private:
-    SwordFacade* _facade = 0;
-    std::string _operation;
-    std::vector<std::string> _args;
+    bool _forced;
+};
+
+class GetModuleSearchResultWorker : public BaseNodeSwordInterfaceWorker {
+public:
+    GetModuleSearchResultWorker(SwordFacade* facade, const Napi::Function& callback, std::string moduleName, std::string searchTerm)
+        : BaseNodeSwordInterfaceWorker(facade, callback), _moduleName(moduleName), _searchTerm(searchTerm) {}
+
+    void Execute() { 
+        this->_stdSearchResults = this->_facade->getModuleSearchResults(this->_moduleName, this->_searchTerm);
+    }
+    
+    void OnOK() {
+        Napi::HandleScope scope(this->Env());
+        this->_napiSearchResults = this->_napiSwordHelper.getNapiVerseObjectsFromRawList(this->Env(), this->_moduleName, this->_stdSearchResults);
+        Callback().Call({ this->_napiSearchResults });
+    }
+
+private:
+    NapiSwordHelper _napiSwordHelper;
+    std::vector<std::string> _stdSearchResults;
+    Napi::Array _napiSearchResults;
+    std::string _moduleName;
+    std::string _searchTerm;
+}; 
+
+class InstallModuleWorker : public BaseNodeSwordInterfaceWorker {
+public:
+    InstallModuleWorker(SwordFacade* facade, const Napi::Function& callback, std::string moduleName)
+        : BaseNodeSwordInterfaceWorker(facade, callback), _moduleName(moduleName) {}
+
+    void Execute() { this->_facade->installModule(this->_moduleName); }
+
+private:
+    std::string _moduleName;
+};
+
+class UninstallModuleWorker : public BaseNodeSwordInterfaceWorker {
+public:
+    UninstallModuleWorker(SwordFacade* facade, const Napi::Function& callback, std::string moduleName)
+        : BaseNodeSwordInterfaceWorker(facade, callback), _moduleName(moduleName) {}
+
+    void Execute() { this->_facade->uninstallModule(this->_moduleName); }
+
+private:
+    std::string _moduleName;
 };
 
 #endif // _NODE_SWORD_INTERFACE_WORKER

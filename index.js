@@ -23,6 +23,7 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
 * An object representation of a bible verse.
 * @typedef VerseObject
 * @type {Object}
+* @property {String} moduleCode - The name/code of the SWORD module
 * @property {String} bibleBookShortTitle - The short title of the verses's bible book
 * @property {String} chapter - The chapter number
 * @property {String} verseNr - The verse number
@@ -230,6 +231,21 @@ class NodeSwordInterface {
    */
   getBibleText(moduleCode) {
     return this.nativeInterface.getBibleText(moduleCode);
+  }
+
+  /**
+   * Returns the results of a module search.
+   *
+   * @param {String} moduleCode - The module code of the SWORD module.
+   * @param {String} searchTerm - The term to search for.
+   * @return {Promise}
+   */
+  getModuleSearchResults(moduleCode, searchTerm) {
+    return new Promise(resolve => {
+      this.nativeInterface.getModuleSearchResults(moduleCode, searchTerm, function(searchResults) {
+        resolve(searchResults);
+      });
+    });
   }
 
   /**

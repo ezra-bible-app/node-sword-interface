@@ -18,6 +18,7 @@
 
 // System includes
 #include <stdlib.h>
+#include <regex.h>
 
 // STD C++ includes
 #include <iostream>
@@ -382,11 +383,19 @@ bool SwordFacade::isModuleInUserDir(string moduleName)
     return this->isModuleInUserDir(module);
 }
 
-string SwordFacade::rtrim(const string& s)
+void SwordFacade::rtrim(string& s, const string& delimiters )
 {
-    static const string WHITESPACE = " \n\r\t\f\v";
-    size_t end = s.find_last_not_of(WHITESPACE);
-    return (end == string::npos) ? "" : s.substr(0, end + 1);
+   s.erase( s.find_last_not_of( delimiters ) + 1 );
+}
+ 
+void SwordFacade::ltrim(string& s,  const string& delimiters )
+{
+   s.erase( 0, s.find_first_not_of( delimiters ) );
+}
+ 
+void SwordFacade::trim(string& s, const string& delimiters )
+{
+    s.erase( s.find_last_not_of( delimiters ) + 1 ).erase( 0, s.erase( s.find_last_not_of( delimiters ) + 1 ).find_first_not_of( delimiters ) );
 }
 
 string SwordFacade::getFilteredVerseText(const string& verseText)
@@ -449,16 +458,21 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     return filteredText;
 }
 
-string SwordFacade::getVerseText(sword::SWModule* module)
+string SwordFacade::getVerseText(sword::SWModule* module, bool forceNoMarkup)
 {
     string verseText;
-    if (this->_markupEnabled) {
-        verseText = rtrim(string(module->getRawEntry()));
-    } else {
-        verseText = rtrim(string(module->stripText()));
-    }
+    string filteredText;
 
-    string filteredText = this->getFilteredVerseText(verseText);
+    if (this->_markupEnabled && !forceNoMarkup) {
+        verseText = string(module->getRawEntry());
+        trim(verseText);
+        filteredText = this->getFilteredVerseText(verseText);
+    } else {
+        verseText = string(module->stripText());
+        trim(verseText);
+        filteredText = verseText;
+    }
+    
     return filteredText;
 }
 
@@ -489,7 +503,7 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
     vector<string> text;
 
     if (module == 0) {
-      cout << "getLocalModule returned zero pointer for " << moduleName << endl;
+        cout << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
         module->setKey(key.c_str());
         // Filter used to get rid of some tags appearing in the GerSchm module
@@ -516,8 +530,8 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
             if (verseText.length() == 0 && firstVerseInBook) { currentBookExisting = false; }
 
             if (currentBookExisting) {
-              currentVerse << module->getKey()->getShortText() << "|" << verseText;
-              text.push_back(currentVerse.str());
+                currentVerse << module->getKey()->getShortText() << "|" << verseText;
+                text.push_back(currentVerse.str());
             }
 
             strcpy(lastKey, module->getKey()->getShortText());
@@ -528,6 +542,53 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
     }
 
     return text;
+}
+
+vector<string> SwordFacade::getModuleSearchResults(string moduleName, string searchTerm)
+{
+    SWModule* module = this->getLocalModule(moduleName);
+	ListKey listkey;
+	ListKey *scope = 0;
+
+    // FROM swmodule.h
+	/*
+	 *			>=0 - regex; (for backward compat, if > 0 then used as additional REGEX FLAGS)
+	 *			-1  - phrase
+	 *			-2  - multiword
+	 *			-3  - entryAttrib (eg. Word//Lemma./G1234/)	 (Lemma with dot means check components (Lemma.[1-9]) also)
+	 *			-4  - Lucene
+	 *			-5  - multilemma window; set 'flags' param to window size (NOT DONE)
+	 */
+    char SEARCH_TYPE = -2;
+    int flags = 0
+    // for case insensitivity
+    | REG_ICASE
+    // for use with entryAttrib search type to match whole entry to value, e.g., G1234 and not G12345
+    //| SEARCHFLAG_MATCHWHOLEENTRY
+    ;
+
+    // This holds the text that we will return
+    vector<string> searchResults;
+
+    if (module == 0) {
+        cout << "getLocalModule returned zero pointer for " << moduleName << endl;
+    } else {
+        listkey = module->search(searchTerm.c_str(), SEARCH_TYPE, flags, scope, 0);
+
+        while (!listkey.popError()) {
+            stringstream currentVerse;
+            module->setKey(listkey.getElement());
+
+            bool forceNoMarkup = true;
+            string verseText = this->getVerseText(module, forceNoMarkup);
+            currentVerse << module->getKey()->getShortText() << "|" << verseText;
+            searchResults.push_back(currentVerse.str());
+
+            listkey++;
+	    }
+    }
+
+    return searchResults;
 }
 
 int SwordFacade::installModule(string moduleName)
@@ -596,6 +657,23 @@ string SwordFacade::getSwordTranslation(string configPath, string originalString
     
     string translation = string(this->_localeMgr->translate(originalString.c_str(), localeCode.c_str()));
     return translation;
+}
+
+bool SwordFacade::moduleHasGlobalOption(SWModule* module, string globalOption)
+{
+    bool hasGlobalOption = false;
+    ConfigEntMap::const_iterator it = module->getConfig().lower_bound("GlobalOptionFilter");
+    ConfigEntMap::const_iterator end = module->getConfig().upper_bound("GlobalOptionFilter");
+
+    for(; it !=end; ++it) {
+        string currentOption = string(it->second.c_str());
+        if (currentOption.find(globalOption) != string::npos) {
+            hasGlobalOption = true;
+            break;
+        }
+    }
+
+    return hasGlobalOption;
 }
 
 string SwordFacade::getSwordVersion()

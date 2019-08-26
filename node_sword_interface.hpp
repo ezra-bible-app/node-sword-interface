@@ -20,7 +20,9 @@
 #define _NODE_SWORD_INTERFACE
 
 #include <napi.h>
-#include "sword_facade.hpp"
+
+class SwordFacade;
+class NapiSwordHelper;
 
 class NodeSwordInterface : public Napi::ObjectWrap<NodeSwordInterface> {
 public:
@@ -50,22 +52,16 @@ private:
     Napi::Value enableMarkup(const Napi::CallbackInfo& info);
     Napi::Value getBookText(const Napi::CallbackInfo& info);
     Napi::Value getBibleText(const Napi::CallbackInfo& info);
+    Napi::Value getModuleSearchResults(const Napi::CallbackInfo& info);
 
     Napi::Value installModule(const Napi::CallbackInfo& info);
     Napi::Value uninstallModule(const Napi::CallbackInfo& info);
 
     Napi::Value getSwordTranslation(const Napi::CallbackInfo& info);
-
     Napi::Value getSwordVersion(const Napi::CallbackInfo& info);
 
+    NapiSwordHelper* _napiSwordHelper;
     SwordFacade* _swordFacade;
-
-    // Functions not exported to js
-    bool moduleHasGlobalOption(sword::SWModule* module, std::string globalOption);
-    Napi::Array getNapiVerseObjectsFromRawList(const Napi::Env& env, std::vector<std::string> verses);
-    void swordModuleToNapiObject(const Napi::Env& env, sword::SWModule* swModule, Napi::Object& object);
-    void verseTextToNapiObject(std::string& rawVerse, unsigned int absoluteVerseNr, Napi::Object& object);
-    std::vector<std::string> split(const std::string& s, char separator);
 };
 
 #endif // _NODE_SWORD_INTERFACE

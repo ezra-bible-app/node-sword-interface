@@ -69,16 +69,18 @@ public:
     bool isModuleInUserDir(sword::SWModule* module);
     std::vector<std::string> getBibleText(std::string moduleName);
     std::vector<std::string> getBookText(std::string moduleName, std::string bookCode);
+    std::vector<std::string> getModuleSearchResults(std::string moduleName, std::string searchTerm);
 
     int installModule(std::string moduleName);
     int installModule(std::string repoName, std::string moduleName);
     int uninstallModule(std::string moduleName);
 
     std::string getSwordTranslation(std::string configPath, std::string originalString, std::string localeCode);
-
     std::string getSwordVersion();
 
     void enableMarkup() { this->_markupEnabled = true; }
+
+    bool moduleHasGlobalOption(sword::SWModule* module, std::string globalOption);
 
 private:
     int getRepoCount();
@@ -89,9 +91,12 @@ private:
     std::thread getRemoteSourceRefreshThread(std::string remoteSourceName);
     void resetMgr();
 
-    std::string getVerseText(sword::SWModule* module);
+    std::string getVerseText(sword::SWModule* module, bool forceNoMarkup=false);
     std::string getFilteredVerseText(const std::string& verseText);
-    std::string rtrim(const std::string& s);
+
+    void rtrim(std::string& s, const std::string& delimiters = " \f\n\r\t\v" );
+    void ltrim(std::string& s,  const std::string& delimiters = " \f\n\r\t\v" );
+    void trim(std::string& s, const std::string& delimiters = " \f\n\r\t\v" );
 
     sword::SWMgr* _mgr = 0;
     sword::SWMgr* _mgrForInstall = 0;
