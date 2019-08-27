@@ -14,6 +14,7 @@ node-sword-interface focusses on discovery, installation/removal and text loadin
 - Get information about a bible module
 - Get the text of a bible book
 - Get the text of the whole bible
+- Search within a bible module
 
 ## Example
 
