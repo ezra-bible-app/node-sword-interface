@@ -21,6 +21,7 @@
 
 #include <napi.h>
 #include <iostream>
+#include <mutex>
 
 #include "napi_sword_helper.hpp"
 #include "sword_facade.hpp"
@@ -61,13 +62,17 @@ private:
     bool _forced;
 };
 
+static std::mutex searchMutex;
+
 class GetModuleSearchResultWorker : public BaseNodeSwordInterfaceWorker {
 public:
     GetModuleSearchResultWorker(SwordFacade* facade, const Napi::Function& callback, std::string moduleName, std::string searchTerm)
         : BaseNodeSwordInterfaceWorker(facade, callback), _moduleName(moduleName), _searchTerm(searchTerm) {}
 
-    void Execute() { 
+    void Execute() {
+        searchMutex.lock();
         this->_stdSearchResults = this->_facade->getModuleSearchResults(this->_moduleName, this->_searchTerm);
+        searchMutex.unlock();
     }
     
     void OnOK() {
