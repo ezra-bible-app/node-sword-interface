@@ -544,7 +544,7 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
     return text;
 }
 
-vector<string> SwordFacade::getModuleSearchResults(string moduleName, string searchTerm)
+vector<string> SwordFacade::getModuleSearchResults(string moduleName, string searchTerm, bool isPhrase, bool isCaseSensitive)
 {
     SWModule* module = this->getLocalModule(moduleName);
 	ListKey listkey;
@@ -560,12 +560,19 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName, string sea
 	 *			-5  - multilemma window; set 'flags' param to window size (NOT DONE)
 	 */
     char SEARCH_TYPE = -2;
-    int flags = 0
-    // for case insensitivity
-    | REG_ICASE
+    if (isPhrase) {
+        SEARCH_TYPE = -1;
+    }
+
+    int flags = 0;
+
+    if (!isCaseSensitive) {
+        // for case insensitivity
+        flags |= REG_ICASE;
+    }
+
     // for use with entryAttrib search type to match whole entry to value, e.g., G1234 and not G12345
     //| SEARCHFLAG_MATCHWHOLEENTRY
-    ;
 
     // This holds the text that we will return
     vector<string> searchResults;

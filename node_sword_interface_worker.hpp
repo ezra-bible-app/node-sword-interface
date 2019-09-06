@@ -66,12 +66,25 @@ static std::mutex searchMutex;
 
 class GetModuleSearchResultWorker : public BaseNodeSwordInterfaceWorker {
 public:
-    GetModuleSearchResultWorker(SwordFacade* facade, const Napi::Function& callback, std::string moduleName, std::string searchTerm)
-        : BaseNodeSwordInterfaceWorker(facade, callback), _moduleName(moduleName), _searchTerm(searchTerm) {}
+    GetModuleSearchResultWorker(SwordFacade* facade,
+                                const Napi::Function& callback,
+                                std::string moduleName,
+                                std::string searchTerm,
+                                bool isPhrase=false,
+                                bool isCaseSensitive=false)
+
+        : BaseNodeSwordInterfaceWorker(facade, callback),
+        _moduleName(moduleName),
+        _searchTerm(searchTerm),
+        _isPhrase(isPhrase),
+        _isCaseSensitive(isCaseSensitive) {}
 
     void Execute() {
         searchMutex.lock();
-        this->_stdSearchResults = this->_facade->getModuleSearchResults(this->_moduleName, this->_searchTerm);
+        this->_stdSearchResults = this->_facade->getModuleSearchResults(this->_moduleName,
+                                                                        this->_searchTerm,
+                                                                        this->_isPhrase,
+                                                                        this->_isCaseSensitive);
         searchMutex.unlock();
     }
     
@@ -87,7 +100,9 @@ private:
     Napi::Array _napiSearchResults;
     std::string _moduleName;
     std::string _searchTerm;
-}; 
+    bool _isPhrase;
+    bool _isCaseSensitive;
+};
 
 class InstallModuleWorker : public BaseNodeSwordInterfaceWorker {
 public:

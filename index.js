@@ -238,11 +238,13 @@ class NodeSwordInterface {
    *
    * @param {String} moduleCode - The module code of the SWORD module.
    * @param {String} searchTerm - The term to search for.
+   * @param {Boolean} isPhrase - Whether it is a phrase search (otherwise multi-word!)
+   * @param {Boolean} isCaseSensitive - Whether the search is case sensitive
    * @return {Promise}
    */
-  getModuleSearchResults(moduleCode, searchTerm) {
+  getModuleSearchResults(moduleCode, searchTerm, isPhrase=false, isCaseSensitive=false) {
     return new Promise(resolve => {
-      this.nativeInterface.getModuleSearchResults(moduleCode, searchTerm, function(searchResults) {
+      this.nativeInterface.getModuleSearchResults(moduleCode, searchTerm, isPhrase, isCaseSensitive, function(searchResults) {
         resolve(searchResults);
       });
     });
