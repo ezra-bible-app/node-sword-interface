@@ -18,7 +18,6 @@
 
 // System includes
 #include <stdlib.h>
-#include <regex.h>
 
 // STD C++ includes
 #include <iostream>
@@ -38,6 +37,21 @@
 
 // Own includes
 #include "sword_facade.hpp"
+
+/* REGEX definitions from regex.h */
+/* POSIX `cflags' bits (i.e., information for `regcomp').  */
+
+/* If this bit is set, then use extended regular expression syntax.
+   If not set, then use basic regular expression syntax.  */
+#ifndef REG_EXTENDED
+#define REG_EXTENDED 1
+#endif
+
+/* If this bit is set, then ignore case when matching.
+   If not set, then case is significant.  */
+#ifndef REG_ICASE
+#define REG_ICASE (REG_EXTENDED << 1)
+#endif
 
 using namespace std;
 using namespace sword;
