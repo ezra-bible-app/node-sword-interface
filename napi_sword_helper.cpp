@@ -58,12 +58,19 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     object["name"] = swModule->getName();
     object["description"] = swModule->getDescription();
     object["language"] = swModule->getLanguage();
-    object["version"] = swModule->getConfigEntry("Version");
-    object["about"] = swModule->getConfigEntry("About");
     object["location"] = swModule->getConfigEntry("AbsoluteDataPath");
-    
-    bool moduleInUserDir = this->_swordFacade->isModuleInUserDir(swModule);
-    object["inUserDir"] = Napi::Boolean::New(env, moduleInUserDir);
+  
+    if (swModule->getConfigEntry("About")) {
+      object["about"] = swModule->getConfigEntry("About");
+    } else {
+      object["about"] = env.Undefined();
+    }
+
+    if (swModule->getConfigEntry("Version")) {
+      object["version"] = swModule->getConfigEntry("Version");
+    } else {
+      object["version"] = env.Undefined();
+    }
 
     if (swModule->getConfigEntry("Direction")) {
         string direction = string(swModule->getConfigEntry("Direction"));
@@ -71,9 +78,6 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     } else {
         object["isRightToLeft"] = Napi::Boolean::New(env, false);
     }
-
-    bool moduleIsLocked = swModule->getConfigEntry("CipherKey");
-    object["locked"] = Napi::Boolean::New(env, moduleIsLocked);
 
     if (swModule->getConfigEntry("InstallSize")) {
       int moduleSize = std::stoi(string(swModule->getConfigEntry("InstallSize")));
@@ -88,6 +92,10 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
       object["abbreviation"] = "";
     }
 
+    bool moduleIsLocked = swModule->getConfigEntry("CipherKey");
+    
+    object["locked"] = Napi::Boolean::New(env, moduleIsLocked);
+    object["inUserDir"] = Napi::Boolean::New(env, this->_swordFacade->isModuleInUserDir(swModule));
     object["hasStrongs"] = Napi::Boolean::New(env, this->_swordFacade->moduleHasGlobalOption(swModule, "Strongs"));
     object["hasFootnotes"] = Napi::Boolean::New(env, this->_swordFacade->moduleHasGlobalOption(swModule, "Footnotes"));
     object["hasHeadings"] = Napi::Boolean::New(env, this->_swordFacade->moduleHasGlobalOption(swModule, "Headings"));
