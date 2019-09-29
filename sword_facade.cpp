@@ -357,7 +357,7 @@ vector<SWModule*> SwordFacade::getRepoModulesByLang(string repoName, string lang
 
     for (unsigned int i = 0; i < allModules.size(); i++) {
       SWModule* currentModule = allModules[i];
-      if ((currentModule->getType() == "Biblical Texts") && (currentModule->getLanguage() == languageCode)) {
+      if ((currentModule->getType() == string("Biblical Texts")) && (currentModule->getLanguage() == languageCode)) {
         selectedLanguageModules.push_back(currentModule);
       }
     }
