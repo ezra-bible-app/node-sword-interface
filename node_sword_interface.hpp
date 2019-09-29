@@ -46,6 +46,7 @@ private:
     Napi::Value getRepoLanguageTranslationCount(const Napi::CallbackInfo& info);
     Napi::Value getAllLocalModules(const Napi::CallbackInfo& info);
     Napi::Value isModuleInUserDir(const Napi::CallbackInfo& info);
+    Napi::Value isModuleAvailableInRepo(const Napi::CallbackInfo& info);
     Napi::Value getModuleDescription(const Napi::CallbackInfo& info);
     Napi::Value getLocalModule(const Napi::CallbackInfo& info);
 
