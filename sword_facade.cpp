@@ -242,13 +242,10 @@ vector<SWModule*> SwordFacade::getAllRemoteModules()
     return allModules;
 }
 
-SWModule* SwordFacade::getRepoModule(string moduleName)
+SWModule* SwordFacade::getModuleFromList(vector<SWModule*>& moduleList, string moduleName)
 {
-    vector<SWModule*> allModules = this->getAllRemoteModules();
-    //cout << "Got " << allModules.size() << " modules!" << endl;
-
-    for (unsigned int i = 0; i < allModules.size(); i++) {
-      SWModule* currentModule = allModules[i];
+    for (unsigned int i = 0; i < moduleList.size(); i++) {
+      SWModule* currentModule = moduleList[i];
       if (currentModule != 0 && currentModule->getName() != 0) {
           string currentModuleName = string(currentModule->getName());
           if (currentModuleName == moduleName) {
@@ -262,6 +259,76 @@ SWModule* SwordFacade::getRepoModule(string moduleName)
     return 0;
 }
 
+SWModule* SwordFacade::getRepoModule(string moduleName, string repoName)
+{
+    vector<SWModule*> allModules;
+    
+    if (repoName == "all") {
+        allModules = this->getAllRemoteModules();
+    } else {
+        allModules = this->getAllRepoModules(repoName);
+    }
+
+    return this->getModuleFromList(allModules, moduleName);
+}
+
+vector<string> SwordFacade::getRepoModuleIds(string repoName)
+{
+    vector<string> moduleIds;
+    InstallSource* remoteSource = this->getRemoteSource(repoName);
+    FileSystemHelper fs;
+    stringstream repoModuleDir;
+    static regex parentheses = regex("[\\[\\]]");
+    static regex lineBreaks = regex("[\\r\\n]");
+
+    if (remoteSource != 0) {
+        //cout << remoteSource->localShadow << endl;
+        repoModuleDir << remoteSource->localShadow << fs.getPathSeparator() << "mods.d";
+
+        vector<string> filesInRepoDir = fs.getFilesInDir(repoModuleDir.str());
+        for (unsigned int i = 0; i < filesInRepoDir.size(); i++) {
+            stringstream moduleFileName;
+            moduleFileName << repoModuleDir.str() << fs.getPathSeparator() << filesInRepoDir[i]; 
+            //cout << moduleFileName.str() << endl;
+
+            FILE* f = fopen(moduleFileName.str().c_str(), "r");
+            char* line = NULL;
+            size_t len = 0;
+
+            if (getline(&line, &len, f) != -1) {
+                string stdLine = string(line);
+                if (stdLine[0] == '[') {
+                    string currentId;
+                    currentId = regex_replace(stdLine, parentheses, "");
+                    currentId = regex_replace(currentId, lineBreaks, "");
+                    moduleIds.push_back(currentId);
+                }
+            }
+
+            fclose(f);
+        }
+    }
+
+    return moduleIds; 
+}
+
+vector<string> SwordFacade::getAllRepoModuleIds()
+{
+    vector<string> repoNames = this->getRepoNames();
+    vector<string> allModuleIds;
+
+    for (unsigned int i = 0; i < repoNames.size(); i++) {
+        string currentRepo = repoNames[i];
+
+        vector<string> currentRepoModuleIds = this->getRepoModuleIds(currentRepo);
+        for (unsigned int j = 0; j < currentRepoModuleIds.size(); j++) {
+            allModuleIds.push_back(currentRepoModuleIds[j]);
+        }
+    }
+
+    return allModuleIds;
+}
+
 vector<SWModule*> SwordFacade::getAllRepoModules(string repoName)
 {
     vector<SWModule*> modules;
@@ -270,13 +337,12 @@ vector<SWModule*> SwordFacade::getAllRepoModules(string repoName)
     if (remoteSource != 0) {
         SWMgr* mgr = remoteSource->getMgr();
 
-        std::map<SWModule *, int> mods = InstallMgr::getModuleStatus(*mgr, *mgr);
-        for (std::map<SWModule *, int>::iterator it = mods.begin(); it != mods.end(); it++) {
-            SWModule* currentModule = it->first;
-            string moduleType = string(currentModule->getType());
+        for (ModMap::const_iterator it = mgr->Modules.begin(); it != mgr->Modules.end(); it++) {
+            SWModule* currentModule = it->second;
+            string moduleType = currentModule->getType();
 
-            if (moduleType == string("Biblical Texts")) {
-              modules.push_back(currentModule);
+            if (moduleType == "Biblical Texts") {
+                modules.push_back(currentModule);
             }
         }
     }
@@ -291,7 +357,7 @@ vector<SWModule*> SwordFacade::getRepoModulesByLang(string repoName, string lang
 
     for (unsigned int i = 0; i < allModules.size(); i++) {
       SWModule* currentModule = allModules[i];
-      if ((currentModule->getType() == string("Biblical Texts")) && (currentModule->getLanguage() == languageCode)) {
+      if ((currentModule->getType() == "Biblical Texts") && (currentModule->getLanguage() == languageCode)) {
         selectedLanguageModules.push_back(currentModule);
       }
     }
@@ -395,6 +461,25 @@ bool SwordFacade::isModuleInUserDir(string moduleName)
 {
     SWModule* module = this->getLocalModule(moduleName);
     return this->isModuleInUserDir(module);
+}
+
+bool SwordFacade::isModuleAvailableInRepo(string moduleName, string repoName)
+{
+    vector<string> moduleIds;
+    
+    if (repoName == "all") {
+        moduleIds = this->getAllRepoModuleIds();
+    } else {
+        moduleIds = this->getRepoModuleIds(repoName);
+    }
+
+    for (unsigned int i = 0; i < moduleIds.size(); i++) {
+        if (moduleIds[i] == moduleName) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void SwordFacade::rtrim(string& s, const string& delimiters )

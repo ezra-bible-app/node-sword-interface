@@ -20,6 +20,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <dirent.h>
+
 #elif _WIN32
 #include <direct.h>
 #include  <io.h>  
@@ -29,6 +31,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <vector>
 
 #include "file_system_helper.hpp"
 
@@ -165,4 +168,20 @@ string FileSystemHelper::getSystemDir()
     return systemDir;
 }
 
+vector<string> FileSystemHelper::getFilesInDir(string dirName)
+{
+    vector<string> files;
+    DIR *dir;
+    struct dirent *ent;
 
+    if ((dir = opendir (dirName.c_str())) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
+            if (ent->d_type == DT_REG) {
+                files.push_back(ent->d_name);
+            }
+        }
+        closedir (dir);
+    }
+
+    return files;
+}

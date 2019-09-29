@@ -32,11 +32,12 @@ public:
     std::string getInstallMgrDir();
     std::string getUserSwordDir();
     std::string getSystemSwordDir();
+    std::vector<std::string> getFilesInDir(std::string dirName);
+    std::string getPathSeparator();
 
 private:
     bool fileExists(std::string fileName);
     int makeDirectory(std::string dirName);
-    std::string getPathSeparator();
     std::string getUserDir();
     std::string getSystemDir();
 };
