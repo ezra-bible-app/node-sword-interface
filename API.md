@@ -43,6 +43,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getModuleSearchResults(moduleCode, searchTerm, isPhrase, isCaseSensitive)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
     * [.getLocalModule(moduleCode)](#NodeSwordInterface+getLocalModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
     * [.isModuleInUserDir(moduleCode)](#NodeSwordInterface+isModuleInUserDir) ⇒ <code>Boolean</code>
+    * [.isModuleAvailableInRepo(moduleCode)](#NodeSwordInterface+isModuleAvailableInRepo) ⇒ <code>Boolean</code>
     * [.getSwordTranslation(originalString, localeCode)](#NodeSwordInterface+getSwordTranslation)
     * [.getSwordVersion()](#NodeSwordInterface+getSwordVersion) ⇒ <code>String</code>
 
@@ -243,7 +244,18 @@ Returns an object representation of a locally installed SWORD module.
 <a name="NodeSwordInterface+isModuleInUserDir"></a>
 
 ### nodeSwordInterface.isModuleInUserDir(moduleCode) ⇒ <code>Boolean</code>
-Checks whether the modules resides in the user directory.
+Checks whether the module resides in the user directory.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleCode | <code>String</code> | The module code of the SWORD module. |
+
+<a name="NodeSwordInterface+isModuleAvailableInRepo"></a>
+
+### nodeSwordInterface.isModuleAvailableInRepo(moduleCode) ⇒ <code>Boolean</code>
+Checks whether the module is available in any repository.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 

@@ -40,7 +40,7 @@ namespace sword {
 class SwordStatusReporter : public sword::StatusReporter
 {
 public:
-	int last;
+    int last;
     virtual void update(unsigned long totalBytes, unsigned long completedBytes);
     virtual void preStatus(long totalBytes, long completedBytes, const char *message);
 };
@@ -56,7 +56,7 @@ public:
 
     std::vector<std::string> getRepoNames();
     std::vector<sword::SWModule*> getAllRemoteModules();
-    sword::SWModule* getRepoModule(std::string moduleName);
+    sword::SWModule* getRepoModule(std::string moduleName, std::string repoName="all");
     std::vector<sword::SWModule*> getAllRepoModules(std::string repoName);
     std::vector<sword::SWModule*> getRepoModulesByLang(std::string repoName, std::string languageCode);
     unsigned int getRepoTranslationCount(std::string repoName);
@@ -67,6 +67,8 @@ public:
     sword::SWModule* getLocalModule(std::string moduleName);
     bool isModuleInUserDir(std::string moduleName);
     bool isModuleInUserDir(sword::SWModule* module);
+    bool isModuleAvailableInRepo(std::string moduleName, std::string repoName="all");
+
     std::vector<std::string> getBibleText(std::string moduleName);
     std::vector<std::string> getBookText(std::string moduleName, std::string bookCode);
     std::vector<std::string> getModuleSearchResults(std::string moduleName, std::string searchTerm, bool isPhrase=false, bool isCaseSensitive=false);
@@ -87,9 +89,13 @@ private:
     std::vector<std::string> getText(std::string moduleName, std::string key, bool onlyCurrentBook=true);
     sword::InstallSource* getRemoteSource(std::string remoteSourceName);
     std::string getModuleRepo(std::string moduleName);
+    std::vector<std::string> getRepoModuleIds(std::string repoName);
+    std::vector<std::string> getAllRepoModuleIds();
     int refreshIndividualRemoteSource(std::string remoteSourceName);
     std::thread getRemoteSourceRefreshThread(std::string remoteSourceName);
     void resetMgr();
+
+    sword::SWModule* getModuleFromList(std::vector<sword::SWModule*>& moduleList, std::string moduleName);
 
     std::string getVerseText(sword::SWModule* module, bool forceNoMarkup=false);
     std::string getFilteredVerseText(const std::string& verseText);

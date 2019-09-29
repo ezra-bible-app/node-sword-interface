@@ -261,13 +261,23 @@ class NodeSwordInterface {
   }
 
   /**
-   * Checks whether the modules resides in the user directory.
+   * Checks whether the module resides in the user directory.
    *
    * @param {String} moduleCode - The module code of the SWORD module.
    * @return {Boolean}
    */
   isModuleInUserDir(moduleCode) {
     return this.nativeInterface.isModuleInUserDir(moduleCode);
+  }
+
+ /**
+   * Checks whether the module is available in any repository.
+   *
+   * @param {String} moduleCode - The module code of the SWORD module.
+   * @return {Boolean}
+   */
+  isModuleAvailableInRepo(moduleCode) {
+    return this.nativeInterface.isModuleAvailableInRepo(moduleCode);
   }
 
   /**
