@@ -24,6 +24,7 @@
 #include <string>
 #include <sstream>
 #include <regex>
+#include <fstream>
 
 // Sword includes
 #include <installmgr.h>
@@ -288,24 +289,22 @@ vector<string> SwordFacade::getRepoModuleIds(string repoName)
         vector<string> filesInRepoDir = fs.getFilesInDir(repoModuleDir.str());
         for (unsigned int i = 0; i < filesInRepoDir.size(); i++) {
             stringstream moduleFileName;
-            moduleFileName << repoModuleDir.str() << fs.getPathSeparator() << filesInRepoDir[i]; 
-            //cout << moduleFileName.str() << endl;
+            moduleFileName << repoModuleDir.str() << fs.getPathSeparator() << filesInRepoDir[i];
+            ifstream moduleFile(moduleFileName.str());
 
-            FILE* f = fopen(moduleFileName.str().c_str(), "r");
-            char* line = NULL;
-            size_t len = 0;
-
-            if (getline(&line, &len, f) != -1) {
-                string stdLine = string(line);
-                if (stdLine[0] == '[') {
+            if (moduleFile.is_open()) {
+                std::string line;
+                std::getline(moduleFile, line);
+                
+                if (line[0] == '[') {
                     string currentId;
-                    currentId = regex_replace(stdLine, parentheses, "");
+                    currentId = regex_replace(line, parentheses, "");
                     currentId = regex_replace(currentId, lineBreaks, "");
                     moduleIds.push_back(currentId);
                 }
             }
 
-            fclose(f);
+            moduleFile.close();
         }
     }
 

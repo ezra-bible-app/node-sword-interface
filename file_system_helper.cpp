@@ -17,15 +17,21 @@
    If not, see <http://www.gnu.org/licenses/>. */
 
 #if defined(__linux__) || defined(__APPLE__)
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>
 
 #elif _WIN32
+
 #include <direct.h>
-#include  <io.h>  
-#include  <stdio.h>  
+#include <io.h>  
+#include <stdio.h>
+#include <windows.h>
+#include <tchar.h>
+#include <strsafe.h>
+
 #endif
 
 #include <iostream>
@@ -171,6 +177,8 @@ string FileSystemHelper::getSystemDir()
 vector<string> FileSystemHelper::getFilesInDir(string dirName)
 {
     vector<string> files;
+
+#if defined(__linux__) || defined(__APPLE__)
     DIR *dir;
     struct dirent *ent;
 
@@ -182,6 +190,34 @@ vector<string> FileSystemHelper::getFilesInDir(string dirName)
         }
         closedir (dir);
     }
+
+#elif _WIN32
+    // The following code is based on
+    // https://docs.microsoft.com/en-us/windows/win32/fileio/listing-the-files-in-a-directory
+    
+    WIN32_FIND_DATA ffd;
+    TCHAR szDir[MAX_PATH];
+    HANDLE hFind = INVALID_HANDLE_VALUE;
+
+    // Prepare string for use with FindFile functions.  First, copy the
+    // string to a buffer, then append '\*' to the directory name.
+    StringCchCopy(szDir, MAX_PATH, dirName.c_str());
+    StringCchCat(szDir, MAX_PATH, TEXT("\\*"));
+
+    // Find the first file in the directory.
+    hFind = FindFirstFile(szDir, &ffd);
+
+    if (INVALID_HANDLE_VALUE != hFind) {
+        do {
+            if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                string stdFileName = string(ffd.cFileName);
+                files.push_back(stdFileName);
+            }
+        } while (FindNextFile(hFind, &ffd) != 0);
+
+        FindClose(hFind);
+    }
+#endif
 
     return files;
 }
