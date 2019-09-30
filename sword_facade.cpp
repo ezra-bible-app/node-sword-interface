@@ -261,16 +261,13 @@ SWModule* SwordFacade::getModuleFromList(vector<SWModule*>& moduleList, string m
 }
 
 SWModule* SwordFacade::getRepoModule(string moduleName, string repoName)
-{
-    vector<SWModule*> allModules;
-    
+{    
     if (repoName == "all") {
-        allModules = this->getAllRemoteModules();
-    } else {
-        allModules = this->getAllRepoModules(repoName);
+        repoName = this->getModuleRepo(moduleName);
     }
-
-    return this->getModuleFromList(allModules, moduleName);
+    
+    vector<SWModule*> modules = this->getAllRepoModules(repoName);
+    return this->getModuleFromList(modules, moduleName);
 }
 
 string SwordFacade::getModuleIdFromFile(string moduleFileName)
@@ -420,11 +417,11 @@ string SwordFacade::getModuleRepo(string moduleName)
 
     for (unsigned int i = 0; i < repositories.size(); i++) {
         string repo = repositories[i];
-        vector<SWModule*> repoModules = this->getAllRepoModules(repo);
+        vector<string> repoModuleIds = this->getRepoModuleIds(repo);
 
-        for (unsigned int j = 0; j < repoModules.size(); j++) {
-            SWModule* module = repoModules[j];
-            if (string(module->getName()) == moduleName) {
+        for (unsigned int j = 0; j < repoModuleIds.size(); j++) {
+            string currentId = repoModuleIds[j];
+            if (currentId == moduleName) {
                 return repo;
             }
         }
