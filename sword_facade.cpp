@@ -273,38 +273,56 @@ SWModule* SwordFacade::getRepoModule(string moduleName, string repoName)
     return this->getModuleFromList(allModules, moduleName);
 }
 
+string SwordFacade::getModuleIdFromFile(string moduleFileName)
+{
+    static regex parentheses = regex("[\\[\\]]");
+    static regex lineBreaks = regex("[\\r\\n]");
+    ifstream moduleFile(moduleFileName);
+    string moduleId = "";
+
+    if (moduleFile.is_open()) {
+        string line;
+        std::getline(moduleFile, line);
+        char firstChar = line[0];
+        char lastChar = line[line.size() - 1];
+        
+        if (firstChar == '[' && lastChar == ']') {
+            // Remove parentheses and line breaks from the first line
+            // What's left is the module id
+            moduleId = regex_replace(line, parentheses, "");
+            moduleId = regex_replace(moduleId, lineBreaks, "");
+        }
+    }
+
+    moduleFile.close();
+    return moduleId;
+}
+
 vector<string> SwordFacade::getRepoModuleIds(string repoName)
 {
     vector<string> moduleIds;
     InstallSource* remoteSource = this->getRemoteSource(repoName);
     FileSystemHelper fs;
     stringstream repoModuleDir;
-    static regex parentheses = regex("[\\[\\]]");
-    static regex lineBreaks = regex("[\\r\\n]");
 
     if (remoteSource != 0) {
         //cout << remoteSource->localShadow << endl;
         repoModuleDir << remoteSource->localShadow << fs.getPathSeparator() << "mods.d";
-
         vector<string> filesInRepoDir = fs.getFilesInDir(repoModuleDir.str());
-        for (unsigned int i = 0; i < filesInRepoDir.size(); i++) {
-            stringstream moduleFileName;
-            moduleFileName << repoModuleDir.str() << fs.getPathSeparator() << filesInRepoDir[i];
-            ifstream moduleFile(moduleFileName.str());
 
-            if (moduleFile.is_open()) {
-                std::string line;
-                std::getline(moduleFile, line);
-                
-                if (line[0] == '[') {
-                    string currentId;
-                    currentId = regex_replace(line, parentheses, "");
-                    currentId = regex_replace(currentId, lineBreaks, "");
-                    moduleIds.push_back(currentId);
-                }
+        for (unsigned int i = 0; i < filesInRepoDir.size(); i++) {
+            // Skip files that do not end with .conf
+            if (!this->hasEnding(filesInRepoDir[i], ".conf")) {
+                continue;
             }
 
-            moduleFile.close();
+            stringstream moduleFileName;
+            moduleFileName << repoModuleDir.str() << fs.getPathSeparator() << filesInRepoDir[i];
+            string currentModuleId = this->getModuleIdFromFile(moduleFileName.str());
+
+            if (currentModuleId != "") {
+                moduleIds.push_back(currentModuleId);
+            }
         }
     }
 
@@ -494,6 +512,15 @@ void SwordFacade::ltrim(string& s,  const string& delimiters )
 void SwordFacade::trim(string& s, const string& delimiters )
 {
     s.erase( s.find_last_not_of( delimiters ) + 1 ).erase( 0, s.erase( s.find_last_not_of( delimiters ) + 1 ).find_first_not_of( delimiters ) );
+}
+
+// taken from https://stackoverflow.com/a/874160
+bool SwordFacade::hasEnding(std::string const &fullString, std::string const &ending) {
+    if (fullString.length() >= ending.length()) {
+        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+    } else {
+        return false;
+    }
 }
 
 string SwordFacade::getFilteredVerseText(const string& verseText)

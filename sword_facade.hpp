@@ -91,6 +91,7 @@ private:
     std::string getModuleRepo(std::string moduleName);
     std::vector<std::string> getRepoModuleIds(std::string repoName);
     std::vector<std::string> getAllRepoModuleIds();
+    std::string getModuleIdFromFile(std::string moduleFileName);
     int refreshIndividualRemoteSource(std::string remoteSourceName);
     std::thread getRemoteSourceRefreshThread(std::string remoteSourceName);
     void resetMgr();
@@ -103,6 +104,7 @@ private:
     void rtrim(std::string& s, const std::string& delimiters = " \f\n\r\t\v" );
     void ltrim(std::string& s,  const std::string& delimiters = " \f\n\r\t\v" );
     void trim(std::string& s, const std::string& delimiters = " \f\n\r\t\v" );
+    bool hasEnding(std::string const &fullString, std::string const &ending);
 
     sword::SWMgr* _mgr = 0;
     sword::SWMgr* _mgrForInstall = 0;
