@@ -54,7 +54,7 @@ The Javascript API of node-sword-interface is documented [here](API.md).
 These installation instructions are working on Debian/Ubuntu based Linux distributions.
 Before installing node-sword-interface you need to make sure that the following dependencies are installed:
 
-- C++ compiler toolchain
+- C++11 compiler toolchain
 - nodejs
 - SQLite 3 library
 - ICU library with development headers
