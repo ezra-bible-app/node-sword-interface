@@ -523,7 +523,7 @@ bool SwordFacade::hasEnding(std::string const &fullString, std::string const &en
 string SwordFacade::replaceSpacesInStrongs(const string& text)
 {
     string input = text;
-    static regex strongsWText = regex(">[a-zA-Z ]*</w>");
+    static regex strongsWText = regex(">[a-zA-Z –‘’-,.!?()`“”\"]*</w>");
     static std::regex space(" ");
     smatch m;
     string filteredText;
