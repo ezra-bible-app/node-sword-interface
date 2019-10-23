@@ -743,6 +743,64 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName, string sea
     return searchResults;
 }
 
+// from https://stackoverflow.com/a/46943631
+vector<string> StrongsEntry::split(string str, string token) {
+    vector<string>result;
+    
+    while(str.size()) {
+        int index = str.find(token);
+
+        if (index != string::npos) {
+            result.push_back(str.substr(0,index));
+            str = str.substr(index + token.size());
+            if (str.size() == 0) result.push_back(str);
+        } else {
+            result.push_back(str);
+            str = "";
+        }
+    }
+
+    return result;
+}
+
+void StrongsEntry::parseFromRawEntry(string rawEntry)
+{
+    this->rawEntry = rawEntry;
+
+    vector<string> allLines = this->split(this->rawEntry, "\n");
+    string firstLine = allLines[0];
+
+    vector<string> firstLineEntries = this->split(firstLine, "  ");
+    this->transcription = firstLineEntries[1];
+    this->phoneticTranscription = firstLineEntries[2];
+}
+
+StrongsEntry SwordFacade::getStrongsEntry(string key, string strongsModule)
+{
+    SWModule* module = this->getLocalModule(strongsModule);
+    StrongsEntry entry;
+
+    if (module != 0) {
+        module->setKey(key.c_str());
+        string rawEntry = string(module->getRawEntry()); 
+        entry.parseFromRawEntry(rawEntry);
+    }
+    
+    return entry;
+}
+
+StrongsEntry SwordFacade::getHebrewStrongsEntry(string key)
+{
+    StrongsEntry entry = this->getStrongsEntry(key, "StrongsHebrew");
+    return entry;
+}
+
+StrongsEntry SwordFacade::getGreekStrongsEntry(string key)
+{
+    StrongsEntry entry = this->getStrongsEntry(key, "StrongsGreek");
+    return entry;
+}
+
 int SwordFacade::installModule(string moduleName)
 {
     string repoName = this->getModuleRepo(moduleName);

@@ -45,6 +45,23 @@ public:
     virtual void preStatus(long totalBytes, long completedBytes, const char *message);
 };
 
+class StrongsEntry
+{
+public:
+    StrongsEntry(){}
+    virtual ~StrongsEntry(){}
+
+    std::string rawEntry;
+    unsigned int key;
+    std::string transcription;
+    std::string phoneticTranscription;
+
+    void parseFromRawEntry(std::string);
+
+private:
+    std::vector<std::string> split(std::string str, std::string token);
+};
+
 class SwordFacade
 {
 public:
@@ -72,6 +89,8 @@ public:
     std::vector<std::string> getBibleText(std::string moduleName);
     std::vector<std::string> getBookText(std::string moduleName, std::string bookCode);
     std::vector<std::string> getModuleSearchResults(std::string moduleName, std::string searchTerm, bool isPhrase=false, bool isCaseSensitive=false);
+    StrongsEntry getHebrewStrongsEntry(std::string key);
+    StrongsEntry getGreekStrongsEntry(std::string key);
 
     int installModule(std::string moduleName);
     int installModule(std::string repoName, std::string moduleName);
@@ -101,6 +120,7 @@ private:
     std::string getVerseText(sword::SWModule* module, bool forceNoMarkup=false);
     std::string getFilteredVerseText(const std::string& verseText);
     std::string replaceSpacesInStrongs(const std::string& text);
+    StrongsEntry getStrongsEntry(std::string key, std::string strongsModule);
 
     void rtrim(std::string& s, const std::string& delimiters = " \f\n\r\t\v" );
     void ltrim(std::string& s,  const std::string& delimiters = " \f\n\r\t\v" );
