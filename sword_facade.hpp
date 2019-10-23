@@ -100,6 +100,7 @@ private:
 
     std::string getVerseText(sword::SWModule* module, bool forceNoMarkup=false);
     std::string getFilteredVerseText(const std::string& verseText);
+    std::string replaceSpacesInStrongs(const std::string& text);
 
     void rtrim(std::string& s, const std::string& delimiters = " \f\n\r\t\v" );
     void ltrim(std::string& s,  const std::string& delimiters = " \f\n\r\t\v" );

@@ -520,6 +520,25 @@ bool SwordFacade::hasEnding(std::string const &fullString, std::string const &en
     }
 }
 
+string SwordFacade::replaceSpacesInStrongs(const string& text)
+{
+    string input = text;
+    static regex strongsWText = regex(">[a-zA-Z ]*</w>");
+    static std::regex space(" ");
+    smatch m;
+    string filteredText;
+
+    // Search for Strongs pattern and then replace all spaces within each occurance
+    while (std::regex_search(input, m, strongsWText)) {
+        filteredText += m.prefix();
+        filteredText += std::regex_replace(m[0].str(), space, "&nbsp;");
+        input = m.suffix();
+    }
+    filteredText += input;
+
+    return filteredText;
+}
+
 string SwordFacade::getFilteredVerseText(const string& verseText)
 {
     static regex schlachterMarkupFilter = regex("<H.*> ");
@@ -541,6 +560,7 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     static regex divEIDFilter = regex("<div eID=");
     static regex divineNameStartElement = regex("<divineName>");
     static regex divineNameEndElement = regex("</divineName>");
+    static regex strongsWElement = regex("<w lemma=");
 
     static regex fullStopWithoutSpace = regex("[.]<");
     static regex questionMarkWithoutSpace = regex("[?]<");
@@ -569,6 +589,7 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     filteredText = regex_replace(filteredText, quoteElementFilter, "&quot;<div class=\"sword-markup sword-quote\" ");
     filteredText = regex_replace(filteredText, divineNameStartElement, "");
     filteredText = regex_replace(filteredText, divineNameEndElement, "");
+    filteredText = regex_replace(filteredText, strongsWElement, "<w class=");
 
     filteredText = regex_replace(filteredText, fullStopWithoutSpace, ". <");
     filteredText = regex_replace(filteredText, questionMarkWithoutSpace, "? <");
@@ -576,6 +597,8 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     filteredText = regex_replace(filteredText, commaWithoutSpace, ", <");
     filteredText = regex_replace(filteredText, semiColonWithoutSpace, "; <");
     filteredText = regex_replace(filteredText, colonWithoutSpace, ": <");
+
+    filteredText = this->replaceSpacesInStrongs(filteredText);
 
     return filteredText;
 }
