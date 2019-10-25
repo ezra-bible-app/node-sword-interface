@@ -101,7 +101,7 @@ void get_strongs_entry(SwordFacade& sword_facade)
 
     cout << endl;
 
-    entry = sword_facade.getStrongsEntry("H300");
+    entry = sword_facade.getStrongsEntry("H8659");
     cout << entry->key << endl;
     cout << entry->transcription << endl;
     cout << entry->phoneticTranscription << endl;
