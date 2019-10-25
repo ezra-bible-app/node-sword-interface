@@ -46,25 +46,34 @@ StrongsEntry* StrongsEntry::getStrongsEntry(SWModule* module, string key)
     return strongsEntry;
 }
 
-void StrongsEntry::parseFromRawEntry(string rawEntry)
+void StrongsEntry::parseFirstLine(string firstLine)
 {
-    this->rawEntry = rawEntry;
-
-    vector<string> allLines = StringHelper::split(this->rawEntry, "\n");
-    string firstLine = allLines[0];
-
     vector<string> firstLineEntries = StringHelper::split(firstLine, "  ");
-    this->transcription = firstLineEntries[1];
-    this->phoneticTranscription = firstLineEntries[2];
+    if (firstLine.size() >= 2) this->transcription = firstLineEntries[1];
+    if (firstLine.size() >= 3) this->phoneticTranscription = firstLineEntries[2];
+}
 
-    // Erase the first three lines, this leaves the definition
-    allLines.erase(allLines.begin(), allLines.begin() + 3);
-    
+void StrongsEntry::eraseEmptyLines(vector<string>& lines)
+{
+    string currentLine = "";
+    int maxIterations = 50;
+
+    for (int i = 0; i < maxIterations && currentLine == "" && lines.size() > 0; i++) {
+      currentLine = lines[0];
+      StringHelper::trim(currentLine);
+      if (currentLine == "") {
+        lines.erase(lines.begin(), lines.begin() + 1);
+      }
+    }
+}
+
+void StrongsEntry::parseDefinitionAndReferences(vector<string>& lines)
+{
     vector<string> references;
     stringstream definition;
 
-    for (unsigned int i = 0; i < allLines.size(); i++) {
-      string currentLine = allLines[i];
+    for (unsigned int i = 0; i < lines.size(); i++) {
+      string currentLine = lines[i];
       if (currentLine.substr(0,4) == " see") {
         StringHelper::trim(currentLine);
         references.push_back(currentLine);
@@ -76,4 +85,24 @@ void StrongsEntry::parseFromRawEntry(string rawEntry)
     this->references = references;
     this->definition = definition.str();
     StringHelper::trim(this->definition);
+}
+
+void StrongsEntry::parseFromRawEntry(string rawEntry)
+{
+    this->rawEntry = rawEntry;
+
+    vector<string> allLines = StringHelper::split(this->rawEntry, "\n");
+    if (allLines.size() == 0) {
+      return;
+    }
+
+    this->parseFirstLine(allLines[0]);
+
+    // Erase the first line
+    allLines.erase(allLines.begin(), allLines.begin() + 1);
+
+    // Erase all empty lines, this leaves us with the definition and references
+    this->eraseEmptyLines(allLines);
+    
+    this->parseDefinitionAndReferences(allLines);
 }

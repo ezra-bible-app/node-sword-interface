@@ -41,7 +41,10 @@ public:
     std::string definition;
     std::vector<std::string> references;
 
-    void parseFromRawEntry(std::string);
+    void parseFromRawEntry(std::string rawEntry);
+    void parseFirstLine(std::string firstLine);
+    void eraseEmptyLines(std::vector<std::string>& lines);
+    void parseDefinitionAndReferences(std::vector<std::string>& lines);
 };
 
 #endif // _STRONGS_ENTRY
