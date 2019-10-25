@@ -73,7 +73,7 @@ public:
     std::vector<std::string> getBibleText(std::string moduleName);
     std::vector<std::string> getBookText(std::string moduleName, std::string bookCode);
     std::vector<std::string> getModuleSearchResults(std::string moduleName, std::string searchTerm, bool isPhrase=false, bool isCaseSensitive=false);
-    StrongsEntry getStrongsEntry(std::string key);
+    StrongsEntry* getStrongsEntry(std::string key);
 
     int installModule(std::string moduleName);
     int installModule(std::string repoName, std::string moduleName);

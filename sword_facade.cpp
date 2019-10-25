@@ -721,7 +721,7 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName, string sea
     return searchResults;
 }
 
-StrongsEntry SwordFacade::getStrongsEntry(string key)
+StrongsEntry* SwordFacade::getStrongsEntry(string key)
 {
     SWModule* module = 0;
     char strongsType = key[0];
@@ -731,10 +731,10 @@ StrongsEntry SwordFacade::getStrongsEntry(string key)
     } else if (strongsType == 'G') {
         module = this->getLocalModule("StrongsGreek");
     } else {
-        throw std::runtime_error("Unknown strongs type!");
+        return 0;
     }
 
-    StrongsEntry entry = StrongsEntry::getStrongsEntry(module, key);
+    StrongsEntry* entry = StrongsEntry::getStrongsEntry(module, key);
     return entry;
 }
 

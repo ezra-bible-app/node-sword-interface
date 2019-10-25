@@ -48,7 +48,7 @@ bool StringHelper::hasEnding(std::string const &fullString, std::string const &e
 vector<string> StringHelper::split(string str, string token) {
     vector<string>result;
     
-    while(str.size()) {
+    while (str.size()) {
         int index = str.find(token);
 
         if (index != string::npos) {

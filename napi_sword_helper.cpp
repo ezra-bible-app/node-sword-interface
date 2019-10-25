@@ -20,6 +20,7 @@
 #include <swmodule.h>
 #include "napi_sword_helper.hpp"
 #include "sword_facade.hpp"
+#include "string_helper.hpp"
 
 using namespace sword;
 
@@ -105,15 +106,15 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
 
 void NapiSwordHelper::verseTextToNapiObject(std::string& moduleCode, string& rawVerse, unsigned int absoluteVerseNr, Napi::Object& object)
 {
-    vector<string> splittedVerse = this->split(rawVerse, '|');
+    vector<string> splittedVerse = StringHelper::split(rawVerse, "|");
     string reference = splittedVerse[0];
     string verseText = splittedVerse[1];
 
-    vector<string> splittedReference = this->split(reference, ' ');
+    vector<string> splittedReference = StringHelper::split(reference, " ");
     string book = splittedReference[0];
     string chapterVerseReference = splittedReference[1];
 
-    vector<string> splittedChapterVerseReference = this->split(chapterVerseReference, ':');
+    vector<string> splittedChapterVerseReference = StringHelper::split(chapterVerseReference, ":");
     string chapter = splittedChapterVerseReference[0];
     string verseNr = splittedChapterVerseReference[1];
 
@@ -125,18 +126,16 @@ void NapiSwordHelper::verseTextToNapiObject(std::string& moduleCode, string& raw
     object["content"] = verseText;
 }
 
-vector<string> NapiSwordHelper::split(const string& s, char separator)
+void NapiSwordHelper::strongsEntryToNapiObject(const Napi::Env& env, StrongsEntry* strongsEntry, Napi::Object& object)
 {
-    vector<string> output;
-    string::size_type prev_pos = 0, pos = 0;
-
-    while((pos = s.find(separator, pos)) != string::npos)
-    {
-        string substring( s.substr(prev_pos, pos-prev_pos) );
-        output.push_back(substring);
-        prev_pos = ++pos;
+    if (strongsEntry == 0) {
+        cerr << "strongsEntry is 0! Cannot run conversion to napi object!" << endl;
+        return;
     }
 
-    output.push_back(s.substr(prev_pos, pos-prev_pos)); // Last word
-    return output;
+    object["rawEntry"] = strongsEntry->rawEntry;
+    object["key"] = strongsEntry->key;
+    object["transcription"] = strongsEntry->transcription;
+    object["phoneticTranscription"] = strongsEntry->phoneticTranscription;
+    object["definition"] = strongsEntry->definition;
 }

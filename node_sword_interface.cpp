@@ -56,6 +56,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getBookText", &NodeSwordInterface::getBookText),
         InstanceMethod("getBibleText", &NodeSwordInterface::getBibleText),
         InstanceMethod("getModuleSearchResults", &NodeSwordInterface::getModuleSearchResults),
+        InstanceMethod("getStrongsEntry", &NodeSwordInterface::getStrongsEntry),
         InstanceMethod("installModule", &NodeSwordInterface::installModule),
         InstanceMethod("uninstallModule", &NodeSwordInterface::uninstallModule),
         InstanceMethod("getSwordTranslation", &NodeSwordInterface::getSwordTranslation),
@@ -444,6 +445,30 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
                                                                           isCaseSensitive);
     worker->Queue();
     return info.Env().Undefined();
+}
+
+Napi::Value NodeSwordInterface::getStrongsEntry(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() != 1 || !info[0].IsString()) {
+        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
+    }
+
+    Napi::String strongsKey = info[0].As<Napi::String>();
+    Napi::Object napiObject = Napi::Object::New(env);
+    StrongsEntry* strongsEntry = this->_swordFacade->getStrongsEntry(strongsKey);
+
+    if (strongsEntry == 0) {
+        stringstream errorMessage;
+        errorMessage << "getStrongsEntry returned 0 for '" << string(strongsKey) << "'" << endl;
+        Napi::Error::New(env, errorMessage.str().c_str()).ThrowAsJavaScriptException();
+    } else {
+        this->_napiSwordHelper->strongsEntryToNapiObject(env, strongsEntry, napiObject);
+    }
+
+    return napiObject;
 }
 
 Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)

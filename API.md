@@ -15,6 +15,9 @@
 <dt><a href="#ModuleObject">ModuleObject</a> : <code>Object</code></dt>
 <dd><p>An object representation of a SWORD module.</p>
 </dd>
+<dt><a href="#StrongsEntry">StrongsEntry</a> : <code>Object</code></dt>
+<dd><p>An object representation of a Strong&#39;s entry.</p>
+</dd>
 </dl>
 
 <a name="NodeSwordInterface"></a>
@@ -41,6 +44,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getBookText(moduleCode, bookCode)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getModuleSearchResults(moduleCode, searchTerm, isPhrase, isCaseSensitive)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
+    * [.getStrongsEntry(strongsKey)](#NodeSwordInterface+getStrongsEntry) ⇒ [<code>StrongsEntry</code>](#StrongsEntry)
     * [.getLocalModule(moduleCode)](#NodeSwordInterface+getLocalModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
     * [.isModuleInUserDir(moduleCode)](#NodeSwordInterface+isModuleInUserDir) ⇒ <code>Boolean</code>
     * [.isModuleAvailableInRepo(moduleCode)](#NodeSwordInterface+isModuleAvailableInRepo) ⇒ <code>Boolean</code>
@@ -230,6 +234,18 @@ Returns the results of a module search.
 | isPhrase | <code>Boolean</code> | <code>false</code> | Whether it is a phrase search (otherwise multi-word!) |
 | isCaseSensitive | <code>Boolean</code> | <code>false</code> | Whether the search is case sensitive |
 
+<a name="NodeSwordInterface+getStrongsEntry"></a>
+
+### nodeSwordInterface.getStrongsEntry(strongsKey) ⇒ [<code>StrongsEntry</code>](#StrongsEntry)
+Returns the Strong's entry for a given key.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: [<code>StrongsEntry</code>](#StrongsEntry) - A StrongsEntry object.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| strongsKey | <code>String</code> | The Strong's key for the requested entry. |
+
 <a name="NodeSwordInterface+getLocalModule"></a>
 
 ### nodeSwordInterface.getLocalModule(moduleCode) ⇒ [<code>ModuleObject</code>](#ModuleObject)
@@ -325,4 +341,20 @@ An object representation of a SWORD module.
 | hasRedLetterWords | <code>Boolean</code> | Information on whether the module has red letter words |
 | hasCrossReferences | <code>Boolean</code> | Information on whether the module has cross references |
 | isRightToLeft | <code>Boolean</code> | Information on whether the module has right to left text direction |
+
+<a name="StrongsEntry"></a>
+
+## StrongsEntry : <code>Object</code>
+An object representation of a Strong's entry.
+
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| rawEntry | <code>String</code> | The full raw entry from the SWORD Strong's module |
+| key | <code>String</code> | The key of the Strong's entry |
+| transcription | <code>String</code> | The transcription of the Strong's entry |
+| phoneticTranscription | <code>String</code> | The phonetic transcription of the Strong's entry |
+| definition | <code>String</code> | The Strong's definition |
 

@@ -54,6 +54,7 @@ private:
     Napi::Value getBookText(const Napi::CallbackInfo& info);
     Napi::Value getBibleText(const Napi::CallbackInfo& info);
     Napi::Value getModuleSearchResults(const Napi::CallbackInfo& info);
+    Napi::Value getStrongsEntry(const Napi::CallbackInfo& info);
 
     Napi::Value installModule(const Napi::CallbackInfo& info);
     Napi::Value uninstallModule(const Napi::CallbackInfo& info);

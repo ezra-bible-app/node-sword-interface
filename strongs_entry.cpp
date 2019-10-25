@@ -32,18 +32,16 @@ StrongsEntry::StrongsEntry(string key, string rawEntry)
   this->parseFromRawEntry(rawEntry);
 }
 
-StrongsEntry StrongsEntry::getStrongsEntry(SWModule* module, string key)
+StrongsEntry* StrongsEntry::getStrongsEntry(SWModule* module, string key)
 {
     if (module == 0) {
-        stringstream errorMessage;
-        errorMessage << "getStrongsModul: module is 0!";
-        throw std::runtime_error(errorMessage.str());
+        return 0;
     }
 
     // Cut off the first character (H or G), since the Sword engine uses the actual number strings as the key for Strong's
     string strongsNumberString = key.substr(1);
     module->setKey(strongsNumberString.c_str());
-    StrongsEntry strongsEntry(key, module->getRawEntry());
+    StrongsEntry* strongsEntry = new StrongsEntry(key, module->getRawEntry());
 
     return strongsEntry;
 }

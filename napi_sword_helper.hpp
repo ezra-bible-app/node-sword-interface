@@ -22,6 +22,8 @@
 #include <napi.h>
 #include <iostream>
 
+#include "strongs_entry.hpp"
+
 using namespace std;
 
 namespace sword {
@@ -37,10 +39,10 @@ public:
 
     Napi::Array getNapiVerseObjectsFromRawList(const Napi::Env& env, std::string& moduleCode, std::vector<std::string>& verses);
     void swordModuleToNapiObject(const Napi::Env& env, sword::SWModule* swModule, Napi::Object& object);
+    void strongsEntryToNapiObject(const Napi::Env& env, StrongsEntry* strongsEntry, Napi::Object& object);
 
 private:
     void verseTextToNapiObject(std::string& moduleCode, std::string& rawVerse, unsigned int absoluteVerseNr, Napi::Object& object);
-    std::vector<std::string> split(const std::string& s, char separator);
 
     SwordFacade* _swordFacade;
 };

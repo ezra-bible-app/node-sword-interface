@@ -53,6 +53,17 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
  * @property {Boolean} isRightToLeft - Information on whether the module has right to left text direction
  */
 
+/**
+* An object representation of a Strong's entry.
+* @typedef StrongsEntry
+* @type {Object}
+* @property {String} rawEntry - The full raw entry from the SWORD Strong's module
+* @property {String} key - The key of the Strong's entry
+* @property {String} transcription - The transcription of the Strong's entry
+* @property {String} phoneticTranscription - The phonetic transcription of the Strong's entry
+* @property {String} definition - The Strong's definition
+*/
+
 /** This is the main class of node-sword-interface and it provides a set of static functions that wrap SWORD library functionality. */
 class NodeSwordInterface {
   constructor() {
@@ -248,6 +259,16 @@ class NodeSwordInterface {
         resolve(searchResults);
       });
     });
+  }
+
+  /**
+   * Returns the Strong's entry for a given key.
+   *
+   * @param {String} strongsKey - The Strong's key for the requested entry.
+   * @return {StrongsEntry} A StrongsEntry object.
+   */
+  getStrongsEntry(strongsKey) {
+    return this.nativeInterface.getStrongsEntry(strongsKey);
   }
 
   /**

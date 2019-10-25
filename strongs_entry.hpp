@@ -32,7 +32,7 @@ public:
     StrongsEntry(std::string key, std::string rawEntry);
     virtual ~StrongsEntry(){};
 
-    static StrongsEntry getStrongsEntry(sword::SWModule* module, std::string key);
+    static StrongsEntry* getStrongsEntry(sword::SWModule* module, std::string key);
 
     std::string rawEntry;
     std::string key;
