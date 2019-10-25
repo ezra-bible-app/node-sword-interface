@@ -14,34 +14,22 @@
 
    You should have received a copy of the GNU General Public License
    along with node-sword-interface. See the file COPYING.
-   If not, see <http://www.gnu.org/licenses/>. */
+   If not, see <http://www.gnu.org/licenses/>. */    
 
-#ifndef _STRONGS_ENTRY
-#define _STRONGS_ENTRY
+#ifndef _STRING_HELPER
+#define _STRING_HELPER
 
-#include <vector>
 #include <string>
+#include <vector>
 
-namespace sword {
-    class SWModule;
-};
-
-class StrongsEntry
+class StringHelper
 {
 public:
-    StrongsEntry(std::string key, std::string rawEntry);
-    virtual ~StrongsEntry(){};
-
-    static StrongsEntry getStrongsEntry(sword::SWModule* module, std::string key);
-
-    std::string rawEntry;
-    std::string key;
-    std::string transcription;
-    std::string phoneticTranscription;
-    std::string definition;
-    std::vector<std::string> references;
-
-    void parseFromRawEntry(std::string);
+    static void rtrim(std::string& s, const std::string& delimiters = " \f\n\r\t\v" );
+    static void ltrim(std::string& s,  const std::string& delimiters = " \f\n\r\t\v" );
+    static void trim(std::string& s, const std::string& delimiters = " \f\n\r\t\v" );
+    static bool hasEnding(std::string const &fullString, std::string const &ending);
+    static std::vector<std::string> split(std::string str, std::string token);
 };
 
-#endif // _STRONGS_ENTRY
+#endif // _STRING_HELPER

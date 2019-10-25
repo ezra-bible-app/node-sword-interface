@@ -34,6 +34,7 @@
         "cflags_cc!": [ "-fno-exceptions -std=c++11 -pthread" ],
         "sources": [
             "file_system_helper.cpp",
+            "string_helper.cpp",
             "strongs_entry.cpp",
             "sword_facade.cpp",
             "napi_sword_helper.cpp",

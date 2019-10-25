@@ -38,6 +38,7 @@
 
 // Own includes
 #include "sword_facade.hpp"
+#include "string_helper.hpp"
 #include "strongs_entry.hpp"
 
 /* REGEX definitions from regex.h */
@@ -310,7 +311,7 @@ vector<string> SwordFacade::getRepoModuleIds(string repoName)
 
         for (unsigned int i = 0; i < filesInRepoDir.size(); i++) {
             // Skip files that do not end with .conf
-            if (!this->hasEnding(filesInRepoDir[i], ".conf")) {
+            if (!StringHelper::hasEnding(filesInRepoDir[i], ".conf")) {
                 continue;
             }
 
@@ -497,30 +498,6 @@ bool SwordFacade::isModuleAvailableInRepo(string moduleName, string repoName)
     return false;
 }
 
-void SwordFacade::rtrim(string& s, const string& delimiters )
-{
-   s.erase( s.find_last_not_of( delimiters ) + 1 );
-}
- 
-void SwordFacade::ltrim(string& s,  const string& delimiters )
-{
-   s.erase( 0, s.find_first_not_of( delimiters ) );
-}
- 
-void SwordFacade::trim(string& s, const string& delimiters )
-{
-    s.erase( s.find_last_not_of( delimiters ) + 1 ).erase( 0, s.erase( s.find_last_not_of( delimiters ) + 1 ).find_first_not_of( delimiters ) );
-}
-
-// taken from https://stackoverflow.com/a/874160
-bool SwordFacade::hasEnding(std::string const &fullString, std::string const &ending) {
-    if (fullString.length() >= ending.length()) {
-        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
-    } else {
-        return false;
-    }
-}
-
 string SwordFacade::replaceSpacesInStrongs(const string& text)
 {
     string input = text;
@@ -611,11 +588,11 @@ string SwordFacade::getVerseText(sword::SWModule* module, bool forceNoMarkup)
 
     if (this->_markupEnabled && !forceNoMarkup) {
         verseText = string(module->getRawEntry());
-        trim(verseText);
+        StringHelper::trim(verseText);
         filteredText = this->getFilteredVerseText(verseText);
     } else {
         verseText = string(module->stripText());
-        trim(verseText);
+        StringHelper::trim(verseText);
         filteredText = verseText;
     }
     

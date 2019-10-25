@@ -104,11 +104,6 @@ private:
     std::string getFilteredVerseText(const std::string& verseText);
     std::string replaceSpacesInStrongs(const std::string& text);
 
-    void rtrim(std::string& s, const std::string& delimiters = " \f\n\r\t\v" );
-    void ltrim(std::string& s,  const std::string& delimiters = " \f\n\r\t\v" );
-    void trim(std::string& s, const std::string& delimiters = " \f\n\r\t\v" );
-    bool hasEnding(std::string const &fullString, std::string const &ending);
-
     sword::SWMgr* _mgr = 0;
     sword::SWMgr* _mgrForInstall = 0;
     sword::InstallMgr* _installMgr = 0;

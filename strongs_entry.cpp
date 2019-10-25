@@ -21,30 +21,10 @@
 
 #include <swmodule.h>
 #include "strongs_entry.hpp"
-#include "sword_facade.hpp"
+#include "string_helper.hpp"
 
 using namespace std;
 using namespace sword;
-
-// from https://stackoverflow.com/a/46943631
-vector<string> StrongsEntry::splitString(string str, string token) {
-    vector<string>result;
-    
-    while(str.size()) {
-        int index = str.find(token);
-
-        if (index != string::npos) {
-            result.push_back(str.substr(0,index));
-            str = str.substr(index + token.size());
-            if (str.size() == 0) result.push_back(str);
-        } else {
-            result.push_back(str);
-            str = "";
-        }
-    }
-
-    return result;
-}
 
 StrongsEntry::StrongsEntry(string key, string rawEntry)
 {
@@ -72,10 +52,10 @@ void StrongsEntry::parseFromRawEntry(string rawEntry)
 {
     this->rawEntry = rawEntry;
 
-    vector<string> allLines = this->splitString(this->rawEntry, "\n");
+    vector<string> allLines = StringHelper::split(this->rawEntry, "\n");
     string firstLine = allLines[0];
 
-    vector<string> firstLineEntries = this->splitString(firstLine, "  ");
+    vector<string> firstLineEntries = StringHelper::split(firstLine, "  ");
     this->transcription = firstLineEntries[1];
     this->phoneticTranscription = firstLineEntries[2];
 
@@ -88,6 +68,7 @@ void StrongsEntry::parseFromRawEntry(string rawEntry)
     for (unsigned int i = 0; i < allLines.size(); i++) {
       string currentLine = allLines[i];
       if (currentLine.substr(0,4) == " see") {
+        StringHelper::trim(currentLine);
         references.push_back(currentLine);
       } else {
         definition << currentLine;
@@ -96,4 +77,5 @@ void StrongsEntry::parseFromRawEntry(string rawEntry)
 
     this->references = references;
     this->definition = definition.str();
+    StringHelper::trim(this->definition);
 }
