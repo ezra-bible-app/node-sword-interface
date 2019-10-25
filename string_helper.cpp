@@ -49,7 +49,7 @@ vector<string> StringHelper::split(string str, string token) {
     vector<string>result;
     
     while (str.size()) {
-        int index = str.find(token);
+        std::size_t index = str.find(token);
 
         if (index != string::npos) {
             result.push_back(str.substr(0,index));
