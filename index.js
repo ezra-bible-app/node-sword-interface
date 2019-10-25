@@ -62,6 +62,7 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
 * @property {String} transcription - The transcription of the Strong's entry
 * @property {String} phoneticTranscription - The phonetic transcription of the Strong's entry
 * @property {String} definition - The Strong's definition
+* @property {String[]} references - The "see also" references of the Strong's entry
 */
 
 /** This is the main class of node-sword-interface and it provides a set of static functions that wrap SWORD library functionality. */

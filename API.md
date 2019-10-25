@@ -378,4 +378,5 @@ An object representation of a Strong's entry.
 | transcription | <code>String</code> | The transcription of the Strong's entry |
 | phoneticTranscription | <code>String</code> | The phonetic transcription of the Strong's entry |
 | definition | <code>String</code> | The Strong's definition |
+| references | <code>Array.&lt;String&gt;</code> | The "see also" references of the Strong's entry |
 
