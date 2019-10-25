@@ -138,4 +138,11 @@ void NapiSwordHelper::strongsEntryToNapiObject(const Napi::Env& env, StrongsEntr
     object["transcription"] = strongsEntry->transcription;
     object["phoneticTranscription"] = strongsEntry->phoneticTranscription;
     object["definition"] = strongsEntry->definition;
+
+    Napi::Array referencesArray = Napi::Array::New(env, strongsEntry->references.size());
+    for (unsigned int i = 0; i < strongsEntry->references.size(); i++) {
+        referencesArray.Set(i, strongsEntry->references[i]);
+    }
+
+    object["references"] = referencesArray;
 }
