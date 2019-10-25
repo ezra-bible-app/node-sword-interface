@@ -48,6 +48,9 @@ StrongsEntry* StrongsEntry::getStrongsEntry(SWModule* module, string key)
 
 void StrongsEntry::parseFirstLine(string firstLine)
 {
+    // The first line looks like this:
+    // 2766  keramos  ker'-am-os
+    // We will split it and then parse the transcription (2nd column) and phonetic transcription (3rd column)
     vector<string> firstLineEntries = StringHelper::split(firstLine, "  ");
     if (firstLine.size() >= 2) this->transcription = firstLineEntries[1];
     if (firstLine.size() >= 3) this->phoneticTranscription = firstLineEntries[2];
@@ -97,12 +100,9 @@ void StrongsEntry::parseFromRawEntry(string rawEntry)
     }
 
     this->parseFirstLine(allLines[0]);
-
     // Erase the first line
     allLines.erase(allLines.begin(), allLines.begin() + 1);
-
     // Erase all empty lines, this leaves us with the definition and references
     this->eraseEmptyLines(allLines);
-    
     this->parseDefinitionAndReferences(allLines);
 }
