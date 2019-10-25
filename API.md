@@ -44,6 +44,9 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getBookText(moduleCode, bookCode)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getModuleSearchResults(moduleCode, searchTerm, isPhrase, isCaseSensitive)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
+    * [.hebrewStrongsAvailable()](#NodeSwordInterface+hebrewStrongsAvailable) ⇒ <code>Boolean</code>
+    * [.greekStrongsAvailable()](#NodeSwordInterface+greekStrongsAvailable) ⇒ <code>Boolean</code>
+    * [.strongsAvailable()](#NodeSwordInterface+strongsAvailable) ⇒ <code>Boolean</code>
     * [.getStrongsEntry(strongsKey)](#NodeSwordInterface+getStrongsEntry) ⇒ [<code>StrongsEntry</code>](#StrongsEntry)
     * [.getLocalModule(moduleCode)](#NodeSwordInterface+getLocalModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
     * [.isModuleInUserDir(moduleCode)](#NodeSwordInterface+isModuleInUserDir) ⇒ <code>Boolean</code>
@@ -234,6 +237,24 @@ Returns the results of a module search.
 | isPhrase | <code>Boolean</code> | <code>false</code> | Whether it is a phrase search (otherwise multi-word!) |
 | isCaseSensitive | <code>Boolean</code> | <code>false</code> | Whether the search is case sensitive |
 
+<a name="NodeSwordInterface+hebrewStrongsAvailable"></a>
+
+### nodeSwordInterface.hebrewStrongsAvailable() ⇒ <code>Boolean</code>
+Checks whether Hebrew Strong's definitions are available
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+<a name="NodeSwordInterface+greekStrongsAvailable"></a>
+
+### nodeSwordInterface.greekStrongsAvailable() ⇒ <code>Boolean</code>
+Checks whether Greek Strong's definitions are available
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+<a name="NodeSwordInterface+strongsAvailable"></a>
+
+### nodeSwordInterface.strongsAvailable() ⇒ <code>Boolean</code>
+Checks whether Strongs definitions are available
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 <a name="NodeSwordInterface+getStrongsEntry"></a>
 
 ### nodeSwordInterface.getStrongsEntry(strongsKey) ⇒ [<code>StrongsEntry</code>](#StrongsEntry)

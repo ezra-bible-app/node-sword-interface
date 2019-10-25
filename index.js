@@ -262,6 +262,43 @@ class NodeSwordInterface {
   }
 
   /**
+   * Checks whether Hebrew Strong's definitions are available
+   * 
+   * @return {Boolean}
+   */
+  hebrewStrongsAvailable() {
+    try {
+      this.nativeInterface.getLocalModule("StrongsHebrew");
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /**
+   * Checks whether Greek Strong's definitions are available
+   * 
+   * @return {Boolean}
+   */
+  greekStrongsAvailable() {
+    try {
+      this.nativeInterface.getLocalModule("StrongsGreek");
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /**
+   * Checks whether Strongs definitions are available
+   * 
+   * @return {Boolean}
+   */
+  strongsAvailable() {
+    return this.hebrewStrongsAvailable() && this.greekStrongsAvailable();
+  }
+
+  /**
    * Returns the Strong's entry for a given key.
    *
    * @param {String} strongsKey - The Strong's key for the requested entry.
