@@ -141,7 +141,13 @@ void NapiSwordHelper::strongsEntryToNapiObject(const Napi::Env& env, StrongsEntr
 
     Napi::Array referencesArray = Napi::Array::New(env, strongsEntry->references.size());
     for (unsigned int i = 0; i < strongsEntry->references.size(); i++) {
-        referencesArray.Set(i, strongsEntry->references[i]);
+        StrongsReference currentReference = strongsEntry->references[i];
+        Napi::Object referenceObject = Napi::Object::New(env);
+        
+        referenceObject["text"] = currentReference.text;
+        referenceObject["key"] = currentReference.key;
+
+        referencesArray.Set(i, referenceObject);
     }
 
     object["references"] = referencesArray;

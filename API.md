@@ -15,6 +15,8 @@
 <dt><a href="#ModuleObject">ModuleObject</a> : <code>Object</code></dt>
 <dd><p>An object representation of a SWORD module.</p>
 </dd>
+<dt><a href="#StrongsReference">StrongsReference</a> : <code>Object</code></dt>
+<dd></dd>
 <dt><a href="#StrongsEntry">StrongsEntry</a> : <code>Object</code></dt>
 <dd><p>An object representation of a Strong&#39;s entry.</p>
 </dd>
@@ -363,6 +365,17 @@ An object representation of a SWORD module.
 | hasCrossReferences | <code>Boolean</code> | Information on whether the module has cross references |
 | isRightToLeft | <code>Boolean</code> | Information on whether the module has right to left text direction |
 
+<a name="StrongsReference"></a>
+
+## StrongsReference : <code>Object</code>
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| text | <code>String</code> | The full text of the reference |
+| key | <code>String</code> | The reference key |
+
 <a name="StrongsEntry"></a>
 
 ## StrongsEntry : <code>Object</code>
@@ -378,5 +391,5 @@ An object representation of a Strong's entry.
 | transcription | <code>String</code> | The transcription of the Strong's entry |
 | phoneticTranscription | <code>String</code> | The phonetic transcription of the Strong's entry |
 | definition | <code>String</code> | The Strong's definition |
-| references | <code>Array.&lt;String&gt;</code> | The "see also" references of the Strong's entry |
+| references | [<code>Array.&lt;StrongsReference&gt;</code>](#StrongsReference) | The "see also" references of the Strong's entry |
 

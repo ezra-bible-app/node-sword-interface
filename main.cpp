@@ -91,12 +91,13 @@ void get_module_text(SwordFacade& sword_facade)
 void get_strongs_entry(SwordFacade& sword_facade)
 {
     StrongsEntry* entry = sword_facade.getStrongsEntry("G2766");
+    /*cout << entry->rawEntry;*/
     cout << entry->key << endl;
     cout << entry->transcription << endl;
     cout << entry->phoneticTranscription << endl;
     cout << entry->definition << endl;
     for (unsigned int i = 0; i < entry->references.size(); i++) {
-        cout << entry->references[i] << endl;
+        cout << entry->references[i].text << endl;
     }
 
     cout << endl;
@@ -107,7 +108,7 @@ void get_strongs_entry(SwordFacade& sword_facade)
     cout << entry->phoneticTranscription << endl;
     cout << entry->definition << endl;
     for (unsigned int i = 0; i < entry->references.size(); i++) {
-        cout << entry->references[i] << endl;
+        cout << entry->references[i].text << endl;
     }    
 }
 

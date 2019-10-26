@@ -26,6 +26,40 @@
 using namespace std;
 using namespace sword;
 
+StrongsReference::StrongsReference(string text)
+{
+  this->text = text;
+  this->key = this->parseKey(text);
+}
+
+string StrongsReference::parseKey(string text)
+{
+  string key = "";
+
+  // A reference looks like this:
+  //see GREEK for 2767
+  //
+  // To parse the actual key we first split the string by space, getting the four literals as a result.
+  vector<string> splittedReference = StringHelper::split(text, " ");
+
+  if (splittedReference.size() == 4) {
+    // The reference language is the first character of the second literal
+    char referenceLang = splittedReference[1][0];
+
+    // The key is the last / 4th literal
+    // We convert it to a number to get rid of unnecessary leading 0s
+    unsigned int numericKey = stoi(splittedReference[3]);
+    // Then we convert it back into a string
+    string stringKey = to_string(numericKey);
+
+    key = referenceLang + stringKey;
+  } else {
+    key = "";
+  }
+
+  return key;
+}
+
 StrongsEntry::StrongsEntry(string key, string rawEntry)
 {
   this->key = key;
@@ -72,13 +106,14 @@ void StrongsEntry::eraseEmptyLines(vector<string>& lines)
 
 void StrongsEntry::parseDefinitionAndReferences(vector<string>& lines)
 {
-    vector<string> references;
+    vector<StrongsReference> references;
     stringstream definition;
 
     for (unsigned int i = 0; i < lines.size(); i++) {
       string currentLine = lines[i];
       if (currentLine.substr(0,4) == " see") {
         StringHelper::trim(currentLine);
+        StrongsReference reference(currentLine);
         references.push_back(currentLine);
       } else {
         definition << currentLine;

@@ -26,11 +26,24 @@ namespace sword {
     class SWModule;
 };
 
+class StrongsReference
+{
+public:
+    StrongsReference(std::string text);
+    virtual ~StrongsReference(){}
+
+    std::string text;
+    std::string key;
+
+private:
+    std::string parseKey(std::string text);
+};
+
 class StrongsEntry
 {
 public:
     StrongsEntry(std::string key, std::string rawEntry);
-    virtual ~StrongsEntry(){};
+    virtual ~StrongsEntry(){}
 
     static StrongsEntry* getStrongsEntry(sword::SWModule* module, std::string key);
 
@@ -39,7 +52,7 @@ public:
     std::string transcription;
     std::string phoneticTranscription;
     std::string definition;
-    std::vector<std::string> references;
+    std::vector<StrongsReference> references;
 
     void parseFromRawEntry(std::string rawEntry);
     void parseFirstLine(std::string firstLine);
