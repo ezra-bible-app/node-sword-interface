@@ -18,6 +18,7 @@
 
 #include <sstream>
 #include <string>
+#include <algorithm>
 
 #include <swmodule.h>
 #include "strongs_entry.hpp"
@@ -107,6 +108,7 @@ void StrongsEntry::eraseEmptyLines(vector<string>& lines)
 void StrongsEntry::parseDefinitionAndReferences(vector<string>& lines)
 {
     vector<StrongsReference> references;
+    vector<string> rawReferences;
     stringstream definition;
 
     for (unsigned int i = 0; i < lines.size(); i++) {
@@ -114,7 +116,12 @@ void StrongsEntry::parseDefinitionAndReferences(vector<string>& lines)
       if (currentLine.substr(0,4) == " see") {
         StringHelper::trim(currentLine);
         StrongsReference reference(currentLine);
-        references.push_back(currentLine);
+        // Only put the current line into the list of references if it's not already in there
+        // We do this, because there are Strong's like H3069 (Yhovih) that contain duplicates
+        if (find(rawReferences.begin(), rawReferences.end(), currentLine) == rawReferences.end()) {
+          rawReferences.push_back(currentLine);
+          references.push_back(reference);
+        }
       } else {
         definition << currentLine;
       }
