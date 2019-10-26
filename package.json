@@ -1,6 +1,6 @@
 {
   "name": "node-sword-interface",
-  "version": "0.77.0",
+  "version": "0.78.0",
   "description": "Javascript (N-API) interface to SWORD library",
   "keywords": [
     "C++",
@@ -14,7 +14,8 @@
   "scripts": {
     "build": "node-gyp rebuild",
     "clean": "node-gyp clean",
-    "doc": "jsdoc2md index.js > API.md"
+    "doc": "jsdoc2md index.js > API.md",
+    "publish": "rm -rf build node_modules sword sword_build test && npm publish ./"
   },
   "author": "Tobias Klein",
   "license": "GPL-3.0",
