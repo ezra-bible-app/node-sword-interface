@@ -101,6 +101,20 @@ SwordFacade::SwordFacade()
 SwordFacade::~SwordFacade()
 {
     delete this->_statusReporter;
+
+    if (this->_strongsHebrew != 0) delete this->_strongsHebrew;
+    if (this->_strongsGreek != 0) delete this->_strongsGreek;
+}
+
+void SwordFacade::initStrongs()
+{
+    if (this->_strongsHebrew == 0) {
+        this->_strongsHebrew = this->getLocalModule("StrongsHebrew");
+    }
+
+    if (this->_strongsGreek == 0) {
+        this->_strongsGreek = this->getLocalModule("StrongsGreek");
+    }
 }
 
 void SwordFacade::resetMgr()
@@ -127,6 +141,8 @@ void SwordFacade::resetMgr()
     this->_mgrForInstall = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
     this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), this->_statusReporter);
     this->_installMgr->setUserDisclaimerConfirmed(true);
+
+    this->initStrongs();
 }
 
 int SwordFacade::refreshRepositoryConfig()
@@ -435,7 +451,7 @@ string SwordFacade::getModuleRepo(string moduleName)
 vector<SWModule*> SwordFacade::getAllLocalModules()
 {
     vector<SWModule*> allLocalModules;
-    this->resetMgr();
+    //this->resetMgr();
 
     for (ModMap::iterator modIterator = this->_mgr->Modules.begin();
          modIterator != this->_mgr->Modules.end();
@@ -454,7 +470,6 @@ vector<SWModule*> SwordFacade::getAllLocalModules()
 
 SWModule* SwordFacade::getLocalModule(string moduleName)
 {
-    this->resetMgr();
     return this->_mgr->getModule(moduleName.c_str());
 }
 
@@ -725,11 +740,12 @@ StrongsEntry* SwordFacade::getStrongsEntry(string key)
 {
     SWModule* module = 0;
     char strongsType = key[0];
+    this->initStrongs();
 
     if (strongsType == 'H') {
-        module = this->getLocalModule("StrongsHebrew");
+        module = this->_strongsHebrew;
     } else if (strongsType == 'G') {
-        module = this->getLocalModule("StrongsGreek");
+        module = this->_strongsGreek;
     } else {
         return 0;
     }
@@ -752,8 +768,6 @@ int SwordFacade::installModule(string moduleName)
 
 int SwordFacade::installModule(string repoName, string moduleName)
 {
-    this->resetMgr();
-
     InstallSource* remoteSource = this->getRemoteSource(repoName);
     if (remoteSource == 0) {
         cout << "Couldn't find remote source " << repoName << endl;
@@ -771,6 +785,8 @@ int SwordFacade::installModule(string repoName, string moduleName)
         module = it->second;
 
         int error = this->_installMgr->installModule(this->_mgrForInstall, 0, module->getName(), remoteSource);
+        this->resetMgr();
+
         if (error) {
             cout << "Error installing module: [" << module->getName() << "] (write permissions?)\n";
             return -1;
@@ -783,8 +799,8 @@ int SwordFacade::installModule(string repoName, string moduleName)
 
 int SwordFacade::uninstallModule(string moduleName)
 {
-    this->resetMgr();
     int error = this->_installMgr->removeModule(this->_mgrForInstall, moduleName.c_str());
+    this->resetMgr();
 
     if (error) {
         cout << "Error uninstalling module: [" << moduleName << "] (write permissions?)\n";

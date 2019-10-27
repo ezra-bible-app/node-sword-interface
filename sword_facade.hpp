@@ -97,6 +97,7 @@ private:
     int refreshIndividualRemoteSource(std::string remoteSourceName);
     std::thread getRemoteSourceRefreshThread(std::string remoteSourceName);
     void resetMgr();
+    void initStrongs();
 
     sword::SWModule* getModuleFromList(std::vector<sword::SWModule*>& moduleList, std::string moduleName);
 
@@ -110,6 +111,9 @@ private:
     sword::LocaleMgr* _localeMgr = 0;
     SwordStatusReporter* _statusReporter = 0;
     FileSystemHelper _fileSystemHelper;
+
+    sword::SWModule* _strongsHebrew = 0;
+    sword::SWModule* _strongsGreek = 0;
 
     bool _markupEnabled = false;
 };
