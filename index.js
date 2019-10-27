@@ -190,9 +190,13 @@ class NodeSwordInterface {
    * @return {Promise}
    */
   installModule(moduleCode) {
-    return new Promise(resolve => {
-      this.nativeInterface.installModule(moduleCode, function() {
-        resolve();
+    return new Promise((resolve, reject) => {
+      this.nativeInterface.installModule(moduleCode, function(installSuccessful) {
+        if (installSuccessful) {
+          resolve();
+        } else {
+          reject();
+        }
       });
     });
   }
@@ -206,9 +210,13 @@ class NodeSwordInterface {
    * @return {Promise}
    */
   uninstallModule(moduleCode) {
-    return new Promise(resolve => {
-      this.nativeInterface.uninstallModule(moduleCode, function() {
-        resolve();
+    return new Promise((resolve, reject) => {
+      this.nativeInterface.uninstallModule(moduleCode, function(uninstallSuccessful) {
+        if (uninstallSuccessful) {
+          resolve();
+        } else {
+          reject();
+        }
       });
     });
   }

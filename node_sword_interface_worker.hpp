@@ -109,9 +109,19 @@ public:
     InstallModuleWorker(SwordFacade* facade, const Napi::Function& callback, std::string moduleName)
         : BaseNodeSwordInterfaceWorker(facade, callback), _moduleName(moduleName) {}
 
-    void Execute() { this->_facade->installModule(this->_moduleName); }
+    void Execute() {
+        unsigned int ret = this->_facade->installModule(this->_moduleName);
+        this->_isSuccessful = (ret == 0);
+    }
+
+    void OnOK() {
+        Napi::HandleScope scope(this->Env());
+        Napi::Boolean isSuccessful = Napi::Boolean::New(this->Env(), this->_isSuccessful);
+        Callback().Call({ isSuccessful });
+    }
 
 private:
+    bool _isSuccessful;
     std::string _moduleName;
 };
 
@@ -120,9 +130,19 @@ public:
     UninstallModuleWorker(SwordFacade* facade, const Napi::Function& callback, std::string moduleName)
         : BaseNodeSwordInterfaceWorker(facade, callback), _moduleName(moduleName) {}
 
-    void Execute() { this->_facade->uninstallModule(this->_moduleName); }
+    void Execute() {
+        unsigned int ret = this->_facade->uninstallModule(this->_moduleName);
+        this->_isSuccessful = (ret == 0);
+    }
+
+    void OnOK() {
+        Napi::HandleScope scope(this->Env());
+        Napi::Boolean isSuccessful = Napi::Boolean::New(this->Env(), this->_isSuccessful);
+        Callback().Call({ isSuccessful });
+    }
 
 private:
+    bool _isSuccessful;
     std::string _moduleName;
 };
 

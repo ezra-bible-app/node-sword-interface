@@ -778,15 +778,12 @@ int SwordFacade::installModule(string repoName, string moduleName)
     }
 
     SWMgr *remoteMgr = remoteSource->getMgr();
-    SWModule *module;
     ModMap::iterator it = remoteMgr->Modules.find(moduleName.c_str());
 
     if (it == remoteMgr->Modules.end()) {
         cerr << "Did not find module " << moduleName << " in repository " << repoName << endl;
         return -1;
     } else {
-        module = it->second;
-
         int error = this->_installMgr->installModule(this->_mgrForInstall, 0, moduleName.c_str(), remoteSource);
         this->resetMgr();
 
