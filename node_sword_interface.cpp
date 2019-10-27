@@ -468,6 +468,7 @@ Napi::Value NodeSwordInterface::getStrongsEntry(const Napi::CallbackInfo& info)
         this->_napiSwordHelper->strongsEntryToNapiObject(env, strongsEntry, napiObject);
     }
 
+    delete strongsEntry;
     return napiObject;
 }
 
