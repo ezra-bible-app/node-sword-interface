@@ -451,7 +451,6 @@ string SwordFacade::getModuleRepo(string moduleName)
 vector<SWModule*> SwordFacade::getAllLocalModules()
 {
     vector<SWModule*> allLocalModules;
-    //this->resetMgr();
 
     for (ModMap::iterator modIterator = this->_mgr->Modules.begin();
          modIterator != this->_mgr->Modules.end();
