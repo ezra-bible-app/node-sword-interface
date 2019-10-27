@@ -108,17 +108,17 @@ SwordFacade::~SwordFacade()
 
 void SwordFacade::initStrongs()
 {
-    if (this->_strongsHebrew == 0) {
+    if (this->_strongsHebrew == 0 || this->_strongsGreek == 0) {
         this->_strongsHebrew = this->getLocalModule("StrongsHebrew");
-    }
-
-    if (this->_strongsGreek == 0) {
         this->_strongsGreek = this->getLocalModule("StrongsGreek");
     }
 }
 
 void SwordFacade::resetMgr()
 {
+    this->_strongsHebrew = 0;
+    this->_strongsGreek = 0;
+
     if (this->_mgr != 0) {
         delete this->_mgr;
     }
@@ -271,7 +271,7 @@ SWModule* SwordFacade::getModuleFromList(vector<SWModule*>& moduleList, string m
               return currentModule;
           }
       } else {
-          cout << "Could not access module at index " << i << endl;
+          cerr << "Could not access module at index " << i << endl;
       }
     }
 
@@ -640,7 +640,7 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
     vector<string> text;
 
     if (module == 0) {
-        cout << "getLocalModule returned zero pointer for " << moduleName << endl;
+        cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
         module->setKey(key.c_str());
         // Filter used to get rid of some tags appearing in the GerSchm module
@@ -715,7 +715,7 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName, string sea
     vector<string> searchResults;
 
     if (module == 0) {
-        cout << "getLocalModule returned zero pointer for " << moduleName << endl;
+        cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
         listkey = module->search(searchTerm.c_str(), SEARCH_TYPE, flags, scope, 0);
 
@@ -739,13 +739,17 @@ StrongsEntry* SwordFacade::getStrongsEntry(string key)
 {
     SWModule* module = 0;
     char strongsType = key[0];
-    this->initStrongs();
 
     if (strongsType == 'H') {
         module = this->_strongsHebrew;
     } else if (strongsType == 'G') {
         module = this->_strongsGreek;
     } else {
+        return 0;
+    }
+
+    if (module == 0) {
+        cerr << "No valid Strong's module available!" << endl;
         return 0;
     }
 
@@ -758,7 +762,7 @@ int SwordFacade::installModule(string moduleName)
     string repoName = this->getModuleRepo(moduleName);
 
     if (repoName == "") {
-        cout << "Could not find repository for module " << moduleName << endl;
+        cerr << "Could not find repository for module " << moduleName << endl;
         return -1;
     }
 
@@ -769,7 +773,7 @@ int SwordFacade::installModule(string repoName, string moduleName)
 {
     InstallSource* remoteSource = this->getRemoteSource(repoName);
     if (remoteSource == 0) {
-        cout << "Couldn't find remote source " << repoName << endl;
+        cerr << "Couldn't find remote source " << repoName << endl;
         return -1;
     }
 
@@ -778,19 +782,19 @@ int SwordFacade::installModule(string repoName, string moduleName)
     ModMap::iterator it = remoteMgr->Modules.find(moduleName.c_str());
 
     if (it == remoteMgr->Modules.end()) {
-        cout << "Did not find module " << moduleName << " in repository " << repoName << endl;
+        cerr << "Did not find module " << moduleName << " in repository " << repoName << endl;
         return -1;
     } else {
         module = it->second;
 
-        int error = this->_installMgr->installModule(this->_mgrForInstall, 0, module->getName(), remoteSource);
+        int error = this->_installMgr->installModule(this->_mgrForInstall, 0, moduleName.c_str(), remoteSource);
         this->resetMgr();
 
         if (error) {
-            cout << "Error installing module: [" << module->getName() << "] (write permissions?)\n";
+            cerr << "Error installing module: " << moduleName << " (write permissions?)" << endl;
             return -1;
         } else {
-            cout << "Installed module: [" << module->getName() << "]\n";
+            cout << "Installed module: " << moduleName << endl;
             return 0;
         }
     }
@@ -802,10 +806,10 @@ int SwordFacade::uninstallModule(string moduleName)
     this->resetMgr();
 
     if (error) {
-        cout << "Error uninstalling module: [" << moduleName << "] (write permissions?)\n";
+        cerr << "Error uninstalling module: " << moduleName << " (write permissions?)" << endl;
         return -1;
     } else {
-        cout << "Uninstalled module: [" << moduleName << "]\n";
+        cout << "Uninstalled module: " << moduleName << endl;
         return 0;
     }
 }
