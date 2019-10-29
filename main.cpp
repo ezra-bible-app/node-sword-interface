@@ -91,25 +91,27 @@ void get_module_text(SwordFacade& sword_facade)
 void get_strongs_entry(SwordFacade& sword_facade)
 {
     StrongsEntry* entry = sword_facade.getStrongsEntry("G2766");
-    /*cout << entry->rawEntry;*/
-    cout << entry->key << endl;
-    cout << entry->transcription << endl;
-    cout << entry->phoneticTranscription << endl;
-    cout << entry->definition << endl;
-    for (unsigned int i = 0; i < entry->references.size(); i++) {
-        cout << entry->references[i].text << endl;
+    if (entry != 0) {
+        cout << entry->key << endl;
+        cout << entry->transcription << endl;
+        cout << entry->phoneticTranscription << endl;
+        cout << entry->definition << endl;
+        for (unsigned int i = 0; i < entry->references.size(); i++) {
+            cout << entry->references[i].text << endl;
+        }
+        cout << endl;
     }
 
-    cout << endl;
-
-    entry = sword_facade.getStrongsEntry("H8659");
-    cout << entry->key << endl;
-    cout << entry->transcription << endl;
-    cout << entry->phoneticTranscription << endl;
-    cout << entry->definition << endl;
-    for (unsigned int i = 0; i < entry->references.size(); i++) {
-        cout << entry->references[i].text << endl;
-    }    
+    entry = sword_facade.getStrongsEntry("H3069");
+    if (entry != 0) {
+        cout << entry->key << endl;
+        cout << entry->transcription << endl;
+        cout << entry->phoneticTranscription << endl;
+        cout << entry->definition << endl;
+        for (unsigned int i = 0; i < entry->references.size(); i++) {
+            cout << entry->references[i].text << endl;
+        }
+    }
 }
 
 int main(int argc, char** argv)
@@ -122,13 +124,13 @@ int main(int argc, char** argv)
         cout << module->getName() << endl;
     }*/
 
-    sword_facade.refreshRemoteSources(true);
+    //sword_facade.refreshRemoteSources(true);
 
     cout << "SWORD version: " << sword_facade.getSwordVersion() << endl;
 
-    show_repos(sword_facade);
+    /*show_repos(sword_facade);
 
-    show_modules(sword_facade);
+    show_modules(sword_facade);*/
 
     /*int error = sword_facade.uninstallModule("KJV");
 
@@ -145,6 +147,9 @@ int main(int argc, char** argv)
     //get_local_module(sword_facade);
     
     //get_repo_module(sword_facade);
+
+    /*sword_facade.installModule("StrongsHebrew");
+    sword_facade.installModule("StrongsGreek");*/
 
     get_strongs_entry(sword_facade);
 
