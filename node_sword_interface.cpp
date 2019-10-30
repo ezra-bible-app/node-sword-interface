@@ -423,8 +423,8 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
         Napi::TypeError::New(env, "String expected as first argument (moduleCode)").ThrowAsJavaScriptException();
     } else if (!info[1].IsString()) {
         Napi::TypeError::New(env, "String expected as second argument (searchTerm)").ThrowAsJavaScriptException();
-    } else if (!info[2].IsBoolean()) {
-        Napi::TypeError::New(env, "Boolean expected as third argument (isPhrase)").ThrowAsJavaScriptException();
+    } else if (!info[2].IsString()) {
+        Napi::TypeError::New(env, "String expected as third argument (searchType)").ThrowAsJavaScriptException();
     } else if (!info[3].IsBoolean()) {
         Napi::TypeError::New(env, "Boolean expected as fourth argument (isCaseSensitive)").ThrowAsJavaScriptException();
     } else if (!info[4].IsFunction()) {
@@ -433,15 +433,27 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
 
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String searchTerm = info[1].As<Napi::String>();
-    Napi::Boolean isPhrase = info[2].As<Napi::Boolean>();
+    string searchTypeString = string(info[2].As<Napi::String>());
     Napi::Boolean isCaseSensitive = info[3].As<Napi::Boolean>();
     Napi::Function callback = info[4].As<Napi::Function>();
+
+    SearchType searchType = SearchType::multiWord;
+    
+    if (searchTypeString == "phrase") {
+        searchType = SearchType::phrase;
+    } else if (searchTypeString == "multiWord") {
+        searchType = SearchType::multiWord;
+    } else if (searchTypeString == "strongsNumber") {
+        searchType = SearchType::strongsNumber;
+    } else {
+        Napi::TypeError::New(env, "Unknown search type!").ThrowAsJavaScriptException();
+    }
 
     GetModuleSearchResultWorker* worker = new GetModuleSearchResultWorker(this->_swordFacade,
                                                                           callback,
                                                                           moduleName,
                                                                           searchTerm,
-                                                                          isPhrase,
+                                                                          searchType,
                                                                           isCaseSensitive);
     worker->Queue();
     return info.Env().Undefined();

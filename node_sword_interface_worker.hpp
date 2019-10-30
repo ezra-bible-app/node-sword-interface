@@ -70,20 +70,20 @@ public:
                                 const Napi::Function& callback,
                                 std::string moduleName,
                                 std::string searchTerm,
-                                bool isPhrase=false,
+                                SearchType searchType,
                                 bool isCaseSensitive=false)
 
         : BaseNodeSwordInterfaceWorker(facade, callback),
         _moduleName(moduleName),
         _searchTerm(searchTerm),
-        _isPhrase(isPhrase),
+        _searchType(searchType),
         _isCaseSensitive(isCaseSensitive) {}
 
     void Execute() {
         searchMutex.lock();
         this->_stdSearchResults = this->_facade->getModuleSearchResults(this->_moduleName,
                                                                         this->_searchTerm,
-                                                                        this->_isPhrase,
+                                                                        this->_searchType,
                                                                         this->_isCaseSensitive);
         searchMutex.unlock();
     }
@@ -100,7 +100,7 @@ private:
     Napi::Array _napiSearchResults;
     std::string _moduleName;
     std::string _searchTerm;
-    bool _isPhrase;
+    SearchType _searchType;
     bool _isCaseSensitive;
 };
 

@@ -46,6 +46,12 @@ public:
     virtual void preStatus(long totalBytes, long completedBytes, const char *message);
 };
 
+enum class SearchType {
+    phrase = -1,
+    multiWord = -2,
+    strongsNumber = -3
+};
+
 class SwordFacade
 {
 public:
@@ -72,7 +78,11 @@ public:
 
     std::vector<std::string> getBibleText(std::string moduleName);
     std::vector<std::string> getBookText(std::string moduleName, std::string bookCode);
-    std::vector<std::string> getModuleSearchResults(std::string moduleName, std::string searchTerm, bool isPhrase=false, bool isCaseSensitive=false);
+    std::vector<std::string> getModuleSearchResults(std::string moduleName,
+                                                    std::string searchTerm,
+                                                    SearchType searchType=SearchType::multiWord,
+                                                    bool isCaseSensitive=false);
+
     StrongsEntry* getStrongsEntry(std::string key);
 
     int installModule(std::string moduleName);

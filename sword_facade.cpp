@@ -681,26 +681,14 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
     return text;
 }
 
-vector<string> SwordFacade::getModuleSearchResults(string moduleName, string searchTerm, bool isPhrase, bool isCaseSensitive)
+vector<string> SwordFacade::getModuleSearchResults(string moduleName,
+                                                   string searchTerm,
+                                                   SearchType searchType,
+                                                   bool isCaseSensitive)
 {
     SWModule* module = this->getLocalModule(moduleName);
 	ListKey listkey;
 	ListKey *scope = 0;
-
-    // FROM swmodule.h
-	/*
-	 *			>=0 - regex; (for backward compat, if > 0 then used as additional REGEX FLAGS)
-	 *			-1  - phrase
-	 *			-2  - multiword
-	 *			-3  - entryAttrib (eg. Word//Lemma./G1234/)	 (Lemma with dot means check components (Lemma.[1-9]) also)
-	 *			-4  - Lucene
-	 *			-5  - multilemma window; set 'flags' param to window size (NOT DONE)
-	 */
-    char SEARCH_TYPE = -2;
-    if (isPhrase) {
-        SEARCH_TYPE = -1;
-    }
-
     int flags = 0;
 
     if (!isCaseSensitive) {
@@ -708,8 +696,12 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName, string sea
         flags |= REG_ICASE;
     }
 
-    // for use with entryAttrib search type to match whole entry to value, e.g., G1234 and not G12345
-    //| SEARCHFLAG_MATCHWHOLEENTRY
+    if (searchType == SearchType::strongsNumber) {
+        // from swmodule.h api docs:
+        // for use with entryAttrib search type to match whole entry to value, e.g., G1234 and not G12345
+        flags |= SEARCHFLAG_MATCHWHOLEENTRY;
+        searchTerm = "Word//Lemma./" + searchTerm;
+    }
 
     // This holds the text that we will return
     vector<string> searchResults;
@@ -717,7 +709,7 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName, string sea
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
-        listkey = module->search(searchTerm.c_str(), SEARCH_TYPE, flags, scope, 0);
+        listkey = module->search(searchTerm.c_str(), int(searchType), flags, scope, 0);
 
         while (!listkey.popError()) {
             stringstream currentVerse;
