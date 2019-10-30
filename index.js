@@ -54,6 +54,7 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
  */
 
 /**
+ * An object representation of a Strongs reference
  * @typedef StrongsReference
  * @type {Object}
  * @property {String} text - The full text of the reference

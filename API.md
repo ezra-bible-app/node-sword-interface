@@ -16,7 +16,8 @@
 <dd><p>An object representation of a SWORD module.</p>
 </dd>
 <dt><a href="#StrongsReference">StrongsReference</a> : <code>Object</code></dt>
-<dd></dd>
+<dd><p>An object representation of a Strongs reference</p>
+</dd>
 <dt><a href="#StrongsEntry">StrongsEntry</a> : <code>Object</code></dt>
 <dd><p>An object representation of a Strong&#39;s entry.</p>
 </dd>
@@ -368,6 +369,8 @@ An object representation of a SWORD module.
 <a name="StrongsReference"></a>
 
 ## StrongsReference : <code>Object</code>
+An object representation of a Strongs reference
+
 **Kind**: global typedef  
 **Properties**
 
