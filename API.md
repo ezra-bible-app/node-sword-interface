@@ -45,7 +45,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
     * [.getBookText(moduleCode, bookCode)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
-    * [.getModuleSearchResults(moduleCode, searchTerm, isPhrase, isCaseSensitive)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
+    * [.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
     * [.hebrewStrongsAvailable()](#NodeSwordInterface+hebrewStrongsAvailable) ⇒ <code>Boolean</code>
     * [.greekStrongsAvailable()](#NodeSwordInterface+greekStrongsAvailable) ⇒ <code>Boolean</code>
     * [.strongsAvailable()](#NodeSwordInterface+strongsAvailable) ⇒ <code>Boolean</code>
@@ -227,7 +227,7 @@ Returns the bible text of a module.
 
 <a name="NodeSwordInterface+getModuleSearchResults"></a>
 
-### nodeSwordInterface.getModuleSearchResults(moduleCode, searchTerm, isPhrase, isCaseSensitive) ⇒ <code>Promise</code>
+### nodeSwordInterface.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive) ⇒ <code>Promise</code>
 Returns the results of a module search.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
@@ -236,7 +236,7 @@ Returns the results of a module search.
 | --- | --- | --- | --- |
 | moduleCode | <code>String</code> |  | The module code of the SWORD module. |
 | searchTerm | <code>String</code> |  | The term to search for. |
-| isPhrase | <code>Boolean</code> | <code>false</code> | Whether it is a phrase search (otherwise multi-word!) |
+| searchType | <code>String</code> | <code>multiWord</code> | Options: phrase, multiWord, strongsNumber |
 | isCaseSensitive | <code>Boolean</code> | <code>false</code> | Whether the search is case sensitive |
 
 <a name="NodeSwordInterface+hebrewStrongsAvailable"></a>
