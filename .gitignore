@@ -2,6 +2,7 @@
 /node_modules
 /sword_build
 /sword
+/test
 package-lock.json
 /.vscode
 *.code-workspace
