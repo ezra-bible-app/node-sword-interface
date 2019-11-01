@@ -548,6 +548,7 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     static regex titleEndElementFilter = regex("</title>");
     static regex divMilestoneFilter = regex("<div type=\"x-milestone\"");
     static regex milestoneFilter = regex("<milestone");
+    static regex xBrFilter = regex("x-br\"/>");
     static regex divSIDFilter = regex("<div sID=");
     static regex divEIDFilter = regex("<div eID=");
     static regex divineNameStartElement = regex("<divineName>");
@@ -575,6 +576,7 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     filteredText = regex_replace(filteredText, titleEndElementFilter, "</div>");
     filteredText = regex_replace(filteredText, divMilestoneFilter, "<div class=\"sword-markup sword-x-milestone\"");
     filteredText = regex_replace(filteredText, milestoneFilter, "<div class=\"sword-markup sword-milestone\"");
+    filteredText = regex_replace(filteredText, xBrFilter, "x-br\"/> ");
     filteredText = regex_replace(filteredText, divSIDFilter, "<div class=\"sword-markup sword-sid\" sID=");
     filteredText = regex_replace(filteredText, divEIDFilter, "<div class=\"sword-markup sword-eid\" eID=");
     filteredText = regex_replace(filteredText, quoteJesusElementFilter, "<div class=\"sword-markup sword-quote-jesus\"/>");
