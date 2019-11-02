@@ -32,6 +32,8 @@ public:
     StrongsReference(std::string text);
     virtual ~StrongsReference(){}
 
+    bool isKeyValid();
+
     std::string text;
     std::string key;
 

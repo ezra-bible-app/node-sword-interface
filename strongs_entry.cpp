@@ -19,6 +19,7 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
+#include <regex>
 
 #include <swmodule.h>
 #include "strongs_entry.hpp"
@@ -61,6 +62,14 @@ string StrongsReference::parseKey(string text)
   return key;
 }
 
+/*
+ * Checks whether the key is valid (not empty)
+ */
+bool StrongsReference::isKeyValid()
+{
+  return this->key != "";
+}
+
 StrongsEntry::StrongsEntry(string key, string rawEntry)
 {
   this->key = key;
@@ -85,8 +94,16 @@ void StrongsEntry::parseFirstLine(string firstLine)
 {
     // The first line looks like this:
     // 2766  keramos  ker'-am-os
-    // We will split it and then parse the transcription (2nd column) and phonetic transcription (3rd column)
-    vector<string> firstLineEntries = StringHelper::split(firstLine, "  ");
+    
+    // Cut off white space on the left side
+    StringHelper::ltrim(firstLine);
+
+    // Make white spaces uniform
+    static regex whiteSpace = regex("\\s+");
+    firstLine = regex_replace(firstLine, whiteSpace, " ");
+
+    // We will now split it and then parse the transcription (2nd column) and phonetic transcription (3rd column)
+    vector<string> firstLineEntries = StringHelper::split(firstLine, " ");
     if (firstLine.size() >= 2) this->transcription = firstLineEntries[1];
     if (firstLine.size() >= 3) this->phoneticTranscription = firstLineEntries[2];
 }
@@ -98,9 +115,12 @@ void StrongsEntry::eraseEmptyLines(vector<string>& lines)
 
     for (int i = 0; i < maxIterations && currentLine == "" && lines.size() > 0; i++) {
       currentLine = lines[0];
-      StringHelper::trim(currentLine);
+      StringHelper::trim(currentLine, " ");
       if (currentLine == "") {
         lines.erase(lines.begin(), lines.begin() + 1);
+      } else {
+        // Break when reaching the first line with actual content
+        break;
       }
     }
 }
@@ -110,31 +130,51 @@ void StrongsEntry::parseDefinitionAndReferences(vector<string>& lines)
     vector<StrongsReference> references;
     vector<string> rawReferences;
     stringstream definition;
+    static regex doubleLineBreak = regex("\n\n");
 
     for (unsigned int i = 0; i < lines.size(); i++) {
       string currentLine = lines[i];
-      if (currentLine.substr(0,4) == " see") {
+      if (currentLine.substr(0,5) == " see ") {
         StringHelper::trim(currentLine);
         StrongsReference reference(currentLine);
         // Only put the current line into the list of references if it's not already in there
         // We do this, because there are Strong's like H3069 (Yhovih) that contain duplicates
         if (find(rawReferences.begin(), rawReferences.end(), currentLine) == rawReferences.end()) {
           rawReferences.push_back(currentLine);
-          references.push_back(reference);
+
+          // We only take references with a valid (non-empty) key
+          if (reference.isKeyValid()) {
+            references.push_back(reference);
+          }
         }
       } else {
-        definition << currentLine;
+        definition << currentLine << "\n";
       }
     }
 
+    string definitionString = definition.str();
+    // Clean up double line breaks
+    definitionString = regex_replace(definitionString, doubleLineBreak, "\n");
+    // Cut off white space in beginning and end (if any)
+    StringHelper::trim(definitionString);
+
+    this->definition = definitionString;
     this->references = references;
-    this->definition = definition.str();
-    StringHelper::trim(this->definition);
 }
 
 void StrongsEntry::parseFromRawEntry(string rawEntry)
 {
     this->rawEntry = rawEntry;
+
+    std::size_t firstCommaPosition = rawEntry.find_first_of(",");
+    std::size_t firstLineBreakPosition = rawEntry.find_first_of("\n");
+
+    // If the first line contains a comma we replace it with a line break
+    // An example for this is G2147
+    // This is necessary so that the parsing works in this specific case
+    if (firstCommaPosition < firstLineBreakPosition) {
+      this->rawEntry.replace(firstCommaPosition, 1, "\n");
+    }
 
     vector<string> allLines = StringHelper::split(this->rawEntry, "\n");
     if (allLines.size() == 0) {
