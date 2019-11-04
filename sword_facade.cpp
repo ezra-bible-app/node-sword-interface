@@ -512,6 +512,7 @@ bool SwordFacade::isModuleAvailableInRepo(string moduleName, string repoName)
     return false;
 }
 
+// FIXME: This method triggers a crash on Windows!!
 string SwordFacade::replaceSpacesInStrongs(const string& text)
 {
     string input = text;
@@ -592,7 +593,8 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     filteredText = regex_replace(filteredText, semiColonWithoutSpace, "; <");
     filteredText = regex_replace(filteredText, colonWithoutSpace, ": <");
 
-    filteredText = this->replaceSpacesInStrongs(filteredText);
+    // Disabled for now, because it trigger's a crash on Windows!
+    // filteredText = this->replaceSpacesInStrongs(filteredText);
 
     return filteredText;
 }
