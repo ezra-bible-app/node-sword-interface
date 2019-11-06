@@ -112,7 +112,7 @@ private:
     sword::SWModule* getModuleFromList(std::vector<sword::SWModule*>& moduleList, std::string moduleName);
 
     std::string getVerseText(sword::SWModule* module, bool forceNoMarkup=false);
-    std::string getFilteredVerseText(const std::string& verseText);
+    std::string getFilteredVerseText(const std::string& verseText, bool hasStrongs);
     std::string replaceSpacesInStrongs(const std::string& text);
 
     sword::SWMgr* _mgr = 0;

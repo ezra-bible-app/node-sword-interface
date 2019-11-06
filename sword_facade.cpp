@@ -532,7 +532,7 @@ string SwordFacade::replaceSpacesInStrongs(const string& text)
     return filteredText;
 }
 
-string SwordFacade::getFilteredVerseText(const string& verseText)
+string SwordFacade::getFilteredVerseText(const string& verseText, bool hasStrongs)
 {
     static regex schlachterMarkupFilter = regex("<H.*> ");
     static regex chapterFilter = regex("<chapter.*/>");
@@ -593,8 +593,9 @@ string SwordFacade::getFilteredVerseText(const string& verseText)
     filteredText = regex_replace(filteredText, semiColonWithoutSpace, "; <");
     filteredText = regex_replace(filteredText, colonWithoutSpace, ": <");
 
-    // Disabled for now, because it trigger's a crash on Windows!
-    // filteredText = this->replaceSpacesInStrongs(filteredText);
+    if (hasStrongs) {
+        filteredText = this->replaceSpacesInStrongs(filteredText);
+    }
 
     return filteredText;
 }
