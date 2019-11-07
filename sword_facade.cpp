@@ -600,7 +600,7 @@ string SwordFacade::getFilteredVerseText(const string& verseText, bool hasStrong
     return filteredText;
 }
 
-string SwordFacade::getVerseText(sword::SWModule* module, bool forceNoMarkup)
+string SwordFacade::getVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup)
 {
     string verseText;
     string filteredText;
@@ -608,7 +608,7 @@ string SwordFacade::getVerseText(sword::SWModule* module, bool forceNoMarkup)
     if (this->_markupEnabled && !forceNoMarkup) {
         verseText = string(module->getRawEntry());
         StringHelper::trim(verseText);
-        filteredText = this->getFilteredVerseText(verseText);
+        filteredText = this->getFilteredVerseText(verseText, hasStrongs);
     } else {
         verseText = string(module->stripText());
         StringHelper::trim(verseText);
@@ -647,6 +647,7 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
+        bool hasStrongs = this->moduleHasGlobalOption(module, "Strongs");
         module->setKey(key.c_str());
         // Filter used to get rid of some tags appearing in the GerSchm module
 
@@ -666,7 +667,7 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
                 firstVerseInBook = true;
             }
 
-            string verseText = this->getVerseText(module);
+            string verseText = this->getVerseText(module, hasStrongs);
             // If the current verse does not have any content and if it is the first verse in this book
             // we assume that the book is not existing.
             if (verseText.length() == 0 && firstVerseInBook) { currentBookExisting = false; }
@@ -714,6 +715,7 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName,
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
+        bool hasStrongs = this->moduleHasGlobalOption(module, "Strongs");
         listkey = module->search(searchTerm.c_str(), int(searchType), flags, scope, 0);
 
         while (!listkey.popError()) {
@@ -721,7 +723,7 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName,
             module->setKey(listkey.getElement());
 
             bool forceNoMarkup = true;
-            string verseText = this->getVerseText(module, forceNoMarkup);
+            string verseText = this->getVerseText(module, hasStrongs, forceNoMarkup);
             currentVerse << module->getKey()->getShortText() << "|" << verseText;
             searchResults.push_back(currentVerse.str());
 
