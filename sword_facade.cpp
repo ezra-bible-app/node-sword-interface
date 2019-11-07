@@ -516,7 +516,7 @@ bool SwordFacade::isModuleAvailableInRepo(string moduleName, string repoName)
 string SwordFacade::replaceSpacesInStrongs(const string& text)
 {
     string input = text;
-    static regex strongsWText = regex(">[a-zA-Z –‘’-,.!?()`“”\"]*</w>");
+    static regex strongsWText = regex(">[^<]*</w>");
     static std::regex space(" ");
     smatch m;
     string filteredText;

@@ -111,11 +111,7 @@ private:
 
     sword::SWModule* getModuleFromList(std::vector<sword::SWModule*>& moduleList, std::string moduleName);
 
-<<<<<<< Updated upstream
-    std::string getVerseText(sword::SWModule* module, bool forceNoMarkup=false);
-=======
     std::string getVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup=false);
->>>>>>> Stashed changes
     std::string getFilteredVerseText(const std::string& verseText, bool hasStrongs);
     std::string replaceSpacesInStrongs(const std::string& text);
 
