@@ -512,7 +512,6 @@ bool SwordFacade::isModuleAvailableInRepo(string moduleName, string repoName)
     return false;
 }
 
-// FIXME: This method triggers a crash on Windows!!
 string SwordFacade::replaceSpacesInStrongs(const string& text)
 {
     string input = text;
