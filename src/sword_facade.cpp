@@ -727,7 +727,7 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName,
             searchResults.push_back(currentVerse.str());
 
             listkey++;
-	    }
+        }
     }
 
     return searchResults;
