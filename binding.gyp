@@ -33,13 +33,13 @@
         "cflags!": [ "-fno-exceptions" ],
         "cflags_cc!": [ "-fno-exceptions -std=c++11 -pthread" ],
         "sources": [
-            "file_system_helper.cpp",
-            "string_helper.cpp",
-            "strongs_entry.cpp",
-            "sword_facade.cpp",
-            "napi_sword_helper.cpp",
-            "node_sword_interface.cpp",
-            "binding.cpp"
+            "src/file_system_helper.cpp",
+            "src/string_helper.cpp",
+            "src/strongs_entry.cpp",
+            "src/sword_facade.cpp",
+            "src/napi_sword_helper.cpp",
+            "src/node_sword_interface.cpp",
+            "src/binding.cpp"
         ],
         "conditions":[
             ["OS=='linux'", {
