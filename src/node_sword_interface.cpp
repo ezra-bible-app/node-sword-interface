@@ -79,7 +79,12 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     this->_napiSwordHelper = new NapiSwordHelper();
 }
 
-#define initScopeAndValidate(...) {\
+#define THROW_JS_EXCEPTION(exceptionString) { \
+    Napi::Error::New(info.Env(), exceptionString).ThrowAsJavaScriptException(); \
+    return info.Env().Null(); \
+}
+
+#define INIT_SCOPE_AND_VALIDATE(...) {\
     Napi::Env env = info.Env(); \
     Napi::HandleScope scope(env);\
     if (this->validateParams(info, { __VA_ARGS__ }) != 0) { return env.Null(); } \
@@ -128,7 +133,7 @@ int NodeSwordInterface::validateParams(const Napi::CallbackInfo& info, vector<Pa
 
 Napi::Value NodeSwordInterface::refreshRepositoryConfig(const Napi::CallbackInfo& info)
 {
-    initScopeAndValidate(ParamType::function);
+    INIT_SCOPE_AND_VALIDATE(ParamType::function);
     Napi::Function callback = info[0].As<Napi::Function>();
     RefreshRepositoryConfigWorker* worker = new RefreshRepositoryConfigWorker(this->_swordFacade, callback);
     worker->Queue();
@@ -137,7 +142,7 @@ Napi::Value NodeSwordInterface::refreshRepositoryConfig(const Napi::CallbackInfo
 
 Napi::Value NodeSwordInterface::refreshRemoteSources(const Napi::CallbackInfo& info)
 {
-    initScopeAndValidate(ParamType::boolean, ParamType::function);
+    INIT_SCOPE_AND_VALIDATE(ParamType::boolean, ParamType::function);
     Napi::Boolean force = info[0].As<Napi::Boolean>();
     Napi::Function callback = info[1].As<Napi::Function>();
     RefreshRemoteSourcesWorker* worker = new RefreshRemoteSourcesWorker(this->_swordFacade, callback, force.Value());
@@ -170,7 +175,7 @@ Napi::Value NodeSwordInterface::getRepoNames(const Napi::CallbackInfo& info)
 Napi::Value NodeSwordInterface::getAllRepoModules(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    initScopeAndValidate(ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
     vector<SWModule*> modules = this->_swordFacade->getAllRepoModules(string(repoName));
     Napi::Array moduleArray = Napi::Array::New(env, modules.size());
@@ -186,7 +191,7 @@ Napi::Value NodeSwordInterface::getAllRepoModules(const Napi::CallbackInfo& info
 
 Napi::Value NodeSwordInterface::isModuleInUserDir(const Napi::CallbackInfo& info)
 {
-    initScopeAndValidate(ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
     bool moduleInUserDir = this->_swordFacade->isModuleInUserDir(moduleName);
     return Napi::Boolean::New(info.Env(), moduleInUserDir);
@@ -194,7 +199,7 @@ Napi::Value NodeSwordInterface::isModuleInUserDir(const Napi::CallbackInfo& info
 
 Napi::Value NodeSwordInterface::isModuleAvailableInRepo(const Napi::CallbackInfo& info)
 {
-    initScopeAndValidate(ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
     bool moduleAvailable = this->_swordFacade->isModuleAvailableInRepo(moduleName);
     return Napi::Boolean::New(info.Env(), moduleAvailable);
@@ -219,7 +224,7 @@ Napi::Value NodeSwordInterface::getAllLocalModules(const Napi::CallbackInfo& inf
 Napi::Value NodeSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    initScopeAndValidate(ParamType::string, ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
     Napi::String languageCode = info[1].As<Napi::String>();
     vector<SWModule*> modules = this->_swordFacade->getRepoModulesByLang(string(repoName), string(languageCode));
@@ -236,7 +241,7 @@ Napi::Value NodeSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo& i
 
 Napi::Value NodeSwordInterface::getRepoLanguages(const Napi::CallbackInfo& info)
 {
-    initScopeAndValidate(ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
     vector<string> repoLanguages = this->_swordFacade->getRepoLanguages(string(repoName));
     Napi::Array languageArray = Napi::Array::New(info.Env(), repoLanguages.size());
@@ -250,7 +255,7 @@ Napi::Value NodeSwordInterface::getRepoLanguages(const Napi::CallbackInfo& info)
 
 Napi::Value NodeSwordInterface::getRepoTranslationCount(const Napi::CallbackInfo& info)
 {
-    initScopeAndValidate(ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
     unsigned int translationCount = this->_swordFacade->getRepoTranslationCount(string(repoName));
     Napi::Number jsTranslationCount = Napi::Number::New(info.Env(), translationCount);
@@ -259,7 +264,7 @@ Napi::Value NodeSwordInterface::getRepoTranslationCount(const Napi::CallbackInfo
 
 Napi::Value NodeSwordInterface::getRepoLanguageTranslationCount(const Napi::CallbackInfo& info)
 {
-    initScopeAndValidate(ParamType::string, ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
     Napi::String languageCode = info[1].As<Napi::String>();
     unsigned int translationCount = this->_swordFacade->getRepoLanguageTranslationCount(string(repoName), string(languageCode));
@@ -270,15 +275,14 @@ Napi::Value NodeSwordInterface::getRepoLanguageTranslationCount(const Napi::Call
 Napi::Value NodeSwordInterface::getRepoModule(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    initScopeAndValidate(ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::Object napiObject = Napi::Object::New(env);
     Napi::String moduleName = info[0].As<Napi::String>();
-    SWModule* swordModule = this->_swordFacade->getRepoModule(std::string(moduleName));
+    SWModule* swordModule = this->_swordFacade->getRepoModule(string(moduleName));
 
     if (swordModule == 0) {
-        stringstream errorMessage;
-        errorMessage << "getRepoModule returned 0 for '" << std::string(moduleName) << "'" << endl;
-        Napi::Error::New(env, errorMessage.str().c_str()).ThrowAsJavaScriptException();
+        string errorMessage = "getRepoModule returned 0 for '" + string(moduleName) + "'";
+        THROW_JS_EXCEPTION(errorMessage);
     } else {
         this->_napiSwordHelper->swordModuleToNapiObject(env, swordModule, napiObject);
     }
@@ -289,12 +293,13 @@ Napi::Value NodeSwordInterface::getRepoModule(const Napi::CallbackInfo& info)
 Napi::Value NodeSwordInterface::getModuleDescription(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    initScopeAndValidate(ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
 
     SWModule* swordModule = this->_swordFacade->getRepoModule(string(moduleName));
     if (swordModule == 0) {
-        Napi::Error::New(env, "getRepoModule returned 0!").ThrowAsJavaScriptException();
+        string errorMessage = "getRepoModule returned 0 for '" + string(moduleName) + "'";
+        THROW_JS_EXCEPTION(errorMessage);
     }
 
     string moduleDescription = string(swordModule->getDescription());
@@ -305,15 +310,14 @@ Napi::Value NodeSwordInterface::getModuleDescription(const Napi::CallbackInfo& i
 Napi::Value NodeSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    initScopeAndValidate(ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Object napiObject = Napi::Object::New(env);    
     SWModule* swordModule = this->_swordFacade->getLocalModule(string(moduleName));
 
     if (swordModule == 0) {
-        stringstream errorMessage;
-        errorMessage << "getLocalModule returned 0 for '" << string(moduleName) << "'" << endl;
-        Napi::Error::New(env, errorMessage.str().c_str()).ThrowAsJavaScriptException();
+        string errorMessage = "getLocalModule returned 0 for '" + string(moduleName) + "'";
+        THROW_JS_EXCEPTION(errorMessage);
     } else {
         this->_napiSwordHelper->swordModuleToNapiObject(env, swordModule, napiObject);
     }
@@ -332,7 +336,7 @@ Napi::Value NodeSwordInterface::enableMarkup(const Napi::CallbackInfo& info)
 
 Napi::Value NodeSwordInterface::getBookText(const Napi::CallbackInfo& info)
 {
-    initScopeAndValidate(ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String bookCode = info[1].As<Napi::String>();
     std::string stdModuleName = std::string(moduleName);
@@ -343,7 +347,7 @@ Napi::Value NodeSwordInterface::getBookText(const Napi::CallbackInfo& info)
 
 Napi::Value NodeSwordInterface::getBibleText(const Napi::CallbackInfo& info)
 {
-    initScopeAndValidate(ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
     std::string stdModuleName = std::string(moduleName);
     vector<string> bibleText = this->_swordFacade->getBibleText(string(moduleName));
@@ -354,7 +358,7 @@ Napi::Value NodeSwordInterface::getBibleText(const Napi::CallbackInfo& info)
 Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    initScopeAndValidate(ParamType::string, ParamType::string, ParamType::string, ParamType::boolean, ParamType::function);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::string, ParamType::boolean, ParamType::function);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String searchTerm = info[1].As<Napi::String>();
     string searchTypeString = string(info[2].As<Napi::String>());
@@ -370,7 +374,7 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
     } else if (searchTypeString == "strongsNumber") {
         searchType = SearchType::strongsNumber;
     } else {
-        Napi::TypeError::New(env, "Unknown search type!").ThrowAsJavaScriptException();
+        THROW_JS_EXCEPTION("Unknown search type!");
     }
 
     GetModuleSearchResultWorker* worker = new GetModuleSearchResultWorker(this->_swordFacade,
@@ -386,15 +390,14 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
 Napi::Value NodeSwordInterface::getStrongsEntry(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    initScopeAndValidate(ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String strongsKey = info[0].As<Napi::String>();
     Napi::Object napiObject = Napi::Object::New(env);
     StrongsEntry* strongsEntry = this->_swordFacade->getStrongsEntry(strongsKey);
 
     if (strongsEntry == 0) {
-        stringstream errorMessage;
-        errorMessage << "getStrongsEntry returned 0 for '" << string(strongsKey) << "'" << endl;
-        Napi::Error::New(env, errorMessage.str().c_str()).ThrowAsJavaScriptException();
+        string errorMessage = "getStrongsEntry returned 0 for '" + string(strongsKey) + "'";
+        THROW_JS_EXCEPTION(errorMessage);
     } else {
         this->_napiSwordHelper->strongsEntryToNapiObject(env, strongsEntry, napiObject);
     }
@@ -405,7 +408,7 @@ Napi::Value NodeSwordInterface::getStrongsEntry(const Napi::CallbackInfo& info)
 
 Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
 {
-    initScopeAndValidate(ParamType::string, ParamType::function);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::function);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Function callback = info[1].As<Napi::Function>();
     InstallModuleWorker* worker = new InstallModuleWorker(this->_swordFacade, callback, moduleName);
@@ -415,7 +418,7 @@ Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
 
 Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
 {
-    initScopeAndValidate(ParamType::string, ParamType::function);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::function);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Function callback = info[1].As<Napi::Function>();
     UninstallModuleWorker* worker = new UninstallModuleWorker(this->_swordFacade, callback, moduleName);
@@ -425,7 +428,7 @@ Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
 
 Napi::Value NodeSwordInterface::getSwordTranslation(const Napi::CallbackInfo& info)
 {
-    initScopeAndValidate(ParamType::string, ParamType::string, ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::string);
     Napi::String configDir = info[0].As<Napi::String>();
     Napi::String originalString = info[1].As<Napi::String>();
     Napi::String localeCode = info[2].As<Napi::String>();
