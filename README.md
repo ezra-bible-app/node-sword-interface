@@ -53,9 +53,11 @@ The Javascript API of node-sword-interface is documented [here](API.md).
 Before installing node-sword-interface you need to make sure that the following dependencies are installed:
 - C++11 compiler toolchain
 - nodejs
-- ICU library with development headers
-- CURL library with development headers
-- CMake (for building the SWORD library)
+- Git
+- Mac/Linux dependencies:
+    - ICU library with development headers
+    - CURL library with development headers
+    - CMake (for building the SWORD library)
 
 ### Install dependencies on Linux
 
@@ -76,6 +78,8 @@ To install the dependencies issue the following command on a Debian/Ubuntu based
 
 1. Install [git](https://git-scm.com/download/win) and [nodejs](https://nodejs.org).
 2. Install [windows-build-tools][windows-build-tools] (VS 2015 Compiler) by running the following command in an administrator powershell: `npm install --vs2015 --global windows-build-tools`.
+
+[windows-build-tools]: https://www.npmjs.com/package/windows-build-tools
 
 ### Install from npmjs
 
