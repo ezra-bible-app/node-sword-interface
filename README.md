@@ -59,6 +59,8 @@ Before installing node-sword-interface you need to make sure that the following 
     - CURL library with development headers
     - CMake (for building the SWORD library)
 
+Below you find the OS-specific instructions for installing the dependencies.
+
 ### Install dependencies on Linux
 
 These installation instructions are working on Debian/Ubuntu based Linux distributions.
