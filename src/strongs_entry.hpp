@@ -56,6 +56,7 @@ public:
     std::string definition;
     std::vector<StrongsReference> references;
 
+private:
     void parseFromRawEntry(std::string rawEntry);
     void parseFirstLine(std::string firstLine);
     void eraseEmptyLines(std::vector<std::string>& lines);
