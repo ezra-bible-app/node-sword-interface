@@ -72,14 +72,14 @@ To install the dependencies issue the following command on a Debian/Ubuntu based
 ### Install dependencies on macOS
 
 1. Install XCode from the App Store
-2. Install Command Line Developer Tools (contains Compiler toolchain, git, etc.) by running this command: `xcode-select --install`   
-2. Install the homebrew package manager by running this command: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
-3. Install some packages with homebrew by running this command: `brew install pkg-config cmake npm`
+2. Install Command Line Developer Tools (contains Compiler toolchain, git, etc.) by running this command:<br/> `xcode-select --install`   
+2. Install the homebrew package manager by running this command:<br/> `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+3. Install some packages with homebrew by running this command:<br/> `brew install pkg-config cmake npm`
 
 ### Install dependencies on Windows
 
 1. Install [git](https://git-scm.com/download/win) and [nodejs](https://nodejs.org).
-2. Install [windows-build-tools][windows-build-tools] (VS 2015 Compiler) by running the following command in an administrator powershell: `npm install --vs2015 --global windows-build-tools`.
+2. Install [windows-build-tools][windows-build-tools] (VS 2015 Compiler) by running the following command in an administrator powershell:<br/> `npm install --vs2015 --global windows-build-tools`.
 
 [windows-build-tools]: https://www.npmjs.com/package/windows-build-tools
 
