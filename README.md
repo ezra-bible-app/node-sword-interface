@@ -50,31 +50,39 @@ The Javascript API of node-sword-interface is documented [here](API.md).
 
 ## Installation
 
-### Linux
-
-These installation instructions are working on Debian/Ubuntu based Linux distributions.
 Before installing node-sword-interface you need to make sure that the following dependencies are installed:
-
 - C++11 compiler toolchain
 - nodejs
-- SQLite 3 library
 - ICU library with development headers
 - CURL library with development headers
 - CMake (for building the SWORD library)
 
+### Install dependencies on Linux
+
+These installation instructions are working on Debian/Ubuntu based Linux distributions.
+
 To install the dependencies issue the following command on a Debian/Ubuntu based distribution:
     
-    sudo apt-get install build-essential nodejs npm libsqlite3-0 libcurl4-gnutls-dev libicu-dev pkg-config cmake
+    sudo apt-get install build-essential nodejs npm libcurl4-gnutls-dev libicu-dev pkg-config cmake
+
+### Install dependencies on macOS
+
+1. Install XCode from the App Store
+2. Install Command Line Developer Tools (contains Compiler toolchain, git, etc.) by running this command: `xcode-select --install`   
+2. Install the homebrew package manager by running this command: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+3. Install some packages with homebrew by running this command: `brew install pkg-config cmake npm`
+
+### Install dependencies on Windows
+
+1. Install [git](https://git-scm.com/download/win) and [nodejs](https://nodejs.org).
+2. Install [windows-build-tools][windows-build-tools] (VS 2015 Compiler) by running the following command in an administrator powershell: `npm install --vs2015 --global windows-build-tools`.
+
+### Install from npmjs
 
 Once the dependencies are available you can install and build the latest node-sword-interface release from [npmjs.com](https://www.npmjs.com/package/node-sword-interface) by issuing the following command:
 
     npm install node-sword-interface
 
+On Windows, you need to add `--arch=ia32` at the end of the command:
 
-### macOS
-
-_Instructions to be added_
-
-### Windows
-
-_Instructions to be added_
+    npm install node-sword-interface --arch=ia32
