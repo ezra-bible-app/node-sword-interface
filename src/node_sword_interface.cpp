@@ -79,37 +79,67 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     this->_napiSwordHelper = new NapiSwordHelper();
 }
 
+#define initScopeAndValidate(...) {\
+    Napi::Env env = info.Env(); \
+    Napi::HandleScope scope(env);\
+    if (this->validateParams(info, { __VA_ARGS__ }) != 0) { return env.Null(); } \
+}
+
+int NodeSwordInterface::validateParams(const Napi::CallbackInfo& info, vector<ParamType> paramSpec) {
+    Napi::Env env = info.Env();
+
+    if (info.Length() != paramSpec.size()) {
+        string paramCountError = "Expected " + to_string(paramSpec.size()) + " parameters, but got " += to_string(info.Length()) + "!";
+        Napi::TypeError::New(env, paramCountError).ThrowAsJavaScriptException();
+        return -1;
+    } else {
+        for (unsigned int i = 0; i < paramSpec.size(); i++) {
+            switch (paramSpec[i]) {
+                case ParamType::string:
+                    if (!info[i].IsString()) {
+                        string stringError = "String expected for argument " + to_string(i + 1);
+                        Napi::TypeError::New(env, stringError).ThrowAsJavaScriptException();
+                        return -1;
+                    }
+                    break;
+                case ParamType::boolean:
+                    if (!info[i].IsBoolean()) {
+                        string booleanError = "Boolean expected for argument " + to_string(i + 1);
+                        Napi::TypeError::New(env, booleanError).ThrowAsJavaScriptException();
+                        return -1;
+                    }
+                    break;
+                case ParamType::function:
+                    if (!info[i].IsFunction()) {
+                        string functionError = "Function expected for argument " + to_string(i + 1);
+                        Napi::TypeError::New(env, functionError).ThrowAsJavaScriptException();
+                        return -1;
+                    }
+                    break;
+                default:
+                    cerr << "Unknown ParamType / invalid paramSpec!" << endl;
+                    return -1;
+            }
+        }
+    }
+
+    return 0;
+}
+
 Napi::Value NodeSwordInterface::refreshRepositoryConfig(const Napi::CallbackInfo& info)
 {
-  Napi::Env env = info.Env();
-  Napi::HandleScope scope(env);
-
-  if (info.Length() != 1 || !info[0].IsFunction()) {
-      Napi::TypeError::New(env, "Function expected as first argument").ThrowAsJavaScriptException();
-  }
-
-  Napi::Function callback = info[0].As<Napi::Function>();
-  RefreshRepositoryConfigWorker* worker = new RefreshRepositoryConfigWorker(this->_swordFacade, callback);
-  worker->Queue();
-  return info.Env().Undefined();
+    initScopeAndValidate(ParamType::function);
+    Napi::Function callback = info[0].As<Napi::Function>();
+    RefreshRepositoryConfigWorker* worker = new RefreshRepositoryConfigWorker(this->_swordFacade, callback);
+    worker->Queue();
+    return info.Env().Undefined();
 }
 
 Napi::Value NodeSwordInterface::refreshRemoteSources(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 2) {
-      Napi::TypeError::New(env, "Expected 2 parameters!").ThrowAsJavaScriptException();
-    } else if (!info[0].IsBoolean()) {
-        Napi::TypeError::New(env, "Boolean expected as first argument").ThrowAsJavaScriptException();
-    } else if (!info[1].IsFunction()) {
-        Napi::TypeError::New(env, "Function expected as second argument").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::boolean, ParamType::function);
     Napi::Boolean force = info[0].As<Napi::Boolean>();
     Napi::Function callback = info[1].As<Napi::Function>();
-
     RefreshRemoteSourcesWorker* worker = new RefreshRemoteSourcesWorker(this->_swordFacade, callback, force.Value());
     worker->Queue();
     return info.Env().Undefined();
@@ -119,7 +149,6 @@ Napi::Value NodeSwordInterface::repositoryConfigExisting(const Napi::CallbackInf
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
-
     bool configExisting = (this->_swordFacade->getRepoNames().size() > 0);
     return Napi::Boolean::New(env, configExisting);
 }
@@ -128,7 +157,6 @@ Napi::Value NodeSwordInterface::getRepoNames(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
-
     vector<string> repoNames = this->_swordFacade->getRepoNames();
     Napi::Array repoNameArray = Napi::Array::New(env, repoNames.size());
 
@@ -142,12 +170,7 @@ Napi::Value NodeSwordInterface::getRepoNames(const Napi::CallbackInfo& info)
 Napi::Value NodeSwordInterface::getAllRepoModules(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 1 || !info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
     vector<SWModule*> modules = this->_swordFacade->getAllRepoModules(string(repoName));
     Napi::Array moduleArray = Napi::Array::New(env, modules.size());
@@ -155,7 +178,7 @@ Napi::Value NodeSwordInterface::getAllRepoModules(const Napi::CallbackInfo& info
     for (unsigned int i = 0; i < modules.size(); i++) {
         Napi::Object napiObject = Napi::Object::New(env);
         this->_napiSwordHelper->swordModuleToNapiObject(env, modules[i], napiObject);
-        moduleArray.Set(i, napiObject); 
+        moduleArray.Set(i, napiObject);
     }
 
     return moduleArray;
@@ -163,38 +186,24 @@ Napi::Value NodeSwordInterface::getAllRepoModules(const Napi::CallbackInfo& info
 
 Napi::Value NodeSwordInterface::isModuleInUserDir(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 1 || !info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
-
     bool moduleInUserDir = this->_swordFacade->isModuleInUserDir(moduleName);
-    return Napi::Boolean::New(env, moduleInUserDir);
+    return Napi::Boolean::New(info.Env(), moduleInUserDir);
 }
 
 Napi::Value NodeSwordInterface::isModuleAvailableInRepo(const Napi::CallbackInfo& info)
 {
-    Napi::Env env=info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 1 || !info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
     bool moduleAvailable = this->_swordFacade->isModuleAvailableInRepo(moduleName);
-    return Napi::Boolean::New(env, moduleAvailable);
+    return Napi::Boolean::New(info.Env(), moduleAvailable);
 }
 
 Napi::Value NodeSwordInterface::getAllLocalModules(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
-
     vector<SWModule*> modules = this->_swordFacade->getAllLocalModules();
     Napi::Array moduleArray = Napi::Array::New(env, modules.size());
 
@@ -210,19 +219,9 @@ Napi::Value NodeSwordInterface::getAllLocalModules(const Napi::CallbackInfo& inf
 Napi::Value NodeSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 2) {
-      Napi::TypeError::New(env, "Expected 2 parameters!").ThrowAsJavaScriptException();
-    } else if (!info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
-    } else if (!info[1].IsString()) {
-        Napi::TypeError::New(env, "String expected as second argument").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string, ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
     Napi::String languageCode = info[1].As<Napi::String>();
-
     vector<SWModule*> modules = this->_swordFacade->getRepoModulesByLang(string(repoName), string(languageCode));
     Napi::Array moduleArray = Napi::Array::New(env, modules.size());
 
@@ -237,16 +236,10 @@ Napi::Value NodeSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo& i
 
 Napi::Value NodeSwordInterface::getRepoLanguages(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 1 || !info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
     vector<string> repoLanguages = this->_swordFacade->getRepoLanguages(string(repoName));
-    Napi::Array languageArray = Napi::Array::New(env, repoLanguages.size());
+    Napi::Array languageArray = Napi::Array::New(info.Env(), repoLanguages.size());
 
     for (unsigned int i = 0; i < repoLanguages.size(); i++) {
         languageArray.Set(i, repoLanguages[i]); 
@@ -257,52 +250,27 @@ Napi::Value NodeSwordInterface::getRepoLanguages(const Napi::CallbackInfo& info)
 
 Napi::Value NodeSwordInterface::getRepoTranslationCount(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 1 || !info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
-
     unsigned int translationCount = this->_swordFacade->getRepoTranslationCount(string(repoName));
-    Napi::Number jsTranslationCount = Napi::Number::New(env, translationCount);
-
+    Napi::Number jsTranslationCount = Napi::Number::New(info.Env(), translationCount);
     return jsTranslationCount;
 }
 
 Napi::Value NodeSwordInterface::getRepoLanguageTranslationCount(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 2) {
-      Napi::TypeError::New(env, "Expected 2 parameters!").ThrowAsJavaScriptException();
-    } else if (!info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
-    } else if (!info[1].IsString()) {
-        Napi::TypeError::New(env, "String expected as second argument").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string, ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
     Napi::String languageCode = info[1].As<Napi::String>();
-
     unsigned int translationCount = this->_swordFacade->getRepoLanguageTranslationCount(string(repoName), string(languageCode));
-    Napi::Number jsTranslationCount = Napi::Number::New(env, translationCount);
-
+    Napi::Number jsTranslationCount = Napi::Number::New(info.Env(), translationCount);
     return jsTranslationCount;
 }
 
 Napi::Value NodeSwordInterface::getRepoModule(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 1 || !info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string);
     Napi::Object napiObject = Napi::Object::New(env);
     Napi::String moduleName = info[0].As<Napi::String>();
     SWModule* swordModule = this->_swordFacade->getRepoModule(std::string(moduleName));
@@ -321,15 +289,10 @@ Napi::Value NodeSwordInterface::getRepoModule(const Napi::CallbackInfo& info)
 Napi::Value NodeSwordInterface::getModuleDescription(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 1 || !info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
-    SWModule* swordModule = this->_swordFacade->getRepoModule(string(moduleName));
 
+    SWModule* swordModule = this->_swordFacade->getRepoModule(string(moduleName));
     if (swordModule == 0) {
         Napi::Error::New(env, "getRepoModule returned 0!").ThrowAsJavaScriptException();
     }
@@ -342,14 +305,9 @@ Napi::Value NodeSwordInterface::getModuleDescription(const Napi::CallbackInfo& i
 Napi::Value NodeSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 1 || !info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
-    }
-
-    Napi::Object napiObject = Napi::Object::New(env);
+    initScopeAndValidate(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
+    Napi::Object napiObject = Napi::Object::New(env);    
     SWModule* swordModule = this->_swordFacade->getLocalModule(string(moduleName));
 
     if (swordModule == 0) {
@@ -374,63 +332,29 @@ Napi::Value NodeSwordInterface::enableMarkup(const Napi::CallbackInfo& info)
 
 Napi::Value NodeSwordInterface::getBookText(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 2) {
-      Napi::TypeError::New(env, "Expected 2 parameters!").ThrowAsJavaScriptException();
-    } else if (!info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument (moduleName)").ThrowAsJavaScriptException();
-    } else if (!info[1].IsString()) {
-        Napi::TypeError::New(env, "String expected as second argument (bookCode)").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String bookCode = info[1].As<Napi::String>();
     std::string stdModuleName = std::string(moduleName);
-
     vector<string> bookText = this->_swordFacade->getBookText(string(moduleName), string(bookCode));
-    Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(env, stdModuleName, bookText);
-
+    Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), stdModuleName, bookText);
     return versesArray;
 }
 
 Napi::Value NodeSwordInterface::getBibleText(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 1 || !info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
     std::string stdModuleName = std::string(moduleName);
     vector<string> bibleText = this->_swordFacade->getBibleText(string(moduleName));
-    Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(env, stdModuleName, bibleText);
-
+    Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), stdModuleName, bibleText);
     return versesArray;
 }
 
 Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 5) {
-        Napi::TypeError::New(env, "Expected 5 parameters!").ThrowAsJavaScriptException();
-    } else if (!info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument (moduleCode)").ThrowAsJavaScriptException();
-    } else if (!info[1].IsString()) {
-        Napi::TypeError::New(env, "String expected as second argument (searchTerm)").ThrowAsJavaScriptException();
-    } else if (!info[2].IsString()) {
-        Napi::TypeError::New(env, "String expected as third argument (searchType)").ThrowAsJavaScriptException();
-    } else if (!info[3].IsBoolean()) {
-        Napi::TypeError::New(env, "Boolean expected as fourth argument (isCaseSensitive)").ThrowAsJavaScriptException();
-    } else if (!info[4].IsFunction()) {
-        Napi::TypeError::New(env, "Function expected as fifth argument").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string, ParamType::string, ParamType::string, ParamType::boolean, ParamType::function);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String searchTerm = info[1].As<Napi::String>();
     string searchTypeString = string(info[2].As<Napi::String>());
@@ -456,18 +380,13 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
                                                                           searchType,
                                                                           isCaseSensitive);
     worker->Queue();
-    return info.Env().Undefined();
+    return env.Undefined();
 }
 
 Napi::Value NodeSwordInterface::getStrongsEntry(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 1 || !info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string);
     Napi::String strongsKey = info[0].As<Napi::String>();
     Napi::Object napiObject = Napi::Object::New(env);
     StrongsEntry* strongsEntry = this->_swordFacade->getStrongsEntry(strongsKey);
@@ -486,20 +405,9 @@ Napi::Value NodeSwordInterface::getStrongsEntry(const Napi::CallbackInfo& info)
 
 Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 2) {
-      Napi::TypeError::New(env, "Expected 2 parameters!").ThrowAsJavaScriptException();
-    } else if (!info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
-    } else if (!info[1].IsFunction()) {
-        Napi::TypeError::New(env, "Function expected as second argument").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string, ParamType::function);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Function callback = info[1].As<Napi::Function>();
-
     InstallModuleWorker* worker = new InstallModuleWorker(this->_swordFacade, callback, moduleName);
     worker->Queue();
     return info.Env().Undefined();
@@ -507,20 +415,9 @@ Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
 
 Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 2) {
-      Napi::TypeError::New(env, "Expected 2 parameters!").ThrowAsJavaScriptException();
-    } else if (!info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument").ThrowAsJavaScriptException();
-    } else if (!info[1].IsFunction()) {
-        Napi::TypeError::New(env, "Function expected as second argument").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string, ParamType::function);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Function callback = info[1].As<Napi::Function>();
-
     UninstallModuleWorker* worker = new UninstallModuleWorker(this->_swordFacade, callback, moduleName);
     worker->Queue();
     return info.Env().Undefined();
@@ -528,24 +425,12 @@ Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
 
 Napi::Value NodeSwordInterface::getSwordTranslation(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-
-    if (info.Length() != 3) {
-      Napi::TypeError::New(env, "Expected 2 parameters!").ThrowAsJavaScriptException();
-    } else if (!info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected as first argument (configDir)").ThrowAsJavaScriptException();
-    } else if (!info[1].IsString()) {
-        Napi::TypeError::New(env, "String expected as second argument (originalString)").ThrowAsJavaScriptException();
-    } else if (!info[2].IsString()) {
-        Napi::TypeError::New(env, "String expected as third argument (localeCode)").ThrowAsJavaScriptException();
-    }
-
+    initScopeAndValidate(ParamType::string, ParamType::string, ParamType::string);
     Napi::String configDir = info[0].As<Napi::String>();
     Napi::String originalString = info[1].As<Napi::String>();
     Napi::String localeCode = info[2].As<Napi::String>();
 
-    Napi::String translation = Napi::String::New(env, this->_swordFacade->getSwordTranslation(
+    Napi::String translation = Napi::String::New(info.Env(), this->_swordFacade->getSwordTranslation(
         string(configDir),
         string(originalString),
         string(localeCode)
@@ -558,8 +443,6 @@ Napi::Value NodeSwordInterface::getSwordVersion(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
-
     Napi::String swVersion = Napi::String::New(env, this->_swordFacade->getSwordVersion());
     return swVersion;
 }
-

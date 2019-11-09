@@ -24,6 +24,12 @@
 class SwordFacade;
 class NapiSwordHelper;
 
+enum class ParamType {
+    string,
+    boolean,
+    function
+};
+
 class NodeSwordInterface : public Napi::ObjectWrap<NodeSwordInterface> {
 public:
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
@@ -61,6 +67,8 @@ private:
 
     Napi::Value getSwordTranslation(const Napi::CallbackInfo& info);
     Napi::Value getSwordVersion(const Napi::CallbackInfo& info);
+
+    int validateParams(const Napi::CallbackInfo& info, std::vector<ParamType> paramSpec);
 
     NapiSwordHelper* _napiSwordHelper;
     SwordFacade* _swordFacade;
