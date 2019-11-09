@@ -329,7 +329,6 @@ Napi::Value NodeSwordInterface::enableMarkup(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
-
     this->_swordFacade->enableMarkup();
     return info.Env().Undefined();
 }
@@ -364,7 +363,6 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
     string searchTypeString = string(info[2].As<Napi::String>());
     Napi::Boolean isCaseSensitive = info[3].As<Napi::Boolean>();
     Napi::Function callback = info[4].As<Napi::Function>();
-
     SearchType searchType = SearchType::multiWord;
     
     if (searchTypeString == "phrase") {
