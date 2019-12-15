@@ -36,7 +36,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getRepoNames()](#NodeSwordInterface+getRepoNames) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoLanguages(repositoryName)](#NodeSwordInterface+getRepoLanguages) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getAllRepoModules(repositoryName)](#NodeSwordInterface+getAllRepoModules) ⇒ <code>Array.&lt;String&gt;</code>
-    * [.getRepoModulesByLang(repositoryName, language)](#NodeSwordInterface+getRepoModulesByLang) ⇒ <code>Array.&lt;String&gt;</code>
+    * [.getRepoModulesByLang(repositoryName, language, headersFilter, strongsFilter)](#NodeSwordInterface+getRepoModulesByLang) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoModule(moduleCode)](#NodeSwordInterface+getRepoModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
     * [.getAllLocalModules()](#NodeSwordInterface+getAllLocalModules) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoLanguageTranslationCount(repositoryName, language)](#NodeSwordInterface+getRepoLanguageTranslationCount) ⇒ <code>Number</code>
@@ -111,16 +111,18 @@ Returns all bible modules for the given repository.
 
 <a name="NodeSwordInterface+getRepoModulesByLang"></a>
 
-### nodeSwordInterface.getRepoModulesByLang(repositoryName, language) ⇒ <code>Array.&lt;String&gt;</code>
+### nodeSwordInterface.getRepoModulesByLang(repositoryName, language, headersFilter, strongsFilter) ⇒ <code>Array.&lt;String&gt;</code>
 Returns all bible modules for the given repository and language
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 **Returns**: <code>Array.&lt;String&gt;</code> - An array of strings with the module codes for the bible modules of the given repository and language.  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| repositoryName | <code>String</code> | The name of the given repository. |
-| language | <code>String</code> | The language code that shall be used as a filter. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| repositoryName | <code>String</code> |  | The name of the given repository. |
+| language | <code>String</code> |  | The language code that shall be used as a filter. |
+| headersFilter | <code>Boolean</code> | <code>false</code> | Whether only modules with Headers shall be returned. |
+| strongsFilter | <code>Boolean</code> | <code>false</code> | Whether only modules with Strong's shall be returned. |
 
 <a name="NodeSwordInterface+getRepoModule"></a>
 
