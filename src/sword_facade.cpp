@@ -531,6 +531,16 @@ string SwordFacade::replaceSpacesInStrongs(const string& text)
     return filteredText;
 }
 
+bool SwordFacade::moduleHasStrongsZeroPrefixes(sword::SWModule* module)
+{
+    string key = "Gen 1:1";
+    module->setKey(key.c_str());
+    this->enableMarkup();
+    string verseText = this->getVerseText(module, true);
+    
+    return verseText.find("strong:H0") != string::npos;
+}
+
 string SwordFacade::getFilteredVerseText(const string& verseText, bool hasStrongs)
 {
     static regex schlachterMarkupFilter = regex("<H.*> ");
@@ -692,19 +702,27 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName,
                                                    bool isCaseSensitive)
 {
     SWModule* module = this->getLocalModule(moduleName);
+    bool moduleHasStrongs = this->moduleHasGlobalOption(module, "Strongs");
 	ListKey listkey;
 	ListKey *scope = 0;
     int flags = 0;
+    // This holds the text that we will return
+    vector<string> searchResults;
 
     if (!isCaseSensitive) {
         // for case insensitivity
         flags |= REG_ICASE;
     }
 
+    if (searchType == SearchType::strongsNumber && !moduleHasStrongs) {
+        // Return immediately if search type is Strong's, but module does not have Strong's support
+        return searchResults;
+    }
+
     if (searchType == SearchType::strongsNumber) {
         // If the Strong's key is OT we need to insert a zero in front of the key
         // This is necessary because the Sword modules with Strong's have a zero in front of the Hebrew Strong's numbers
-        if (searchTerm[0] == 'H') {
+        if (searchTerm[0] == 'H' && this->moduleHasStrongsZeroPrefixes(module)) {
             // Cut out the number from the Strong's key (starting at index 1 until end of string)
             string strongsKey = searchTerm.substr(1, searchTerm.size());
             // Overwrite the searchTerm with an inserted 0
@@ -716,9 +734,6 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName,
         flags |= SEARCHFLAG_MATCHWHOLEENTRY;
         searchTerm = "Word//Lemma./" + searchTerm;
     }
-
-    // This holds the text that we will return
-    vector<string> searchResults;
 
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;

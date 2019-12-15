@@ -114,6 +114,7 @@ private:
     std::string getVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup=false);
     std::string getFilteredVerseText(const std::string& verseText, bool hasStrongs);
     std::string replaceSpacesInStrongs(const std::string& text);
+    bool moduleHasStrongsZeroPrefixes(sword::SWModule* module);
 
     sword::SWMgr* _mgr = 0;
     sword::SWMgr* _mgrForInstall = 0;
