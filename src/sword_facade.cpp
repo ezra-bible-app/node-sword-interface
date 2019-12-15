@@ -702,6 +702,15 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName,
     }
 
     if (searchType == SearchType::strongsNumber) {
+        // If the Strong's key is OT we need to insert a zero in front of the key
+        // This is necessary because the Sword modules with Strong's have a zero in front of the Hebrew Strong's numbers
+        if (searchTerm[0] == 'H') {
+            // Cut out the number from the Strong's key (starting at index 1 until end of string)
+            string strongsKey = searchTerm.substr(1, searchTerm.size());
+            // Overwrite the searchTerm with an inserted 0
+            searchTerm = "H0" + strongsKey;
+        }
+
         // from swmodule.h api docs:
         // for use with entryAttrib search type to match whole entry to value, e.g., G1234 and not G12345
         flags |= SEARCHFLAG_MATCHWHOLEENTRY;
