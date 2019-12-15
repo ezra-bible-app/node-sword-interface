@@ -382,14 +382,28 @@ vector<SWModule*> SwordFacade::getAllRepoModules(string repoName)
     return modules;
 }
 
-vector<SWModule*> SwordFacade::getRepoModulesByLang(string repoName, string languageCode)
+vector<SWModule*> SwordFacade::getRepoModulesByLang(string repoName, string languageCode, bool headersFilter, bool strongsFilter)
 {
     vector<SWModule*> allModules = this->getAllRepoModules(repoName);
     vector<SWModule*> selectedLanguageModules;
 
     for (unsigned int i = 0; i < allModules.size(); i++) {
       SWModule* currentModule = allModules[i];
-      if ((currentModule->getType() == string("Biblical Texts")) && (currentModule->getLanguage() == languageCode)) {
+
+      if ((currentModule->getType() == string("Biblical Texts")) &&
+          (currentModule->getLanguage() == languageCode)) {
+
+        bool hasHeadings = this->moduleHasGlobalOption(currentModule, "Headings");
+        bool hasStrongs = this->moduleHasGlobalOption(currentModule, "Strongs");
+        
+        if (headersFilter && !hasHeadings) {
+            continue;
+        }
+
+        if (strongsFilter && !hasStrongs) {
+            continue;
+        }
+
         selectedLanguageModules.push_back(currentModule);
       }
     }

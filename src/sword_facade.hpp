@@ -65,7 +65,7 @@ public:
     std::vector<sword::SWModule*> getAllRemoteModules();
     sword::SWModule* getRepoModule(std::string moduleName, std::string repoName="all");
     std::vector<sword::SWModule*> getAllRepoModules(std::string repoName);
-    std::vector<sword::SWModule*> getRepoModulesByLang(std::string repoName, std::string languageCode);
+    std::vector<sword::SWModule*> getRepoModulesByLang(std::string repoName, std::string languageCode, bool headersFilter=false, bool strongsFilter=false);
     unsigned int getRepoTranslationCount(std::string repoName);
     std::vector<std::string> getRepoLanguages(std::string repoName);
     unsigned int getRepoLanguageTranslationCount(std::string repoName, std::string languageCode);

@@ -32,7 +32,7 @@ NapiSwordHelper::~NapiSwordHelper() {
   delete this->_swordFacade;
 }
 
-Napi::Array NapiSwordHelper::getNapiVerseObjectsFromRawList(const Napi::Env& env, std::string& moduleCode, vector<string>& verses)
+Napi::Array NapiSwordHelper::getNapiVerseObjectsFromRawList(const Napi::Env& env, std::string moduleCode, vector<string>& verses)
 {
     Napi::Array versesArray = Napi::Array::New(env, verses.size());
 
@@ -104,7 +104,7 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     object["hasCrossReferences"] = Napi::Boolean::New(env, this->_swordFacade->moduleHasGlobalOption(swModule, "Scripref"));
 }
 
-void NapiSwordHelper::verseTextToNapiObject(std::string& moduleCode, string& rawVerse, unsigned int absoluteVerseNr, Napi::Object& object)
+void NapiSwordHelper::verseTextToNapiObject(std::string moduleCode, string rawVerse, unsigned int absoluteVerseNr, Napi::Object& object)
 {
     vector<string> splittedVerse = StringHelper::split(rawVerse, "|");
     string reference = splittedVerse[0];
