@@ -716,8 +716,7 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName,
                                                    bool isCaseSensitive)
 {
     SWModule* module = this->getLocalModule(moduleName);
-    bool moduleHasStrongs = this->moduleHasGlobalOption(module, "Strongs");
-	ListKey listkey;
+	ListKey listKey;
 	ListKey *scope = 0;
     int flags = 0;
     // This holds the text that we will return
@@ -728,43 +727,46 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName,
         flags |= REG_ICASE;
     }
 
-    if (searchType == SearchType::strongsNumber && !moduleHasStrongs) {
-        // Return immediately if search type is Strong's, but module does not have Strong's support
-        return searchResults;
-    }
-
-    if (searchType == SearchType::strongsNumber) {
-        // If the Strong's key is OT we need to insert a zero in front of the key
-        // This is necessary because the Sword modules with Strong's have a zero in front of the Hebrew Strong's numbers
-        if (searchTerm[0] == 'H' && this->moduleHasStrongsZeroPrefixes(module)) {
-            // Cut out the number from the Strong's key (starting at index 1 until end of string)
-            string strongsKey = searchTerm.substr(1, searchTerm.size());
-            // Overwrite the searchTerm with an inserted 0
-            searchTerm = "H0" + strongsKey;
-        }
-
-        // from swmodule.h api docs:
-        // for use with entryAttrib search type to match whole entry to value, e.g., G1234 and not G12345
-        flags |= SEARCHFLAG_MATCHWHOLEENTRY;
-        searchTerm = "Word//Lemma./" + searchTerm;
-    }
-
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
         bool hasStrongs = this->moduleHasGlobalOption(module, "Strongs");
-        listkey = module->search(searchTerm.c_str(), int(searchType), flags, scope, 0);
 
-        while (!listkey.popError()) {
+        if (searchType == SearchType::strongsNumber) {
+            if (!hasStrongs) {
+                // Return immediately if search type is Strong's, but the module does not have Strong's support
+                return searchResults;
+            }
+
+            // If the Strong's key is OT we need to insert a zero in front of the key
+            // This is necessary because the Sword modules with Strong's have a zero in front of the Hebrew Strong's numbers
+            if (searchTerm[0] == 'H' && this->moduleHasStrongsZeroPrefixes(module)) {
+                // Cut out the number from the Strong's key (starting at index 1 until end of string)
+                string strongsKey = searchTerm.substr(1, searchTerm.size());
+                // Overwrite the searchTerm with an inserted 0
+                searchTerm = "H0" + strongsKey;
+            }
+
+            // from swmodule.h api docs:
+            // for use with entryAttrib search type to match whole entry to value, e.g., G1234 and not G12345
+            flags |= SEARCHFLAG_MATCHWHOLEENTRY;
+            searchTerm = "Word//Lemma./" + searchTerm;
+        }
+
+        // Perform search
+        listKey = module->search(searchTerm.c_str(), int(searchType), flags, scope, 0);
+
+        // Populate searchResults vector
+        while (!listKey.popError()) {
             stringstream currentVerse;
-            module->setKey(listkey.getElement());
+            module->setKey(listKey.getElement());
 
             bool forceNoMarkup = true;
             string verseText = this->getVerseText(module, hasStrongs, forceNoMarkup);
             currentVerse << module->getKey()->getShortText() << "|" << verseText;
             searchResults.push_back(currentVerse.str());
 
-            listkey++;
+            listKey++;
         }
     }
 
