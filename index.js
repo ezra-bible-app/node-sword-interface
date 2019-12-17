@@ -273,10 +273,14 @@ class NodeSwordInterface {
    * @return {Promise}
    */
   getModuleSearchResults(moduleCode, searchTerm, searchType="multiWord", isCaseSensitive=false) {
-    return new Promise(resolve => {
-      this.nativeInterface.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive, function(searchResults) {
-        resolve(searchResults);
-      });
+    return new Promise((resolve, reject) => {
+      try {
+        this.nativeInterface.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive, function(searchResults) {
+          resolve(searchResults);
+        });
+      } catch (error) {
+        reject(error);
+      }
     });
   }
 
