@@ -63,11 +63,11 @@ string StrongsReference::parseKey(string text)
 }
 
 /*
- * Checks whether the key is valid (not empty)
+ * Checks whether the key is valid
  */
-bool StrongsReference::isKeyValid()
+bool StrongsReference::hasValidKey()
 {
-    return this->key != "";
+    return StrongsEntry::isValidStrongsKey(this->key);
 }
 
 StrongsEntry::StrongsEntry(string key, string rawEntry)
@@ -76,9 +76,27 @@ StrongsEntry::StrongsEntry(string key, string rawEntry)
     this->parseFromRawEntry(rawEntry);
 }
 
+bool StrongsEntry::isValidStrongsKey(std::string key)
+{
+    static std::regex strongsKey("[HG]{1}[0-9]{1,5}$");
+    bool matchesPattern = std::regex_match(key, strongsKey);
+    
+    string strongsNumberString = key.substr(1);
+    int strongsNumber = stoi(strongsNumberString);
+
+    return (matchesPattern && 
+            strongsNumber > 0 &&
+            strongsNumber <= 9999);
+}
+
+
 StrongsEntry* StrongsEntry::getStrongsEntry(SWModule* module, string key)
 {
     if (module == 0) {
+        return 0;
+    }
+
+    if (!StrongsEntry::isValidStrongsKey(key)) {
         return 0;
     }
 
@@ -143,7 +161,7 @@ void StrongsEntry::parseDefinitionAndReferences(vector<string>& lines)
                 rawReferences.push_back(currentLine);
 
                 // We only take references with a valid (non-empty) key
-                if (reference.isKeyValid()) {
+                if (reference.hasValidKey()) {
                     references.push_back(reference);
                 }
             }

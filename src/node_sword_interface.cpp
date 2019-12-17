@@ -375,6 +375,12 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
         THROW_JS_EXCEPTION("Unknown search type!");
     }
 
+    if (searchType == SearchType::strongsNumber) {
+        if (!StrongsEntry::isValidStrongsKey(searchTerm)) {
+            THROW_JS_EXCEPTION("The given search term is not a valid Strong's number!");
+        }
+    }
+
     GetModuleSearchResultWorker* worker = new GetModuleSearchResultWorker(this->_swordFacade,
                                                                           callback,
                                                                           moduleName,

@@ -32,7 +32,7 @@ public:
     StrongsReference(std::string text);
     virtual ~StrongsReference(){}
 
-    bool isKeyValid();
+    bool hasValidKey();
 
     std::string text;
     std::string key;
@@ -47,6 +47,7 @@ public:
     StrongsEntry(std::string key, std::string rawEntry);
     virtual ~StrongsEntry(){}
 
+    static bool isValidStrongsKey(std::string key);
     static StrongsEntry* getStrongsEntry(sword::SWModule* module, std::string key);
 
     std::string rawEntry;
