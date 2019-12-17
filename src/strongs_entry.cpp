@@ -20,6 +20,7 @@
 #include <string>
 #include <algorithm>
 #include <regex>
+#include <stdlib.h>
 
 #include <swmodule.h>
 #include "strongs_entry.hpp"
@@ -50,7 +51,7 @@ string StrongsReference::parseKey(string text)
 
         // The key is the last / 4th literal
         // We convert it to a number to get rid of unnecessary leading 0s
-        unsigned int numericKey = stoi(splittedReference[3]);
+        unsigned int numericKey = atoi(splittedReference[3].c_str());
         // Then we convert it back into a string
         string stringKey = to_string(numericKey);
 
@@ -78,17 +79,29 @@ StrongsEntry::StrongsEntry(string key, string rawEntry)
 
 bool StrongsEntry::isValidStrongsKey(std::string key)
 {
-    static std::regex strongsKey("[HG]{1}[0-9]{1,5}$");
-    bool matchesPattern = std::regex_match(key, strongsKey);
-    
+    if (key.size() < 2) {
+        return false;
+    }
+
+    char dictionary = key[0];
+    static const int HEBREW_MAX = 8674;
+    static const int GREEK_MAX = 5624;
+    int maxStrongsNumber;
+
+    if (dictionary == 'H') {
+        maxStrongsNumber = HEBREW_MAX;
+    } else if (dictionary == 'G') {
+        maxStrongsNumber = GREEK_MAX;
+    } else {
+        // Unknown dictionary type
+        return false;
+    }
+
     string strongsNumberString = key.substr(1);
-    int strongsNumber = stoi(strongsNumberString);
-
-    return (matchesPattern && 
-            strongsNumber > 0 &&
-            strongsNumber <= 9999);
+    int strongsNumber = atoi(strongsNumberString.c_str());
+    return (strongsNumber > 0 &&
+            strongsNumber <= maxStrongsNumber);
 }
-
 
 StrongsEntry* StrongsEntry::getStrongsEntry(SWModule* module, string key)
 {
