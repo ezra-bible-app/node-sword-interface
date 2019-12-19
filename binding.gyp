@@ -11,7 +11,7 @@
                         'message': 'Building sword library...',
                         'inputs': [],
                         'outputs': ['sword_build/libsword.a'],
-                        'action': ['./build_sword.sh'],
+                        'action': ['./scripts/build_sword.sh'],
                     }
                 ]
             }],
@@ -22,7 +22,7 @@
                         'message': 'Cloning Win32 sword library from GitHub ...',
                         'inputs': [],
                         'outputs': ['sword-win32'],
-                        'action': ['call <(module_root_dir)\get_sword_win32.bat'],
+                        'action': ['call <(module_root_dir)\scripts\get_sword_win32.bat'],
                     }
                 ]
             }]
