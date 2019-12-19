@@ -20,5 +20,14 @@ ${CMAKE_SOURCE_DIR}/src/string_helper.cpp
 ${CMAKE_SOURCE_DIR}/src/file_system_helper.cpp
 )
 
+# ICU Components Reference:
+# https://cmake.org/cmake/help/latest/module/FindICU.html
+# ICU components = data, i18n, io, le, lx, test, tu and uc.
+
+find_package(ICU COMPONENTS uc i18n data io REQUIRED)
+find_package(ZLIB REQUIRED)
+find_package(BZIP2 REQUIRED)
+find_package(CURL REQUIRED)
+
 add_executable(node_sword_cli ${SOURCES})
-target_link_libraries(node_sword_cli libsword.a libcurl.so libicuio.so libicuuc.so libicudata.so libicui18n.so libz.so /usr/lib/x86_64-linux-gnu/libcurl.so.4 pthread)
+target_link_libraries(node_sword_cli libsword.a ICU::io ICU::uc ICU::data ICU::i18n ${ZLIB_LIBRARIES} ${BZIP2_LIBRARIES} CURL::libcurl pthread)
