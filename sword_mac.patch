@@ -1,0 +1,62 @@
+Index include/utf8transliterator.h
+===================================================================
+--- include/utf8transliterator.h
++++ include/utf8transliterator.h
+@@ -42,6 +42,9 @@ SE_JAMO, SE_HAN, SE_KANJI
+ 
+ #include <unicode/translit.h>
+ 
++using icu_64::UnicodeString;
++using icu_64::Transliterator;
++
+ #include <defs.h>
+ #include <map>
+ 
+Index src/modules/filters/scsuutf8.cpp
+===================================================================
+--- src/modules/filters/scsuutf8.cpp
++++ src/modules/filters/scsuutf8.cpp
+@@ -29,13 +29,14 @@
+  * in http://www.unicode.org/unicode/reports/tr6.html
+  */
+ 
+-#include <scsuutf8.h>
+-#include <swbuf.h>
+ #ifdef _ICU_
+ #include <unicode/unistr.h>
+ #endif
+ 
++using icu_64::UnicodeString;
+ 
++#include <scsuutf8.h>
++#include <swbuf.h>
+ 
+ SWORD_NAMESPACE_START
+ 
+Index src/modules/filters/utf8nfc.cpp
+===================================================================
+--- src/modules/filters/utf8nfc.cpp
++++ src/modules/filters/utf8nfc.cpp
+@@ -27,6 +27,9 @@
+ #include <unicode/normlzr.h>
+ #include <unicode/unorm.h>
+ 
++using icu_64::UnicodeString;
++using icu_64::Normalizer;
++
+ #include <utf8nfc.h>
+ #include <swbuf.h>
+ 
+Index src/modules/filters/utf8scsu.cpp
+===================================================================
+--- src/modules/filters/utf8scsu.cpp
++++ src/modules/filters/utf8scsu.cpp
+@@ -25,6 +25,8 @@
+ #include <utf8scsu.h>
+ #include <swbuf.h>
+ 
++using icu_64::UnicodeString;
++
+ SWORD_NAMESPACE_START
+ 
+ 
