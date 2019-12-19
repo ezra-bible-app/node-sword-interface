@@ -65,7 +65,7 @@
                 "libraries": [
                     '<(module_root_dir)/sword_build/libsword.a',
                     '<!@(pkg-config --libs libcurl)',
-                    '<!@(pkg-config --libs icu-uc icu-io)'
+                    '<!@(PKG_CONFIG_PATH=/usr/local/opt/icu4c/lib/pkgconfig pkg-config --libs icu-uc icu-io)'
                 ],
                 "dependencies": [
                     "<!(node -p \"require('node-addon-api').gyp\")",
