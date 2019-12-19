@@ -50,6 +50,8 @@ The Javascript API of node-sword-interface is documented [here](API.md).
 
 ## Installation
 
+### Dependencies
+
 Before installing node-sword-interface you need to make sure that the following dependencies are installed:
 - C++11 compiler toolchain
 - nodejs
@@ -61,7 +63,7 @@ Before installing node-sword-interface you need to make sure that the following 
 
 Below you find the OS-specific instructions for installing the dependencies.
 
-### Install dependencies on Linux
+#### Install dependencies on Linux
 
 These installation instructions are working on Debian/Ubuntu based Linux distributions.
 
@@ -69,14 +71,14 @@ To install the dependencies issue the following command on a Debian/Ubuntu based
     
     sudo apt-get install build-essential nodejs npm libcurl4-gnutls-dev libicu-dev pkg-config cmake
 
-### Install dependencies on macOS
+#### Install dependencies on macOS
 
 1. Install XCode from the App Store
 2. Install Command Line Developer Tools (contains Compiler toolchain, git, etc.) by running this command:<br/> `xcode-select --install`   
-2. Install the homebrew package manager by running this command:<br/> `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
-3. Install some packages with homebrew by running this command:<br/> `brew install pkg-config cmake npm`
+3. Install the homebrew package manager by running this command:<br/> `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+4. Install some packages with homebrew by running this command:<br/> `brew install pkg-config cmake npm icu4c`
 
-### Install dependencies on Windows
+#### Install dependencies on Windows
 
 1. Install [git](https://git-scm.com/download/win) and [nodejs](https://nodejs.org).
 2. Install [windows-build-tools][windows-build-tools] (VS 2015 Compiler) by running the following command in an administrator powershell:<br/> `npm install --vs2015 --global windows-build-tools`.
