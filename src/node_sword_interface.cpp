@@ -59,6 +59,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getStrongsEntry", &NodeSwordInterface::getStrongsEntry),
         InstanceMethod("installModule", &NodeSwordInterface::installModule),
         InstanceMethod("uninstallModule", &NodeSwordInterface::uninstallModule),
+        InstanceMethod("saveModuleUnlockKey", &NodeSwordInterface::saveModuleUnlockKey),
         InstanceMethod("getSwordTranslation", &NodeSwordInterface::getSwordTranslation),
         InstanceMethod("getSwordVersion", &NodeSwordInterface::getSwordVersion)
     });
@@ -428,6 +429,42 @@ Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
     UninstallModuleWorker* worker = new UninstallModuleWorker(this->_swordFacade, callback, moduleName);
     worker->Queue();
     return info.Env().Undefined();
+}
+
+Napi::Value NodeSwordInterface::saveModuleUnlockKey(const Napi::CallbackInfo& info)
+{
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
+
+    Napi::String moduleName = info[0].As<Napi::String>();
+    Napi::String key = info[1].As<Napi::String>();
+
+    int returnCode = this->_swordFacade->saveModuleUnlockKey(moduleName, key);
+
+    if (returnCode == 0) {
+        return info.Env().Undefined();
+    } else {
+        string errorMessage;
+
+        switch(returnCode) {
+            case -1:
+                errorMessage = "Invalid parameter";
+                break;
+
+            case -2:
+                errorMessage = "Section cipherKey not found in config file!";
+                break;
+
+            case -3:
+                errorMessage = "Module file not found!";
+                break;
+            
+            default:
+                errorMessage = "Unknown error!";
+                break;
+        }
+
+        THROW_JS_EXCEPTION(errorMessage);
+    }
 }
 
 Napi::Value NodeSwordInterface::getSwordTranslation(const Napi::CallbackInfo& info)

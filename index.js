@@ -225,6 +225,17 @@ class NodeSwordInterface {
   }
 
   /**
+   * Persistently saves the unlock key of the corresponding module in the module's .conf file
+   * (in ~/.sword/mods.d/<modname>.conf)
+   * 
+   * @param {String} moduleCode - The module code of the SWORD module. 
+   * @param {String} key - The unlock key.
+   */
+  saveModuleUnlockKey(moduleCode, key) {
+    return this.nativeInterface.saveModuleUnlockKey(moduleCode, key);
+  }
+
+  /**
    * Returns the description of a module.
    *
    * @param {String} moduleCode - The module code of the SWORD module.

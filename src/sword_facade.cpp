@@ -849,6 +849,54 @@ int SwordFacade::uninstallModule(string moduleName)
     }
 }
 
+int SwordFacade::saveModuleUnlockKey(string moduleName, string key)
+{
+    if (moduleName.size() == 0 || key.size() == 0) {
+        return -1;
+    }
+
+    string moduleDir = this->_fileSystemHelper.getModuleDir();
+    vector<string> moduleConfFiles = this->_fileSystemHelper.getFilesInDir(moduleDir);
+
+    for (int i = 0; i < moduleConfFiles.size(); i++) {
+        string currentFileName = moduleConfFiles[i];
+
+        // Skip files that do not end with .conf
+        if (!StringHelper::hasEnding(currentFileName, ".conf")) {
+            continue;
+        }
+
+        string fullPath = moduleDir + this->_fileSystemHelper.getPathSeparator() + currentFileName;
+        SWConfig *config = new SWConfig(fullPath.c_str());
+        SectionMap::iterator section = config->getSections().find(moduleName.c_str());
+
+        if (section != config->getSections().end()) {
+            // Found config file for module
+            int returnCode = 0;
+
+            ConfigEntMap::iterator cipherKeyEntry = section->second.find("CipherKey");
+            if (cipherKeyEntry != section->second.end()) {
+                // "Found CipherKey section ... saving new key!"
+                //-- set cipher key
+                cipherKeyEntry->second = key.c_str();
+                //-- save config file
+                config->save();
+            } else {
+                // Section CipherKey not found!
+                returnCode = -2;
+            }
+
+            delete config;
+            return returnCode;
+        }
+        
+        delete config;
+    }
+
+    // Module file not found
+    return -3;
+}
+
 string SwordFacade::getSwordTranslation(string configPath, string originalString, string localeCode)
 {
     // We only initialize this at the first execution

@@ -89,6 +89,8 @@ public:
     int installModule(std::string repoName, std::string moduleName);
     int uninstallModule(std::string moduleName);
 
+    int saveModuleUnlockKey(std::string moduleName, std::string key);
+
     std::string getSwordTranslation(std::string configPath, std::string originalString, std::string localeCode);
     std::string getSwordVersion();
 
