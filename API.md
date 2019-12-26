@@ -42,6 +42,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getRepoLanguageTranslationCount(repositoryName, language)](#NodeSwordInterface+getRepoLanguageTranslationCount) ⇒ <code>Number</code>
     * [.installModule(moduleCode)](#NodeSwordInterface+installModule) ⇒ <code>Promise</code>
     * [.uninstallModule(moduleCode)](#NodeSwordInterface+uninstallModule) ⇒ <code>Promise</code>
+    * [.saveModuleUnlockKey(moduleCode, key)](#NodeSwordInterface+saveModuleUnlockKey)
     * [.getModuleDescription(moduleCode)](#NodeSwordInterface+getModuleDescription) ⇒ <code>String</code>
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
     * [.getBookText(moduleCode, bookCode)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
@@ -183,6 +184,19 @@ This function works asynchronously and returns a Promise object.
 | Param | Type | Description |
 | --- | --- | --- |
 | moduleCode | <code>String</code> | The module code of the SWORD module that shall be uninstalled. |
+
+<a name="NodeSwordInterface+saveModuleUnlockKey"></a>
+
+### nodeSwordInterface.saveModuleUnlockKey(moduleCode, key)
+Persistently saves the unlock key of the corresponding module in the module's .conf file
+(in ~/.sword/mods.d/<modname>.conf)
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleCode | <code>String</code> | The module code of the SWORD module. |
+| key | <code>String</code> | The unlock key. |
 
 <a name="NodeSwordInterface+getModuleDescription"></a>
 
@@ -359,6 +373,7 @@ An object representation of a SWORD module.
 | abbreviation | <code>String</code> | The abbreviation of the SWORD module |
 | size | <code>Number</code> | The file size of the SWORD module (in KB) |
 | location | <code>String</code> | The filesystem location where the module is stored |
+| unlockInfo | <code>String</code> | Information about how to retrieve an unlock key (in case the module is locked) |
 | inUserDir | <code>Boolean</code> | Information on whether the module is located in the user's directory |
 | locked | <code>Boolean</code> | Information on whether the module is locked |
 | hasStrongs | <code>Boolean</code> | Information on whether the module has Strong's numbers |
