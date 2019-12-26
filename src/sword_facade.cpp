@@ -858,7 +858,7 @@ int SwordFacade::saveModuleUnlockKey(string moduleName, string key)
     string moduleDir = this->_fileSystemHelper.getModuleDir();
     vector<string> moduleConfFiles = this->_fileSystemHelper.getFilesInDir(moduleDir);
 
-    for (int i = 0; i < moduleConfFiles.size(); i++) {
+    for (unsigned int i = 0; i < moduleConfFiles.size(); i++) {
         string currentFileName = moduleConfFiles[i];
 
         // Skip files that do not end with .conf
