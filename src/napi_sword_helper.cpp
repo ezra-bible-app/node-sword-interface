@@ -96,6 +96,10 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     bool moduleIsLocked = swModule->getConfigEntry("CipherKey");
     
     object["locked"] = Napi::Boolean::New(env, moduleIsLocked);
+    if (moduleIsLocked) {
+      object["unlockInfo"] = swModule->getConfigEntry("UnlockInfo");
+    }
+
     object["inUserDir"] = Napi::Boolean::New(env, this->_swordFacade->isModuleInUserDir(swModule));
     object["hasStrongs"] = Napi::Boolean::New(env, this->_swordFacade->moduleHasGlobalOption(swModule, "Strongs"));
     object["hasFootnotes"] = Napi::Boolean::New(env, this->_swordFacade->moduleHasGlobalOption(swModule, "Footnotes"));
