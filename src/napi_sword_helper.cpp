@@ -62,15 +62,15 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     object["location"] = swModule->getConfigEntry("AbsoluteDataPath");
   
     if (swModule->getConfigEntry("About")) {
-      object["about"] = swModule->getConfigEntry("About");
+        object["about"] = swModule->getConfigEntry("About");
     } else {
-      object["about"] = env.Undefined();
+        object["about"] = env.Undefined();
     }
 
     if (swModule->getConfigEntry("Version")) {
-      object["version"] = swModule->getConfigEntry("Version");
+        object["version"] = swModule->getConfigEntry("Version");
     } else {
-      object["version"] = env.Undefined();
+        object["version"] = env.Undefined();
     }
 
     if (swModule->getConfigEntry("Direction")) {
@@ -81,23 +81,25 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     }
 
     if (swModule->getConfigEntry("InstallSize")) {
-      int moduleSize = std::stoi(string(swModule->getConfigEntry("InstallSize")));
-      object["size"] = Napi::Number::New(env, moduleSize);
+        int moduleSize = std::stoi(string(swModule->getConfigEntry("InstallSize")));
+        object["size"] = Napi::Number::New(env, moduleSize);
     } else {
-      object["size"] = Napi::Number::New(env, -1);
+        object["size"] = Napi::Number::New(env, -1);
     }
 
     if (swModule->getConfigEntry("Abbreviation")) {
-      object["abbreviation"] = swModule->getConfigEntry("Abbreviation");
+        object["abbreviation"] = swModule->getConfigEntry("Abbreviation");
     } else {
-      object["abbreviation"] = "";
+        object["abbreviation"] = "";
     }
 
     bool moduleIsLocked = swModule->getConfigEntry("CipherKey");
     
     object["locked"] = Napi::Boolean::New(env, moduleIsLocked);
-    if (moduleIsLocked) {
-      object["unlockInfo"] = swModule->getConfigEntry("UnlockInfo");
+    if (moduleIsLocked && swModule->getConfigEntry("UnlockInfo")) {
+        object["unlockInfo"] = swModule->getConfigEntry("UnlockInfo");
+    } else {
+        object["unlockInfo"] = "";
     }
 
     object["inUserDir"] = Napi::Boolean::New(env, this->_swordFacade->isModuleInUserDir(swModule));
