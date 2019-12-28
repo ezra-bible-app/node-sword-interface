@@ -26,8 +26,7 @@ ${CMAKE_SOURCE_DIR}/src/file_system_helper.cpp
 
 find_package(ICU COMPONENTS uc i18n data io REQUIRED)
 find_package(ZLIB REQUIRED)
-find_package(BZIP2 REQUIRED)
 find_package(CURL REQUIRED)
 
 add_executable(node_sword_cli ${SOURCES})
-target_link_libraries(node_sword_cli libsword.a ICU::io ICU::uc ICU::data ICU::i18n ${ZLIB_LIBRARIES} ${BZIP2_LIBRARIES} CURL::libcurl pthread)
+target_link_libraries(node_sword_cli libsword.a ICU::io ICU::uc ICU::data ICU::i18n ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} pthread)
