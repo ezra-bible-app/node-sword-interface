@@ -2,20 +2,20 @@
 
 # CHECKOUT
 git clone https://github.com/bibletime/crosswire-sword-mirror sword
-git -C sword checkout tags/sword-1-8-1
+#git -C sword checkout tags/sword-1-8-1
 
 # PATCHES
-case "$(uname -s)" in
-    Linux)
-    # We only apply the Sword ICU patch on Linux
-        patch --batch --forward -d sword -p 0 < patch/sword_icu.patch
-    ;;
-    Darwin)
-    # We only apply the following patch on macOS
-        export CMAKE_PREFIX_PATH=/usr/local/opt/icu4c
-        patch --batch --forward -d sword -p 0 < patch/sword_mac.patch
-    ;;
-esac
+#case "$(uname -s)" in
+#    Linux)
+#    # We only apply the Sword ICU patch on Linux
+#        patch --batch --forward -d sword -p 0 < patch/sword_icu.patch
+#    ;;
+#    Darwin)
+#    # We only apply the following patch on macOS
+#        export CMAKE_PREFIX_PATH=/usr/local/opt/icu4c
+#        patch --batch --forward -d sword -p 0 < patch/sword_mac.patch
+#    ;;
+#esac
 
 patch --batch --forward -d sword -p 0 < patch/sword_globconf.patch
 
