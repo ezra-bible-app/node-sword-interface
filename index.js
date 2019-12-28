@@ -102,9 +102,13 @@ class NodeSwordInterface {
    * @return {Promise}
    */
   updateRepositoryConfig() {
-    return new Promise(resolve => {
-      this.nativeInterface.refreshRemoteSources(true, function() {
-        resolve();
+    return new Promise((resolve, reject) => {
+      this.nativeInterface.updateRepositoryConfig(true, function(updateSuccessful) {
+        if (updateSuccessful) {
+          resolve();
+        } else {
+          reject();
+        }
       });
     });
   }

@@ -59,7 +59,7 @@ public:
     virtual ~SwordFacade();
 
     int refreshRepositoryConfig();
-    void refreshRemoteSources(bool force=false);
+    int refreshRemoteSources(bool force=false);
 
     std::vector<std::string> getRepoNames();
     std::vector<sword::SWModule*> getAllRemoteModules();

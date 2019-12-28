@@ -37,8 +37,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
     Napi::HandleScope scope(env);
 
     Napi::Function func = DefineClass(env, "NodeSwordInterface", {
-        InstanceMethod("refreshRepositoryConfig", &NodeSwordInterface::refreshRepositoryConfig),
-        InstanceMethod("refreshRemoteSources", &NodeSwordInterface::refreshRemoteSources),
+        InstanceMethod("updateRepositoryConfig", &NodeSwordInterface::updateRepositoryConfig),
         InstanceMethod("repositoryConfigExisting", &NodeSwordInterface::repositoryConfigExisting),
         InstanceMethod("getRepoNames", &NodeSwordInterface::getRepoNames),
         InstanceMethod("getAllRepoModules", &NodeSwordInterface::getAllRepoModules),
@@ -132,16 +131,7 @@ int NodeSwordInterface::validateParams(const Napi::CallbackInfo& info, vector<Pa
     return 0;
 }
 
-Napi::Value NodeSwordInterface::refreshRepositoryConfig(const Napi::CallbackInfo& info)
-{
-    INIT_SCOPE_AND_VALIDATE(ParamType::function);
-    Napi::Function callback = info[0].As<Napi::Function>();
-    RefreshRepositoryConfigWorker* worker = new RefreshRepositoryConfigWorker(this->_swordFacade, callback);
-    worker->Queue();
-    return info.Env().Undefined();
-}
-
-Napi::Value NodeSwordInterface::refreshRemoteSources(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::updateRepositoryConfig(const Napi::CallbackInfo& info)
 {
     INIT_SCOPE_AND_VALIDATE(ParamType::boolean, ParamType::function);
     Napi::Boolean force = info[0].As<Napi::Boolean>();

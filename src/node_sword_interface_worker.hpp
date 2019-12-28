@@ -44,21 +44,24 @@ protected:
     SwordFacade* _facade;
 };
 
-class RefreshRepositoryConfigWorker : public BaseNodeSwordInterfaceWorker {
-public:
-    RefreshRepositoryConfigWorker(SwordFacade* facade, const Napi::Function& callback)
-        : BaseNodeSwordInterfaceWorker(facade, callback) {}
-
-    void Execute() { this->_facade->refreshRepositoryConfig(); }
-};
-
 class RefreshRemoteSourcesWorker : public BaseNodeSwordInterfaceWorker {
 public:
     RefreshRemoteSourcesWorker(SwordFacade* facade, const Napi::Function& callback, bool forced)
         : BaseNodeSwordInterfaceWorker(facade, callback), _forced(forced) {}
 
-    void Execute() { this->_facade->refreshRemoteSources(this->_forced); }
+    void Execute() {
+        int ret = this->_facade->refreshRemoteSources(this->_forced);
+        this->_isSuccessful = (ret == 0);
+    }
+
+    void OnOK() {
+        Napi::HandleScope scope(this->Env());
+        Napi::Boolean isSuccessful = Napi::Boolean::New(this->Env(), this->_isSuccessful);
+        Callback().Call({ isSuccessful });
+    }
+
 private:
+    bool _isSuccessful;
     bool _forced;
 };
 
@@ -110,7 +113,7 @@ public:
         : BaseNodeSwordInterfaceWorker(facade, callback), _moduleName(moduleName) {}
 
     void Execute() {
-        unsigned int ret = this->_facade->installModule(this->_moduleName);
+        int ret = this->_facade->installModule(this->_moduleName);
         this->_isSuccessful = (ret == 0);
     }
 
@@ -131,7 +134,7 @@ public:
         : BaseNodeSwordInterfaceWorker(facade, callback), _moduleName(moduleName) {}
 
     void Execute() {
-        unsigned int ret = this->_facade->uninstallModule(this->_moduleName);
+        int ret = this->_facade->uninstallModule(this->_moduleName);
         this->_isSuccessful = (ret == 0);
     }
 

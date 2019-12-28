@@ -38,8 +38,7 @@ public:
 private:
     static Napi::FunctionReference constructor;
 
-    Napi::Value refreshRepositoryConfig(const Napi::CallbackInfo& info);
-    Napi::Value refreshRemoteSources(const Napi::CallbackInfo& info);
+    Napi::Value updateRepositoryConfig(const Napi::CallbackInfo& info);
     Napi::Value repositoryConfigExisting(const Napi::CallbackInfo& info);
 
     Napi::Value getRepoNames(const Napi::CallbackInfo& info);

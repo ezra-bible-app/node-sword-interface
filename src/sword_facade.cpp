@@ -160,12 +160,16 @@ int SwordFacade::refreshRepositoryConfig()
     return 0;
 }
 
-void SwordFacade::refreshRemoteSources(bool force)
+int SwordFacade::refreshRemoteSources(bool force)
 {
     vector<thread> refreshThreads;
 
     if (this->getRepoNames().size() == 0 || force) {
-        this->refreshRepositoryConfig();
+        int ret = this->refreshRepositoryConfig();
+        if (ret != 0) {
+            return -1;
+        }
+
         vector<string> sourceNames = this->getRepoNames();
 
         // Create worker threads
@@ -178,6 +182,8 @@ void SwordFacade::refreshRemoteSources(bool force)
             refreshThreads[i].join();
         }
     }
+
+    return 0;
 }
 
 int SwordFacade::refreshIndividualRemoteSource(string remoteSourceName)
