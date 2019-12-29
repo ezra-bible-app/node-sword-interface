@@ -78,6 +78,8 @@ public:
 
     std::vector<std::string> getBibleText(std::string moduleName);
     std::vector<std::string> getBookText(std::string moduleName, std::string bookCode);
+    std::string getBookIntroduction(sword::SWModule* module, std::string bookCode);
+
     std::vector<std::string> getModuleSearchResults(std::string moduleName,
                                                     std::string searchTerm,
                                                     SearchType searchType=SearchType::multiWord,
@@ -113,10 +115,9 @@ private:
 
     sword::SWModule* getModuleFromList(std::vector<sword::SWModule*>& moduleList, std::string moduleName);
 
-    std::string getVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup=false);
-    std::string getBookIntro(sword::SWModule* module);
-    std::string getChapterHeading(sword::SWModule* module);
-    std::string getFilteredVerseText(const std::string& verseText, bool hasStrongs);
+    std::string getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup=false);
+    std::string getCurrentChapterHeading(sword::SWModule* module);
+    std::string getFilteredText(const std::string& text, bool hasStrongs=false);
     std::string replaceSpacesInStrongs(const std::string& text);
     bool moduleHasStrongsZeroPrefixes(sword::SWModule* module);
 

@@ -556,12 +556,12 @@ bool SwordFacade::moduleHasStrongsZeroPrefixes(sword::SWModule* module)
     string key = "Gen 1:1";
     module->setKey(key.c_str());
     this->enableMarkup();
-    string verseText = this->getVerseText(module, true);
+    string verseText = this->getCurrentVerseText(module, true);
     
     return verseText.find("strong:H0") != string::npos;
 }
 
-string SwordFacade::getFilteredVerseText(const string& verseText, bool hasStrongs)
+string SwordFacade::getFilteredText(const string& text, bool hasStrongs)
 {
     static regex schlachterMarkupFilter = regex("<H.*> ");
     static regex chapterFilter = regex("<chapter.*/>");
@@ -592,7 +592,7 @@ string SwordFacade::getFilteredVerseText(const string& verseText, bool hasStrong
     static regex semiColonWithoutSpace = regex(";<");
     static regex colonWithoutSpace = regex(":<");
 
-    string filteredText = verseText;
+    string filteredText = text;
     filteredText = regex_replace(filteredText, schlachterMarkupFilter, "");
     filteredText = regex_replace(filteredText, chapterFilter, "");
     filteredText = regex_replace(filteredText, lbBeginParagraph, "");
@@ -629,32 +629,27 @@ string SwordFacade::getFilteredVerseText(const string& verseText, bool hasStrong
     return filteredText;
 }
 
-string SwordFacade::getBookIntro(sword::SWModule* module)
+string SwordFacade::getBookIntroduction(sword::SWModule* module, string bookCode)
 {
     string bookIntroText = "";
+    stringstream key;
+    key << bookCode;
+    key << " 0:0";
+
+    module->setKey(key.str().c_str());
     VerseKey currentVerseKey(module->getKey());
 
-    if (currentVerseKey.getChapter() == 1 && currentVerseKey.getVerse() == 1) { // 1:1, set key to 0:0
-        // Include chapter/book/testament/module intros
-        currentVerseKey.setIntros(true);
+    // Include chapter/book/testament/module intros
+    currentVerseKey.setIntros(true);
+    module->setKey(currentVerseKey);
 
-        currentVerseKey.setChapter(0);
-        currentVerseKey.setVerse(0);
-
-        module->setKey(currentVerseKey);
-        bookIntroText = string(module->getRawEntry());
-        StringHelper::trim(bookIntroText);
-
-        // Set chapter & verse back to 1:1
-        currentVerseKey.setChapter(1);
-        currentVerseKey.setVerse(1);
-        module->setKey(currentVerseKey);
-    }
+    bookIntroText = string(module->getRawEntry());
+    StringHelper::trim(bookIntroText);
 
     return bookIntroText;
 }
 
-string SwordFacade::getChapterHeading(sword::SWModule* module)
+string SwordFacade::getCurrentChapterHeading(sword::SWModule* module)
 {
     string chapterHeading = "";
     VerseKey currentVerseKey(module->getKey());
@@ -673,10 +668,11 @@ string SwordFacade::getChapterHeading(sword::SWModule* module)
         module->setKey(currentVerseKey);
     }
 
+    chapterHeading = this->getFilteredText(chapterHeading);
     return chapterHeading;
 }
 
-string SwordFacade::getVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup)
+string SwordFacade::getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup)
 {
     string verseText;
     string filteredText;
@@ -684,7 +680,7 @@ string SwordFacade::getVerseText(sword::SWModule* module, bool hasStrongs, bool 
     if (this->_markupEnabled && !forceNoMarkup) {
         verseText = string(module->getRawEntry());
         StringHelper::trim(verseText);
-        filteredText = this->getFilteredVerseText(verseText, hasStrongs);
+        filteredText = this->getFilteredText(verseText, hasStrongs);
     } else {
         verseText = string(module->stripText());
         StringHelper::trim(verseText);
@@ -724,7 +720,7 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
         bool hasStrongs = this->moduleHasGlobalOption(module, "Strongs");
-        
+
         module->setKey(key.c_str());
 
         for (;;) {
@@ -745,18 +741,13 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
                 firstVerseInBook = true;
             }
 
-            // Book introduction
-            if (firstVerseInBook) {
-                verseText += this->getBookIntro(module);
-            }
-
             // Chapter heading
             if (firstVerseInChapter) {
-                verseText += this->getChapterHeading(module);
+                verseText += this->getCurrentChapterHeading(module);
             }
 
             // Current verse text
-            verseText += this->getVerseText(module, hasStrongs);
+            verseText += this->getCurrentVerseText(module, hasStrongs);
 
             // If the current verse does not have any content and if it is the first verse in this book
             // we assume that the book is not existing.
@@ -829,7 +820,7 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName,
             module->setKey(listKey.getElement());
 
             bool forceNoMarkup = true;
-            string verseText = this->getVerseText(module, hasStrongs, forceNoMarkup);
+            string verseText = this->getCurrentVerseText(module, hasStrongs, forceNoMarkup);
             currentVerse << module->getKey()->getShortText() << "|" << verseText;
             searchResults.push_back(currentVerse.str());
 
