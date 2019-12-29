@@ -81,11 +81,19 @@ void get_module_text(SwordFacade& sword_facade)
 {
     cout << "Text:" << endl;
     sword_facade.enableMarkup();
-    vector<string> verses = sword_facade.getBookText("ESV2011", "Phi");
+    vector<string> verses = sword_facade.getBookText("GerNeUe", "Gen");
     cout << "Got " << verses.size() << " verses!" << endl;
     for (int i = 0; i < verses.size(); i++) {
         cout << verses[i] << endl;
     }
+}
+
+void get_book_intro(SwordFacade& sword_facade)
+{
+    cout << "Text:" << endl;
+    sword_facade.enableMarkup();
+    string bookIntro = sword_facade.getBookIntroduction("GerNeUe", "Gen");
+    cout << bookIntro << endl;
 }
 
 void get_strongs_entry(SwordFacade& sword_facade)
@@ -151,9 +159,11 @@ int main(int argc, char** argv)
     /*sword_facade.installModule("StrongsHebrew");
     sword_facade.installModule("StrongsGreek");*/
 
-    get_strongs_entry(sword_facade);
+    //get_strongs_entry(sword_facade);
 
     //get_module_text(sword_facade);
+
+    get_book_intro(sword_facade);
 
     //string translation = sword_facade.getSwordTranslation(string("/usr/share/sword/locales.d"), string("de"), string("locales"));
     //cout << translation << endl;
