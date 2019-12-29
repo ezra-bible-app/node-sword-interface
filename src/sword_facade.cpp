@@ -629,6 +629,53 @@ string SwordFacade::getFilteredVerseText(const string& verseText, bool hasStrong
     return filteredText;
 }
 
+string SwordFacade::getBookIntro(sword::SWModule* module)
+{
+    string bookIntroText = "";
+    VerseKey currentVerseKey(module->getKey());
+
+    if (currentVerseKey.getChapter() == 1 && currentVerseKey.getVerse() == 1) { // 1:1, set key to 0:0
+        // Include chapter/book/testament/module intros
+        currentVerseKey.setIntros(true);
+
+        currentVerseKey.setChapter(0);
+        currentVerseKey.setVerse(0);
+
+        module->setKey(currentVerseKey);
+        bookIntroText = string(module->getRawEntry());
+        StringHelper::trim(bookIntroText);
+
+        // Set chapter & verse back to 1:1
+        currentVerseKey.setChapter(1);
+        currentVerseKey.setVerse(1);
+        module->setKey(currentVerseKey);
+    }
+
+    return bookIntroText;
+}
+
+string SwordFacade::getChapterHeading(sword::SWModule* module)
+{
+    string chapterHeading = "";
+    VerseKey currentVerseKey(module->getKey());
+
+    if (currentVerseKey.getVerse() == 1) { // X:1, set key to X:0
+        // Include chapter/book/testament/module intros
+        currentVerseKey.setIntros(true);
+        currentVerseKey.setVerse(0);
+
+        module->setKey(currentVerseKey);
+        chapterHeading = string(module->getRawEntry());
+        StringHelper::trim(chapterHeading);
+
+        // Set verse back to X:1
+        currentVerseKey.setVerse(1);
+        module->setKey(currentVerseKey);
+    }
+
+    return chapterHeading;
+}
+
 string SwordFacade::getVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup)
 {
     string verseText;
@@ -667,7 +714,7 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
     SWModule* module = this->getLocalModule(moduleName);
     char lastKey[255];
     unsigned int index = 0;
-    string lastBookName;
+    string lastBookName = "";
     bool currentBookExisting = true;
 
     // This holds the text that we will return
@@ -677,14 +724,16 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
         bool hasStrongs = this->moduleHasGlobalOption(module, "Strongs");
+        
         module->setKey(key.c_str());
-        // Filter used to get rid of some tags appearing in the GerSchm module
 
         for (;;) {
             stringstream currentVerse;
             VerseKey currentVerseKey(module->getKey());
             string currentBookName(currentVerseKey.getBookAbbrev());
             bool firstVerseInBook = false;
+            bool firstVerseInChapter = (currentVerseKey.getVerse() == 1);
+            string verseText = "";
 
             // Stop, once the newly read key is the same as the previously read key
             if (strcmp(module->getKey()->getShortText(), lastKey) == 0) { break; }
@@ -696,7 +745,19 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
                 firstVerseInBook = true;
             }
 
-            string verseText = this->getVerseText(module, hasStrongs);
+            // Book introduction
+            if (firstVerseInBook) {
+                verseText += this->getBookIntro(module);
+            }
+
+            // Chapter heading
+            if (firstVerseInChapter) {
+                verseText += this->getChapterHeading(module);
+            }
+
+            // Current verse text
+            verseText += this->getVerseText(module, hasStrongs);
+
             // If the current verse does not have any content and if it is the first verse in this book
             // we assume that the book is not existing.
             if (verseText.length() == 0 && firstVerseInBook) { currentBookExisting = false; }
@@ -722,8 +783,8 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName,
                                                    bool isCaseSensitive)
 {
     SWModule* module = this->getLocalModule(moduleName);
-	ListKey listKey;
-	ListKey *scope = 0;
+    ListKey listKey;
+    ListKey *scope = 0;
     int flags = 0;
     // This holds the text that we will return
     vector<string> searchResults;

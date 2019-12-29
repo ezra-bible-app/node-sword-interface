@@ -114,6 +114,8 @@ private:
     sword::SWModule* getModuleFromList(std::vector<sword::SWModule*>& moduleList, std::string moduleName);
 
     std::string getVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup=false);
+    std::string getBookIntro(sword::SWModule* module);
+    std::string getChapterHeading(sword::SWModule* module);
     std::string getFilteredVerseText(const std::string& verseText, bool hasStrongs);
     std::string replaceSpacesInStrongs(const std::string& text);
     bool moduleHasStrongsZeroPrefixes(sword::SWModule* module);
