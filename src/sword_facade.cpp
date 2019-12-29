@@ -629,19 +629,17 @@ string SwordFacade::getFilteredText(const string& text, bool hasStrongs)
     return filteredText;
 }
 
-string SwordFacade::getBookIntroduction(sword::SWModule* module, string bookCode)
+string SwordFacade::getBookIntroduction(string moduleName, string bookCode)
 {
     string bookIntroText = "";
-    stringstream key;
-    key << bookCode;
-    key << " 0:0";
-
-    module->setKey(key.str().c_str());
-    VerseKey currentVerseKey(module->getKey());
+    SWModule* module = this->getLocalModule(moduleName);
+    VerseKey verseKey(bookCode.c_str());
 
     // Include chapter/book/testament/module intros
-    currentVerseKey.setIntros(true);
-    module->setKey(currentVerseKey);
+    verseKey.setIntros(true);
+    verseKey.setChapter(0);
+    verseKey.setVerse(0);
+    module->setKey(verseKey);
 
     bookIntroText = string(module->getRawEntry());
     StringHelper::trim(bookIntroText);
