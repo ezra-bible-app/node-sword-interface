@@ -629,24 +629,6 @@ string SwordFacade::getFilteredText(const string& text, bool hasStrongs)
     return filteredText;
 }
 
-string SwordFacade::getBookIntroduction(string moduleName, string bookCode)
-{
-    string bookIntroText = "";
-    SWModule* module = this->getLocalModule(moduleName);
-    VerseKey verseKey(bookCode.c_str());
-
-    // Include chapter/book/testament/module intros
-    verseKey.setIntros(true);
-    verseKey.setChapter(0);
-    verseKey.setVerse(0);
-    module->setKey(verseKey);
-
-    bookIntroText = string(module->getRawEntry());
-    StringHelper::trim(bookIntroText);
-
-    return bookIntroText;
-}
-
 string SwordFacade::getCurrentChapterHeading(sword::SWModule* module)
 {
     string chapterHeading = "";
@@ -764,6 +746,24 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
     }
 
     return text;
+}
+
+string SwordFacade::getBookIntroduction(string moduleName, string bookCode)
+{
+    string bookIntroText = "";
+    SWModule* module = this->getLocalModule(moduleName);
+    VerseKey verseKey(bookCode.c_str());
+
+    // Include chapter/book/testament/module intros
+    verseKey.setIntros(true);
+    verseKey.setChapter(0);
+    verseKey.setVerse(0);
+    module->setKey(verseKey);
+
+    bookIntroText = string(module->getRawEntry());
+    StringHelper::trim(bookIntroText);
+
+    return bookIntroText;
 }
 
 vector<string> SwordFacade::getModuleSearchResults(string moduleName,
