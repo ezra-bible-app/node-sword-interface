@@ -280,6 +280,17 @@ class NodeSwordInterface {
   }
 
   /**
+   * Returns the introduction of the given book.
+   * 
+   * @param {String} moduleCode - The module code of the SWORD module.
+   * @param {String} bookCode - The book code of the SWORD module.
+   * @return {String}
+   */
+  getBookIntroduction(moduleCode, bookCode) {
+    return this.nativeInterface.getBookIntroduction(moduleCode, bookCode);
+  }
+
+  /**
    * Returns the results of a module search.
    *
    * @param {String} moduleCode - The module code of the SWORD module.
