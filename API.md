@@ -47,6 +47,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
     * [.getBookText(moduleCode, bookCode)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
+    * [.getBookIntroduction(moduleCode, bookCode)](#NodeSwordInterface+getBookIntroduction) ⇒ <code>String</code>
     * [.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
     * [.hebrewStrongsAvailable()](#NodeSwordInterface+hebrewStrongsAvailable) ⇒ <code>Boolean</code>
     * [.greekStrongsAvailable()](#NodeSwordInterface+greekStrongsAvailable) ⇒ <code>Boolean</code>
@@ -241,6 +242,18 @@ Returns the bible text of a module.
 | Param | Type | Description |
 | --- | --- | --- |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
+
+<a name="NodeSwordInterface+getBookIntroduction"></a>
+
+### nodeSwordInterface.getBookIntroduction(moduleCode, bookCode) ⇒ <code>String</code>
+Returns the introduction of the given book.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleCode | <code>String</code> | The module code of the SWORD module. |
+| bookCode | <code>String</code> | The book code of the SWORD module. |
 
 <a name="NodeSwordInterface+getModuleSearchResults"></a>
 
