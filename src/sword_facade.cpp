@@ -763,7 +763,14 @@ string SwordFacade::getBookIntroduction(string moduleName, string bookCode)
     bookIntroText = string(module->getRawEntry());
     StringHelper::trim(bookIntroText);
 
-    return bookIntroText;
+    static regex titleStartElementFilter = regex("<title");
+    static regex titleEndElementFilter = regex("</title>");
+
+    string filteredText = bookIntroText;
+    filteredText = regex_replace(filteredText, titleStartElementFilter, "<div class=\"sword-markup sword-book-title\"");
+    filteredText = regex_replace(filteredText, titleEndElementFilter, "</div>");
+
+    return filteredText;
 }
 
 vector<string> SwordFacade::getModuleSearchResults(string moduleName,
