@@ -96,6 +96,15 @@ void get_book_intro(SwordFacade& sword_facade)
     cout << bookIntro << endl;
 }
 
+void test_unlock_key(SwordFacade& sword_facade)
+{
+    sword_facade.uninstallModule("NA28");
+    sword_facade.installModule("NA28");
+    sword_facade.saveModuleUnlockKey("NA28", "");
+    SWModule* m = sword_facade.getLocalModule("NA28");
+    cout << "Module readable: " << sword_facade.isModuleReadable(m) << endl;
+}
+
 void get_strongs_entry(SwordFacade& sword_facade)
 {
     StrongsEntry* entry = sword_facade.getStrongsEntry("G2766");
@@ -132,7 +141,7 @@ int main(int argc, char** argv)
         cout << module->getName() << endl;
     }*/
 
-    //sword_facade.refreshRemoteSources(true);
+    sword_facade.refreshRemoteSources(true);
 
     cout << "SWORD version: " << sword_facade.getSwordVersion() << endl;
 
@@ -163,7 +172,9 @@ int main(int argc, char** argv)
 
     //get_module_text(sword_facade);
 
-    get_book_intro(sword_facade);
+    //get_book_intro(sword_facade);
+
+    test_unlock_key(sword_facade);
 
     //string translation = sword_facade.getSwordTranslation(string("/usr/share/sword/locales.d"), string("de"), string("locales"));
     //cout << translation << endl;

@@ -43,6 +43,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.installModule(moduleCode)](#NodeSwordInterface+installModule) ⇒ <code>Promise</code>
     * [.uninstallModule(moduleCode)](#NodeSwordInterface+uninstallModule) ⇒ <code>Promise</code>
     * [.saveModuleUnlockKey(moduleCode, key)](#NodeSwordInterface+saveModuleUnlockKey)
+    * [.isModuleReadable(moduleCode)](#NodeSwordInterface+isModuleReadable) ⇒ <code>Boolean</code>
     * [.getModuleDescription(moduleCode)](#NodeSwordInterface+getModuleDescription) ⇒ <code>String</code>
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
     * [.getBookText(moduleCode, bookCode)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
@@ -198,6 +199,17 @@ Persistently saves the unlock key of the corresponding module in the module's .c
 | --- | --- | --- |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
 | key | <code>String</code> | The unlock key. |
+
+<a name="NodeSwordInterface+isModuleReadable"></a>
+
+### nodeSwordInterface.isModuleReadable(moduleCode) ⇒ <code>Boolean</code>
+Checks whether the module is readable.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleCode | <code>String</code> | The module code of the SWORD module. |
 
 <a name="NodeSwordInterface+getModuleDescription"></a>
 

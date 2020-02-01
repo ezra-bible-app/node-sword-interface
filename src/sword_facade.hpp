@@ -92,11 +92,13 @@ public:
     int uninstallModule(std::string moduleName);
 
     int saveModuleUnlockKey(std::string moduleName, std::string key);
+    bool isModuleReadable(sword::SWModule* module, std::string key="John 1:1");
 
     std::string getSwordTranslation(std::string configPath, std::string originalString, std::string localeCode);
     std::string getSwordVersion();
 
     void enableMarkup() { this->_markupEnabled = true; }
+    void disableMarkup() { this->_markupEnabled = false; }
 
     bool moduleHasGlobalOption(sword::SWModule* module, std::string globalOption);
 

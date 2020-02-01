@@ -241,6 +241,16 @@ class NodeSwordInterface {
   }
 
   /**
+   * Checks whether the module is readable.
+   *
+   * @param {String} moduleCode - The module code of the SWORD module.
+   * @return {Boolean}
+   */
+  isModuleReadable(moduleCode) {
+    return this.nativeInterface.isModuleReadable(moduleCode);
+  }
+
+  /**
    * Returns the description of a module.
    *
    * @param {String} moduleCode - The module code of the SWORD module.

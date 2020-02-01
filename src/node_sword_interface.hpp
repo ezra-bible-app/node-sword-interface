@@ -67,6 +67,7 @@ private:
     Napi::Value installModule(const Napi::CallbackInfo& info);
     Napi::Value uninstallModule(const Napi::CallbackInfo& info);
     Napi::Value saveModuleUnlockKey(const Napi::CallbackInfo& info);
+    Napi::Value isModuleReadable(const Napi::CallbackInfo& info);
 
     Napi::Value getSwordTranslation(const Napi::CallbackInfo& info);
     Napi::Value getSwordVersion(const Napi::CallbackInfo& info);

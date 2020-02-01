@@ -561,6 +561,13 @@ bool SwordFacade::moduleHasStrongsZeroPrefixes(sword::SWModule* module)
     return verseText.find("strong:H0") != string::npos;
 }
 
+bool SwordFacade::isModuleReadable(sword::SWModule* module, std::string key)
+{
+    module->setKey(key.c_str());
+    string verseText = this->getCurrentVerseText(module, false);
+    return verseText.size() > 0;
+}
+
 string SwordFacade::getFilteredText(const string& text, bool hasStrongs)
 {
     static regex schlachterMarkupFilter = regex("<H.*> ");
@@ -944,6 +951,10 @@ int SwordFacade::saveModuleUnlockKey(string moduleName, string key)
                 cipherKeyEntry->second = key.c_str();
                 //-- save config file
                 config->save();
+                // Reset the mgr to reload the modules
+                this->resetMgr();
+                // Without this step we cannot load a remote module afterwards ...
+                this->refreshRemoteSources(true);
             } else {
                 // Section CipherKey not found!
                 returnCode = -2;

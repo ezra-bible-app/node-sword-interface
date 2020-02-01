@@ -60,6 +60,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("installModule", &NodeSwordInterface::installModule),
         InstanceMethod("uninstallModule", &NodeSwordInterface::uninstallModule),
         InstanceMethod("saveModuleUnlockKey", &NodeSwordInterface::saveModuleUnlockKey),
+        InstanceMethod("isModuleReadable", &NodeSwordInterface::isModuleReadable),
         InstanceMethod("getSwordTranslation", &NodeSwordInterface::getSwordTranslation),
         InstanceMethod("getSwordVersion", &NodeSwordInterface::getSwordVersion)
     });
@@ -465,6 +466,22 @@ Napi::Value NodeSwordInterface::saveModuleUnlockKey(const Napi::CallbackInfo& in
         }
 
         THROW_JS_EXCEPTION(errorMessage);
+    }
+}
+
+Napi::Value NodeSwordInterface::isModuleReadable(const Napi::CallbackInfo& info)
+{
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
+
+    Napi::String moduleName = info[0].As<Napi::String>();
+    SWModule* swordModule = this->_swordFacade->getLocalModule(moduleName);
+
+    if (swordModule == 0) {
+        string errorMessage = "getLocalModule returned 0 for '" + string(moduleName) + "'";
+        THROW_JS_EXCEPTION(errorMessage);
+    } else {
+        bool moduleReadable = this->_swordFacade->isModuleReadable(swordModule);
+        return Napi::Boolean::New(info.Env(), moduleReadable);
     }
 }
 
