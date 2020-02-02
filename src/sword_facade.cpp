@@ -784,10 +784,20 @@ string SwordFacade::getBookIntroduction(string moduleName, string bookCode)
 
     static regex titleStartElementFilter = regex("<title");
     static regex titleEndElementFilter = regex("</title>");
+    static regex noteStartElementFilter = regex("<note");
+    static regex noteEndElementFilter = regex("</note>");
+    static regex headStartElementFilter = regex("<head");
+    static regex headEndElementFilter = regex("</head>");
+    static regex chapterDivFilter = regex("<div type=\"chapter\" n=\"[0-9]{1}\" id=\"[-A-Z0-9]{1,8}\">");
 
     string filteredText = bookIntroText;
     filteredText = regex_replace(filteredText, titleStartElementFilter, "<div class=\"sword-markup sword-book-title\"");
     filteredText = regex_replace(filteredText, titleEndElementFilter, "</div>");
+    filteredText = regex_replace(filteredText, noteStartElementFilter, "<div class=\"sword-markup sword-note\"");
+    filteredText = regex_replace(filteredText, noteEndElementFilter, "</div>");
+    filteredText = regex_replace(filteredText, headStartElementFilter, "<div class=\"sword-markup sword-head\"");
+    filteredText = regex_replace(filteredText, headEndElementFilter, "</div>");
+    filteredText = regex_replace(filteredText, chapterDivFilter, "");
 
     return filteredText;
 }
