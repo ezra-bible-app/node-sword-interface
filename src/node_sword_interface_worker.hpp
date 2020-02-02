@@ -99,7 +99,7 @@ public:
 
 private:
     NapiSwordHelper _napiSwordHelper;
-    std::vector<std::string> _stdSearchResults;
+    std::vector<Verse> _stdSearchResults;
     Napi::Array _napiSearchResults;
     std::string _moduleName;
     std::string _searchTerm;

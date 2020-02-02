@@ -52,6 +52,16 @@ enum class SearchType {
     strongsNumber = -3
 };
 
+class Verse
+{
+public:
+    Verse() {}
+    virtual ~Verse() {}
+
+    std::string reference;
+    std::string content;
+};
+
 class SwordFacade
 {
 public:
@@ -76,14 +86,14 @@ public:
     bool isModuleInUserDir(sword::SWModule* module);
     bool isModuleAvailableInRepo(std::string moduleName, std::string repoName="all");
 
-    std::vector<std::string> getBibleText(std::string moduleName);
-    std::vector<std::string> getBookText(std::string moduleName, std::string bookCode);
+    std::vector<Verse> getBibleText(std::string moduleName);
+    std::vector<Verse> getBookText(std::string moduleName, std::string bookCode);
     std::string getBookIntroduction(std::string moduleName, std::string bookCode);
 
-    std::vector<std::string> getModuleSearchResults(std::string moduleName,
-                                                    std::string searchTerm,
-                                                    SearchType searchType=SearchType::multiWord,
-                                                    bool isCaseSensitive=false);
+    std::vector<Verse> getModuleSearchResults(std::string moduleName,
+                                              std::string searchTerm,
+                                              SearchType searchType=SearchType::multiWord,
+                                              bool isCaseSensitive=false);
 
     StrongsEntry* getStrongsEntry(std::string key);
 
@@ -104,7 +114,7 @@ public:
 
 private:
     int getRepoCount();
-    std::vector<std::string> getText(std::string moduleName, std::string key, bool onlyCurrentBook=true);
+    std::vector<Verse> getText(std::string moduleName, std::string key, bool onlyCurrentBook=true);
     sword::InstallSource* getRemoteSource(std::string remoteSourceName);
     std::string getModuleRepo(std::string moduleName);
     std::vector<std::string> getRepoModuleIds(std::string repoName);

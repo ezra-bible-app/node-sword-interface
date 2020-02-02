@@ -31,18 +31,19 @@ namespace sword {
 }
 
 class SwordFacade;
+class Verse;
 
 class NapiSwordHelper {
 public:
     NapiSwordHelper();
     virtual ~NapiSwordHelper();
 
-    Napi::Array getNapiVerseObjectsFromRawList(const Napi::Env& env, std::string moduleCode, std::vector<std::string>& verses);
+    Napi::Array getNapiVerseObjectsFromRawList(const Napi::Env& env, std::string moduleCode, std::vector<Verse>& verses);
     void swordModuleToNapiObject(const Napi::Env& env, sword::SWModule* swModule, Napi::Object& object);
     void strongsEntryToNapiObject(const Napi::Env& env, StrongsEntry* strongsEntry, Napi::Object& object);
 
 private:
-    void verseTextToNapiObject(std::string moduleCode, std::string rawVerse, unsigned int absoluteVerseNr, Napi::Object& object);
+    void verseTextToNapiObject(std::string moduleCode, Verse rawVerse, unsigned int absoluteVerseNr, Napi::Object& object);
 
     SwordFacade* _swordFacade;
 };

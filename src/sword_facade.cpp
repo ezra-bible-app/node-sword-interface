@@ -579,6 +579,11 @@ string SwordFacade::getFilteredText(const string& text, bool hasStrongs)
     static regex lgElementFilter = regex("<lg ");
     static regex noteStartElementFilter = regex("<note");
     static regex noteEndElementFilter = regex("</note>");
+    static regex headStartElementFilter = regex("<head");
+    static regex headEndElementFilter = regex("</head>");
+    static regex appStartElementFilter = regex("<app");
+    static regex appEndElementFilter = regex("</app>");
+    static regex rtxtFilter = regex("<rtxt type=\"omit\"/>");
     static regex quoteJesusElementFilter = regex("<q marker=\"\" who=\"Jesus\">");
     static regex quoteElementFilter = regex("<q ");
     static regex titleStartElementFilter = regex("<title");
@@ -609,6 +614,12 @@ string SwordFacade::getFilteredText(const string& text, bool hasStrongs)
     filteredText = regex_replace(filteredText, lgElementFilter, "<div class=\"sword-markup sword-lg\" ");
     filteredText = regex_replace(filteredText, noteStartElementFilter, "<div class=\"sword-markup sword-note\" ");
     filteredText = regex_replace(filteredText, noteEndElementFilter, "</div>");
+    filteredText = regex_replace(filteredText, headStartElementFilter, "<div class=\"sword-markup sword-head\" ");
+    filteredText = regex_replace(filteredText, headEndElementFilter, "</div>");
+    filteredText = regex_replace(filteredText, appStartElementFilter, "<div class=\"sword-markup sword-app\" ");
+    filteredText = regex_replace(filteredText, appEndElementFilter, "</div>");
+    filteredText = regex_replace(filteredText, rtxtFilter, "");
+
     filteredText = regex_replace(filteredText, titleStartElementFilter, "<div class=\"sword-markup sword-section-title\"");
     filteredText = regex_replace(filteredText, titleEndElementFilter, "</div>");
     filteredText = regex_replace(filteredText, divMilestoneFilter, "<div class=\"sword-markup sword-x-milestone\"");
@@ -677,13 +688,13 @@ string SwordFacade::getCurrentVerseText(sword::SWModule* module, bool hasStrongs
     return filteredText;
 }
 
-vector<string> SwordFacade::getBibleText(string moduleName)
+vector<Verse> SwordFacade::getBibleText(string moduleName)
 {
     string key = "Gen 1:1";
     return this->getText(moduleName, key, false);
 }
 
-vector<string> SwordFacade::getBookText(string moduleName, string bookCode)
+vector<Verse> SwordFacade::getBookText(string moduleName, string bookCode)
 {
     stringstream key;
     key << bookCode;
@@ -692,7 +703,7 @@ vector<string> SwordFacade::getBookText(string moduleName, string bookCode)
     return this->getText(moduleName, key.str());
 }
 
-vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurrentBook)
+vector<Verse> SwordFacade::getText(string moduleName, string key, bool onlyCurrentBook)
 {
     SWModule* module = this->getLocalModule(moduleName);
     char lastKey[255];
@@ -701,7 +712,7 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
     bool currentBookExisting = true;
 
     // This holds the text that we will return
-    vector<string> text;
+    vector<Verse> text;
 
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
@@ -711,7 +722,6 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
         module->setKey(key.c_str());
 
         for (;;) {
-            stringstream currentVerse;
             VerseKey currentVerseKey(module->getKey());
             string currentBookName(currentVerseKey.getBookAbbrev());
             bool firstVerseInBook = false;
@@ -741,8 +751,10 @@ vector<string> SwordFacade::getText(string moduleName, string key, bool onlyCurr
             if (verseText.length() == 0 && firstVerseInBook) { currentBookExisting = false; }
 
             if (currentBookExisting) {
-                currentVerse << module->getKey()->getShortText() << "|" << verseText;
-                text.push_back(currentVerse.str());
+                Verse currentVerse;
+                currentVerse.reference = module->getKey()->getShortText();
+                currentVerse.content = verseText;
+                text.push_back(currentVerse);
             }
 
             strcpy(lastKey, module->getKey()->getShortText());
@@ -780,17 +792,17 @@ string SwordFacade::getBookIntroduction(string moduleName, string bookCode)
     return filteredText;
 }
 
-vector<string> SwordFacade::getModuleSearchResults(string moduleName,
-                                                   string searchTerm,
-                                                   SearchType searchType,
-                                                   bool isCaseSensitive)
+vector<Verse> SwordFacade::getModuleSearchResults(string moduleName,
+                                                  string searchTerm,
+                                                  SearchType searchType,
+                                                  bool isCaseSensitive)
 {
     SWModule* module = this->getLocalModule(moduleName);
     ListKey listKey;
     ListKey *scope = 0;
     int flags = 0;
     // This holds the text that we will return
-    vector<string> searchResults;
+    vector<Verse> searchResults;
 
     if (!isCaseSensitive) {
         // for case insensitivity
@@ -828,13 +840,14 @@ vector<string> SwordFacade::getModuleSearchResults(string moduleName,
 
         // Populate searchResults vector
         while (!listKey.popError()) {
-            stringstream currentVerse;
             module->setKey(listKey.getElement());
 
             bool forceNoMarkup = true;
             string verseText = this->getCurrentVerseText(module, hasStrongs, forceNoMarkup);
-            currentVerse << module->getKey()->getShortText() << "|" << verseText;
-            searchResults.push_back(currentVerse.str());
+            Verse currentVerse;
+            currentVerse.reference = module->getKey()->getShortText();
+            currentVerse.content = verseText;
+            searchResults.push_back(currentVerse);
 
             listKey++;
         }

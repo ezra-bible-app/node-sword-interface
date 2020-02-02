@@ -333,7 +333,7 @@ Napi::Value NodeSwordInterface::getBookText(const Napi::CallbackInfo& info)
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String bookCode = info[1].As<Napi::String>();
-    vector<string> bookText = this->_swordFacade->getBookText(moduleName, bookCode);
+    vector<Verse> bookText = this->_swordFacade->getBookText(moduleName, bookCode);
     Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), string(moduleName), bookText);
     return versesArray;
 }
@@ -342,7 +342,7 @@ Napi::Value NodeSwordInterface::getBibleText(const Napi::CallbackInfo& info)
 {
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
-    vector<string> bibleText = this->_swordFacade->getBibleText(moduleName);
+    vector<Verse> bibleText = this->_swordFacade->getBibleText(moduleName);
     Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), string(moduleName), bibleText);
     return versesArray;
 }
