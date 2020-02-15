@@ -59,6 +59,11 @@
 using namespace std;
 using namespace sword;
 
+#if defined(_WIN32)
+// For some reason this symbol is missing in the sword.dll on Windows, hence we include it here.
+char * sword::SWBuf::nullStr = (char *)"";
+#endif
+
 void SwordStatusReporter::update(unsigned long totalBytes, unsigned long completedBytes)
 {
     /*int p = (totalBytes > 0) ? (int)(74.0 * ((double)completedBytes / (double)totalBytes)) : 0;
