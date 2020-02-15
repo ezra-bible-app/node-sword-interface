@@ -24,9 +24,22 @@ ${CMAKE_SOURCE_DIR}/src/file_system_helper.cpp
 # https://cmake.org/cmake/help/latest/module/FindICU.html
 # ICU components = data, i18n, io, le, lx, test, tu and uc.
 
-find_package(ICU COMPONENTS uc i18n data io REQUIRED)
+find_package(ICU COMPONENTS uc i18n data REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(CURL REQUIRED)
 
+set(SWORD_LIBRARY_NAME "libsword.a")
+set(DEPENDENT_LIBS ICU::uc ICU::data ICU::i18n ${ZLIB_LIBRARIES} ${CURL_LIBRARIES})
+
+if (UNIX)
+    set(DEPENDENT_LIBS ${DEPENDENT_LIBS} pthread)
+endif (UNIX)
+
+if (WIN32)
+    set(SWORD_LIBRARY_NAME "sword.dll")
+    include_directories(${CMAKE_SOURCE_DIR}/build/sword-win32/include)
+    link_directories(${CMAKE_SOURCE_DIR}/build/sword-win32/lib)
+endif (WIN32)
+
 add_executable(node_sword_cli ${SOURCES})
-target_link_libraries(node_sword_cli libsword.a ICU::io ICU::uc ICU::data ICU::i18n ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} pthread)
+target_link_libraries(node_sword_cli ${SWORD_LIBRARY_NAME} ${DEPENDENT_LIBS} )
