@@ -19,10 +19,10 @@
                 'actions': [
                     {
                         'action_name': 'get_sword_win32',
-                        'message': 'Cloning Win32 sword library from GitHub ...',
+                        'message': 'Downloading sword-build-win32 artifacts from GitHub ...',
                         'inputs': [],
-                        'outputs': ['sword-win32'],
-                        'action': ['call <(module_root_dir)\scripts\get_sword_win32.bat'],
+                        'outputs': ['sword-build-win32'],
+                        'action': ['call PowerShell.exe -ExecutionPolicy Bypass -File <(module_root_dir)\scripts\get_sword_build_win32.ps1'],
                     }
                 ]
             }]
@@ -75,16 +75,16 @@
             ["OS=='win'", {
                 'include_dirs': [
                     "<!@(node -p \"require('node-addon-api').include\")",
-                    "<(module_root_dir)/build/sword-win32/include"
+                    "<(module_root_dir)/build/sword-build-win32/include"
                 ],
                 "libraries": [
-                    '-l<(module_root_dir)/build/sword-win32/lib/libsword.lib',
-                    '-l<(module_root_dir)/build/sword-win32/lib/icuuc.lib',
-                    '-l<(module_root_dir)/build/sword-win32/lib/icuin.lib',
-                    '-l<(module_root_dir)/build/sword-win32/lib/icudt.lib',
-                    '-l<(module_root_dir)/build/sword-win32/lib/libbz2.lib',
-                    '-l<(module_root_dir)/build/sword-win32/lib/liblzma.lib',
-                    '-l<(module_root_dir)/build/sword-win32/lib/libcurl_imp.lib',
+                    '-l<(module_root_dir)/build/sword-build-win32/lib/sword.lib',
+                    '-l<(module_root_dir)/build/sword-build-win32/lib/icuuc.lib',
+                    '-l<(module_root_dir)/build/sword-build-win32/lib/icuin.lib',
+                    '-l<(module_root_dir)/build/sword-build-win32/lib/icudt.lib',
+                    '-l<(module_root_dir)/build/sword-build-win32/lib/libbz2.lib',
+                    '-l<(module_root_dir)/build/sword-build-win32/lib/liblzma.lib',
+                    '-l<(module_root_dir)/build/sword-build-win32/lib/libcurl_imp.lib',
                     '-lWldap32.lib',
                     '-lWs2_32.lib',
                     '-lcrypt32.lib',
