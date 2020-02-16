@@ -16,7 +16,9 @@ $ZipName = $Response.assets[0].name
 $ZipUrl = $Response.assets[0].browser_download_url
 
 # --- Remove the existing folder
-Remove-Item -Recurse -Force sword-build-win32
+if (Test-Path sword-build-win32) {
+		Remove-Item -Recurse -Force sword-build-win32
+}
 
 # --- Download the file to the current location
 $OutputPath = "$((Get-Location).Path)\$ZipName"
