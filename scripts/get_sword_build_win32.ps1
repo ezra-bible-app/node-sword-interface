@@ -7,6 +7,10 @@ function unzip {
 	[System.IO.Compression.ZipFile]::ExtractToDirectory( $ziparchive, $extractpath )
 }
 
+# --- Only allow TLS1.1 and TLS1.2
+$AllProtocols = [System.Net.SecurityProtocolType]'Tls11,Tls12'
+[System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
+
 # --- Set the uri for the latest release
 $URI = "https://api.github.com/repos/tobias-klein/sword-build-win32/releases/latest"
 
