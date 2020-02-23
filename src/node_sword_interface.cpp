@@ -330,7 +330,7 @@ Napi::Value NodeSwordInterface::enableMarkup(const Napi::CallbackInfo& info)
 
 Napi::Value NodeSwordInterface::getBookText(const Napi::CallbackInfo& info)
 {
-    INIT_SCOPE_AND_VALIDATE(ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String bookCode = info[1].As<Napi::String>();
     vector<Verse> bookText = this->_swordFacade->getBookText(moduleName, bookCode);
