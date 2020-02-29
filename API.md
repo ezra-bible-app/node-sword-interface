@@ -46,7 +46,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.isModuleReadable(moduleCode)](#NodeSwordInterface+isModuleReadable) ⇒ <code>Boolean</code>
     * [.getModuleDescription(moduleCode)](#NodeSwordInterface+getModuleDescription) ⇒ <code>String</code>
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
-    * [.getBookText(moduleCode, bookCode)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
+    * [.getBookText(moduleCode, bookCode, startVerseNr, verseCount)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookIntroduction(moduleCode, bookCode)](#NodeSwordInterface+getBookIntroduction) ⇒ <code>String</code>
     * [.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
@@ -232,7 +232,7 @@ This influences the output for getBookText and getBibleText.
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 <a name="NodeSwordInterface+getBookText"></a>
 
-### nodeSwordInterface.getBookText(moduleCode, bookCode) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
+### nodeSwordInterface.getBookText(moduleCode, bookCode, startVerseNr, verseCount) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
 Returns the text of a book for the given module.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
@@ -242,6 +242,8 @@ Returns the text of a book for the given module.
 | --- | --- | --- |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
 | bookCode | <code>String</code> | The book code of the SWORD module. |
+| startVerseNr | <code>Number</code> | The start verse number (absolute) where we start reading (Optional) |
+| verseCount | <code>Number</code> | The number of verses that shall be returned (Optional) |
 
 <a name="NodeSwordInterface+getBibleText"></a>
 
