@@ -26,6 +26,7 @@ class NapiSwordHelper;
 
 enum class ParamType {
     string,
+    number,
     boolean,
     function
 };

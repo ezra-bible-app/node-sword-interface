@@ -87,7 +87,7 @@ public:
     bool isModuleAvailableInRepo(std::string moduleName, std::string repoName="all");
 
     std::vector<Verse> getBibleText(std::string moduleName);
-    std::vector<Verse> getBookText(std::string moduleName, std::string bookCode);
+    std::vector<Verse> getBookText(std::string moduleName, std::string bookCode, int startVerseNumber=-1, int verseCount=-1);
     std::string getBookIntroduction(std::string moduleName, std::string bookCode);
 
     std::vector<Verse> getModuleSearchResults(std::string moduleName,
@@ -114,7 +114,12 @@ public:
 
 private:
     int getRepoCount();
-    std::vector<Verse> getText(std::string moduleName, std::string key, bool onlyCurrentBook=true);
+    std::vector<Verse> getText(std::string moduleName,
+                               std::string bookCode,
+                               bool onlyCurrentBook=true,
+                               int startVerseNr=-1,
+                               int verseCount=-1);
+
     sword::InstallSource* getRemoteSource(std::string remoteSourceName);
     std::string getModuleRepo(std::string moduleName);
     std::vector<std::string> getRepoModuleIds(std::string repoName);

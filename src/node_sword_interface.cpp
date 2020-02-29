@@ -109,6 +109,13 @@ int NodeSwordInterface::validateParams(const Napi::CallbackInfo& info, vector<Pa
                         return -1;
                     }
                     break;
+                case ParamType::number:
+                    if (!info[i].IsNumber()) {
+                        string numberError = "Number expected for argument " + to_string(i + 1);
+                        Napi::TypeError::New(env, numberError).ThrowAsJavaScriptException();
+                        return -1;
+                    }
+                    break;
                 case ParamType::boolean:
                     if (!info[i].IsBoolean()) {
                         string booleanError = "Boolean expected for argument " + to_string(i + 1);
@@ -330,10 +337,12 @@ Napi::Value NodeSwordInterface::enableMarkup(const Napi::CallbackInfo& info)
 
 Napi::Value NodeSwordInterface::getBookText(const Napi::CallbackInfo& info)
 {
-    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::number, ParamType::number);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String bookCode = info[1].As<Napi::String>();
-    vector<Verse> bookText = this->_swordFacade->getBookText(moduleName, bookCode);
+    Napi::Number startVerseNr = info[2].As<Napi::Number>();
+    Napi::Number verseCount = info[3].As<Napi::Number>();
+    vector<Verse> bookText = this->_swordFacade->getBookText(moduleName, bookCode, startVerseNr.Int32Value(), verseCount.Int32Value());
     Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), string(moduleName), bookText);
     return versesArray;
 }

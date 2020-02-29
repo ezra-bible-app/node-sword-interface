@@ -273,10 +273,12 @@ class NodeSwordInterface {
    *
    * @param {String} moduleCode - The module code of the SWORD module.
    * @param {String} bookCode - The book code of the SWORD module.
+   * @param {Number} startVerseNr - The start verse number (absolute) where we start reading (Optional)
+   * @param {Number} verseCount - The number of verses that shall be returned (Optional)
    * @return {VerseObject[]} An array of verse objects.
    */
-  getBookText(moduleCode, bookCode) {
-    return this.nativeInterface.getBookText(moduleCode, bookCode);
+  getBookText(moduleCode, bookCode, startVerseNr=-1, verseCount=-1) {
+    return this.nativeInterface.getBookText(moduleCode, bookCode, startVerseNr, verseCount);
   }
 
   /**

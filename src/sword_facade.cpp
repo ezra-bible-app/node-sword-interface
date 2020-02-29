@@ -695,24 +695,23 @@ string SwordFacade::getCurrentVerseText(sword::SWModule* module, bool hasStrongs
 
 vector<Verse> SwordFacade::getBibleText(string moduleName)
 {
-    string key = "Gen 1:1";
-    return this->getText(moduleName, key, false);
+    return this->getText(moduleName, "Gen", false);
 }
 
-vector<Verse> SwordFacade::getBookText(string moduleName, string bookCode)
+vector<Verse> SwordFacade::getBookText(string moduleName, string bookCode, int startVerseNumber, int verseCount)
+{
+    return this->getText(moduleName, bookCode, true, startVerseNumber, verseCount);
+}
+
+vector<Verse> SwordFacade::getText(string moduleName, string bookCode, bool onlyCurrentBook, int startVerseNumber, int verseCount)
 {
     stringstream key;
     key << bookCode;
     key << " 1:1";
 
-    return this->getText(moduleName, key.str());
-}
-
-vector<Verse> SwordFacade::getText(string moduleName, string key, bool onlyCurrentBook)
-{
     SWModule* module = this->getLocalModule(moduleName);
     char lastKey[255];
-    unsigned int index = 0;
+    int index = 0;
     string lastBookName = "";
     bool currentBookExisting = true;
 
@@ -724,7 +723,11 @@ vector<Verse> SwordFacade::getText(string moduleName, string key, bool onlyCurre
     } else {
         bool hasStrongs = this->moduleHasGlobalOption(module, "Strongs");
 
-        module->setKey(key.c_str());
+        module->setKey(key.str().c_str());
+
+        if (startVerseNumber >= 1) {
+          module->increment(startVerseNumber - 1);
+        }
 
         for (;;) {
             VerseKey currentVerseKey(module->getKey());
@@ -737,6 +740,8 @@ vector<Verse> SwordFacade::getText(string moduleName, string key, bool onlyCurre
             if (strcmp(module->getKey()->getShortText(), lastKey) == 0) { break; }
             // Stop, once the newly ready key is a different book than the previously read key
             if (onlyCurrentBook && (index > 0) && (currentBookName != lastBookName)) { break; }
+            // Stop once the maximum number of verses is reached
+            if (startVerseNumber >= 1 && verseCount >= 1 && (index == verseCount)) { break; }
 
             if (currentBookName != lastBookName) {
                 currentBookExisting = true;
