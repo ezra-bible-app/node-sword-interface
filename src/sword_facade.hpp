@@ -139,6 +139,8 @@ private:
     std::string replaceSpacesInStrongs(const std::string& text);
     bool moduleHasStrongsZeroPrefixes(sword::SWModule* module);
 
+    int getAbsoluteVerseNumberFromKey(sword::SWKey* key);
+
     sword::SWMgr* _mgr = 0;
     sword::SWMgr* _mgrForInstall = 0;
     sword::InstallMgr* _installMgr = 0;

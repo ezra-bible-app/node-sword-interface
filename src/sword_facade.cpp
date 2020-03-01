@@ -815,6 +815,25 @@ string SwordFacade::getBookIntroduction(string moduleName, string bookCode)
     return filteredText;
 }
 
+int SwordFacade::getAbsoluteVerseNumberFromKey(sword::SWKey* key)
+{
+    sword::VerseKey currentVerseKey;
+    sword::VerseKey firstVerseKey;
+
+    currentVerseKey.copyFrom(*key);
+    char book = currentVerseKey.getBook();
+
+    firstVerseKey.setBook(book);
+    firstVerseKey.setChapter(1);
+    firstVerseKey.setVerse(1);
+
+    int currentVerseKeyIndex = currentVerseKey.getIndex();
+    int firstVerseKeyIndex = firstVerseKey.getIndex();
+    int absoluteVerseNumber = currentVerseKeyIndex - firstVerseKeyIndex;
+
+    return absoluteVerseNumber;
+}
+
 vector<Verse> SwordFacade::getModuleSearchResults(string moduleName,
                                                   string searchTerm,
                                                   SearchType searchType,
@@ -869,7 +888,7 @@ vector<Verse> SwordFacade::getModuleSearchResults(string moduleName,
             string verseText = this->getCurrentVerseText(module, hasStrongs, forceNoMarkup);
             Verse currentVerse;
             currentVerse.reference = module->getKey()->getShortText();
-            currentVerse.absoluteVerseNumber = -1;
+            currentVerse.absoluteVerseNumber = this->getAbsoluteVerseNumberFromKey(module->getKey());
             currentVerse.content = verseText;
             searchResults.push_back(currentVerse);
 
