@@ -25,6 +25,7 @@
 #include <sstream>
 #include <regex>
 #include <fstream>
+#include <map>
 
 // Sword includes
 #include <installmgr.h>
@@ -815,23 +816,59 @@ string SwordFacade::getBookIntroduction(string moduleName, string bookCode)
     return filteredText;
 }
 
-int SwordFacade::getAbsoluteVerseNumberFromKey(sword::SWKey* key)
+int SwordFacade::getAbsoluteVerseNumberFromKey(sword::SWKey* key, sword::SWModule* module)
 {
-    sword::VerseKey currentVerseKey;
+    VerseKey currentVerseKey(key);
+    char currentKey[255];
+    strcpy(currentKey, currentVerseKey.getShortText());
+
     sword::VerseKey firstVerseKey;
-
-    currentVerseKey.copyFrom(*key);
-    char book = currentVerseKey.getBook();
-
-    firstVerseKey.setBook(book);
+    firstVerseKey.setBook(currentVerseKey.getBook());
     firstVerseKey.setChapter(1);
     firstVerseKey.setVerse(1);
 
-    int currentVerseKeyIndex = currentVerseKey.getIndex();
-    int firstVerseKeyIndex = firstVerseKey.getIndex();
-    int absoluteVerseNumber = currentVerseKeyIndex - firstVerseKeyIndex;
+    module->setKey(firstVerseKey);
+    int index = 0;
 
-    return absoluteVerseNumber;
+    for (;;) {
+        if (strcmp(module->getKey()->getShortText(), currentKey) == 0) { break; }
+        
+        module->increment();
+        index++;
+    }
+
+    return index + 1;
+}
+
+map<string, int> SwordFacade::getAbsoluteVerseNumberMap(SWModule* module)
+{
+    string lastBookName = "";
+    string lastKey = "";
+    int currentAbsoluteVerseNumber = 0;
+
+    std::map<std::string, int> absoluteVerseNumbers;
+    module->setKey("Gen 1:1");
+
+    for (;;) {
+        VerseKey currentVerseKey(module->getKey());
+        string currentBookName(currentVerseKey.getBookAbbrev());
+
+        // Stop, once the newly read key is the same as the previously read key
+        if (strcmp(module->getKey()->getShortText(), lastKey.c_str()) == 0) { break; }
+
+        // Reset the currentAbsoluteVerseNumber when a new book is started
+        if ((currentAbsoluteVerseNumber > 0) && (currentBookName != lastBookName)) { currentAbsoluteVerseNumber = 0; }
+
+        string currentKey(module->getKey()->getShortText());
+        absoluteVerseNumbers[currentKey] = currentAbsoluteVerseNumber;
+
+        module->increment();
+        currentAbsoluteVerseNumber++;
+        lastBookName = currentBookName;
+        lastKey = currentKey;
+    }
+
+    return absoluteVerseNumbers;
 }
 
 vector<Verse> SwordFacade::getModuleSearchResults(string moduleName,
@@ -877,6 +914,8 @@ vector<Verse> SwordFacade::getModuleSearchResults(string moduleName,
             searchTerm = "Word//Lemma./" + searchTerm;
         }
 
+        map<string, int> absoluteVerseNumbers = this->getAbsoluteVerseNumberMap(module);
+
         // Perform search
         listKey = module->search(searchTerm.c_str(), int(searchType), flags, scope, 0);
 
@@ -888,7 +927,7 @@ vector<Verse> SwordFacade::getModuleSearchResults(string moduleName,
             string verseText = this->getCurrentVerseText(module, hasStrongs, forceNoMarkup);
             Verse currentVerse;
             currentVerse.reference = module->getKey()->getShortText();
-            currentVerse.absoluteVerseNumber = this->getAbsoluteVerseNumberFromKey(module->getKey());
+            currentVerse.absoluteVerseNumber = absoluteVerseNumbers[currentVerse.reference];
             currentVerse.content = verseText;
             searchResults.push_back(currentVerse);
 

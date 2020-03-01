@@ -33,6 +33,7 @@ namespace sword {
     class InstallMgr;
     class InstallSource;
     class SWModule;
+    class SWKey;
     class SWMgr;
     class SWConfig;
     class LocaleMgr;
@@ -139,7 +140,8 @@ private:
     std::string replaceSpacesInStrongs(const std::string& text);
     bool moduleHasStrongsZeroPrefixes(sword::SWModule* module);
 
-    int getAbsoluteVerseNumberFromKey(sword::SWKey* key);
+    int getAbsoluteVerseNumberFromKey(sword::SWKey* key, sword::SWModule* module);
+    std::map<std::string, int> getAbsoluteVerseNumberMap(sword::SWModule* module);
 
     sword::SWMgr* _mgr = 0;
     sword::SWMgr* _mgrForInstall = 0;
