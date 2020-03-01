@@ -59,6 +59,7 @@ public:
     virtual ~Verse() {}
 
     std::string reference;
+    int absoluteVerseNumber;
     std::string content;
 };
 

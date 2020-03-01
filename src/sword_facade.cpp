@@ -727,6 +727,8 @@ vector<Verse> SwordFacade::getText(string moduleName, string bookCode, bool only
 
         if (startVerseNumber >= 1) {
           module->increment(startVerseNumber - 1);
+        } else {
+          startVerseNumber = 1;
         }
 
         for (;;) {
@@ -763,6 +765,7 @@ vector<Verse> SwordFacade::getText(string moduleName, string bookCode, bool only
             if (currentBookExisting) {
                 Verse currentVerse;
                 currentVerse.reference = module->getKey()->getShortText();
+                currentVerse.absoluteVerseNumber = startVerseNumber + index;
                 currentVerse.content = verseText;
                 text.push_back(currentVerse);
             }
@@ -866,6 +869,7 @@ vector<Verse> SwordFacade::getModuleSearchResults(string moduleName,
             string verseText = this->getCurrentVerseText(module, hasStrongs, forceNoMarkup);
             Verse currentVerse;
             currentVerse.reference = module->getKey()->getShortText();
+            currentVerse.absoluteVerseNumber = -1;
             currentVerse.content = verseText;
             searchResults.push_back(currentVerse);
 

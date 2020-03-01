@@ -38,11 +38,8 @@ Napi::Array NapiSwordHelper::getNapiVerseObjectsFromRawList(const Napi::Env& env
 
     for (unsigned int i = 0; i < verses.size(); i++) {
         Verse currentRawVerse = verses[i];
-        // FIXME: This only works within one bible book, not for the whole bible
-        unsigned int currentAbsoluteVerseNr = i + 1;
-
         Napi::Object verseObject = Napi::Object::New(env);
-        this->verseTextToNapiObject(moduleCode, currentRawVerse, currentAbsoluteVerseNr, verseObject);
+        this->verseTextToNapiObject(moduleCode, currentRawVerse, verseObject);
         versesArray.Set(i, verseObject);
     }
 
@@ -110,7 +107,7 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     object["hasCrossReferences"] = Napi::Boolean::New(env, this->_swordFacade->moduleHasGlobalOption(swModule, "Scripref"));
 }
 
-void NapiSwordHelper::verseTextToNapiObject(std::string moduleCode, Verse rawVerse, unsigned int absoluteVerseNr, Napi::Object& object)
+void NapiSwordHelper::verseTextToNapiObject(std::string moduleCode, Verse rawVerse, Napi::Object& object)
 {
     string reference = rawVerse.reference;
     string verseText = rawVerse.content;
@@ -127,7 +124,7 @@ void NapiSwordHelper::verseTextToNapiObject(std::string moduleCode, Verse rawVer
     object["bibleBookShortTitle"] = book;
     object["chapter"] = chapter;
     object["verseNr"] = verseNr;
-    object["absoluteVerseNr"] = absoluteVerseNr;
+    object["absoluteVerseNr"] = rawVerse.absoluteVerseNumber;
     object["content"] = verseText;
 }
 

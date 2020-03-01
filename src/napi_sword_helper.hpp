@@ -43,7 +43,7 @@ public:
     void strongsEntryToNapiObject(const Napi::Env& env, StrongsEntry* strongsEntry, Napi::Object& object);
 
 private:
-    void verseTextToNapiObject(std::string moduleCode, Verse rawVerse, unsigned int absoluteVerseNr, Napi::Object& object);
+    void verseTextToNapiObject(std::string moduleCode, Verse rawVerse, Napi::Object& object);
 
     SwordFacade* _swordFacade;
 };
