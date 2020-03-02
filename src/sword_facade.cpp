@@ -829,30 +829,6 @@ string SwordFacade::getBookIntroduction(string moduleName, string bookCode)
     return filteredText;
 }
 
-int SwordFacade::getAbsoluteVerseNumberFromKey(sword::SWKey* key, sword::SWModule* module)
-{
-    VerseKey currentVerseKey(key);
-    char currentKey[255];
-    strcpy(currentKey, currentVerseKey.getShortText());
-
-    sword::VerseKey firstVerseKey;
-    firstVerseKey.setBook(currentVerseKey.getBook());
-    firstVerseKey.setChapter(1);
-    firstVerseKey.setVerse(1);
-
-    module->setKey(firstVerseKey);
-    int index = 0;
-
-    for (;;) {
-        if (strcmp(module->getKey()->getShortText(), currentKey) == 0) { break; }
-        
-        module->increment();
-        index++;
-    }
-
-    return index + 1;
-}
-
 map<string, int> SwordFacade::getAbsoluteVerseNumberMap(SWModule* module)
 {
     string lastBookName = "";
