@@ -262,10 +262,22 @@ class NodeSwordInterface {
 
   /**
    * Enables available markup (like Strongs, foot notes, etc.)
-   * This influences the output for getBookText and getBibleText.
+   * This influences the output for getChapterText, getBookText and getBibleText.
    */
   enableMarkup() {
     return this.nativeInterface.enableMarkup();
+  }
+
+  /**
+   * Returns the text of a chapter for the given module.
+   *
+   * @param {String} moduleCode - The module code of the SWORD module.
+   * @param {String} bookCode - The book code of the SWORD module.
+   * @param {Number} chapter - The chapter that shall be returned.
+   * @return {VerseObject[]} An array of verse objects.
+   */
+  getChapterText(moduleCode, bookCode, chapter) {
+    return this.nativeInterface.getChapterText(moduleCode, bookCode, chapter);
   }
 
   /**

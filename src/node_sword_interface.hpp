@@ -58,6 +58,7 @@ private:
 
     Napi::Value enableMarkup(const Napi::CallbackInfo& info);
     
+    Napi::Value getChapterText(const Napi::CallbackInfo& info);
     Napi::Value getBookText(const Napi::CallbackInfo& info);
     Napi::Value getBibleText(const Napi::CallbackInfo& info);
     Napi::Value getBookIntroduction(const Napi::CallbackInfo& info);

@@ -52,6 +52,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getModuleDescription", &NodeSwordInterface::getModuleDescription),
         InstanceMethod("getLocalModule", &NodeSwordInterface::getLocalModule),
         InstanceMethod("enableMarkup", &NodeSwordInterface::enableMarkup),
+        InstanceMethod("getChapterText", &NodeSwordInterface::getChapterText),
         InstanceMethod("getBookText", &NodeSwordInterface::getBookText),
         InstanceMethod("getBibleText", &NodeSwordInterface::getBibleText),
         InstanceMethod("getBookIntroduction", &NodeSwordInterface::getBookIntroduction),
@@ -335,6 +336,18 @@ Napi::Value NodeSwordInterface::enableMarkup(const Napi::CallbackInfo& info)
     return info.Env().Undefined();
 }
 
+Napi::Value NodeSwordInterface::getChapterText(const Napi::CallbackInfo& info)
+{
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::number);
+    Napi::String moduleName = info[0].As<Napi::String>();
+    Napi::String bookCode = info[1].As<Napi::String>();
+    Napi::Number chapterNumber = info[2].As<Napi::Number>();
+
+    vector<Verse> chapterText = this->_swordFacade->getChapterText(moduleName, bookCode, chapterNumber.Int32Value());
+    Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), string(moduleName), chapterText);
+    return versesArray;
+}
+
 Napi::Value NodeSwordInterface::getBookText(const Napi::CallbackInfo& info)
 {
     INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::number, ParamType::number);
@@ -342,6 +355,7 @@ Napi::Value NodeSwordInterface::getBookText(const Napi::CallbackInfo& info)
     Napi::String bookCode = info[1].As<Napi::String>();
     Napi::Number startVerseNr = info[2].As<Napi::Number>();
     Napi::Number verseCount = info[3].As<Napi::Number>();
+
     vector<Verse> bookText = this->_swordFacade->getBookText(moduleName, bookCode, startVerseNr.Int32Value(), verseCount.Int32Value());
     Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), string(moduleName), bookText);
     return versesArray;
@@ -351,6 +365,7 @@ Napi::Value NodeSwordInterface::getBibleText(const Napi::CallbackInfo& info)
 {
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
+
     vector<Verse> bibleText = this->_swordFacade->getBibleText(moduleName);
     Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), string(moduleName), bibleText);
     return versesArray;

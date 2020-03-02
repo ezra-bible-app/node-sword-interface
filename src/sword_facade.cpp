@@ -696,24 +696,33 @@ string SwordFacade::getCurrentVerseText(sword::SWModule* module, bool hasStrongs
 
 vector<Verse> SwordFacade::getBibleText(string moduleName)
 {
-    return this->getText(moduleName, "Gen", false);
+    return this->getText(moduleName, "Gen 1:1");
 }
 
 vector<Verse> SwordFacade::getBookText(string moduleName, string bookCode, int startVerseNumber, int verseCount)
-{
-    return this->getText(moduleName, bookCode, true, startVerseNumber, verseCount);
-}
-
-vector<Verse> SwordFacade::getText(string moduleName, string bookCode, bool onlyCurrentBook, int startVerseNumber, int verseCount)
 {
     stringstream key;
     key << bookCode;
     key << " 1:1";
 
+    return this->getText(moduleName, key.str(), QueryLimit::book, startVerseNumber, verseCount);
+}
+
+vector<Verse> SwordFacade::getChapterText(string moduleName, string bookCode, int chapter)
+{
+    stringstream key;
+    key << bookCode << " " << chapter << ":1";
+
+    return this->getText(moduleName, key.str(), QueryLimit::chapter);
+}
+
+vector<Verse> SwordFacade::getText(string moduleName, string key, QueryLimit queryLimit, int startVerseNumber, int verseCount)
+{
     SWModule* module = this->getLocalModule(moduleName);
     char lastKey[255];
     int index = 0;
     string lastBookName = "";
+    int lastChapter = -1;
     bool currentBookExisting = true;
 
     // This holds the text that we will return
@@ -724,7 +733,7 @@ vector<Verse> SwordFacade::getText(string moduleName, string bookCode, bool only
     } else {
         bool hasStrongs = this->moduleHasGlobalOption(module, "Strongs");
 
-        module->setKey(key.str().c_str());
+        module->setKey(key.c_str());
 
         if (startVerseNumber >= 1) {
           module->increment(startVerseNumber - 1);
@@ -735,6 +744,7 @@ vector<Verse> SwordFacade::getText(string moduleName, string bookCode, bool only
         for (;;) {
             VerseKey currentVerseKey(module->getKey());
             string currentBookName(currentVerseKey.getBookAbbrev());
+            int currentChapter = currentVerseKey.getChapter();
             bool firstVerseInBook = false;
             bool firstVerseInChapter = (currentVerseKey.getVerse() == 1);
             string verseText = "";
@@ -742,7 +752,9 @@ vector<Verse> SwordFacade::getText(string moduleName, string bookCode, bool only
             // Stop, once the newly read key is the same as the previously read key
             if (strcmp(module->getKey()->getShortText(), lastKey) == 0) { break; }
             // Stop, once the newly ready key is a different book than the previously read key
-            if (onlyCurrentBook && (index > 0) && (currentBookName != lastBookName)) { break; }
+            if (queryLimit == QueryLimit::book && (index > 0) && (currentBookName != lastBookName)) { break; }
+            // Stop, once the newly ready key is a different chapter than the previously read key
+            if (queryLimit == QueryLimit::chapter && (index > 0) && (currentChapter != lastChapter)) { break; }
             // Stop once the maximum number of verses is reached
             if (startVerseNumber >= 1 && verseCount >= 1 && (index == verseCount)) { break; }
 
@@ -773,6 +785,7 @@ vector<Verse> SwordFacade::getText(string moduleName, string bookCode, bool only
 
             strcpy(lastKey, module->getKey()->getShortText());
             lastBookName = currentBookName;
+            lastChapter = currentChapter;
             module->increment();
             index++;
         }

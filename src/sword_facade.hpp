@@ -20,6 +20,7 @@
 #define _SWORD_FACADE
 
 #include <vector>
+#include <map>
 #include <string>
 #include <thread>
 #include <climits>
@@ -51,6 +52,12 @@ enum class SearchType {
     phrase = -1,
     multiWord = -2,
     strongsNumber = -3
+};
+
+enum class QueryLimit {
+    none,
+    chapter,
+    book
 };
 
 class Verse
@@ -90,6 +97,7 @@ public:
 
     std::vector<Verse> getBibleText(std::string moduleName);
     std::vector<Verse> getBookText(std::string moduleName, std::string bookCode, int startVerseNumber=-1, int verseCount=-1);
+    std::vector<Verse> getChapterText(std::string moduleName, std::string bookCode, int chapter);
     std::string getBookIntroduction(std::string moduleName, std::string bookCode);
 
     std::vector<Verse> getModuleSearchResults(std::string moduleName,
@@ -117,8 +125,8 @@ public:
 private:
     int getRepoCount();
     std::vector<Verse> getText(std::string moduleName,
-                               std::string bookCode,
-                               bool onlyCurrentBook=true,
+                               std::string key,
+                               QueryLimit queryLimit=QueryLimit::none,
                                int startVerseNr=-1,
                                int verseCount=-1);
 

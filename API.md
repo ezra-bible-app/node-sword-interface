@@ -46,6 +46,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.isModuleReadable(moduleCode)](#NodeSwordInterface+isModuleReadable) ⇒ <code>Boolean</code>
     * [.getModuleDescription(moduleCode)](#NodeSwordInterface+getModuleDescription) ⇒ <code>String</code>
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
+    * [.getChapterText(moduleCode, bookCode, chapter)](#NodeSwordInterface+getChapterText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookText(moduleCode, bookCode, startVerseNr, verseCount)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookIntroduction(moduleCode, bookCode)](#NodeSwordInterface+getBookIntroduction) ⇒ <code>String</code>
@@ -227,9 +228,23 @@ Returns the description of a module.
 
 ### nodeSwordInterface.enableMarkup()
 Enables available markup (like Strongs, foot notes, etc.)
-This influences the output for getBookText and getBibleText.
+This influences the output for getChapterText, getBookText and getBibleText.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+<a name="NodeSwordInterface+getChapterText"></a>
+
+### nodeSwordInterface.getChapterText(moduleCode, bookCode, chapter) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
+Returns the text of a chapter for the given module.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject) - An array of verse objects.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleCode | <code>String</code> | The module code of the SWORD module. |
+| bookCode | <code>String</code> | The book code of the SWORD module. |
+| chapter | <code>Number</code> | The chapter that shall be returned. |
+
 <a name="NodeSwordInterface+getBookText"></a>
 
 ### nodeSwordInterface.getBookText(moduleCode, bookCode, startVerseNr, verseCount) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
