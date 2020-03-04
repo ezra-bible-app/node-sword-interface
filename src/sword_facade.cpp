@@ -797,36 +797,91 @@ vector<Verse> SwordFacade::getText(string moduleName, string key, QueryLimit que
 string SwordFacade::getBookIntroduction(string moduleName, string bookCode)
 {
     string bookIntroText = "";
+    string filteredText = "";
     SWModule* module = this->getLocalModule(moduleName);
-    VerseKey verseKey(bookCode.c_str());
 
-    // Include chapter/book/testament/module intros
-    verseKey.setIntros(true);
-    verseKey.setChapter(0);
-    verseKey.setVerse(0);
-    module->setKey(verseKey);
+    if (module == 0) {
+        cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
+    } else {
+        VerseKey verseKey(bookCode.c_str());
 
-    bookIntroText = string(module->getRawEntry());
-    StringHelper::trim(bookIntroText);
+        // Include chapter/book/testament/module intros
+        verseKey.setIntros(true);
+        verseKey.setChapter(0);
+        verseKey.setVerse(0);
+        module->setKey(verseKey);
 
-    static regex titleStartElementFilter = regex("<title");
-    static regex titleEndElementFilter = regex("</title>");
-    static regex noteStartElementFilter = regex("<note");
-    static regex noteEndElementFilter = regex("</note>");
-    static regex headStartElementFilter = regex("<head");
-    static regex headEndElementFilter = regex("</head>");
-    static regex chapterDivFilter = regex("<div type=\"chapter\" n=\"[0-9]{1}\" id=\"[-A-Z0-9]{1,8}\">");
+        bookIntroText = string(module->getRawEntry());
+        StringHelper::trim(bookIntroText);
 
-    string filteredText = bookIntroText;
-    filteredText = regex_replace(filteredText, titleStartElementFilter, "<div class=\"sword-markup sword-book-title\"");
-    filteredText = regex_replace(filteredText, titleEndElementFilter, "</div>");
-    filteredText = regex_replace(filteredText, noteStartElementFilter, "<div class=\"sword-markup sword-note\"");
-    filteredText = regex_replace(filteredText, noteEndElementFilter, "</div>");
-    filteredText = regex_replace(filteredText, headStartElementFilter, "<div class=\"sword-markup sword-head\"");
-    filteredText = regex_replace(filteredText, headEndElementFilter, "</div>");
-    filteredText = regex_replace(filteredText, chapterDivFilter, "");
+        static regex titleStartElementFilter = regex("<title");
+        static regex titleEndElementFilter = regex("</title>");
+        static regex noteStartElementFilter = regex("<note");
+        static regex noteEndElementFilter = regex("</note>");
+        static regex headStartElementFilter = regex("<head");
+        static regex headEndElementFilter = regex("</head>");
+        static regex chapterDivFilter = regex("<div type=\"chapter\" n=\"[0-9]{1}\" id=\"[-A-Z0-9]{1,8}\">");
+
+        filteredText = bookIntroText;
+        filteredText = regex_replace(filteredText, titleStartElementFilter, "<div class=\"sword-markup sword-book-title\"");
+        filteredText = regex_replace(filteredText, titleEndElementFilter, "</div>");
+        filteredText = regex_replace(filteredText, noteStartElementFilter, "<div class=\"sword-markup sword-note\"");
+        filteredText = regex_replace(filteredText, noteEndElementFilter, "</div>");
+        filteredText = regex_replace(filteredText, headStartElementFilter, "<div class=\"sword-markup sword-head\"");
+        filteredText = regex_replace(filteredText, headEndElementFilter, "</div>");
+        filteredText = regex_replace(filteredText, chapterDivFilter, "");
+    }
 
     return filteredText;
+}
+
+map<string, vector<int>> SwordFacade::getBibleChapterVerseCounts(std::string moduleName)
+{
+    string currentBookName = "";
+    string lastBookName = "";
+    string lastKey = "";
+    int lastChapter = -1;
+    int currentChapterCount = 0;
+    map<string, vector<int>> bibleChapterVerseCounts;
+    SWModule* module = this->getLocalModule(moduleName);
+
+    if (module == 0) {
+        cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
+    } else {
+        module->setKey("Gen 1:1");
+
+        for (;;) {
+            VerseKey currentVerseKey(module->getKey());
+            currentBookName = currentVerseKey.getBookAbbrev();
+            int currentChapter = currentVerseKey.getChapter();
+            string currentKey(module->getKey()->getShortText());
+
+            // Stop, once the newly read key is the same as the previously read key
+            if (strcmp(module->getKey()->getShortText(), lastKey.c_str()) == 0) { break; }
+
+            if (currentBookName != lastBookName) {
+                // Init a new chapter verse count vector for the new book
+                vector<int> currentChapterVerseCounts;
+                bibleChapterVerseCounts[currentBookName] = currentChapterVerseCounts;
+            }
+
+            if (lastChapter != -1 && (currentChapter != lastChapter || currentBookName != lastBookName)) {
+                bibleChapterVerseCounts[lastBookName].push_back(currentChapterCount);
+                currentChapterCount = 0;
+            }
+
+            currentChapterCount++;
+
+            module->increment();
+            lastChapter = currentChapter;
+            lastBookName = currentBookName;
+            lastKey = currentKey;
+        }
+
+        bibleChapterVerseCounts[currentBookName].push_back(currentChapterCount);
+    }
+
+    return bibleChapterVerseCounts;
 }
 
 map<string, int> SwordFacade::getAbsoluteVerseNumberMap(SWModule* module)
@@ -1085,6 +1140,6 @@ bool SwordFacade::moduleHasGlobalOption(SWModule* module, string globalOption)
 
 string SwordFacade::getSwordVersion()
 {
-    return string("1.8.1");
+    return string("1.8.900-e34fd3");
 }
 

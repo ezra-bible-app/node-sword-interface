@@ -55,6 +55,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getChapterText", &NodeSwordInterface::getChapterText),
         InstanceMethod("getBookText", &NodeSwordInterface::getBookText),
         InstanceMethod("getBibleText", &NodeSwordInterface::getBibleText),
+        InstanceMethod("getBibleChapterVerseCounts", &NodeSwordInterface::getBibleChapterVerseCounts),
         InstanceMethod("getBookIntroduction", &NodeSwordInterface::getBookIntroduction),
         InstanceMethod("getModuleSearchResults", &NodeSwordInterface::getModuleSearchResults),
         InstanceMethod("getStrongsEntry", &NodeSwordInterface::getStrongsEntry),
@@ -369,6 +370,29 @@ Napi::Value NodeSwordInterface::getBibleText(const Napi::CallbackInfo& info)
     vector<Verse> bibleText = this->_swordFacade->getBibleText(moduleName);
     Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), string(moduleName), bibleText);
     return versesArray;
+}
+
+Napi::Value NodeSwordInterface::getBibleChapterVerseCounts(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
+    Napi::String moduleName = info[0].As<Napi::String>();
+
+    map<string, vector<int>> chapterVerseCounts = this->_swordFacade->getBibleChapterVerseCounts(moduleName);
+    Napi::Object jsChapterVerseCounts = Napi::Object::New(env);
+    
+    for (const auto &book : chapterVerseCounts) {
+        vector<int> verseCounts = book.second;
+        Napi::Array jsVerseCounts = Napi::Array::New(env, verseCounts.size());
+
+        for (unsigned int i = 0; i < verseCounts.size(); i++) {
+            jsVerseCounts.Set(i, verseCounts[i]);
+        }
+
+        jsChapterVerseCounts[book.first] = jsVerseCounts;
+    }
+
+    return jsChapterVerseCounts;
 }
 
 Napi::Value NodeSwordInterface::getBookIntroduction(const Napi::CallbackInfo& info)
