@@ -1,5 +1,12 @@
 #!/bin/sh
 
+if [ "$LINK_SYSTEM_SWORD" = "1" ]; then
+    echo "Linking system SWORD library!"
+    exit 0
+else
+    echo "Linking self-compiled SWORD library"
+fi
+
 # CHECKOUT
 git clone https://github.com/bibletime/crosswire-sword-mirror sword
 git -C sword checkout e34fd3

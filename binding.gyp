@@ -48,7 +48,7 @@
                     "sword/include"
                 ],
                 "libraries": [
-                    '<(module_root_dir)/sword_build/libsword.a',
+                    '<!@(./scripts/get_sword_library.sh \"../sword_build/libsword.a\")',
                     '<!@(pkg-config --libs libcurl)',
                     '<!@(pkg-config --libs icu-uc icu-io)'
                 ],
