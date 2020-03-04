@@ -1,5 +1,8 @@
 #!/bin/sh
+# This script gets the SWORD sources from the Crosswire SWORD mirror repo (set up by the BibleTime folks)
+# and then builds it as static library.
 
+# If the environment variable LINK_SYSTEM_SWORD is set to 1 then we directly exit without building SWORD.
 if [ "$LINK_SYSTEM_SWORD" = "1" ]; then
     echo "Linking system SWORD library!"
     exit 0
