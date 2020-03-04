@@ -48,6 +48,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
     * [.getChapterText(moduleCode, bookCode, chapter)](#NodeSwordInterface+getChapterText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookText(moduleCode, bookCode, startVerseNr, verseCount)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
+    * [.getBibleChapterVerseCounts(moduleCode)](#NodeSwordInterface+getBibleChapterVerseCounts) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookIntroduction(moduleCode, bookCode)](#NodeSwordInterface+getBookIntroduction) ⇒ <code>String</code>
     * [.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
@@ -259,6 +260,18 @@ Returns the text of a book for the given module.
 | bookCode | <code>String</code> | The book code of the SWORD module. |
 | startVerseNr | <code>Number</code> | The start verse number (absolute) where we start reading (Optional) |
 | verseCount | <code>Number</code> | The number of verses that shall be returned (Optional) |
+
+<a name="NodeSwordInterface+getBibleChapterVerseCounts"></a>
+
+### nodeSwordInterface.getBibleChapterVerseCounts(moduleCode) ⇒ <code>Array.&lt;Object&gt;</code>
+Returns the chapter verse count statistics for the given module.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - An associative array that maps each book to an array with the verse counts for each chapter.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleCode | <code>String</code> | The module code of the SWORD module. |
 
 <a name="NodeSwordInterface+getBibleText"></a>
 
