@@ -20,14 +20,14 @@
   "author": "Tobias Klein",
   "license": "GPL-3.0",
   "dependencies": {
-    "node-addon-api": "^1.7.1",
-    "node-gyp": "^5.0.4"
+    "node-addon-api": "^1.7.1"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/tobias-klein/node-sword-interface.git"
   },
   "devDependencies": {
-    "jsdoc-to-markdown": "^5.0.3"
+    "jsdoc-to-markdown": "^5.0.3",
+    "node-gyp": "^5.1.0"
   }
 }
