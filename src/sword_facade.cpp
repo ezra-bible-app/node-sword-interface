@@ -719,7 +719,7 @@ vector<Verse> SwordFacade::getChapterText(string moduleName, string bookCode, in
 vector<Verse> SwordFacade::getText(string moduleName, string key, QueryLimit queryLimit, int startVerseNumber, int verseCount)
 {
     SWModule* module = this->getLocalModule(moduleName);
-    char lastKey[255];
+    string lastKey;
     int index = 0;
     string lastBookName = "";
     int lastChapter = -1;
@@ -748,9 +748,10 @@ vector<Verse> SwordFacade::getText(string moduleName, string key, QueryLimit que
             bool firstVerseInBook = false;
             bool firstVerseInChapter = (currentVerseKey.getVerse() == 1);
             string verseText = "";
+            string currentKey(module->getKey()->getShortText());
 
             // Stop, once the newly read key is the same as the previously read key
-            if (strcmp(module->getKey()->getShortText(), lastKey) == 0) { break; }
+            if (currentKey == lastKey) { break; }
             // Stop, once the newly ready key is a different book than the previously read key
             if (queryLimit == QueryLimit::book && (index > 0) && (currentBookName != lastBookName)) { break; }
             // Stop, once the newly ready key is a different chapter than the previously read key
@@ -783,7 +784,7 @@ vector<Verse> SwordFacade::getText(string moduleName, string key, QueryLimit que
                 text.push_back(currentVerse);
             }
 
-            strcpy(lastKey, module->getKey()->getShortText());
+            lastKey = currentKey;
             lastBookName = currentBookName;
             lastChapter = currentChapter;
             module->increment();
@@ -857,7 +858,7 @@ map<string, vector<int>> SwordFacade::getBibleChapterVerseCounts(std::string mod
             string currentKey(module->getKey()->getShortText());
 
             // Stop, once the newly read key is the same as the previously read key
-            if (strcmp(module->getKey()->getShortText(), lastKey.c_str()) == 0) { break; }
+            if (currentKey == lastKey) { break; }
 
             if (currentBookName != lastBookName) {
                 // Init a new chapter verse count vector for the new book
@@ -896,14 +897,14 @@ map<string, int> SwordFacade::getAbsoluteVerseNumberMap(SWModule* module)
     for (;;) {
         VerseKey currentVerseKey(module->getKey());
         string currentBookName(currentVerseKey.getBookAbbrev());
+        string currentKey(module->getKey()->getShortText());
 
         // Stop, once the newly read key is the same as the previously read key
-        if (strcmp(module->getKey()->getShortText(), lastKey.c_str()) == 0) { break; }
+        if (currentKey == lastKey) { break; }
 
         // Reset the currentAbsoluteVerseNumber when a new book is started
         if ((currentAbsoluteVerseNumber > 0) && (currentBookName != lastBookName)) { currentAbsoluteVerseNumber = 0; }
 
-        string currentKey(module->getKey()->getShortText());
         absoluteVerseNumbers[currentKey] = currentAbsoluteVerseNumber;
 
         module->increment();
