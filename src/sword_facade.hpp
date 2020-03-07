@@ -100,6 +100,7 @@ public:
     std::vector<Verse> getChapterText(std::string moduleName, std::string bookCode, int chapter);
     std::string getBookIntroduction(std::string moduleName, std::string bookCode);
 
+    std::vector<std::string> getBookList(std::string moduleName);
     std::map<std::string, std::vector<int>> getBibleChapterVerseCounts(std::string moduleName);
 
     std::vector<Verse> getModuleSearchResults(std::string moduleName,

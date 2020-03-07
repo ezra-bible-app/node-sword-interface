@@ -61,6 +61,7 @@ private:
     Napi::Value getChapterText(const Napi::CallbackInfo& info);
     Napi::Value getBookText(const Napi::CallbackInfo& info);
     Napi::Value getBibleText(const Napi::CallbackInfo& info);
+    Napi::Value getBookList(const Napi::CallbackInfo& info);
     Napi::Value getBibleChapterVerseCounts(const Napi::CallbackInfo& info);
     Napi::Value getBookIntroduction(const Napi::CallbackInfo& info);
 

@@ -96,6 +96,15 @@ void get_book_intro(SwordFacade& sword_facade)
     cout << bookIntro << endl;
 }
 
+void get_book_list(SwordFacade& sword_facade)
+{
+    vector<string> bookList = sword_facade.getBookList("GerLeoNA28");
+
+    for (int i = 0; i < bookList.size(); i++) {
+        cout << bookList[i] << endl;
+    }
+}
+
 void test_unlock_key(SwordFacade& sword_facade)
 {
     sword_facade.uninstallModule("NA28");
@@ -141,7 +150,7 @@ int main(int argc, char** argv)
         cout << module->getName() << endl;
     }*/
 
-    sword_facade.refreshRemoteSources(true);
+    //sword_facade.refreshRemoteSources(true);
 
     cout << "SWORD version: " << sword_facade.getSwordVersion() << endl;
 
@@ -172,9 +181,11 @@ int main(int argc, char** argv)
 
     //get_strongs_entry(sword_facade);
 
-    get_module_text(sword_facade);
+    //get_module_text(sword_facade);
 
     //get_book_intro(sword_facade);
+
+    get_book_list(sword_facade);
 
     //string translation = sword_facade.getSwordTranslation(string("/usr/share/sword/locales.d"), string("de"), string("locales"));
     //cout << translation << endl;

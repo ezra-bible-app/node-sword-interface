@@ -294,6 +294,16 @@ class NodeSwordInterface {
   }
 
   /**
+   * Returns the list of books available in the given module.
+   * 
+   * @param {String} moduleCode - The module code of the SWORD module.
+   * @return {String[]} An array of book codes.
+   */
+  getBookList(moduleCode) {
+    return this.nativeInterface.getBookList(moduleCode);
+  }
+
+  /**
    * Returns the chapter verse count statistics for the given module.
    *
    * @param {String} moduleCode - The module code of the SWORD module.

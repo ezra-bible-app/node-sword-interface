@@ -48,6 +48,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
     * [.getChapterText(moduleCode, bookCode, chapter)](#NodeSwordInterface+getChapterText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookText(moduleCode, bookCode, startVerseNr, verseCount)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
+    * [.getBookList(moduleCode)](#NodeSwordInterface+getBookList) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getBibleChapterVerseCounts(moduleCode)](#NodeSwordInterface+getBibleChapterVerseCounts) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookIntroduction(moduleCode, bookCode)](#NodeSwordInterface+getBookIntroduction) ⇒ <code>String</code>
@@ -260,6 +261,18 @@ Returns the text of a book for the given module.
 | bookCode | <code>String</code> | The book code of the SWORD module. |
 | startVerseNr | <code>Number</code> | The start verse number (absolute) where we start reading (Optional) |
 | verseCount | <code>Number</code> | The number of verses that shall be returned (Optional) |
+
+<a name="NodeSwordInterface+getBookList"></a>
+
+### nodeSwordInterface.getBookList(moduleCode) ⇒ <code>Array.&lt;String&gt;</code>
+Returns the list of books available in the given module.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: <code>Array.&lt;String&gt;</code> - An array of book codes.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleCode | <code>String</code> | The module code of the SWORD module. |
 
 <a name="NodeSwordInterface+getBibleChapterVerseCounts"></a>
 
