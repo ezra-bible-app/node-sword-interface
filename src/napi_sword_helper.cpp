@@ -22,6 +22,7 @@
 #include "sword_facade.hpp"
 #include "string_helper.hpp"
 
+using namespace std;
 using namespace sword;
 
 NapiSwordHelper::NapiSwordHelper() {
@@ -32,7 +33,18 @@ NapiSwordHelper::~NapiSwordHelper() {
   delete this->_swordFacade;
 }
 
-Napi::Array NapiSwordHelper::getNapiVerseObjectsFromRawList(const Napi::Env& env, std::string moduleCode, vector<Verse>& verses)
+Napi::Array NapiSwordHelper::getNapiArrayFromStringVector(const Napi::Env& env, vector<string>& stringVector)
+{
+    Napi::Array napiArray = Napi::Array::New(env, stringVector.size());
+
+    for (unsigned int i = 0; i < stringVector.size(); i++) {
+        napiArray.Set(i, stringVector[i]);
+    }
+
+    return napiArray;
+}
+
+Napi::Array NapiSwordHelper::getNapiVerseObjectsFromRawList(const Napi::Env& env, string moduleCode, vector<Verse>& verses)
 {
     Napi::Array versesArray = Napi::Array::New(env, verses.size());
 
@@ -107,7 +119,7 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     object["hasCrossReferences"] = Napi::Boolean::New(env, this->_swordFacade->moduleHasGlobalOption(swModule, "Scripref"));
 }
 
-void NapiSwordHelper::verseTextToNapiObject(std::string moduleCode, Verse rawVerse, Napi::Object& object)
+void NapiSwordHelper::verseTextToNapiObject(string moduleCode, Verse rawVerse, Napi::Object& object)
 {
     string reference = rawVerse.reference;
     string verseText = rawVerse.content;

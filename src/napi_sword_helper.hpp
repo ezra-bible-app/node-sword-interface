@@ -38,6 +38,7 @@ public:
     NapiSwordHelper();
     virtual ~NapiSwordHelper();
 
+    Napi::Array getNapiArrayFromStringVector(const Napi::Env& env, std::vector<std::string>& stringVector);
     Napi::Array getNapiVerseObjectsFromRawList(const Napi::Env& env, std::string moduleCode, std::vector<Verse>& verses);
     void swordModuleToNapiObject(const Napi::Env& env, sword::SWModule* swModule, Napi::Object& object);
     void strongsEntryToNapiObject(const Napi::Env& env, StrongsEntry* strongsEntry, Napi::Object& object);

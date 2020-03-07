@@ -165,12 +165,7 @@ Napi::Value NodeSwordInterface::getRepoNames(const Napi::CallbackInfo& info)
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
     vector<string> repoNames = this->_swordFacade->getRepoNames();
-    Napi::Array repoNameArray = Napi::Array::New(env, repoNames.size());
-
-    for (unsigned int i = 0; i < repoNames.size(); i++) {
-        repoNameArray.Set(i, repoNames[i]); 
-    }
-
+    Napi::Array repoNameArray = this->_napiSwordHelper->getNapiArrayFromStringVector(env, repoNames);
     return repoNameArray;
 }
 
@@ -248,12 +243,7 @@ Napi::Value NodeSwordInterface::getRepoLanguages(const Napi::CallbackInfo& info)
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
     vector<string> repoLanguages = this->_swordFacade->getRepoLanguages(repoName);
-    Napi::Array languageArray = Napi::Array::New(info.Env(), repoLanguages.size());
-
-    for (unsigned int i = 0; i < repoLanguages.size(); i++) {
-        languageArray.Set(i, repoLanguages[i]); 
-    }
-
+    Napi::Array languageArray = this->_napiSwordHelper->getNapiArrayFromStringVector(info.Env(), repoLanguages);
     return languageArray;
 }
 
