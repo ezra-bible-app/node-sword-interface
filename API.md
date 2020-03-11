@@ -38,7 +38,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getAllRepoModules(repositoryName)](#NodeSwordInterface+getAllRepoModules) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoModulesByLang(repositoryName, language, headersFilter, strongsFilter)](#NodeSwordInterface+getRepoModulesByLang) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoModule(moduleCode)](#NodeSwordInterface+getRepoModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
-    * [.getAllLocalModules()](#NodeSwordInterface+getAllLocalModules) ⇒ <code>Array.&lt;String&gt;</code>
+    * [.getAllLocalModules()](#NodeSwordInterface+getAllLocalModules) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
     * [.getRepoLanguageTranslationCount(repositoryName, language)](#NodeSwordInterface+getRepoLanguageTranslationCount) ⇒ <code>Number</code>
     * [.installModule(moduleCode)](#NodeSwordInterface+installModule) ⇒ <code>Promise</code>
     * [.uninstallModule(moduleCode)](#NodeSwordInterface+uninstallModule) ⇒ <code>Promise</code>
@@ -143,11 +143,11 @@ Returns an object representation of a SWORD module from a repository.
 
 <a name="NodeSwordInterface+getAllLocalModules"></a>
 
-### nodeSwordInterface.getAllLocalModules() ⇒ <code>Array.&lt;String&gt;</code>
+### nodeSwordInterface.getAllLocalModules() ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
 Returns all bible modules installed locally.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
-**Returns**: <code>Array.&lt;String&gt;</code> - An array of strings with the module codes for the locally installed bible modules.  
+**Returns**: [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject) - An array of ModuleObjects which represents the locally installed bible modules.  
 <a name="NodeSwordInterface+getRepoLanguageTranslationCount"></a>
 
 ### nodeSwordInterface.getRepoLanguageTranslationCount(repositoryName, language) ⇒ <code>Number</code>

@@ -169,7 +169,7 @@ class NodeSwordInterface {
   /**
    * Returns all bible modules installed locally.
    *
-   * @return {String[]} An array of strings with the module codes for the locally installed bible modules.
+   * @return {ModuleObject[]} An array of ModuleObjects which represents the locally installed bible modules.
    */
   getAllLocalModules() {
     return this.nativeInterface.getAllLocalModules();
