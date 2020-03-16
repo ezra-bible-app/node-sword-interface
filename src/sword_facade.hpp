@@ -124,6 +124,7 @@ public:
     void disableMarkup() { this->_markupEnabled = false; }
 
     bool moduleHasGlobalOption(sword::SWModule* module, std::string globalOption);
+    std::string getModuleDataPath(sword::SWModule* module);
 
 private:
     int getRepoCount();

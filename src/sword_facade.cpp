@@ -503,12 +503,13 @@ bool SwordFacade::isModuleInUserDir(sword::SWModule* module)
     if (module == 0) {
         return false;
     } else {
-        if (module->getConfigEntry("AbsoluteDataPath")) {
-            string dataPath = string(module->getConfigEntry("AbsoluteDataPath"));
-            string userDir = this->_fileSystemHelper.getUserSwordDir();
-            return (dataPath.find(userDir) != string::npos);
-        } else {
+        string modulePath = this->getModuleDataPath(module);
+
+        if (modulePath == "") {
             return false;
+        } else {
+            string userDir = this->_fileSystemHelper.getUserSwordDir();
+            return (modulePath.find(userDir) != string::npos);
         }
     }
 }
@@ -565,6 +566,22 @@ bool SwordFacade::moduleHasStrongsZeroPrefixes(sword::SWModule* module)
     string verseText = this->getCurrentVerseText(module, true);
     
     return verseText.find("strong:H0") != string::npos;
+}
+
+string SwordFacade::getModuleDataPath(sword::SWModule* module)
+{
+    if (module == 0) {
+        return "";
+    }
+
+    string dataPath = string(module->getConfigEntry("AbsoluteDataPath"));
+
+    #if _WIN32
+        static regex slash("/");
+        dataPath = regex_replace(dataPath, slash, "\\");
+    #endif
+
+    return dataPath;
 }
 
 bool SwordFacade::isModuleReadable(sword::SWModule* module, std::string key)
