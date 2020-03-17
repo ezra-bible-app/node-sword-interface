@@ -57,10 +57,10 @@ void show_modules(SwordFacade& sword_facade)
 
 void get_local_module(SwordFacade& sword_facade)
 {
-    SWModule* m = sword_facade.getLocalModule("germenge");
-    string path = m->getConfigEntry("AbsoluteDataPath");
-    cout << "germenge path: " << path << endl;
-    cout << sword_facade.isModuleInUserDir("germenge") << endl;
+    SWModule* m = sword_facade.getLocalModule("GerNeUe");
+    string path = sword_facade.getModuleDataPath(m);
+    cout << "GerNeUe path: " << path << endl;
+    cout << sword_facade.isModuleInUserDir("GerNeUe") << endl;
 }
 
 void get_repo_module(SwordFacade& sword_facade)
@@ -98,7 +98,7 @@ void get_book_intro(SwordFacade& sword_facade)
 
 void get_book_list(SwordFacade& sword_facade)
 {
-    vector<string> bookList = sword_facade.getBookList("GerLeoNA28");
+    vector<string> bookList = sword_facade.getBookList("GerNeUe");
 
     for (int i = 0; i < bookList.size(); i++) {
         cout << bookList[i] << endl;
@@ -172,7 +172,7 @@ int main(int argc, char** argv)
         cout << "Error installing module (write permissions?)\n";
     }*/
 
-    //get_local_module(sword_facade);
+    get_local_module(sword_facade);
     
     //get_repo_module(sword_facade);
 

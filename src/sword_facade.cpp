@@ -501,6 +501,7 @@ SWModule* SwordFacade::getLocalModule(string moduleName)
 bool SwordFacade::isModuleInUserDir(sword::SWModule* module)
 {
     if (module == 0) {
+        cerr << "isModuleInUserDir: module is zero pointer!" << endl;
         return false;
     } else {
         string modulePath = this->getModuleDataPath(module);
