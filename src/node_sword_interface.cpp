@@ -26,6 +26,7 @@
 #include "napi_sword_helper.hpp"
 #include "node_sword_interface_worker.hpp"
 #include "sword_facade.hpp"
+#include "sword_status_reporter.hpp"
 
 using namespace std;
 using namespace sword;
@@ -80,7 +81,8 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    this->_swordFacade = new SwordFacade();
+    this->_swordStatusReporter = new SwordStatusReporter();
+    this->_swordFacade = new SwordFacade(this->_swordStatusReporter);
     this->_napiSwordHelper = new NapiSwordHelper();
 }
 
@@ -464,10 +466,11 @@ Napi::Value NodeSwordInterface::getStrongsEntry(const Napi::CallbackInfo& info)
 
 Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
 {
-    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::function);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::function, ParamType::function);
     Napi::String moduleName = info[0].As<Napi::String>();
-    Napi::Function callback = info[1].As<Napi::Function>();
-    InstallModuleWorker* worker = new InstallModuleWorker(this->_swordFacade, callback, moduleName);
+    Napi::Function progressCallback = info[1].As<Napi::Function>();
+    Napi::Function callback = info[2].As<Napi::Function>();
+    InstallModuleWorker* worker = new InstallModuleWorker(this->_swordFacade, this->_swordStatusReporter, progressCallback, callback, moduleName);
     worker->Queue();
     return info.Env().Undefined();
 }
@@ -477,7 +480,7 @@ Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
     INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::function);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Function callback = info[1].As<Napi::Function>();
-    UninstallModuleWorker* worker = new UninstallModuleWorker(this->_swordFacade, callback, moduleName);
+    UninstallModuleWorker* worker = new UninstallModuleWorker(this->_swordFacade, this->_swordStatusReporter, callback, moduleName);
     worker->Queue();
     return info.Env().Undefined();
 }

@@ -40,14 +40,6 @@ namespace sword {
     class LocaleMgr;
 };
 
-class SwordStatusReporter : public sword::StatusReporter
-{
-public:
-    int last;
-    virtual void update(unsigned long totalBytes, unsigned long completedBytes);
-    virtual void preStatus(long totalBytes, long completedBytes, const char *message);
-};
-
 enum class SearchType {
     phrase = -1,
     multiWord = -2,
@@ -71,10 +63,12 @@ public:
     std::string content;
 };
 
+class SwordStatusReporter;
+
 class SwordFacade
 {
 public:
-    SwordFacade();
+    SwordFacade(SwordStatusReporter* statusReporter=0);
     virtual ~SwordFacade();
 
     int refreshRepositoryConfig();
@@ -125,6 +119,8 @@ public:
 
     bool moduleHasGlobalOption(sword::SWModule* module, std::string globalOption);
     std::string getModuleDataPath(sword::SWModule* module);
+
+
 
 private:
     int getRepoCount();

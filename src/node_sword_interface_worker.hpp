@@ -25,13 +25,14 @@
 
 #include "napi_sword_helper.hpp"
 #include "sword_facade.hpp"
+#include "sword_status_reporter.hpp"
 
 using namespace std;
 
-class BaseNodeSwordInterfaceWorker : public Napi::AsyncWorker {
+class BaseNodeSwordInterfaceWorker : public Napi::AsyncProgressWorker<uint32_t> {
 public:
-    BaseNodeSwordInterfaceWorker(SwordFacade* facade, const Napi::Function& callback)
-        : Napi::AsyncWorker(callback), _facade(facade) {}
+    BaseNodeSwordInterfaceWorker(SwordFacade* facade, SwordStatusReporter* statusReporter, const Napi::Function& callback)
+        : Napi::AsyncProgressWorker<uint32_t>(callback), _facade(facade), _statusReporter(statusReporter) {}
 
     virtual ~BaseNodeSwordInterfaceWorker() {}
 
@@ -40,16 +41,23 @@ public:
         Callback().Call({Env().Null()});
     }
 
+    virtual void OnProgress(const uint32_t* data, size_t /* count */) {
+        Napi::HandleScope scope(Env());
+
+        //Callback().Call({Env().Null(), Env().Null(), Napi::Number::New(Env(), *data)});
+    }
+
 protected:
     SwordFacade* _facade;
+    SwordStatusReporter* _statusReporter;
 };
 
 class RefreshRemoteSourcesWorker : public BaseNodeSwordInterfaceWorker {
 public:
     RefreshRemoteSourcesWorker(SwordFacade* facade, const Napi::Function& callback, bool forced)
-        : BaseNodeSwordInterfaceWorker(facade, callback), _forced(forced) {}
+        : BaseNodeSwordInterfaceWorker(facade, 0, callback), _forced(forced) {}
 
-    void Execute() {
+    void Execute(const ExecutionProgress& progress) {
         int ret = this->_facade->refreshRemoteSources(this->_forced);
         this->_isSuccessful = (ret == 0);
     }
@@ -76,13 +84,13 @@ public:
                                 SearchType searchType,
                                 bool isCaseSensitive=false)
 
-        : BaseNodeSwordInterfaceWorker(facade, callback),
+        : BaseNodeSwordInterfaceWorker(facade, 0, callback),
         _moduleName(moduleName),
         _searchTerm(searchTerm),
         _searchType(searchType),
         _isCaseSensitive(isCaseSensitive) {}
 
-    void Execute() {
+    void Execute(const ExecutionProgress& progress) {
         searchMutex.lock();
         this->_stdSearchResults = this->_facade->getModuleSearchResults(this->_moduleName,
                                                                         this->_searchTerm,
@@ -109,12 +117,47 @@ private:
 
 class InstallModuleWorker : public BaseNodeSwordInterfaceWorker {
 public:
-    InstallModuleWorker(SwordFacade* facade, const Napi::Function& callback, std::string moduleName)
-        : BaseNodeSwordInterfaceWorker(facade, callback), _moduleName(moduleName) {}
+    InstallModuleWorker(SwordFacade* facade, SwordStatusReporter* statusReporter, const Napi::Function& jsProgressCallback, const Napi::Function& callback, std::string moduleName)
+        : BaseNodeSwordInterfaceWorker(facade, statusReporter, callback), _moduleName(moduleName), _jsProgressCallback(Napi::Persistent(jsProgressCallback)) {}
 
-    void Execute() {
+    void swordPreStatusCB(long totalBytes, long completedBytes, const char *message) {
+        //cout << "swordPreStatusCB" << endl;
+
+        if (this->_executionProgress != 0) {
+            uint32_t progress = 1;
+            this->_executionProgress->Send(&progress, 1);
+        }
+    }
+
+    void swordUpdateCB(unsigned long totalBytes, unsigned long completedBytes) {
+        //cout << "swordUpdateCB" << endl;
+    }
+
+    void Execute(const ExecutionProgress& progress) {
+        this->_executionProgress = &progress;
+
+        std::function<void(long, long, const char*)> _swordPreStatusCB = std::bind(&InstallModuleWorker::swordPreStatusCB,
+                                                                                   this,
+                                                                                   std::placeholders::_1,
+                                                                                   std::placeholders::_2,
+                                                                                   std::placeholders::_3);
+        
+        std::function<void(unsigned long, unsigned long)> _swordUpdateCB = std::bind(&InstallModuleWorker::swordUpdateCB,
+                                                                                     this,
+                                                                                     std::placeholders::_1,
+                                                                                     std::placeholders::_2);
+
+        this->_statusReporter->setCallBacks(&_swordPreStatusCB, &_swordUpdateCB);
+
+        cout << "Starting module installation" << endl;
         int ret = this->_facade->installModule(this->_moduleName);
+        cout << "Done!" << endl;
         this->_isSuccessful = (ret == 0);
+    }
+
+    virtual void OnProgress(const uint32_t* data, size_t /* count */) {
+        Napi::HandleScope scope(this->Env());
+        this->_jsProgressCallback.Call({ Napi::Number::New(this->Env(), *data) });
     }
 
     void OnOK() {
@@ -124,16 +167,18 @@ public:
     }
 
 private:
+    const ExecutionProgress* _executionProgress = 0;
     bool _isSuccessful;
     std::string _moduleName;
+    Napi::FunctionReference _jsProgressCallback;
 };
 
 class UninstallModuleWorker : public BaseNodeSwordInterfaceWorker {
 public:
-    UninstallModuleWorker(SwordFacade* facade, const Napi::Function& callback, std::string moduleName)
-        : BaseNodeSwordInterfaceWorker(facade, callback), _moduleName(moduleName) {}
+    UninstallModuleWorker(SwordFacade* facade, SwordStatusReporter* statusReporter, const Napi::Function& callback, std::string moduleName)
+        : BaseNodeSwordInterfaceWorker(facade, statusReporter, callback), _moduleName(moduleName) {}
 
-    void Execute() {
+    void Execute(const ExecutionProgress& progress) {
         int ret = this->_facade->uninstallModule(this->_moduleName);
         this->_isSuccessful = (ret == 0);
     }

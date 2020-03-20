@@ -39,6 +39,7 @@
 
 // Own includes
 #include "sword_facade.hpp"
+#include "sword_status_reporter.hpp"
 #include "string_helper.hpp"
 #include "strongs_entry.hpp"
 
@@ -65,42 +66,11 @@ using namespace sword;
 char * sword::SWBuf::nullStr = (char *)"";
 #endif
 
-void SwordStatusReporter::update(unsigned long totalBytes, unsigned long completedBytes)
-{
-    /*int p = (totalBytes > 0) ? (int)(74.0 * ((double)completedBytes / (double)totalBytes)) : 0;
-    for (;last < p; ++last) {
-        if (!last) {
-            SWBuf output;
-            output.setFormatted("[ File Bytes: %ld", totalBytes);
-            while (output.size() < 75) output += " ";
-            output += "]";
-            cout << output.c_str() << "\n ";
-        }
-        cout << "-";
-    }
-    cout.flush();*/
-}
-
-void SwordStatusReporter::preStatus(long totalBytes, long completedBytes, const char *message)
-{
-    /*SWBuf output;
-    output.setFormatted("[ Total Bytes: %ld; Completed Bytes: %ld", totalBytes, completedBytes);
-    while (output.size() < 75) output += " ";
-    output += "]";
-    cout << "\n" << output.c_str() << "\n ";
-    int p = (int)(74.0 * (double)completedBytes/totalBytes);
-    for (int i = 0; i < p; ++i) { cout << "="; }
-    cout << "\n\n" << message << "\n";
-    last = 0;*/
-
-    cout << "\n" << message << "\n";
-}
-
-SwordFacade::SwordFacade()
+SwordFacade::SwordFacade(SwordStatusReporter* statusReporter)
 {
     //SWLog::getSystemLog()->setLogLevel(SWLog::LOG_DEBUG);
     this->_fileSystemHelper.createBasicDirectories();
-    this->_statusReporter = new SwordStatusReporter();
+    this->_statusReporter = statusReporter;
     this->resetMgr();
 }
 
@@ -145,6 +115,7 @@ void SwordFacade::resetMgr()
 #endif
 
     this->_mgrForInstall = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
+    
     this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), this->_statusReporter);
     this->_installMgr->setUserDisclaimerConfirmed(true);
 

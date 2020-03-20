@@ -197,9 +197,9 @@ class NodeSwordInterface {
    * @param {String} moduleCode - The module code of the SWORD module that shall be installed.
    * @return {Promise}
    */
-  installModule(moduleCode) {
+  installModule(moduleCode, progressCB) {
     return new Promise((resolve, reject) => {
-      this.nativeInterface.installModule(moduleCode, function(installSuccessful) {
+      this.nativeInterface.installModule(moduleCode, progressCB, function(installSuccessful) {
         if (installSuccessful) {
           resolve();
         } else {
