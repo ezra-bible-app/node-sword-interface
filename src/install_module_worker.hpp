@@ -20,36 +20,7 @@
 #define _INSTALL_MODULE_WORKER
 
 #include "node_sword_interface_worker.hpp"
-
-// Functions copied and adapted from BibleTime source code
-// see https://github.com/bibletime/bibletime/blob/master/src/backend/btinstallmgr.cpp
-namespace {
-
-template <typename T>
-inline T normalizeCompletionPercentage(const T value) {
-    if (value < 0)
-        return 0;
-    if (value > 100)
-        return 100;
-    return value;
-}
-
-template <typename T>
-inline int calculateIntPercentage(T done, T total) {
-    if (!(done >= 0 && total >= 0)) {
-        return 100;
-    }
-
-    // Special care (see warning in BtInstallMgr::statusUpdate()).
-    if (done > total)
-        done = total;
-    if (total == 0)
-        return 100;
-
-    return normalizeCompletionPercentage<int>((done / total) * 100);
-}
-
-} // anonymous namespace
+#include "percentage_calc.hpp"
 
 class InstallModuleWorker : public BaseNodeSwordInterfaceWorker {
 public:

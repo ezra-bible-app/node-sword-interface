@@ -26,6 +26,7 @@
 #include <regex>
 #include <fstream>
 #include <map>
+#include <mutex>
 
 // Sword includes
 #include <installmgr.h>
@@ -42,6 +43,7 @@
 #include "sword_status_reporter.hpp"
 #include "string_helper.hpp"
 #include "strongs_entry.hpp"
+#include "percentage_calc.hpp"
 
 /* REGEX definitions from regex.h */
 /* POSIX `cflags' bits (i.e., information for `regcomp').  */
@@ -137,9 +139,10 @@ int SwordFacade::refreshRepositoryConfig()
     return 0;
 }
 
-int SwordFacade::refreshRemoteSources(bool force)
+int SwordFacade::refreshRemoteSources(bool force, std::function<void(unsigned int progress)>* progressCallback)
 {
     vector<thread> refreshThreads;
+    this->_remoteSourceUpdateCount = 0;
 
     if (this->getRepoNames().size() == 0 || force) {
         int ret = this->refreshRepositoryConfig();
@@ -148,10 +151,11 @@ int SwordFacade::refreshRemoteSources(bool force)
         }
 
         vector<string> sourceNames = this->getRepoNames();
+        this->_remoteSourceCount = sourceNames.size();
 
         // Create worker threads
         for (unsigned int i = 0; i < sourceNames.size(); i++) {
-            refreshThreads.push_back(this->getRemoteSourceRefreshThread(sourceNames[i]));
+            refreshThreads.push_back(this->getRemoteSourceRefreshThread(sourceNames[i], progressCallback));
         }
 
         // Wait for threads to finish
@@ -163,21 +167,33 @@ int SwordFacade::refreshRemoteSources(bool force)
     return 0;
 }
 
-int SwordFacade::refreshIndividualRemoteSource(string remoteSourceName)
+static std::mutex remoteSourceUpdateMutex;
+
+int SwordFacade::refreshIndividualRemoteSource(string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback)
 {
     //cout << "Refreshing source " << remoteSourceName << endl << flush;
     InstallSource* source = this->getRemoteSource(remoteSourceName);
     int result = this->_installMgr->refreshRemoteSource(source);
     if (result != 0) {
-        cout << "Failed to refresh source " << remoteSourceName << endl << flush;
+        cerr << "Failed to refresh source " << remoteSourceName << endl << flush;
     }
+
+    remoteSourceUpdateMutex.lock();
+    this->_remoteSourceUpdateCount++;
+    unsigned int totalPercent = (unsigned int)calculateIntPercentage<double>(this->_remoteSourceUpdateCount,
+                                                                     this->_remoteSourceCount);
+    
+    if (progressCallback != 0) {
+        (*progressCallback)(totalPercent);
+    }
+    remoteSourceUpdateMutex.unlock();
 
     return result;
 }
 
-thread SwordFacade::getRemoteSourceRefreshThread(string remoteSourceName)
+thread SwordFacade::getRemoteSourceRefreshThread(string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback)
 {
-    return thread(&SwordFacade::refreshIndividualRemoteSource, this, remoteSourceName);
+    return thread(&SwordFacade::refreshIndividualRemoteSource, this, remoteSourceName, progressCallback);
 }
 
 int SwordFacade::getRepoCount()
@@ -219,7 +235,7 @@ InstallSource* SwordFacade::getRemoteSource(string remoteSourceName)
 {
     InstallSourceMap::iterator source = this->_installMgr->sources.find(remoteSourceName.c_str());
     if (source == this->_installMgr->sources.end()) {
-        cout << "Could not find remote source " << remoteSourceName << endl;
+        cerr << "Could not find remote source " << remoteSourceName << endl;
     } else {
         return source->second;
     }

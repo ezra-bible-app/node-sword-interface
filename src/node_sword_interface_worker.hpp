@@ -59,12 +59,47 @@ protected:
 
 class RefreshRemoteSourcesWorker : public BaseNodeSwordInterfaceWorker {
 public:
-    RefreshRemoteSourcesWorker(SwordFacade* facade, const Napi::Function& callback, bool forced)
-        : BaseNodeSwordInterfaceWorker(facade, 0, callback), _forced(forced) {}
+    RefreshRemoteSourcesWorker(SwordFacade* facade,
+                               const Napi::Function& jsProgressCallback,
+                               const Napi::Function& callback,
+                               bool forced)
+
+        : BaseNodeSwordInterfaceWorker(facade, 0, callback),
+          _forced(forced),
+          _jsProgressCallback(Napi::Persistent(jsProgressCallback)) {}
+    
+    void progressCallback(unsigned int progressPercentage) {
+        if (this->_executionProgress != 0) {
+            SwordProgressFeedback feedback;
+
+            feedback.totalPercent = progressPercentage;
+            feedback.filePercent = 0;
+            feedback.message = "";
+            this->_executionProgress->Send(&feedback, 1);
+        }
+    }
 
     void Execute(const ExecutionProgress& progress) {
-        int ret = this->_facade->refreshRemoteSources(this->_forced);
+        this->_executionProgress = &progress;
+        std::function<void(unsigned int)> _progressCallback = std::bind(&RefreshRemoteSourcesWorker::progressCallback,
+                                                                        this,
+                                                                        std::placeholders::_1);
+
+        int ret = this->_facade->refreshRemoteSources(this->_forced, &_progressCallback);
         this->_isSuccessful = (ret == 0);
+    }
+
+    void OnProgress(const SwordProgressFeedback* progressFeedback, size_t /* count */) {
+        Napi::HandleScope scope(this->Env());
+
+        if (progressFeedback != 0) {
+            Napi::Object jsProgressFeedback = Napi::Object::New(this->Env());
+            jsProgressFeedback["totalPercent"] = progressFeedback->totalPercent;
+            jsProgressFeedback["filePercent"] = progressFeedback->filePercent;
+            jsProgressFeedback["message"] = progressFeedback->message;
+
+            this->_jsProgressCallback.Call({ jsProgressFeedback });
+        }
     }
 
     void OnOK() {
@@ -74,6 +109,8 @@ public:
     }
 
 private:
+    const ExecutionProgress* _executionProgress = 0;
+    Napi::FunctionReference _jsProgressCallback;
     bool _isSuccessful;
     bool _forced;
 };

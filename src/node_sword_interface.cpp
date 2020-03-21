@@ -148,10 +148,14 @@ int NodeSwordInterface::validateParams(const Napi::CallbackInfo& info, vector<Pa
 
 Napi::Value NodeSwordInterface::updateRepositoryConfig(const Napi::CallbackInfo& info)
 {
-    INIT_SCOPE_AND_VALIDATE(ParamType::boolean, ParamType::function);
+    INIT_SCOPE_AND_VALIDATE(ParamType::boolean, ParamType::function, ParamType::function);
     Napi::Boolean force = info[0].As<Napi::Boolean>();
-    Napi::Function callback = info[1].As<Napi::Function>();
-    RefreshRemoteSourcesWorker* worker = new RefreshRemoteSourcesWorker(this->_swordFacade, callback, force.Value());
+    Napi::Function progressCallback = info[1].As<Napi::Function>();
+    Napi::Function callback = info[2].As<Napi::Function>();
+    RefreshRemoteSourcesWorker* worker = new RefreshRemoteSourcesWorker(this->_swordFacade,
+                                                                        progressCallback,
+                                                                        callback,
+                                                                        force.Value());
     worker->Queue();
     return info.Env().Undefined();
 }

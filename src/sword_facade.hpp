@@ -72,7 +72,7 @@ public:
     virtual ~SwordFacade();
 
     int refreshRepositoryConfig();
-    int refreshRemoteSources(bool force=false);
+    int refreshRemoteSources(bool force=false, std::function<void(unsigned int progress)>* progressCallback=0);
 
     std::vector<std::string> getRepoNames();
     std::vector<sword::SWModule*> getAllRemoteModules();
@@ -135,8 +135,8 @@ private:
     std::vector<std::string> getRepoModuleIds(std::string repoName);
     std::vector<std::string> getAllRepoModuleIds();
     std::string getModuleIdFromFile(std::string moduleFileName);
-    int refreshIndividualRemoteSource(std::string remoteSourceName);
-    std::thread getRemoteSourceRefreshThread(std::string remoteSourceName);
+    int refreshIndividualRemoteSource(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
+    std::thread getRemoteSourceRefreshThread(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
     void resetMgr();
     void initStrongs();
 
@@ -161,6 +161,8 @@ private:
     sword::SWModule* _strongsGreek = 0;
 
     bool _markupEnabled = false;
+    unsigned int _remoteSourceCount = 0;
+    unsigned int _remoteSourceUpdateCount = 0;
 };
 
 #endif // _SWORD_FACADE
