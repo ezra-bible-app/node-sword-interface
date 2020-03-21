@@ -29,33 +29,6 @@
 
 using namespace std;
 
-namespace {
-
-template <typename T>
-inline T normalizeCompletionPercentage(const T value) {
-    if (value < 0)
-        return 0;
-    if (value > 100)
-        return 100;
-    return value;
-}
-
-template <typename T>
-inline int calculateIntPercentage(T done, T total) {
-    // BT_ASSERT(done >= 0);
-    // BT_ASSERT(total >= 0);
-
-    // Special care (see warning in BtInstallMgr::statusUpdate()).
-    if (done > total)
-        done = total;
-    if (total == 0)
-        return 100;
-
-    return normalizeCompletionPercentage<int>((done / total) * 100);
-}
-
-} // anonymous namespace
-
 class SwordProgressFeedback {
 public:
     int totalPercent;
@@ -71,7 +44,7 @@ public:
     virtual ~BaseNodeSwordInterfaceWorker() {}
 
     virtual void OnOK() {
-        Napi::HandleScope scope(Env());
+        Napi::HandleScope scope(this->Env());
         Callback().Call({Env().Null()});
     }
 
@@ -145,107 +118,6 @@ private:
     std::string _searchTerm;
     SearchType _searchType;
     bool _isCaseSensitive;
-};
-
-class InstallModuleWorker : public BaseNodeSwordInterfaceWorker {
-public:
-    InstallModuleWorker(SwordFacade* facade, SwordStatusReporter* statusReporter, const Napi::Function& jsProgressCallback, const Napi::Function& callback, std::string moduleName)
-        : BaseNodeSwordInterfaceWorker(facade, statusReporter, callback), _moduleName(moduleName), _jsProgressCallback(Napi::Persistent(jsProgressCallback)) {}
-
-    void swordPreStatusCB(long totalBytes, long completedBytes, const char *message) {
-        //cout << "swordPreStatusCB" << endl;
-
-        if (this->_executionProgress != 0) {
-            SwordProgressFeedback feedback;
-
-            feedback.totalPercent = 0;
-            feedback.filePercent = 0;
-            feedback.message = string(message);
-            this->_executionProgress->Send(&feedback, 1);
-        }
-
-        this->_completedBytes = completedBytes;
-        this->_totalBytes = totalBytes;
-    }
-
-    void swordUpdateCB(double dltotal, double dlnow) {
-        /**
-                WARNING
-
-                Note that these *might be* rough measures due to the double data
-                type being used by Sword to store the number of bytes. Special
-                care must be taken to work around this, since the arguments may
-                contain weird values which would otherwise break this logic.
-        */
-
-        if (dltotal < 0.0) // Special care (see warning above)
-            dltotal = 0.0;
-        if (dlnow < 0.0) // Special care (see warning above)
-            dlnow = 0.0;
-
-        const int totalPercent = calculateIntPercentage<double>(dlnow + this->_completedBytes,
-                                                                this->_totalBytes);
-        const int filePercent  = calculateIntPercentage(dlnow, dltotal);
-
-
-        if (this->_executionProgress != 0) {
-            SwordProgressFeedback feedback;
-
-            feedback.totalPercent = totalPercent;
-            feedback.filePercent = filePercent;
-            feedback.message = "";
-            this->_executionProgress->Send(&feedback, 1);
-        }
-    }
-
-    void Execute(const ExecutionProgress& progress) {
-        this->_executionProgress = &progress;
-
-        std::function<void(long, long, const char*)> _swordPreStatusCB = std::bind(&InstallModuleWorker::swordPreStatusCB,
-                                                                                   this,
-                                                                                   std::placeholders::_1,
-                                                                                   std::placeholders::_2,
-                                                                                   std::placeholders::_3);
-        
-        std::function<void(unsigned long, unsigned long)> _swordUpdateCB = std::bind(&InstallModuleWorker::swordUpdateCB,
-                                                                                     this,
-                                                                                     std::placeholders::_1,
-                                                                                     std::placeholders::_2);
-
-        this->_statusReporter->setCallBacks(&_swordPreStatusCB, &_swordUpdateCB);
-
-        cout << "Starting module installation" << endl;
-        int ret = this->_facade->installModule(this->_moduleName);
-        cout << "Done!" << endl;
-        this->_isSuccessful = (ret == 0);
-    }
-
-    virtual void OnProgress(const SwordProgressFeedback* progressFeedback, size_t /* count */) {
-        Napi::HandleScope scope(this->Env());
-
-        if (progressFeedback != 0) {
-            Napi::Object jsProgressFeedback = Napi::Object::New(this->Env());
-            jsProgressFeedback["totalPercent"] = progressFeedback->totalPercent;
-            jsProgressFeedback["filePercent"] = progressFeedback->filePercent;
-            jsProgressFeedback["message"] = progressFeedback->message;
-
-            this->_jsProgressCallback.Call({ jsProgressFeedback });
-        }
-    }
-
-    void OnOK() {
-        Napi::HandleScope scope(this->Env());
-        Napi::Boolean isSuccessful = Napi::Boolean::New(this->Env(), this->_isSuccessful);
-        Callback().Call({ isSuccessful });
-    }
-
-private:
-    const ExecutionProgress* _executionProgress = 0;
-    bool _isSuccessful;
-    std::string _moduleName;
-    Napi::FunctionReference _jsProgressCallback;
-    long _completedBytes = 0;
-    long _totalBytes = 0;
 };
 
 class UninstallModuleWorker : public BaseNodeSwordInterfaceWorker {

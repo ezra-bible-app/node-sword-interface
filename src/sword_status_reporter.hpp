@@ -20,7 +20,6 @@
 #define _SWORD_STATUS_REPORTER
 
 #include <functional>
-
 #include <remotetrans.h>
 
 class SwordStatusReporter : public sword::StatusReporter
@@ -29,7 +28,6 @@ public:
     void setCallBacks(std::function<void(long, long, const char*)>* preStatusCallback,
                       std::function<void(unsigned long, unsigned long)>* updateCallback);
 
-    int last;
     virtual void update(unsigned long totalBytes, unsigned long completedBytes);
     virtual void preStatus(long totalBytes, long completedBytes, const char *message);
 
