@@ -22,7 +22,7 @@
 #include "node_sword_interface_worker.hpp"
 #include "percentage_calc.hpp"
 
-class InstallModuleWorker : public BaseNodeSwordInterfaceWorker {
+class InstallModuleWorker : public ProgressNodeSwordInterfaceWorker {
 public:
     InstallModuleWorker(SwordFacade* facade,
                         SwordStatusReporter* statusReporter,
@@ -30,24 +30,18 @@ public:
                         const Napi::Function& callback,
                         std::string moduleName)
 
-        : BaseNodeSwordInterfaceWorker(facade,
-                                       statusReporter,
-                                       callback),
-                                       _moduleName(moduleName),
-                                       _jsProgressCallback(Napi::Persistent(jsProgressCallback)) {}
+        : ProgressNodeSwordInterfaceWorker(facade,
+                                           statusReporter,
+                                           jsProgressCallback,
+                                           callback),
+                                           _moduleName(moduleName) {}
 
     void swordPreStatusCB(long totalBytes, long completedBytes, const char *message);
-
     void swordUpdateCB(double dltotal, double dlnow);
-
     void Execute(const ExecutionProgress& progress);
-
-    virtual void OnProgress(const SwordProgressFeedback* progressFeedback, size_t /* count */);
-
     void OnOK();
 
 private:
-    const ExecutionProgress* _executionProgress = 0;
     bool _isSuccessful;
     std::string _moduleName;
     Napi::FunctionReference _jsProgressCallback;

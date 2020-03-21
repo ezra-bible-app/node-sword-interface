@@ -21,17 +21,8 @@
 #include "install_module_worker.hpp"
 
 void InstallModuleWorker::swordPreStatusCB(long totalBytes, long completedBytes, const char *message) {
-    //cout << "swordPreStatusCB" << endl;
 
-    if (this->_executionProgress != 0) {
-        SwordProgressFeedback feedback;
-
-        feedback.totalPercent = 0;
-        feedback.filePercent = 0;
-        feedback.message = string(message);
-        this->_executionProgress->Send(&feedback, 1);
-    }
-
+    this->sendExecutionProgress(0, 0, string(message));
     this->_completedBytes = completedBytes;
     this->_totalBytes = totalBytes;
 }
@@ -57,14 +48,7 @@ void InstallModuleWorker::swordUpdateCB(double dltotal, double dlnow) {
     const int filePercent  = calculateIntPercentage(dlnow, dltotal);
 
 
-    if (this->_executionProgress != 0) {
-        SwordProgressFeedback feedback;
-
-        feedback.totalPercent = totalPercent;
-        feedback.filePercent = filePercent;
-        feedback.message = "";
-        this->_executionProgress->Send(&feedback, 1);
-    }
+    this->sendExecutionProgress(totalPercent, filePercent, "");
 }
 
 void InstallModuleWorker::Execute(const ExecutionProgress& progress) {
@@ -84,19 +68,6 @@ void InstallModuleWorker::Execute(const ExecutionProgress& progress) {
     this->_statusReporter->setCallBacks(&_swordPreStatusCB, &_swordUpdateCB);
     int ret = this->_facade->installModule(this->_moduleName);
     this->_isSuccessful = (ret == 0);
-}
-
-void InstallModuleWorker::OnProgress(const SwordProgressFeedback* progressFeedback, size_t /* count */) {
-    Napi::HandleScope scope(this->Env());
-
-    if (progressFeedback != 0) {
-        Napi::Object jsProgressFeedback = Napi::Object::New(this->Env());
-        jsProgressFeedback["totalPercent"] = progressFeedback->totalPercent;
-        jsProgressFeedback["filePercent"] = progressFeedback->filePercent;
-        jsProgressFeedback["message"] = progressFeedback->message;
-
-        this->_jsProgressCallback.Call({ jsProgressFeedback });
-    }
 }
 
 void InstallModuleWorker::OnOK() {

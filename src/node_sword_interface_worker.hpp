@@ -57,37 +57,14 @@ protected:
     SwordStatusReporter* _statusReporter;
 };
 
-class RefreshRemoteSourcesWorker : public BaseNodeSwordInterfaceWorker {
+class ProgressNodeSwordInterfaceWorker : public BaseNodeSwordInterfaceWorker {
 public:
-    RefreshRemoteSourcesWorker(SwordFacade* facade,
-                               const Napi::Function& jsProgressCallback,
-                               const Napi::Function& callback,
-                               bool forced)
-
-        : BaseNodeSwordInterfaceWorker(facade, 0, callback),
-          _forced(forced),
-          _jsProgressCallback(Napi::Persistent(jsProgressCallback)) {}
-    
-    void progressCallback(unsigned int progressPercentage) {
-        if (this->_executionProgress != 0) {
-            SwordProgressFeedback feedback;
-
-            feedback.totalPercent = progressPercentage;
-            feedback.filePercent = 0;
-            feedback.message = "";
-            this->_executionProgress->Send(&feedback, 1);
-        }
-    }
-
-    void Execute(const ExecutionProgress& progress) {
-        this->_executionProgress = &progress;
-        std::function<void(unsigned int)> _progressCallback = std::bind(&RefreshRemoteSourcesWorker::progressCallback,
-                                                                        this,
-                                                                        std::placeholders::_1);
-
-        int ret = this->_facade->refreshRemoteSources(this->_forced, &_progressCallback);
-        this->_isSuccessful = (ret == 0);
-    }
+    ProgressNodeSwordInterfaceWorker(SwordFacade* facade,
+                                     SwordStatusReporter* statusReporter,
+                                     const Napi::Function& jsProgressCallback,
+                                     const Napi::Function& callback)
+        : BaseNodeSwordInterfaceWorker(facade, statusReporter, callback),
+        _jsProgressCallback(Napi::Persistent(jsProgressCallback)) {}
 
     void OnProgress(const SwordProgressFeedback* progressFeedback, size_t /* count */) {
         Napi::HandleScope scope(this->Env());
@@ -102,6 +79,46 @@ public:
         }
     }
 
+protected:
+    virtual void sendExecutionProgress(int totalPercent, int filePercent, std::string message) {
+        if (this->_executionProgress != 0) {
+            SwordProgressFeedback feedback;
+
+            feedback.totalPercent = totalPercent;
+            feedback.filePercent = filePercent;
+            feedback.message = message;
+            this->_executionProgress->Send(&feedback, 1);
+        }        
+    }
+
+    Napi::FunctionReference _jsProgressCallback;
+    const ExecutionProgress* _executionProgress = 0;
+};
+
+class RefreshRemoteSourcesWorker : public ProgressNodeSwordInterfaceWorker {
+public:
+    RefreshRemoteSourcesWorker(SwordFacade* facade,
+                               const Napi::Function& jsProgressCallback,
+                               const Napi::Function& callback,
+                               bool forced)
+
+        : ProgressNodeSwordInterfaceWorker(facade, 0, jsProgressCallback, callback),
+          _forced(forced) {}
+    
+    void progressCallback(unsigned int progressPercentage) {
+        this->sendExecutionProgress(progressPercentage, 0, "");
+    }
+
+    void Execute(const ExecutionProgress& progress) {
+        this->_executionProgress = &progress;
+        std::function<void(unsigned int)> _progressCallback = std::bind(&RefreshRemoteSourcesWorker::progressCallback,
+                                                                        this,
+                                                                        std::placeholders::_1);
+
+        int ret = this->_facade->refreshRemoteSources(this->_forced, &_progressCallback);
+        this->_isSuccessful = (ret == 0);
+    }
+
     void OnOK() {
         Napi::HandleScope scope(this->Env());
         Napi::Boolean isSuccessful = Napi::Boolean::New(this->Env(), this->_isSuccessful);
@@ -109,8 +126,6 @@ public:
     }
 
 private:
-    const ExecutionProgress* _executionProgress = 0;
-    Napi::FunctionReference _jsProgressCallback;
     bool _isSuccessful;
     bool _forced;
 };
