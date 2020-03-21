@@ -29,10 +29,44 @@
 
 using namespace std;
 
-class BaseNodeSwordInterfaceWorker : public Napi::AsyncProgressWorker<uint32_t> {
+namespace {
+
+template <typename T>
+inline T normalizeCompletionPercentage(const T value) {
+    if (value < 0)
+        return 0;
+    if (value > 100)
+        return 100;
+    return value;
+}
+
+template <typename T>
+inline int calculateIntPercentage(T done, T total) {
+    // BT_ASSERT(done >= 0);
+    // BT_ASSERT(total >= 0);
+
+    // Special care (see warning in BtInstallMgr::statusUpdate()).
+    if (done > total)
+        done = total;
+    if (total == 0)
+        return 100;
+
+    return normalizeCompletionPercentage<int>((done / total) * 100);
+}
+
+} // anonymous namespace
+
+class SwordProgressFeedback {
+public:
+    int totalPercent;
+    int filePercent;
+    std::string message;
+};
+
+class BaseNodeSwordInterfaceWorker : public Napi::AsyncProgressWorker<SwordProgressFeedback> {
 public:
     BaseNodeSwordInterfaceWorker(SwordFacade* facade, SwordStatusReporter* statusReporter, const Napi::Function& callback)
-        : Napi::AsyncProgressWorker<uint32_t>(callback), _facade(facade), _statusReporter(statusReporter) {}
+        : Napi::AsyncProgressWorker<SwordProgressFeedback>(callback), _facade(facade), _statusReporter(statusReporter) {}
 
     virtual ~BaseNodeSwordInterfaceWorker() {}
 
@@ -41,10 +75,8 @@ public:
         Callback().Call({Env().Null()});
     }
 
-    virtual void OnProgress(const uint32_t* data, size_t /* count */) {
-        Napi::HandleScope scope(Env());
-
-        //Callback().Call({Env().Null(), Env().Null(), Napi::Number::New(Env(), *data)});
+    virtual void OnProgress(const SwordProgressFeedback* progressFeedback, size_t /* count */) {
+        Napi::HandleScope scope(this->Env());
     }
 
 protected:
@@ -124,13 +156,46 @@ public:
         //cout << "swordPreStatusCB" << endl;
 
         if (this->_executionProgress != 0) {
-            uint32_t progress = 1;
-            this->_executionProgress->Send(&progress, 1);
+            SwordProgressFeedback feedback;
+
+            feedback.totalPercent = 0;
+            feedback.filePercent = 0;
+            feedback.message = string(message);
+            this->_executionProgress->Send(&feedback, 1);
         }
+
+        this->_completedBytes = completedBytes;
+        this->_totalBytes = totalBytes;
     }
 
-    void swordUpdateCB(unsigned long totalBytes, unsigned long completedBytes) {
-        //cout << "swordUpdateCB" << endl;
+    void swordUpdateCB(double dltotal, double dlnow) {
+        /**
+                WARNING
+
+                Note that these *might be* rough measures due to the double data
+                type being used by Sword to store the number of bytes. Special
+                care must be taken to work around this, since the arguments may
+                contain weird values which would otherwise break this logic.
+        */
+
+        if (dltotal < 0.0) // Special care (see warning above)
+            dltotal = 0.0;
+        if (dlnow < 0.0) // Special care (see warning above)
+            dlnow = 0.0;
+
+        const int totalPercent = calculateIntPercentage<double>(dlnow + this->_completedBytes,
+                                                                this->_totalBytes);
+        const int filePercent  = calculateIntPercentage(dlnow, dltotal);
+
+
+        if (this->_executionProgress != 0) {
+            SwordProgressFeedback feedback;
+
+            feedback.totalPercent = totalPercent;
+            feedback.filePercent = filePercent;
+            feedback.message = "";
+            this->_executionProgress->Send(&feedback, 1);
+        }
     }
 
     void Execute(const ExecutionProgress& progress) {
@@ -155,9 +220,17 @@ public:
         this->_isSuccessful = (ret == 0);
     }
 
-    virtual void OnProgress(const uint32_t* data, size_t /* count */) {
+    virtual void OnProgress(const SwordProgressFeedback* progressFeedback, size_t /* count */) {
         Napi::HandleScope scope(this->Env());
-        this->_jsProgressCallback.Call({ Napi::Number::New(this->Env(), *data) });
+
+        if (progressFeedback != 0) {
+            Napi::Object jsProgressFeedback = Napi::Object::New(this->Env());
+            jsProgressFeedback["totalPercent"] = progressFeedback->totalPercent;
+            jsProgressFeedback["filePercent"] = progressFeedback->filePercent;
+            jsProgressFeedback["message"] = progressFeedback->message;
+
+            this->_jsProgressCallback.Call({ jsProgressFeedback });
+        }
     }
 
     void OnOK() {
@@ -171,6 +244,8 @@ private:
     bool _isSuccessful;
     std::string _moduleName;
     Napi::FunctionReference _jsProgressCallback;
+    long _completedBytes = 0;
+    long _totalBytes = 0;
 };
 
 class UninstallModuleWorker : public BaseNodeSwordInterfaceWorker {
