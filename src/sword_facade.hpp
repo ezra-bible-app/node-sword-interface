@@ -40,14 +40,6 @@ namespace sword {
     class LocaleMgr;
 };
 
-class SwordStatusReporter : public sword::StatusReporter
-{
-public:
-    int last;
-    virtual void update(unsigned long totalBytes, unsigned long completedBytes);
-    virtual void preStatus(long totalBytes, long completedBytes, const char *message);
-};
-
 enum class SearchType {
     phrase = -1,
     multiWord = -2,
@@ -71,14 +63,19 @@ public:
     std::string content;
 };
 
+class SwordStatusReporter;
+
+void setModuleSearchProgressCB(std::function<void(char, void*)>* moduleSearchProgressCB);
+void internalModuleSearchProgressCB(char percent, void* userData);
+
 class SwordFacade
 {
 public:
-    SwordFacade();
+    SwordFacade(SwordStatusReporter* statusReporter=0);
     virtual ~SwordFacade();
 
     int refreshRepositoryConfig();
-    int refreshRemoteSources(bool force=false);
+    int refreshRemoteSources(bool force=false, std::function<void(unsigned int progress)>* progressCallback=0);
 
     std::vector<std::string> getRepoNames();
     std::vector<sword::SWModule*> getAllRemoteModules();
@@ -139,8 +136,8 @@ private:
     std::vector<std::string> getRepoModuleIds(std::string repoName);
     std::vector<std::string> getAllRepoModuleIds();
     std::string getModuleIdFromFile(std::string moduleFileName);
-    int refreshIndividualRemoteSource(std::string remoteSourceName);
-    std::thread getRemoteSourceRefreshThread(std::string remoteSourceName);
+    int refreshIndividualRemoteSource(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
+    std::thread getRemoteSourceRefreshThread(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
     void resetMgr();
     void initStrongs();
 
@@ -165,6 +162,8 @@ private:
     sword::SWModule* _strongsGreek = 0;
 
     bool _markupEnabled = false;
+    unsigned int _remoteSourceCount = 0;
+    unsigned int _remoteSourceUpdateCount = 0;
 };
 
 #endif // _SWORD_FACADE

@@ -37,6 +37,9 @@
             "src/string_helper.cpp",
             "src/strongs_entry.cpp",
             "src/sword_facade.cpp",
+            "src/sword_status_reporter.cpp",
+            "src/install_module_worker.cpp",
+            "src/module_search_worker.cpp",
             "src/napi_sword_helper.cpp",
             "src/node_sword_interface.cpp",
             "src/binding.cpp"

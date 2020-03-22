@@ -26,6 +26,7 @@
 #include <regex>
 #include <fstream>
 #include <map>
+#include <mutex>
 
 // Sword includes
 #include <installmgr.h>
@@ -39,8 +40,10 @@
 
 // Own includes
 #include "sword_facade.hpp"
+#include "sword_status_reporter.hpp"
 #include "string_helper.hpp"
 #include "strongs_entry.hpp"
+#include "percentage_calc.hpp"
 
 /* REGEX definitions from regex.h */
 /* POSIX `cflags' bits (i.e., information for `regcomp').  */
@@ -65,42 +68,11 @@ using namespace sword;
 char * sword::SWBuf::nullStr = (char *)"";
 #endif
 
-void SwordStatusReporter::update(unsigned long totalBytes, unsigned long completedBytes)
-{
-    /*int p = (totalBytes > 0) ? (int)(74.0 * ((double)completedBytes / (double)totalBytes)) : 0;
-    for (;last < p; ++last) {
-        if (!last) {
-            SWBuf output;
-            output.setFormatted("[ File Bytes: %ld", totalBytes);
-            while (output.size() < 75) output += " ";
-            output += "]";
-            cout << output.c_str() << "\n ";
-        }
-        cout << "-";
-    }
-    cout.flush();*/
-}
-
-void SwordStatusReporter::preStatus(long totalBytes, long completedBytes, const char *message)
-{
-    /*SWBuf output;
-    output.setFormatted("[ Total Bytes: %ld; Completed Bytes: %ld", totalBytes, completedBytes);
-    while (output.size() < 75) output += " ";
-    output += "]";
-    cout << "\n" << output.c_str() << "\n ";
-    int p = (int)(74.0 * (double)completedBytes/totalBytes);
-    for (int i = 0; i < p; ++i) { cout << "="; }
-    cout << "\n\n" << message << "\n";
-    last = 0;*/
-
-    cout << "\n" << message << "\n";
-}
-
-SwordFacade::SwordFacade()
+SwordFacade::SwordFacade(SwordStatusReporter* statusReporter)
 {
     //SWLog::getSystemLog()->setLogLevel(SWLog::LOG_DEBUG);
     this->_fileSystemHelper.createBasicDirectories();
-    this->_statusReporter = new SwordStatusReporter();
+    this->_statusReporter = statusReporter;
     this->resetMgr();
 }
 
@@ -145,6 +117,7 @@ void SwordFacade::resetMgr()
 #endif
 
     this->_mgrForInstall = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
+    
     this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), this->_statusReporter);
     this->_installMgr->setUserDisclaimerConfirmed(true);
 
@@ -166,9 +139,10 @@ int SwordFacade::refreshRepositoryConfig()
     return 0;
 }
 
-int SwordFacade::refreshRemoteSources(bool force)
+int SwordFacade::refreshRemoteSources(bool force, std::function<void(unsigned int progress)>* progressCallback)
 {
     vector<thread> refreshThreads;
+    this->_remoteSourceUpdateCount = 0;
 
     if (this->getRepoNames().size() == 0 || force) {
         int ret = this->refreshRepositoryConfig();
@@ -177,10 +151,11 @@ int SwordFacade::refreshRemoteSources(bool force)
         }
 
         vector<string> sourceNames = this->getRepoNames();
+        this->_remoteSourceCount = sourceNames.size();
 
         // Create worker threads
         for (unsigned int i = 0; i < sourceNames.size(); i++) {
-            refreshThreads.push_back(this->getRemoteSourceRefreshThread(sourceNames[i]));
+            refreshThreads.push_back(this->getRemoteSourceRefreshThread(sourceNames[i], progressCallback));
         }
 
         // Wait for threads to finish
@@ -192,21 +167,33 @@ int SwordFacade::refreshRemoteSources(bool force)
     return 0;
 }
 
-int SwordFacade::refreshIndividualRemoteSource(string remoteSourceName)
+static std::mutex remoteSourceUpdateMutex;
+
+int SwordFacade::refreshIndividualRemoteSource(string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback)
 {
     //cout << "Refreshing source " << remoteSourceName << endl << flush;
     InstallSource* source = this->getRemoteSource(remoteSourceName);
     int result = this->_installMgr->refreshRemoteSource(source);
     if (result != 0) {
-        cout << "Failed to refresh source " << remoteSourceName << endl << flush;
+        cerr << "Failed to refresh source " << remoteSourceName << endl << flush;
     }
+
+    remoteSourceUpdateMutex.lock();
+    this->_remoteSourceUpdateCount++;
+    unsigned int totalPercent = (unsigned int)calculateIntPercentage<double>(this->_remoteSourceUpdateCount,
+                                                                     this->_remoteSourceCount);
+    
+    if (progressCallback != 0) {
+        (*progressCallback)(totalPercent);
+    }
+    remoteSourceUpdateMutex.unlock();
 
     return result;
 }
 
-thread SwordFacade::getRemoteSourceRefreshThread(string remoteSourceName)
+thread SwordFacade::getRemoteSourceRefreshThread(string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback)
 {
-    return thread(&SwordFacade::refreshIndividualRemoteSource, this, remoteSourceName);
+    return thread(&SwordFacade::refreshIndividualRemoteSource, this, remoteSourceName, progressCallback);
 }
 
 int SwordFacade::getRepoCount()
@@ -248,7 +235,7 @@ InstallSource* SwordFacade::getRemoteSource(string remoteSourceName)
 {
     InstallSourceMap::iterator source = this->_installMgr->sources.find(remoteSourceName.c_str());
     if (source == this->_installMgr->sources.end()) {
-        cout << "Could not find remote source " << remoteSourceName << endl;
+        cerr << "Could not find remote source " << remoteSourceName << endl;
     } else {
         return source->second;
     }
@@ -1019,7 +1006,7 @@ vector<Verse> SwordFacade::getModuleSearchResults(string moduleName,
         map<string, int> absoluteVerseNumbers = this->getAbsoluteVerseNumberMap(module);
 
         // Perform search
-        listKey = module->search(searchTerm.c_str(), int(searchType), flags, scope, 0);
+        listKey = module->search(searchTerm.c_str(), int(searchType), flags, scope, 0, internalModuleSearchProgressCB);
 
         // Populate searchResults vector
         while (!listKey.popError()) {
@@ -1201,3 +1188,18 @@ string SwordFacade::getSwordVersion()
     return string("1.8.900-e34fd3");
 }
 
+static std::function<void(char, void*)>* _moduleSearchProgressCB = 0;
+
+void internalModuleSearchProgressCB(char percent, void* userData)
+{
+    if (_moduleSearchProgressCB != 0) {
+        //cout << "internal cb: " << (int)percent << endl;
+
+        (*_moduleSearchProgressCB)(percent, userData);
+    }
+}
+
+void setModuleSearchProgressCB(std::function<void(char, void*)>* moduleSearchProgressCB)
+{
+    _moduleSearchProgressCB = moduleSearchProgressCB;
+}

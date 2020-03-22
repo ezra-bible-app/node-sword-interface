@@ -20,7 +20,7 @@
   "author": "Tobias Klein",
   "license": "GPL-3.0",
   "dependencies": {
-    "node-addon-api": "^1.7.1"
+    "node-addon-api": "^2.0.0"
   },
   "repository": {
     "type": "git",

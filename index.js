@@ -99,11 +99,16 @@ class NodeSwordInterface {
    *
    * This function works asynchronously and returns a Promise object.
    *
+   * @param {Function} progressCB - Optional callback function that is called on progress events.
    * @return {Promise}
    */
-  updateRepositoryConfig() {
+  updateRepositoryConfig(progressCB=undefined) {
     return new Promise((resolve, reject) => {
-      this.nativeInterface.updateRepositoryConfig(true, function(updateSuccessful) {
+      if (progressCB === undefined) {
+        progressCB = function(progress) {};
+      }
+
+      this.nativeInterface.updateRepositoryConfig(true, progressCB, function(updateSuccessful) {
         if (updateSuccessful) {
           resolve();
         } else {
@@ -195,11 +200,16 @@ class NodeSwordInterface {
    * This function works asynchronously and returns a Promise object.
    *
    * @param {String} moduleCode - The module code of the SWORD module that shall be installed.
+   * @param {Function} progressCB - Optional callback function that is called on progress events.
    * @return {Promise}
    */
-  installModule(moduleCode) {
+  installModule(moduleCode, progressCB=undefined) {
+    if (progressCB === undefined) {
+      progressCB = function(progress) {};
+    }
+
     return new Promise((resolve, reject) => {
-      this.nativeInterface.installModule(moduleCode, function(installSuccessful) {
+      this.nativeInterface.installModule(moduleCode, progressCB, function(installSuccessful) {
         if (installSuccessful) {
           resolve();
         } else {
@@ -341,12 +351,17 @@ class NodeSwordInterface {
    * @param {String} searchTerm - The term to search for.
    * @param {String} searchType - Options: phrase, multiWord, strongsNumber
    * @param {Boolean} isCaseSensitive - Whether the search is case sensitive
+   * @param {Function} progressCB - Optional callback function that is called on progress events.
    * @return {Promise}
    */
-  getModuleSearchResults(moduleCode, searchTerm, searchType="multiWord", isCaseSensitive=false) {
+  getModuleSearchResults(moduleCode, searchTerm, progressCB=undefined, searchType="multiWord", isCaseSensitive=false) {
+    if (progressCB === undefined) {
+      progressCB = function(progress) {};
+    }
+
     return new Promise((resolve, reject) => {
       try {
-        this.nativeInterface.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive, function(searchResults) {
+        this.nativeInterface.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive, progressCB, function(searchResults) {
           resolve(searchResults);
         });
       } catch (error) {
