@@ -54,7 +54,7 @@ The Javascript API of node-sword-interface is documented [here](API.md).
 
 Before installing node-sword-interface you need to make sure that the following dependencies are installed:
 - C++11 compiler toolchain
-- nodejs
+- nodejs (A version that supports N-API version >= 4, like 8.16.0, 10.16.0 or 12.0.0 (see [N-API Version Matrix](https://nodejs.org/api/n-api.html#n_api_n_api_version_matrix)))
 - Git
 - Mac/Linux dependencies:
     - ICU library with development headers
