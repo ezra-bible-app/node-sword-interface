@@ -19,21 +19,25 @@
 #ifndef _MODULE_SEARCH_WORKER
 #define _MODULE_SEARCH_WORKER
 
-class ModuleSearchWorker : public BaseNodeSwordInterfaceWorker {
+#include "node_sword_interface_worker.hpp"
+
+class ModuleSearchWorker : public ProgressNodeSwordInterfaceWorker {
 public:
     ModuleSearchWorker(SwordFacade* facade,
+                       const Napi::Function& jsProgressCallback,
                        const Napi::Function& callback,
                        std::string moduleName,
                        std::string searchTerm,
                        SearchType searchType,
                        bool isCaseSensitive=false)
 
-        : BaseNodeSwordInterfaceWorker(facade, 0, callback),
+        : ProgressNodeSwordInterfaceWorker(facade, 0, jsProgressCallback, callback),
         _moduleName(moduleName),
         _searchTerm(searchTerm),
         _searchType(searchType),
         _isCaseSensitive(isCaseSensitive) {}
 
+    void searchProgressCB(char percent, void* userData);
     void Execute(const ExecutionProgress& progress);    
     void OnOK();
 

@@ -1006,7 +1006,7 @@ vector<Verse> SwordFacade::getModuleSearchResults(string moduleName,
         map<string, int> absoluteVerseNumbers = this->getAbsoluteVerseNumberMap(module);
 
         // Perform search
-        listKey = module->search(searchTerm.c_str(), int(searchType), flags, scope, 0);
+        listKey = module->search(searchTerm.c_str(), int(searchType), flags, scope, 0, internalModuleSearchProgressCB);
 
         // Populate searchResults vector
         while (!listKey.popError()) {
@@ -1188,3 +1188,18 @@ string SwordFacade::getSwordVersion()
     return string("1.8.900-e34fd3");
 }
 
+static std::function<void(char, void*)>* _moduleSearchProgressCB = 0;
+
+void internalModuleSearchProgressCB(char percent, void* userData)
+{
+    if (_moduleSearchProgressCB != 0) {
+        //cout << "internal cb: " << (int)percent << endl;
+
+        (*_moduleSearchProgressCB)(percent, userData);
+    }
+}
+
+void setModuleSearchProgressCB(std::function<void(char, void*)>* moduleSearchProgressCB)
+{
+    _moduleSearchProgressCB = moduleSearchProgressCB;
+}

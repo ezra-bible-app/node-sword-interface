@@ -18,11 +18,21 @@
 
 #include "node_sword_interface_worker.hpp"
 #include "module_search_worker.hpp"
+#include "sword_facade.hpp"
 
 static std::mutex searchMutex;
 
-void ModuleSearchWorker::Execute(const ExecutionProgress& progress) {
+void ModuleSearchWorker::Execute(const ExecutionProgress& progress)
+{
     searchMutex.lock();
+
+    this->_executionProgress = &progress;
+    
+    std::function<void(char, void*)> searchProgressCB = std::bind(&ModuleSearchWorker::searchProgressCB,
+                                                                  this,
+                                                                  std::placeholders::_1,
+                                                                  std::placeholders::_2);
+    setModuleSearchProgressCB(&searchProgressCB);
     this->_stdSearchResults = this->_facade->getModuleSearchResults(this->_moduleName,
                                                                     this->_searchTerm,
                                                                     this->_searchType,
@@ -30,7 +40,13 @@ void ModuleSearchWorker::Execute(const ExecutionProgress& progress) {
     searchMutex.unlock();
 }
 
-void ModuleSearchWorker::OnOK() {
+void ModuleSearchWorker::searchProgressCB(char percent, void* userData)
+{
+    this->sendExecutionProgress((int)percent, 0, "");
+}
+
+void ModuleSearchWorker::OnOK()
+{
     Napi::HandleScope scope(this->Env());
     this->_napiSearchResults = this->_napiSwordHelper.getNapiVerseObjectsFromRawList(this->Env(), this->_moduleName, this->_stdSearchResults);
     Callback().Call({ this->_napiSearchResults });

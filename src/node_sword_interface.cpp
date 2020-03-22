@@ -417,12 +417,13 @@ Napi::Value NodeSwordInterface::getBookIntroduction(const Napi::CallbackInfo& in
 Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
-    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::string, ParamType::boolean, ParamType::function);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::string, ParamType::boolean, ParamType::function, ParamType::function);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String searchTerm = info[1].As<Napi::String>();
     string searchTypeString = string(info[2].As<Napi::String>());
     Napi::Boolean isCaseSensitive = info[3].As<Napi::Boolean>();
-    Napi::Function callback = info[4].As<Napi::Function>();
+    Napi::Function jsProgressCallback = info[4].As<Napi::Function>();
+    Napi::Function callback = info[5].As<Napi::Function>();
     SearchType searchType = SearchType::multiWord;
     
     if (searchTypeString == "phrase") {
@@ -442,6 +443,7 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
     }
 
     ModuleSearchWorker* worker = new ModuleSearchWorker(this->_swordFacade,
+                                                        jsProgressCallback,
                                                         callback,
                                                         moduleName,
                                                         searchTerm,

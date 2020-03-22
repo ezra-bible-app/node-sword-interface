@@ -65,6 +65,9 @@ public:
 
 class SwordStatusReporter;
 
+void setModuleSearchProgressCB(std::function<void(char, void*)>* moduleSearchProgressCB);
+void internalModuleSearchProgressCB(char percent, void* userData);
+
 class SwordFacade
 {
 public:
@@ -119,8 +122,6 @@ public:
 
     bool moduleHasGlobalOption(sword::SWModule* module, std::string globalOption);
     std::string getModuleDataPath(sword::SWModule* module);
-
-
 
 private:
     int getRepoCount();

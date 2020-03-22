@@ -44,7 +44,6 @@ public:
 private:
     bool _isSuccessful;
     std::string _moduleName;
-    Napi::FunctionReference _jsProgressCallback;
     long _completedBytes = 0;
     long _totalBytes = 0;
 };

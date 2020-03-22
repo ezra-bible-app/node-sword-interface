@@ -20,7 +20,8 @@
 #include "node_sword_interface_worker.hpp"
 #include "install_module_worker.hpp"
 
-void InstallModuleWorker::swordPreStatusCB(long totalBytes, long completedBytes, const char *message) {
+void InstallModuleWorker::swordPreStatusCB(long totalBytes, long completedBytes, const char *message)
+{
 
     this->sendExecutionProgress(0, 0, string(message));
     this->_completedBytes = completedBytes;
@@ -29,7 +30,8 @@ void InstallModuleWorker::swordPreStatusCB(long totalBytes, long completedBytes,
 
 // Function copied and adapted from BibleTime source code
 // see https://github.com/bibletime/bibletime/blob/master/src/backend/btinstallmgr.cpp
-void InstallModuleWorker::swordUpdateCB(double dltotal, double dlnow) {
+void InstallModuleWorker::swordUpdateCB(double dltotal, double dlnow)
+{
     /**
             WARNING
             Note that these *might be* rough measures due to the double data
@@ -51,7 +53,8 @@ void InstallModuleWorker::swordUpdateCB(double dltotal, double dlnow) {
     this->sendExecutionProgress(totalPercent, filePercent, "");
 }
 
-void InstallModuleWorker::Execute(const ExecutionProgress& progress) {
+void InstallModuleWorker::Execute(const ExecutionProgress& progress)
+{
     this->_executionProgress = &progress;
 
     std::function<void(long, long, const char*)> _swordPreStatusCB = std::bind(&InstallModuleWorker::swordPreStatusCB,
@@ -70,7 +73,8 @@ void InstallModuleWorker::Execute(const ExecutionProgress& progress) {
     this->_isSuccessful = (ret == 0);
 }
 
-void InstallModuleWorker::OnOK() {
+void InstallModuleWorker::OnOK()
+{
     Napi::HandleScope scope(this->Env());
     Napi::Boolean isSuccessful = Napi::Boolean::New(this->Env(), this->_isSuccessful);
     Callback().Call({ isSuccessful });
