@@ -130,48 +130,6 @@ private:
     bool _forced;
 };
 
-static std::mutex searchMutex;
-
-class GetModuleSearchResultWorker : public BaseNodeSwordInterfaceWorker {
-public:
-    GetModuleSearchResultWorker(SwordFacade* facade,
-                                const Napi::Function& callback,
-                                std::string moduleName,
-                                std::string searchTerm,
-                                SearchType searchType,
-                                bool isCaseSensitive=false)
-
-        : BaseNodeSwordInterfaceWorker(facade, 0, callback),
-        _moduleName(moduleName),
-        _searchTerm(searchTerm),
-        _searchType(searchType),
-        _isCaseSensitive(isCaseSensitive) {}
-
-    void Execute(const ExecutionProgress& progress) {
-        searchMutex.lock();
-        this->_stdSearchResults = this->_facade->getModuleSearchResults(this->_moduleName,
-                                                                        this->_searchTerm,
-                                                                        this->_searchType,
-                                                                        this->_isCaseSensitive);
-        searchMutex.unlock();
-    }
-    
-    void OnOK() {
-        Napi::HandleScope scope(this->Env());
-        this->_napiSearchResults = this->_napiSwordHelper.getNapiVerseObjectsFromRawList(this->Env(), this->_moduleName, this->_stdSearchResults);
-        Callback().Call({ this->_napiSearchResults });
-    }
-
-private:
-    NapiSwordHelper _napiSwordHelper;
-    std::vector<Verse> _stdSearchResults;
-    Napi::Array _napiSearchResults;
-    std::string _moduleName;
-    std::string _searchTerm;
-    SearchType _searchType;
-    bool _isCaseSensitive;
-};
-
 class UninstallModuleWorker : public BaseNodeSwordInterfaceWorker {
 public:
     UninstallModuleWorker(SwordFacade* facade, SwordStatusReporter* statusReporter, const Napi::Function& callback, std::string moduleName)

@@ -26,6 +26,7 @@
 #include "napi_sword_helper.hpp"
 #include "node_sword_interface_worker.hpp"
 #include "install_module_worker.hpp"
+#include "module_search_worker.hpp"
 #include "sword_facade.hpp"
 #include "sword_status_reporter.hpp"
 
@@ -440,12 +441,12 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
         }
     }
 
-    GetModuleSearchResultWorker* worker = new GetModuleSearchResultWorker(this->_swordFacade,
-                                                                          callback,
-                                                                          moduleName,
-                                                                          searchTerm,
-                                                                          searchType,
-                                                                          isCaseSensitive);
+    ModuleSearchWorker* worker = new ModuleSearchWorker(this->_swordFacade,
+                                                        callback,
+                                                        moduleName,
+                                                        searchTerm,
+                                                        searchType,
+                                                        isCaseSensitive);
     worker->Queue();
     return env.Undefined();
 }
