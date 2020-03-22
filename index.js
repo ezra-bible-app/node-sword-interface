@@ -99,11 +99,15 @@ class NodeSwordInterface {
    *
    * This function works asynchronously and returns a Promise object.
    *
-   * @param {Function} progressCB - The callback function that is called on progress events.
+   * @param {Function} progressCB - Optional callback function that is called on progress events.
    * @return {Promise}
    */
-  updateRepositoryConfig(progressCB) {
+  updateRepositoryConfig(progressCB=undefined) {
     return new Promise((resolve, reject) => {
+      if (progressCB === undefined) {
+        progressCB = function(progress) {};
+      }
+
       this.nativeInterface.updateRepositoryConfig(true, progressCB, function(updateSuccessful) {
         if (updateSuccessful) {
           resolve();
@@ -196,10 +200,14 @@ class NodeSwordInterface {
    * This function works asynchronously and returns a Promise object.
    *
    * @param {String} moduleCode - The module code of the SWORD module that shall be installed.
-   * @param {Function} progressCB - The callback function that is called on progress events.
+   * @param {Function} progressCB - Optional callback function that is called on progress events.
    * @return {Promise}
    */
-  installModule(moduleCode, progressCB) {
+  installModule(moduleCode, progressCB=undefined) {
+    if (progressCB === undefined) {
+      progressCB = function(progress) {};
+    }
+
     return new Promise((resolve, reject) => {
       this.nativeInterface.installModule(moduleCode, progressCB, function(installSuccessful) {
         if (installSuccessful) {
