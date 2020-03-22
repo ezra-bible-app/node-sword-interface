@@ -36,14 +36,14 @@ inline T normalizeCompletionPercentage(const T value) {
 template <typename T>
 inline int calculateIntPercentage(T done, T total) {
     if (!(done >= 0 && total >= 0)) {
-        return 100;
+        return 0;
     }
 
-    // Special care (see warning in BtInstallMgr::statusUpdate()).
+    // Special care (see warning in InstallModuleWorker::swordUpdateCB()).
     if (done > total)
         done = total;
     if (total == 0)
-        return 100;
+        return 0;
 
     return normalizeCompletionPercentage<int>((done / total) * 100);
 }
