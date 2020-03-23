@@ -57,6 +57,8 @@ protected:
     SwordStatusReporter* _statusReporter;
 };
 
+static std::mutex progressMutex;
+
 class ProgressNodeSwordInterfaceWorker : public BaseNodeSwordInterfaceWorker {
 public:
     ProgressNodeSwordInterfaceWorker(SwordFacade* facade,
@@ -75,7 +77,9 @@ public:
             jsProgressFeedback["filePercent"] = progressFeedback->filePercent;
             jsProgressFeedback["message"] = progressFeedback->message;
 
+            progressMutex.lock();
             this->_jsProgressCallback.Call({ jsProgressFeedback });
+            progressMutex.unlock();
         }
     }
 
