@@ -24,11 +24,15 @@
 #include <string>
 #include <thread>
 #include <climits>
+#include <functional>
+#include <mutex>
 
 #include <remotetrans.h>
 
 #include "file_system_helper.hpp"
 #include "strongs_entry.hpp"
+
+static std::mutex progressMutex;
 
 namespace sword {
     class InstallMgr;

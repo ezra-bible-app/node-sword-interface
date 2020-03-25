@@ -21,7 +21,6 @@
 
 #include <napi.h>
 #include <iostream>
-#include <mutex>
 
 #include "napi_sword_helper.hpp"
 #include "sword_facade.hpp"
@@ -56,8 +55,6 @@ protected:
     SwordFacade* _facade;
     SwordStatusReporter* _statusReporter;
 };
-
-static std::mutex progressMutex;
 
 class ProgressNodeSwordInterfaceWorker : public BaseNodeSwordInterfaceWorker {
 public:

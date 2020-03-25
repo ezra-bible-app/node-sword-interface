@@ -12,6 +12,14 @@ include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/node_modules/no
 
 link_directories(${CMAKE_SOURCE_DIR}/sword_build)
 
+# ICU Components Reference:
+# https://cmake.org/cmake/help/latest/module/FindICU.html
+# ICU components = data, i18n, io, le, lx, test, tu and uc.
+
+find_package(ICU COMPONENTS uc i18n data REQUIRED)
+find_package(ZLIB REQUIRED)
+find_package(CURL REQUIRED)
+
 set(SWORD_LIBRARY_NAME "libsword.a")
 set(DEPENDENT_LIBS ICU::uc ICU::data ICU::i18n ${ZLIB_LIBRARIES} ${CURL_LIBRARIES})
 
@@ -32,14 +40,6 @@ ${CMAKE_SOURCE_DIR}/src/sword_facade.cpp
 ${CMAKE_SOURCE_DIR}/src/string_helper.cpp
 ${CMAKE_SOURCE_DIR}/src/file_system_helper.cpp
 )
-
-# ICU Components Reference:
-# https://cmake.org/cmake/help/latest/module/FindICU.html
-# ICU components = data, i18n, io, le, lx, test, tu and uc.
-
-find_package(ICU COMPONENTS uc i18n data REQUIRED)
-find_package(ZLIB REQUIRED)
-find_package(CURL REQUIRED)
 
 add_executable(node_sword_cli ${SOURCES})
 target_link_libraries(node_sword_cli ${SWORD_LIBRARY_NAME} ${DEPENDENT_LIBS} )
