@@ -34,7 +34,7 @@ if (WIN32)
 endif (WIN32)
 
 set(SOURCES
-${CMAKE_SOURCE_DIR}/src/main.cpp
+${CMAKE_SOURCE_DIR}/src/node_sword_cli.cpp
 ${CMAKE_SOURCE_DIR}/src/strongs_entry.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_facade.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_status_reporter.cpp
