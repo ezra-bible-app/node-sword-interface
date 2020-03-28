@@ -21,7 +21,7 @@
 
 #include "node_sword_interface_worker.hpp"
 
-class ModuleSearchWorker : public ProgressNodeSwordInterfaceWorker {
+class ModuleSearchWorker : public ProgressWorker {
 public:
     ModuleSearchWorker(SwordFacade& facade,
                        const Napi::Function& jsProgressCallback,
@@ -31,7 +31,7 @@ public:
                        SearchType searchType,
                        bool isCaseSensitive=false)
 
-        : ProgressNodeSwordInterfaceWorker(facade, jsProgressCallback, callback),
+        : ProgressWorker(facade, jsProgressCallback, callback),
         _moduleName(moduleName),
         _searchTerm(searchTerm),
         _searchType(searchType),

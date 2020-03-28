@@ -22,14 +22,14 @@
 #include "node_sword_interface_worker.hpp"
 #include "percentage_calc.hpp"
 
-class InstallModuleWorker : public ProgressNodeSwordInterfaceWorker {
+class InstallModuleWorker : public ProgressWorker {
 public:
     InstallModuleWorker(SwordFacade& facade,
                         const Napi::Function& jsProgressCallback,
                         const Napi::Function& callback,
                         std::string moduleName)
 
-        : ProgressNodeSwordInterfaceWorker(facade,
+        : ProgressWorker(facade,
                                            jsProgressCallback,
                                            callback),
                                            _moduleName(moduleName) {}

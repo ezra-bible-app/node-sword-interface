@@ -35,12 +35,12 @@ public:
     std::string message;
 };
 
-class BaseNodeSwordInterfaceWorker : public Napi::AsyncProgressWorker<SwordProgressFeedback> {
+class BaseWorker : public Napi::AsyncProgressWorker<SwordProgressFeedback> {
 public:
-    BaseNodeSwordInterfaceWorker(SwordFacade& facade, const Napi::Function& callback)
+    BaseWorker(SwordFacade& facade, const Napi::Function& callback)
         : Napi::AsyncProgressWorker<SwordProgressFeedback>(callback), _facade(facade) {}
 
-    virtual ~BaseNodeSwordInterfaceWorker() {}
+    virtual ~BaseWorker() {}
 
     virtual void OnOK() {
         Napi::HandleScope scope(this->Env());
@@ -55,12 +55,12 @@ protected:
     SwordFacade& _facade;
 };
 
-class ProgressNodeSwordInterfaceWorker : public BaseNodeSwordInterfaceWorker {
+class ProgressWorker : public BaseWorker {
 public:
-    ProgressNodeSwordInterfaceWorker(SwordFacade& facade,
-                                     const Napi::Function& jsProgressCallback,
-                                     const Napi::Function& callback)
-        : BaseNodeSwordInterfaceWorker(facade, callback),
+    ProgressWorker(SwordFacade& facade,
+                   const Napi::Function& jsProgressCallback,
+                   const Napi::Function& callback)
+        : BaseWorker(facade, callback),
         _jsProgressCallback(Napi::Persistent(jsProgressCallback)) {}
 
     void OnProgress(const SwordProgressFeedback* progressFeedback, size_t /* count */) {
@@ -94,14 +94,14 @@ protected:
     const ExecutionProgress* _executionProgress = 0;
 };
 
-class RefreshRemoteSourcesWorker : public ProgressNodeSwordInterfaceWorker {
+class RefreshRemoteSourcesWorker : public ProgressWorker {
 public:
     RefreshRemoteSourcesWorker(SwordFacade& facade,
                                const Napi::Function& jsProgressCallback,
                                const Napi::Function& callback,
                                bool forced)
 
-        : ProgressNodeSwordInterfaceWorker(facade, jsProgressCallback, callback),
+        : ProgressWorker(facade, jsProgressCallback, callback),
           _forced(forced) {}
     
     void progressCallback(unsigned int progressPercentage) {
@@ -129,10 +129,10 @@ private:
     bool _forced;
 };
 
-class UninstallModuleWorker : public BaseNodeSwordInterfaceWorker {
+class UninstallModuleWorker : public BaseWorker {
 public:
     UninstallModuleWorker(SwordFacade& facade, const Napi::Function& callback, std::string moduleName)
-        : BaseNodeSwordInterfaceWorker(facade, callback), _moduleName(moduleName) {}
+        : BaseWorker(facade, callback), _moduleName(moduleName) {}
 
     void Execute(const ExecutionProgress& progress) {
         int ret = this->_facade.uninstallModule(this->_moduleName);
