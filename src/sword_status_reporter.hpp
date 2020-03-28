@@ -25,6 +25,9 @@
 class SwordStatusReporter : public sword::StatusReporter
 {
 public:
+    SwordStatusReporter() {}
+    virtual ~SwordStatusReporter() {}
+
     void setCallBacks(std::function<void(long, long, const char*)>* preStatusCallback,
                       std::function<void(unsigned long, unsigned long)>* updateCallback);
 
