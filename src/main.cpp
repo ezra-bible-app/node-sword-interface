@@ -1,4 +1,5 @@
 #include "sword_facade.hpp"
+#include "sword_status_reporter.hpp"
 
 #include <vector>
 #include <iostream>
@@ -142,7 +143,8 @@ void get_strongs_entry(SwordFacade& sword_facade)
 
 int main(int argc, char** argv)
 {
-    SwordFacade sword_facade;
+    SwordStatusReporter statusReporter;
+    SwordFacade sword_facade(statusReporter);
 
     /*std::vector<sword::SWModule*> localModules = sword_facade.getAllLocalModules();
     for (int i = 0; i < localModules.size(); i++) {
