@@ -33,10 +33,10 @@ void ModuleSearchWorker::Execute(const ExecutionProgress& progress)
                                                                   std::placeholders::_1,
                                                                   std::placeholders::_2);
     setModuleSearchProgressCB(&searchProgressCB);
-    this->_stdSearchResults = this->_facade->getModuleSearchResults(this->_moduleName,
-                                                                    this->_searchTerm,
-                                                                    this->_searchType,
-                                                                    this->_isCaseSensitive);
+    this->_stdSearchResults = this->_facade.getModuleSearchResults(this->_moduleName,
+                                                                   this->_searchTerm,
+                                                                   this->_searchType,
+                                                                   this->_isCaseSensitive);
     searchMutex.unlock();
 }
 
@@ -48,6 +48,6 @@ void ModuleSearchWorker::searchProgressCB(char percent, void* userData)
 void ModuleSearchWorker::OnOK()
 {
     Napi::HandleScope scope(this->Env());
-    this->_napiSearchResults = this->_napiSwordHelper.getNapiVerseObjectsFromRawList(this->Env(), this->_moduleName, this->_stdSearchResults);
+    this->_napiSearchResults = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(this->Env(), this->_moduleName, this->_stdSearchResults);
     Callback().Call({ this->_napiSearchResults });
 }

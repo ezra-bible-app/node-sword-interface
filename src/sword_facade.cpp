@@ -68,18 +68,16 @@ using namespace sword;
 char * sword::SWBuf::nullStr = (char *)"";
 #endif
 
-SwordFacade::SwordFacade(SwordStatusReporter* statusReporter)
+SwordFacade::SwordFacade(SwordStatusReporter& statusReporter)
+    : _statusReporter(statusReporter)
 {
     //SWLog::getSystemLog()->setLogLevel(SWLog::LOG_DEBUG);
     this->_fileSystemHelper.createBasicDirectories();
-    this->_statusReporter = statusReporter;
     this->resetMgr();
 }
 
 SwordFacade::~SwordFacade()
 {
-    delete this->_statusReporter;
-
     if (this->_strongsHebrew != 0) delete this->_strongsHebrew;
     if (this->_strongsGreek != 0) delete this->_strongsGreek;
 }
@@ -118,7 +116,7 @@ void SwordFacade::resetMgr()
 
     this->_mgrForInstall = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
     
-    this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), this->_statusReporter);
+    this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), &this->_statusReporter);
     this->_installMgr->setUserDisclaimerConfirmed(true);
 
     this->initStrongs();

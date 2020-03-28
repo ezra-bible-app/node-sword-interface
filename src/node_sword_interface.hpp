@@ -20,9 +20,9 @@
 #define _NODE_SWORD_INTERFACE
 
 #include <napi.h>
+#include "sword_status_reporter.hpp"
 
 class SwordFacade;
-class SwordStatusReporter;
 class NapiSwordHelper;
 
 enum class ParamType {
@@ -81,7 +81,7 @@ private:
 
     NapiSwordHelper* _napiSwordHelper;
     SwordFacade* _swordFacade;
-    SwordStatusReporter* _swordStatusReporter;
+    SwordStatusReporter _swordStatusReporter;
 };
 
 #endif // _NODE_SWORD_INTERFACE

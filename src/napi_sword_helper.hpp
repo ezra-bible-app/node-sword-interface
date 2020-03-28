@@ -35,8 +35,10 @@ class Verse;
 
 class NapiSwordHelper {
 public:
-    NapiSwordHelper();
-    virtual ~NapiSwordHelper();
+    NapiSwordHelper(SwordFacade& swordFacade)
+        : _swordFacade(swordFacade) {}
+
+    virtual ~NapiSwordHelper() {}
 
     Napi::Array getNapiArrayFromStringVector(const Napi::Env& env, std::vector<std::string>& stringVector);
     Napi::Array getNapiVerseObjectsFromRawList(const Napi::Env& env, std::string moduleCode, std::vector<Verse>& verses);
@@ -46,7 +48,7 @@ public:
 private:
     void verseTextToNapiObject(std::string moduleCode, Verse rawVerse, Napi::Object& object);
 
-    SwordFacade* _swordFacade;
+    SwordFacade& _swordFacade;
 };
 
 #endif // _NAPI_SWORD_HELPER

@@ -75,7 +75,7 @@ void internalModuleSearchProgressCB(char percent, void* userData);
 class SwordFacade
 {
 public:
-    SwordFacade(SwordStatusReporter* statusReporter=0);
+    SwordFacade(SwordStatusReporter& statusReporter);
     virtual ~SwordFacade();
 
     int refreshRepositoryConfig();
@@ -127,6 +127,10 @@ public:
     bool moduleHasGlobalOption(sword::SWModule* module, std::string globalOption);
     std::string getModuleDataPath(sword::SWModule* module);
 
+    SwordStatusReporter& getStatusReporter() {
+        return this->_statusReporter;
+    }
+
 private:
     int getRepoCount();
     std::vector<Verse> getText(std::string moduleName,
@@ -159,7 +163,7 @@ private:
     sword::SWMgr* _mgrForInstall = 0;
     sword::InstallMgr* _installMgr = 0;
     sword::LocaleMgr* _localeMgr = 0;
-    SwordStatusReporter* _statusReporter = 0;
+    SwordStatusReporter& _statusReporter;
     FileSystemHelper _fileSystemHelper;
 
     sword::SWModule* _strongsHebrew = 0;

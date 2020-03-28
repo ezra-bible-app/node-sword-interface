@@ -39,3 +39,9 @@ void SwordStatusReporter::preStatus(long totalBytes, long completedBytes, const 
         (*(this->_preStatusCallback))(totalBytes, completedBytes, message);
     }
 }
+
+void SwordStatusReporter::resetCallbacks()
+{
+    this->_updateCallback = 0;
+    this->_preStatusCallback = 0;
+}

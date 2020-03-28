@@ -23,7 +23,7 @@
 
 class ModuleSearchWorker : public ProgressNodeSwordInterfaceWorker {
 public:
-    ModuleSearchWorker(SwordFacade* facade,
+    ModuleSearchWorker(SwordFacade& facade,
                        const Napi::Function& jsProgressCallback,
                        const Napi::Function& callback,
                        std::string moduleName,
@@ -31,18 +31,21 @@ public:
                        SearchType searchType,
                        bool isCaseSensitive=false)
 
-        : ProgressNodeSwordInterfaceWorker(facade, 0, jsProgressCallback, callback),
+        : ProgressNodeSwordInterfaceWorker(facade, jsProgressCallback, callback),
         _moduleName(moduleName),
         _searchTerm(searchTerm),
         _searchType(searchType),
-        _isCaseSensitive(isCaseSensitive) {}
+        _isCaseSensitive(isCaseSensitive) {
+
+        this->_napiSwordHelper = new NapiSwordHelper(facade);
+    }
 
     void searchProgressCB(char percent, void* userData);
     void Execute(const ExecutionProgress& progress);    
     void OnOK();
 
 private:
-    NapiSwordHelper _napiSwordHelper;
+    NapiSwordHelper* _napiSwordHelper;
     std::vector<Verse> _stdSearchResults;
     Napi::Array _napiSearchResults;
     std::string _moduleName;

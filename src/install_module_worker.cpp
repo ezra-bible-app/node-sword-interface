@@ -58,18 +58,20 @@ void InstallModuleWorker::Execute(const ExecutionProgress& progress)
     this->_executionProgress = &progress;
 
     std::function<void(long, long, const char*)> _swordPreStatusCB = std::bind(&InstallModuleWorker::swordPreStatusCB,
-                                                                                this,
-                                                                                std::placeholders::_1,
-                                                                                std::placeholders::_2,
-                                                                                std::placeholders::_3);
+                                                                               this,
+                                                                               std::placeholders::_1,
+                                                                               std::placeholders::_2,
+                                                                               std::placeholders::_3);
     
     std::function<void(unsigned long, unsigned long)> _swordUpdateCB = std::bind(&InstallModuleWorker::swordUpdateCB,
-                                                                                  this,
-                                                                                  std::placeholders::_1,
-                                                                                  std::placeholders::_2);
+                                                                                 this,
+                                                                                 std::placeholders::_1,
+                                                                                 std::placeholders::_2);
 
-    this->_statusReporter->setCallBacks(&_swordPreStatusCB, &_swordUpdateCB);
-    int ret = this->_facade->installModule(this->_moduleName);
+    SwordStatusReporter& statusReporter = this->_facade.getStatusReporter();
+    statusReporter.setCallBacks(&_swordPreStatusCB, &_swordUpdateCB);
+    int ret = this->_facade.installModule(this->_moduleName);
+    statusReporter.resetCallbacks();
     this->_isSuccessful = (ret == 0);
 }
 

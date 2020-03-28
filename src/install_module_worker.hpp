@@ -24,14 +24,12 @@
 
 class InstallModuleWorker : public ProgressNodeSwordInterfaceWorker {
 public:
-    InstallModuleWorker(SwordFacade* facade,
-                        SwordStatusReporter* statusReporter,
+    InstallModuleWorker(SwordFacade& facade,
                         const Napi::Function& jsProgressCallback,
                         const Napi::Function& callback,
                         std::string moduleName)
 
         : ProgressNodeSwordInterfaceWorker(facade,
-                                           statusReporter,
                                            jsProgressCallback,
                                            callback),
                                            _moduleName(moduleName) {}

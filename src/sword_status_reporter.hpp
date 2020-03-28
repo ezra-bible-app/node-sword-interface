@@ -28,6 +28,8 @@ public:
     void setCallBacks(std::function<void(long, long, const char*)>* preStatusCallback,
                       std::function<void(unsigned long, unsigned long)>* updateCallback);
 
+    // Reset the callbacks to 0 after they have expired. Using this function is very important, because otherwise we will have invalid pointers.
+    virtual void resetCallbacks();
     virtual void update(unsigned long totalBytes, unsigned long completedBytes);
     virtual void preStatus(long totalBytes, long completedBytes, const char *message);
 
