@@ -37,6 +37,7 @@ set(SOURCES
 ${CMAKE_SOURCE_DIR}/src/main.cpp
 ${CMAKE_SOURCE_DIR}/src/strongs_entry.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_facade.cpp
+${CMAKE_SOURCE_DIR}/src/sword_status_reporter.cpp
 ${CMAKE_SOURCE_DIR}/src/string_helper.cpp
 ${CMAKE_SOURCE_DIR}/src/file_system_helper.cpp
 )
