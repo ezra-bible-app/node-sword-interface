@@ -19,7 +19,7 @@
 #ifndef _INSTALL_MODULE_WORKER
 #define _INSTALL_MODULE_WORKER
 
-#include "node_sword_interface_worker.hpp"
+#include "worker.hpp"
 #include "percentage_calc.hpp"
 
 class InstallModuleWorker : public ProgressWorker {

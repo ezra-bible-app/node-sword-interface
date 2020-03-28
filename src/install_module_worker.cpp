@@ -17,7 +17,7 @@
    If not, see <http://www.gnu.org/licenses/>. */
 
 
-#include "node_sword_interface_worker.hpp"
+#include "worker.hpp"
 #include "install_module_worker.hpp"
 
 void InstallModuleWorker::swordPreStatusCB(long totalBytes, long completedBytes, const char *message)

@@ -16,7 +16,7 @@
    along with node-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
-#include "node_sword_interface_worker.hpp"
+#include "worker.hpp"
 #include "module_search_worker.hpp"
 #include "sword_facade.hpp"
 

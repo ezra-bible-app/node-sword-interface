@@ -16,8 +16,8 @@
    along with node-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
-#ifndef _NODE_SWORD_INTERFACE_WORKER
-#define _NODE_SWORD_INTERFACE_WORKER
+#ifndef _WORKER
+#define _WORKER
 
 #include <napi.h>
 #include <iostream>
@@ -150,5 +150,5 @@ private:
     std::string _moduleName;
 };
 
-#endif // _NODE_SWORD_INTERFACE_WORKER
+#endif // _WORKER
 

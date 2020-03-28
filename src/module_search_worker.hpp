@@ -19,7 +19,7 @@
 #ifndef _MODULE_SEARCH_WORKER
 #define _MODULE_SEARCH_WORKER
 
-#include "node_sword_interface_worker.hpp"
+#include "worker.hpp"
 
 class ModuleSearchWorker : public ProgressWorker {
 public:

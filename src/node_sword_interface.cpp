@@ -24,7 +24,7 @@
 #include "swmodule.h"
 #include "node_sword_interface.hpp"
 #include "napi_sword_helper.hpp"
-#include "node_sword_interface_worker.hpp"
+#include "worker.hpp"
 #include "install_module_worker.hpp"
 #include "module_search_worker.hpp"
 #include "sword_facade.hpp"
