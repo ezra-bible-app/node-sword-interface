@@ -25,7 +25,6 @@ static std::mutex searchMutex;
 void ModuleSearchWorker::Execute(const ExecutionProgress& progress)
 {
     searchMutex.lock();
-
     this->_executionProgress = &progress;
     
     std::function<void(char, void*)> searchProgressCB = std::bind(&ModuleSearchWorker::searchProgressCB,
@@ -37,6 +36,7 @@ void ModuleSearchWorker::Execute(const ExecutionProgress& progress)
                                                                    this->_searchTerm,
                                                                    this->_searchType,
                                                                    this->_isCaseSensitive);
+    setModuleSearchProgressCB(0);
     searchMutex.unlock();
 }
 
