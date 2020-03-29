@@ -16,6 +16,7 @@
    along with node-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
+#include "api_lock.hpp"
 #include "worker.hpp"
 #include "module_search_worker.hpp"
 #include "sword_facade.hpp"
@@ -38,6 +39,7 @@ void ModuleSearchWorker::Execute(const ExecutionProgress& progress)
                                                                    this->_isCaseSensitive);
     setModuleSearchProgressCB(0);
     searchMutex.unlock();
+    unlockApi();
 }
 
 void ModuleSearchWorker::searchProgressCB(char percent, void* userData)

@@ -16,7 +16,7 @@
    along with node-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
-
+#include "api_lock.hpp"
 #include "worker.hpp"
 #include "install_module_worker.hpp"
 
@@ -73,6 +73,7 @@ void InstallModuleWorker::Execute(const ExecutionProgress& progress)
     int ret = this->_facade.installModule(this->_moduleName);
     statusReporter.resetCallbacks();
     this->_isSuccessful = (ret == 0);
+    unlockApi();
 }
 
 void InstallModuleWorker::OnOK()

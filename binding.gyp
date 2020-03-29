@@ -33,6 +33,7 @@
         "cflags!": [ "-fno-exceptions" ],
         "cflags_cc!": [ "-fno-exceptions -std=c++11 -pthread" ],
         "sources": [
+            "src/api_lock.cpp",
             "src/file_system_helper.cpp",
             "src/string_helper.cpp",
             "src/strongs_entry.cpp",

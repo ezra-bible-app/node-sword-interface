@@ -22,6 +22,7 @@
 #include <napi.h>
 #include <iostream>
 
+#include "api_lock.hpp"
 #include "napi_sword_helper.hpp"
 #include "sword_facade.hpp"
 #include "sword_status_reporter.hpp"
@@ -116,6 +117,7 @@ public:
 
         int ret = this->_facade.refreshRemoteSources(this->_forced, &_progressCallback);
         this->_isSuccessful = (ret == 0);
+        unlockApi();
     }
 
     void OnOK() {
@@ -137,6 +139,7 @@ public:
     void Execute(const ExecutionProgress& progress) {
         int ret = this->_facade.uninstallModule(this->_moduleName);
         this->_isSuccessful = (ret == 0);
+        unlockApi();
     }
 
     void OnOK() {
