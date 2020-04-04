@@ -1010,8 +1010,7 @@ vector<Verse> SwordFacade::getModuleSearchResults(string moduleName,
         while (!listKey.popError()) {
             module->setKey(listKey.getElement());
 
-            bool forceNoMarkup = true;
-            string verseText = this->getCurrentVerseText(module, hasStrongs, forceNoMarkup);
+            string verseText = this->getCurrentVerseText(module, hasStrongs);
             Verse currentVerse;
             currentVerse.reference = module->getKey()->getShortText();
             currentVerse.absoluteVerseNumber = absoluteVerseNumbers[currentVerse.reference];
