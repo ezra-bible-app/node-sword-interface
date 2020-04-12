@@ -931,7 +931,7 @@ map<string, int> SwordFacade::getAbsoluteVerseNumberMap(SWModule* module)
 {
     string lastBookName = "";
     string lastKey = "";
-    int currentAbsoluteVerseNumber = 0;
+    int currentAbsoluteVerseNumber = 1;
 
     std::map<std::string, int> absoluteVerseNumbers;
     module->setKey("Gen 1:1");
@@ -945,7 +945,7 @@ map<string, int> SwordFacade::getAbsoluteVerseNumberMap(SWModule* module)
         if (currentKey == lastKey) { break; }
 
         // Reset the currentAbsoluteVerseNumber when a new book is started
-        if ((currentAbsoluteVerseNumber > 0) && (currentBookName != lastBookName)) { currentAbsoluteVerseNumber = 0; }
+        if ((currentAbsoluteVerseNumber > 0) && (currentBookName != lastBookName)) { currentAbsoluteVerseNumber = 1; }
 
         absoluteVerseNumbers[currentKey] = currentAbsoluteVerseNumber;
 
