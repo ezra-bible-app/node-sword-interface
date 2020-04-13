@@ -47,6 +47,7 @@ public:
 
 private:
     void verseTextToNapiObject(std::string moduleCode, Verse rawVerse, Napi::Object& object);
+    Napi::String getConfigEntry(sword::SWModule* swModule, std::string key, const Napi::Env& env);
 
     SwordFacade& _swordFacade;
 };

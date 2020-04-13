@@ -38,6 +38,8 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
  * @property {String} name - The name/code of the SWORD module
  * @property {String} description - The description of the SWORD module
  * @property {String} language - The language code of the SWORD module
+ * @property {String} distributionLicense - The distribution license of the SWORD module
+ * @property {String} shortCopyright - The short copyright information of the SWORD module
  * @property {String} version - The version of the SWORD module
  * @property {String} about - Extended description of the SWORD module
  * @property {String} abbreviation - The abbreviation of the SWORD module

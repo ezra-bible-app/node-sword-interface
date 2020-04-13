@@ -443,6 +443,8 @@ An object representation of a SWORD module.
 | name | <code>String</code> | The name/code of the SWORD module |
 | description | <code>String</code> | The description of the SWORD module |
 | language | <code>String</code> | The language code of the SWORD module |
+| distributionLicense | <code>String</code> | The distribution license of the SWORD module |
+| shortCopyright | <code>String</code> | The short copyright information of the SWORD module |
 | version | <code>String</code> | The version of the SWORD module |
 | about | <code>String</code> | Extended description of the SWORD module |
 | abbreviation | <code>String</code> | The abbreviation of the SWORD module |

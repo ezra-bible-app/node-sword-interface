@@ -62,17 +62,11 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     object["language"] = swModule->getLanguage();
     object["location"] = this->_swordFacade.getModuleDataPath(swModule);
   
-    if (swModule->getConfigEntry("About")) {
-        object["about"] = swModule->getConfigEntry("About");
-    } else {
-        object["about"] = env.Undefined();
-    }
-
-    if (swModule->getConfigEntry("Version")) {
-        object["version"] = swModule->getConfigEntry("Version");
-    } else {
-        object["version"] = env.Undefined();
-    }
+    object["abbreviation"] = this->getConfigEntry(swModule, "Abbreviation", env);
+    object["about"] = this->getConfigEntry(swModule, "About", env);
+    object["distributionLicense"] = this->getConfigEntry(swModule, "DistributionLicense", env);
+    object["shortCopyright"] = this->getConfigEntry(swModule, "ShortCopyright", env);
+    object["version"] = this->getConfigEntry(swModule, "Version", env);
 
     if (swModule->getConfigEntry("Direction")) {
         string direction = string(swModule->getConfigEntry("Direction"));
@@ -86,12 +80,6 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
         object["size"] = Napi::Number::New(env, moduleSize);
     } else {
         object["size"] = Napi::Number::New(env, -1);
-    }
-
-    if (swModule->getConfigEntry("Abbreviation")) {
-        object["abbreviation"] = swModule->getConfigEntry("Abbreviation");
-    } else {
-        object["abbreviation"] = "";
     }
 
     bool moduleIsLocked = swModule->getConfigEntry("CipherKey");
@@ -109,6 +97,22 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     object["hasHeadings"] = Napi::Boolean::New(env, this->_swordFacade.moduleHasGlobalOption(swModule, "Headings"));
     object["hasRedLetterWords"] = Napi::Boolean::New(env, this->_swordFacade.moduleHasGlobalOption(swModule, "RedLetter"));
     object["hasCrossReferences"] = Napi::Boolean::New(env, this->_swordFacade.moduleHasGlobalOption(swModule, "Scripref"));
+}
+
+Napi::String NapiSwordHelper::getConfigEntry(sword::SWModule* swModule, std::string key, const Napi::Env& env)
+{
+    std::string configEntry = "";
+
+    if (swModule == 0) {
+        cerr << "swModule is 0! Cannot get config entry!" << endl;
+    } else {
+        if (swModule->getConfigEntry(key.c_str())) {
+            configEntry = swModule->getConfigEntry(key.c_str());
+        }
+    }
+
+    Napi::String napiConfigEntry = Napi::String::New(env, configEntry);
+    return napiConfigEntry;
 }
 
 void NapiSwordHelper::verseTextToNapiObject(string moduleCode, Verse rawVerse, Napi::Object& object)
