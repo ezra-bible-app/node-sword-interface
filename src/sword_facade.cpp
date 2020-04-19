@@ -1187,7 +1187,7 @@ bool SwordFacade::moduleHasGlobalOption(SWModule* module, string globalOption)
 
 string SwordFacade::getSwordVersion()
 {
-    return string("1.8.900-e34fd3");
+    return string("1.8.900-d5030c1");
 }
 
 static std::function<void(char, void*)>* _moduleSearchProgressCB = 0;
