@@ -23,6 +23,7 @@
 #include "sword_status_reporter.hpp"
 
 class SwordFacade;
+class RepositoryInterface;
 class NapiSwordHelper;
 
 enum class ParamType {
@@ -81,6 +82,7 @@ private:
 
     NapiSwordHelper* _napiSwordHelper;
     SwordFacade* _swordFacade;
+    RepositoryInterface* _repoInterface;
     SwordStatusReporter _swordStatusReporter;
 };
 

@@ -21,6 +21,7 @@
 #include "napi_sword_helper.hpp"
 #include "sword_facade.hpp"
 #include "string_helper.hpp"
+#include "module_helper.hpp"
 
 using namespace std;
 using namespace sword;
@@ -92,11 +93,11 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     }
 
     object["inUserDir"] = Napi::Boolean::New(env, this->_swordFacade.isModuleInUserDir(swModule));
-    object["hasStrongs"] = Napi::Boolean::New(env, this->_swordFacade.moduleHasGlobalOption(swModule, "Strongs"));
-    object["hasFootnotes"] = Napi::Boolean::New(env, this->_swordFacade.moduleHasGlobalOption(swModule, "Footnotes"));
-    object["hasHeadings"] = Napi::Boolean::New(env, this->_swordFacade.moduleHasGlobalOption(swModule, "Headings"));
-    object["hasRedLetterWords"] = Napi::Boolean::New(env, this->_swordFacade.moduleHasGlobalOption(swModule, "RedLetter"));
-    object["hasCrossReferences"] = Napi::Boolean::New(env, this->_swordFacade.moduleHasGlobalOption(swModule, "Scripref"));
+    object["hasStrongs"] = Napi::Boolean::New(env, this->_moduleHelper.moduleHasGlobalOption(swModule, "Strongs"));
+    object["hasFootnotes"] = Napi::Boolean::New(env, this->_moduleHelper.moduleHasGlobalOption(swModule, "Footnotes"));
+    object["hasHeadings"] = Napi::Boolean::New(env, this->_moduleHelper.moduleHasGlobalOption(swModule, "Headings"));
+    object["hasRedLetterWords"] = Napi::Boolean::New(env, this->_moduleHelper.moduleHasGlobalOption(swModule, "RedLetter"));
+    object["hasCrossReferences"] = Napi::Boolean::New(env, this->_moduleHelper.moduleHasGlobalOption(swModule, "Scripref"));
 }
 
 Napi::String NapiSwordHelper::getConfigEntry(sword::SWModule* swModule, std::string key, const Napi::Env& env)

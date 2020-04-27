@@ -24,6 +24,7 @@
 class ModuleSearchWorker : public ProgressWorker {
 public:
     ModuleSearchWorker(SwordFacade& facade,
+                       RepositoryInterface & repoInterface,
                        const Napi::Function& jsProgressCallback,
                        const Napi::Function& callback,
                        std::string moduleName,
@@ -31,7 +32,7 @@ public:
                        SearchType searchType,
                        bool isCaseSensitive=false)
 
-        : ProgressWorker(facade, jsProgressCallback, callback),
+        : ProgressWorker(facade, repoInterface, jsProgressCallback, callback),
         _moduleName(moduleName),
         _searchTerm(searchTerm),
         _searchType(searchType),

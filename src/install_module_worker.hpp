@@ -25,14 +25,16 @@
 class InstallModuleWorker : public ProgressWorker {
 public:
     InstallModuleWorker(SwordFacade& facade,
+                        RepositoryInterface& repoInterface,
                         const Napi::Function& jsProgressCallback,
                         const Napi::Function& callback,
                         std::string moduleName)
 
         : ProgressWorker(facade,
-                                           jsProgressCallback,
-                                           callback),
-                                           _moduleName(moduleName) {}
+                         repoInterface,
+                         jsProgressCallback,
+                         callback),
+                         _moduleName(moduleName) {}
 
     void swordPreStatusCB(long totalBytes, long completedBytes, const char *message);
     void swordUpdateCB(double dltotal, double dlnow);

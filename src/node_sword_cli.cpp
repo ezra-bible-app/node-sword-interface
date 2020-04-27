@@ -1,4 +1,5 @@
 #include "sword_facade.hpp"
+#include "repository_interface.hpp"
 #include "sword_status_reporter.hpp"
 
 #include <vector>
@@ -9,20 +10,20 @@
 using namespace std;
 using namespace sword;
 
-void show_repos(SwordFacade& sword_facade)
+void show_repos(RepositoryInterface& repoInterface)
 {
     cout << "REPOSITORIES:" << endl;
-    vector<string> repoNames = sword_facade.getRepoNames();
+    vector<string> repoNames = repoInterface.getRepoNames();
     for (unsigned int i = 0; i < repoNames.size(); i++) {
         cout << repoNames[i] << endl;
     }
     cout << endl;
 }
 
-void show_modules(SwordFacade& sword_facade)
+void show_modules(RepositoryInterface& repoInterface)
 {
     cout << "German MODULES of CrossWire:" << endl;
-    vector<SWModule*> modules = sword_facade.getRepoModulesByLang("CrossWire", "de");
+    vector<SWModule*> modules = repoInterface.getRepoModulesByLang("CrossWire", "de");
     for (unsigned int i = 0; i < modules.size(); i++) {
         SWModule* currentModule = modules[i];
 
@@ -64,15 +65,16 @@ void get_local_module(SwordFacade& sword_facade)
     cout << sword_facade.isModuleInUserDir("GerNeUe") << endl;
 }
 
-void get_repo_module(SwordFacade& sword_facade)
+void get_repo_module(RepositoryInterface& repoInterface)
 {
     string module = "GerSch";
-    SWModule* m = sword_facade.getRepoModule(module);
+    SWModule* m = repoInterface.getRepoModule(module);
 
     if (m != 0) {
         string description = m->getConfigEntry("About");
         cout << module << " description: " << description << endl;
-        cout << sword_facade.isModuleInUserDir(module) << endl;
+        // FIXME
+        //cout << sword_facade.isModuleInUserDir(module) << endl;
     } else {
         cout << "Could not find " << module << "!" << endl;
     }
@@ -145,6 +147,7 @@ int main(int argc, char** argv)
 {
     SwordStatusReporter statusReporter;
     SwordFacade sword_facade(statusReporter);
+    RepositoryInterface repoInterface(statusReporter);
 
     /*std::vector<sword::SWModule*> localModules = sword_facade.getAllLocalModules();
     for (int i = 0; i < localModules.size(); i++) {
@@ -158,9 +161,9 @@ int main(int argc, char** argv)
 
     //test_unlock_key(sword_facade);
 
-    /*show_repos(sword_facade);
+    /*show_repos(repoInterface);
 
-    show_modules(sword_facade);*/
+    show_modules(repoInterface);*/
 
     /*int error = sword_facade.uninstallModule("KJV");
 
@@ -176,7 +179,7 @@ int main(int argc, char** argv)
 
     get_local_module(sword_facade);
     
-    //get_repo_module(sword_facade);
+    //get_repo_module(repoInterface);
 
     /*sword_facade.installModule("StrongsHebrew");
     sword_facade.installModule("StrongsGreek");*/

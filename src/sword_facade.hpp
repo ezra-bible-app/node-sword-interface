@@ -30,7 +30,9 @@
 #include <remotetrans.h>
 
 #include "file_system_helper.hpp"
+#include "module_helper.hpp"
 #include "strongs_entry.hpp"
+#include "repository_interface.hpp"
 
 namespace sword {
     class InstallMgr;
@@ -76,23 +78,10 @@ public:
     SwordFacade(SwordStatusReporter& statusReporter);
     virtual ~SwordFacade();
 
-    int refreshRepositoryConfig();
-    int refreshRemoteSources(bool force=false, std::function<void(unsigned int progress)>* progressCallback=0);
-
-    std::vector<std::string> getRepoNames();
-    std::vector<sword::SWModule*> getAllRemoteModules();
-    sword::SWModule* getRepoModule(std::string moduleName, std::string repoName="all");
-    std::vector<sword::SWModule*> getAllRepoModules(std::string repoName);
-    std::vector<sword::SWModule*> getRepoModulesByLang(std::string repoName, std::string languageCode, bool headersFilter=false, bool strongsFilter=false);
-    unsigned int getRepoTranslationCount(std::string repoName);
-    std::vector<std::string> getRepoLanguages(std::string repoName);
-    unsigned int getRepoLanguageTranslationCount(std::string repoName, std::string languageCode);
-
     std::vector<sword::SWModule*> getAllLocalModules();
     sword::SWModule* getLocalModule(std::string moduleName);
     bool isModuleInUserDir(std::string moduleName);
     bool isModuleInUserDir(sword::SWModule* module);
-    bool isModuleAvailableInRepo(std::string moduleName, std::string repoName="all");
 
     std::vector<Verse> getBibleText(std::string moduleName);
     std::vector<Verse> getBookText(std::string moduleName, std::string bookCode, int startVerseNumber=-1, int verseCount=-1);
@@ -122,7 +111,6 @@ public:
     void enableMarkup() { this->_markupEnabled = true; }
     void disableMarkup() { this->_markupEnabled = false; }
 
-    bool moduleHasGlobalOption(sword::SWModule* module, std::string globalOption);
     std::string getModuleDataPath(sword::SWModule* module);
 
     SwordStatusReporter& getStatusReporter() {
@@ -137,17 +125,8 @@ private:
                                int startVerseNr=-1,
                                int verseCount=-1);
 
-    sword::InstallSource* getRemoteSource(std::string remoteSourceName);
-    std::string getModuleRepo(std::string moduleName);
-    std::vector<std::string> getRepoModuleIds(std::string repoName);
-    std::vector<std::string> getAllRepoModuleIds();
-    std::string getModuleIdFromFile(std::string moduleFileName);
-    int refreshIndividualRemoteSource(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
-    std::thread getRemoteSourceRefreshThread(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
     void resetMgr();
     void initStrongs();
-
-    sword::SWModule* getModuleFromList(std::vector<sword::SWModule*>& moduleList, std::string moduleName);
 
     std::string getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup=false);
     std::string getCurrentChapterHeading(sword::SWModule* module);
@@ -157,19 +136,20 @@ private:
 
     std::map<std::string, int> getAbsoluteVerseNumberMap(sword::SWModule* module);
 
+    RepositoryInterface* _repoInterface = 0;
+
     sword::SWMgr* _mgr = 0;
     sword::SWMgr* _mgrForInstall = 0;
-    sword::InstallMgr* _installMgr = 0;
     sword::LocaleMgr* _localeMgr = 0;
+
     SwordStatusReporter& _statusReporter;
     FileSystemHelper _fileSystemHelper;
+    ModuleHelper _moduleHelper;
 
     sword::SWModule* _strongsHebrew = 0;
     sword::SWModule* _strongsGreek = 0;
 
     bool _markupEnabled = false;
-    unsigned int _remoteSourceCount = 0;
-    unsigned int _remoteSourceUpdateCount = 0;
 };
 
 #endif // _SWORD_FACADE

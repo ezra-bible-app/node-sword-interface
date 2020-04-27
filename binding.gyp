@@ -35,9 +35,11 @@
         "sources": [
             "src/api_lock.cpp",
             "src/file_system_helper.cpp",
+            "src/module_helper.cpp",
             "src/string_helper.cpp",
             "src/strongs_entry.cpp",
             "src/sword_facade.cpp",
+            "src/repository_interface.cpp",
             "src/sword_status_reporter.cpp",
             "src/install_module_worker.cpp",
             "src/module_search_worker.cpp",

@@ -25,6 +25,7 @@
 #include "api_lock.hpp"
 #include "napi_sword_helper.hpp"
 #include "sword_facade.hpp"
+#include "repository_interface.hpp"
 #include "sword_status_reporter.hpp"
 
 using namespace std;
@@ -38,8 +39,8 @@ public:
 
 class BaseWorker : public Napi::AsyncProgressWorker<SwordProgressFeedback> {
 public:
-    BaseWorker(SwordFacade& facade, const Napi::Function& callback)
-        : Napi::AsyncProgressWorker<SwordProgressFeedback>(callback), _facade(facade) {}
+    BaseWorker(SwordFacade& facade, RepositoryInterface& repoInterface, const Napi::Function& callback)
+        : Napi::AsyncProgressWorker<SwordProgressFeedback>(callback), _facade(facade), _repoInterface(repoInterface) {}
 
     virtual ~BaseWorker() {}
 
@@ -54,14 +55,16 @@ public:
 
 protected:
     SwordFacade& _facade;
+    RepositoryInterface& _repoInterface;
 };
 
 class ProgressWorker : public BaseWorker {
 public:
     ProgressWorker(SwordFacade& facade,
+                   RepositoryInterface& repoInterface,
                    const Napi::Function& jsProgressCallback,
                    const Napi::Function& callback)
-        : BaseWorker(facade, callback),
+        : BaseWorker(facade, repoInterface, callback),
         _jsProgressCallback(Napi::Persistent(jsProgressCallback)) {}
 
     void OnProgress(const SwordProgressFeedback* progressFeedback, size_t /* count */) {
@@ -72,7 +75,7 @@ public:
             jsProgressFeedback["totalPercent"] = progressFeedback->totalPercent;
             jsProgressFeedback["filePercent"] = progressFeedback->filePercent;
             jsProgressFeedback["message"] = progressFeedback->message;
-            
+
             this->_jsProgressCallback.Call({ jsProgressFeedback });
         }
     }
@@ -96,11 +99,12 @@ protected:
 class RefreshRemoteSourcesWorker : public ProgressWorker {
 public:
     RefreshRemoteSourcesWorker(SwordFacade& facade,
+                               RepositoryInterface& repoInterface,
                                const Napi::Function& jsProgressCallback,
                                const Napi::Function& callback,
                                bool forced)
 
-        : ProgressWorker(facade, jsProgressCallback, callback),
+        : ProgressWorker(facade, repoInterface, jsProgressCallback, callback),
           _forced(forced) {}
     
     void progressCallback(unsigned int progressPercentage) {
@@ -113,7 +117,7 @@ public:
                                                                         this,
                                                                         std::placeholders::_1);
 
-        int ret = this->_facade.refreshRemoteSources(this->_forced, &_progressCallback);
+        int ret = this->_repoInterface.refreshRemoteSources(this->_forced, &_progressCallback);
         this->_isSuccessful = (ret == 0);
         unlockApi();
     }
@@ -131,8 +135,8 @@ private:
 
 class UninstallModuleWorker : public BaseWorker {
 public:
-    UninstallModuleWorker(SwordFacade& facade, const Napi::Function& callback, std::string moduleName)
-        : BaseWorker(facade, callback), _moduleName(moduleName) {}
+    UninstallModuleWorker(SwordFacade& facade, RepositoryInterface& repoInterface, const Napi::Function& callback, std::string moduleName)
+        : BaseWorker(facade, repoInterface, callback), _moduleName(moduleName) {}
 
     void Execute(const ExecutionProgress& progress) {
         int ret = this->_facade.uninstallModule(this->_moduleName);

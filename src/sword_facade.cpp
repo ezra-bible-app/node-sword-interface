@@ -103,10 +103,6 @@ void SwordFacade::resetMgr()
         delete this->_mgrForInstall;
     }
 
-    if (this->_installMgr != 0) {
-        delete this->_installMgr;
-    }
-
 #ifdef _WIN32
     this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
     this->_mgr->augmentModules(this->_fileSystemHelper.getSystemSwordDir().c_str());
@@ -115,348 +111,8 @@ void SwordFacade::resetMgr()
 #endif
 
     this->_mgrForInstall = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
-    
-    this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), &this->_statusReporter);
-    this->_installMgr->setUserDisclaimerConfirmed(true);
 
     this->initStrongs();
-}
-
-int SwordFacade::refreshRepositoryConfig()
-{
-    //cout << "Refreshing repository configuration ... ";
-
-    int ret = this->_installMgr->refreshRemoteSourceConfiguration();
-    if (ret != 0) {
-        cout << endl << "refreshRemoteSourceConfiguration returned " << ret << endl;
-        return ret;
-    }
-
-    this->_installMgr->saveInstallConf();
-    //cout << "done." << endl;
-    return 0;
-}
-
-int SwordFacade::refreshRemoteSources(bool force, std::function<void(unsigned int progress)>* progressCallback)
-{
-    vector<thread> refreshThreads;
-    this->_remoteSourceUpdateCount = 0;
-
-    if (this->getRepoNames().size() == 0 || force) {
-        int ret = this->refreshRepositoryConfig();
-        if (ret != 0) {
-            return -1;
-        }
-
-        vector<string> sourceNames = this->getRepoNames();
-        this->_remoteSourceCount = sourceNames.size();
-
-        // Create worker threads
-        for (unsigned int i = 0; i < sourceNames.size(); i++) {
-            refreshThreads.push_back(this->getRemoteSourceRefreshThread(sourceNames[i], progressCallback));
-        }
-
-        // Wait for threads to finish
-        for (unsigned int i = 0; i < refreshThreads.size(); i++) {
-            refreshThreads[i].join();
-        }
-    }
-
-    return 0;
-}
-
-static std::mutex remoteSourceUpdateMutex;
-
-int SwordFacade::refreshIndividualRemoteSource(string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback)
-{
-    //cout << "Refreshing source " << remoteSourceName << endl << flush;
-    InstallSource* source = this->getRemoteSource(remoteSourceName);
-    int result = this->_installMgr->refreshRemoteSource(source);
-    if (result != 0) {
-        cerr << "Failed to refresh source " << remoteSourceName << endl << flush;
-    }
-
-    remoteSourceUpdateMutex.lock();
-    this->_remoteSourceUpdateCount++;
-    unsigned int totalPercent = (unsigned int)calculateIntPercentage<double>(this->_remoteSourceUpdateCount,
-                                                                     this->_remoteSourceCount);
-    
-    if (progressCallback != 0) {
-        (*progressCallback)(totalPercent);
-    }
-    remoteSourceUpdateMutex.unlock();
-
-    return result;
-}
-
-thread SwordFacade::getRemoteSourceRefreshThread(string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback)
-{
-    return thread(&SwordFacade::refreshIndividualRemoteSource, this, remoteSourceName, progressCallback);
-}
-
-int SwordFacade::getRepoCount()
-{
-    int repoCount = 0;
-
-    if (this->_installMgr != 0) {
-        for (InstallSourceMap::iterator it = this->_installMgr->sources.begin();
-             it != this->_installMgr->sources.end();
-             ++it) {
-
-            repoCount++;
-        }
-    }
-
-    return repoCount;
-}
-
-vector<string> SwordFacade::getRepoNames()
-{
-    if (this->getRepoCount() == 0) {
-        this->resetMgr();
-    }
-
-    vector<string> sourceNames;
-
-    for (InstallSourceMap::iterator it = this->_installMgr->sources.begin();
-         it != this->_installMgr->sources.end();
-         ++it) {
-
-        string source = string(it->second->caption);
-        sourceNames.push_back(source);
-    }
-
-    return sourceNames;
-}
-
-InstallSource* SwordFacade::getRemoteSource(string remoteSourceName)
-{
-    InstallSourceMap::iterator source = this->_installMgr->sources.find(remoteSourceName.c_str());
-    if (source == this->_installMgr->sources.end()) {
-        cerr << "Could not find remote source " << remoteSourceName << endl;
-    } else {
-        return source->second;
-    }
-
-    return 0;
-}
-
-vector<SWModule*> SwordFacade::getAllRemoteModules()
-{
-    vector<string> repoNames = this->getRepoNames();
-    vector<SWModule*> allModules;
-
-    for (unsigned int i = 0; i < repoNames.size(); i++) {
-        string currentRepo = repoNames[i];
-        vector<SWModule*> repoModules = this->getAllRepoModules(currentRepo);
-
-        for (unsigned int j = 0; j < repoModules.size(); j++) {
-            allModules.push_back(repoModules[j]);
-        }
-    }
-
-    return allModules;
-}
-
-SWModule* SwordFacade::getModuleFromList(vector<SWModule*>& moduleList, string moduleName)
-{
-    for (unsigned int i = 0; i < moduleList.size(); i++) {
-      SWModule* currentModule = moduleList[i];
-      if (currentModule != 0 && currentModule->getName() != 0) {
-          string currentModuleName = string(currentModule->getName());
-          if (currentModuleName == moduleName) {
-              return currentModule;
-          }
-      } else {
-          cerr << "Could not access module at index " << i << endl;
-      }
-    }
-
-    return 0;
-}
-
-SWModule* SwordFacade::getRepoModule(string moduleName, string repoName)
-{    
-    if (repoName == "all") {
-        repoName = this->getModuleRepo(moduleName);
-    }
-    
-    vector<SWModule*> modules = this->getAllRepoModules(repoName);
-    return this->getModuleFromList(modules, moduleName);
-}
-
-string SwordFacade::getModuleIdFromFile(string moduleFileName)
-{
-    static regex parentheses = regex("[\\[\\]]");
-    static regex lineBreaks = regex("[\\r\\n]");
-    ifstream moduleFile(moduleFileName);
-    string moduleId = "";
-
-    if (moduleFile.is_open()) {
-        string line;
-        std::getline(moduleFile, line);
-        char firstChar = line[0];
-        char lastChar = line[line.size() - 1];
-        
-        if (firstChar == '[' && lastChar == ']') {
-            // Remove parentheses and line breaks from the first line
-            // What's left is the module id
-            moduleId = regex_replace(line, parentheses, "");
-            moduleId = regex_replace(moduleId, lineBreaks, "");
-        }
-    }
-
-    moduleFile.close();
-    return moduleId;
-}
-
-vector<string> SwordFacade::getRepoModuleIds(string repoName)
-{
-    vector<string> moduleIds;
-    InstallSource* remoteSource = this->getRemoteSource(repoName);
-    FileSystemHelper fs;
-    stringstream repoModuleDir;
-
-    if (remoteSource != 0) {
-        //cout << remoteSource->localShadow << endl;
-        repoModuleDir << remoteSource->localShadow << fs.getPathSeparator() << "mods.d";
-        vector<string> filesInRepoDir = fs.getFilesInDir(repoModuleDir.str());
-
-        for (unsigned int i = 0; i < filesInRepoDir.size(); i++) {
-            // Skip files that do not end with .conf
-            if (!StringHelper::hasEnding(filesInRepoDir[i], ".conf")) {
-                continue;
-            }
-
-            stringstream moduleFileName;
-            moduleFileName << repoModuleDir.str() << fs.getPathSeparator() << filesInRepoDir[i];
-            string currentModuleId = this->getModuleIdFromFile(moduleFileName.str());
-
-            if (currentModuleId != "") {
-                moduleIds.push_back(currentModuleId);
-            }
-        }
-    }
-
-    return moduleIds; 
-}
-
-vector<string> SwordFacade::getAllRepoModuleIds()
-{
-    vector<string> repoNames = this->getRepoNames();
-    vector<string> allModuleIds;
-
-    for (unsigned int i = 0; i < repoNames.size(); i++) {
-        string currentRepo = repoNames[i];
-
-        vector<string> currentRepoModuleIds = this->getRepoModuleIds(currentRepo);
-        for (unsigned int j = 0; j < currentRepoModuleIds.size(); j++) {
-            allModuleIds.push_back(currentRepoModuleIds[j]);
-        }
-    }
-
-    return allModuleIds;
-}
-
-vector<SWModule*> SwordFacade::getAllRepoModules(string repoName)
-{
-    vector<SWModule*> modules;
-    InstallSource* remoteSource = this->getRemoteSource(repoName);
-
-    if (remoteSource != 0) {
-        SWMgr* mgr = remoteSource->getMgr();
-
-        for (ModMap::const_iterator it = mgr->Modules.begin(); it != mgr->Modules.end(); it++) {
-            SWModule* currentModule = it->second;
-            string moduleType = currentModule->getType();
-
-            if (moduleType == "Biblical Texts") {
-                modules.push_back(currentModule);
-            }
-        }
-    }
-
-    return modules;
-}
-
-vector<SWModule*> SwordFacade::getRepoModulesByLang(string repoName, string languageCode, bool headersFilter, bool strongsFilter)
-{
-    vector<SWModule*> allModules = this->getAllRepoModules(repoName);
-    vector<SWModule*> selectedLanguageModules;
-
-    for (unsigned int i = 0; i < allModules.size(); i++) {
-      SWModule* currentModule = allModules[i];
-
-      if ((currentModule->getType() == string("Biblical Texts")) &&
-          (currentModule->getLanguage() == languageCode)) {
-
-        bool hasHeadings = this->moduleHasGlobalOption(currentModule, "Headings");
-        bool hasStrongs = this->moduleHasGlobalOption(currentModule, "Strongs");
-        
-        if (headersFilter && !hasHeadings) {
-            continue;
-        }
-
-        if (strongsFilter && !hasStrongs) {
-            continue;
-        }
-
-        selectedLanguageModules.push_back(currentModule);
-      }
-    }
-
-    return selectedLanguageModules;
-}
-
-unsigned int SwordFacade::getRepoTranslationCount(string repoName)
-{
-    vector<SWModule*> allModules = this->getAllRepoModules(repoName);
-    return (unsigned int)allModules.size();
-}
-
-unsigned int SwordFacade::getRepoLanguageTranslationCount(string repoName, string languageCode)
-{
-    vector<SWModule*> allModules = this->getRepoModulesByLang(repoName, languageCode);
-    return (unsigned int)allModules.size();
-}
-
-vector<string> SwordFacade::getRepoLanguages(string repoName)
-{
-    vector<SWModule*> modules;
-    vector<string> languages;
-
-    modules = this->getAllRepoModules(repoName);
-
-    for (unsigned int i = 0; i < modules.size(); i++) {
-        SWModule* currentModule = modules[i];
-        string currentLanguage = string(currentModule->getLanguage());
-        
-        if (find(languages.begin(), languages.end(), currentLanguage) == languages.end()) {
-            // Only add the language if it is not already in the list
-            languages.push_back(currentLanguage);
-        }
-    }
-
-    return languages;
-}
-
-string SwordFacade::getModuleRepo(string moduleName)
-{
-    vector<string> repositories = this->getRepoNames();
-
-    for (unsigned int i = 0; i < repositories.size(); i++) {
-        string repo = repositories[i];
-        vector<string> repoModuleIds = this->getRepoModuleIds(repo);
-
-        for (unsigned int j = 0; j < repoModuleIds.size(); j++) {
-            string currentId = repoModuleIds[j];
-            if (currentId == moduleName) {
-                return repo;
-            }
-        }
-    }
-
-    return "";
 }
 
 vector<SWModule*> SwordFacade::getAllLocalModules()
@@ -504,25 +160,6 @@ bool SwordFacade::isModuleInUserDir(string moduleName)
 {
     SWModule* module = this->getLocalModule(moduleName);
     return this->isModuleInUserDir(module);
-}
-
-bool SwordFacade::isModuleAvailableInRepo(string moduleName, string repoName)
-{
-    vector<string> moduleIds;
-    
-    if (repoName == "all") {
-        moduleIds = this->getAllRepoModuleIds();
-    } else {
-        moduleIds = this->getRepoModuleIds(repoName);
-    }
-
-    for (unsigned int i = 0; i < moduleIds.size(); i++) {
-        if (moduleIds[i] == moduleName) {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 string SwordFacade::replaceSpacesInStrongs(const string& text)
@@ -734,7 +371,7 @@ vector<Verse> SwordFacade::getText(string moduleName, string key, QueryLimit que
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
-        bool hasStrongs = this->moduleHasGlobalOption(module, "Strongs");
+        bool hasStrongs = this->_moduleHelper.moduleHasGlobalOption(module, "Strongs");
 
         module->setKey(key.c_str());
 
@@ -978,7 +615,7 @@ vector<Verse> SwordFacade::getModuleSearchResults(string moduleName,
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
-        bool hasStrongs = this->moduleHasGlobalOption(module, "Strongs");
+        bool hasStrongs = this->_moduleHelper.moduleHasGlobalOption(module, "Strongs");
 
         if (searchType == SearchType::strongsNumber) {
             if (!hasStrongs) {
@@ -1048,7 +685,7 @@ StrongsEntry* SwordFacade::getStrongsEntry(string key)
 
 int SwordFacade::installModule(string moduleName)
 {
-    string repoName = this->getModuleRepo(moduleName);
+    string repoName = this->_repoInterface->getModuleRepo(moduleName);
 
     if (repoName == "") {
         cerr << "Could not find repository for module " << moduleName << endl;
@@ -1060,7 +697,7 @@ int SwordFacade::installModule(string moduleName)
 
 int SwordFacade::installModule(string repoName, string moduleName)
 {
-    InstallSource* remoteSource = this->getRemoteSource(repoName);
+    InstallSource* remoteSource = this->_repoInterface->getRemoteSource(repoName);
     if (remoteSource == 0) {
         cerr << "Couldn't find remote source " << repoName << endl;
         return -1;
@@ -1073,7 +710,7 @@ int SwordFacade::installModule(string repoName, string moduleName)
         cerr << "Did not find module " << moduleName << " in repository " << repoName << endl;
         return -1;
     } else {
-        int error = this->_installMgr->installModule(this->_mgrForInstall, 0, moduleName.c_str(), remoteSource);
+        int error = this->_repoInterface->getInstallMgr()->installModule(this->_mgrForInstall, 0, moduleName.c_str(), remoteSource);
         this->resetMgr();
 
         if (error) {
@@ -1088,7 +725,7 @@ int SwordFacade::installModule(string repoName, string moduleName)
 
 int SwordFacade::uninstallModule(string moduleName)
 {
-    int error = this->_installMgr->removeModule(this->_mgrForInstall, moduleName.c_str());
+    int error = this->_repoInterface->getInstallMgr()->removeModule(this->_mgrForInstall, moduleName.c_str());
     this->resetMgr();
 
     if (error) {
@@ -1135,7 +772,7 @@ int SwordFacade::saveModuleUnlockKey(string moduleName, string key)
                 // Reset the mgr to reload the modules
                 this->resetMgr();
                 // Without this step we cannot load a remote module afterwards ...
-                this->refreshRemoteSources(true);
+                this->_repoInterface->refreshRemoteSources(true);
             } else {
                 // Section CipherKey not found!
                 returnCode = -2;
@@ -1161,23 +798,6 @@ string SwordFacade::getSwordTranslation(string configPath, string originalString
     
     string translation = string(this->_localeMgr->translate(originalString.c_str(), localeCode.c_str()));
     return translation;
-}
-
-bool SwordFacade::moduleHasGlobalOption(SWModule* module, string globalOption)
-{
-    bool hasGlobalOption = false;
-    ConfigEntMap::const_iterator it = module->getConfig().lower_bound("GlobalOptionFilter");
-    ConfigEntMap::const_iterator end = module->getConfig().upper_bound("GlobalOptionFilter");
-
-    for(; it !=end; ++it) {
-        string currentOption = string(it->second.c_str());
-        if (currentOption.find(globalOption) != string::npos) {
-            hasGlobalOption = true;
-            break;
-        }
-    }
-
-    return hasGlobalOption;
 }
 
 string SwordFacade::getSwordVersion()

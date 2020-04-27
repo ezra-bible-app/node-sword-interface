@@ -23,6 +23,7 @@
 #include <iostream>
 
 #include "strongs_entry.hpp"
+#include "module_helper.hpp"
 
 using namespace std;
 
@@ -50,6 +51,7 @@ private:
     Napi::String getConfigEntry(sword::SWModule* swModule, std::string key, const Napi::Env& env);
 
     SwordFacade& _swordFacade;
+    ModuleHelper _moduleHelper;
 };
 
 #endif // _NAPI_SWORD_HELPER
