@@ -32,8 +32,6 @@
 #include "file_system_helper.hpp"
 #include "strongs_entry.hpp"
 
-static std::mutex progressMutex;
-
 namespace sword {
     class InstallMgr;
     class InstallSource;

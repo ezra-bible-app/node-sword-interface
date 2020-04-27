@@ -72,10 +72,8 @@ public:
             jsProgressFeedback["totalPercent"] = progressFeedback->totalPercent;
             jsProgressFeedback["filePercent"] = progressFeedback->filePercent;
             jsProgressFeedback["message"] = progressFeedback->message;
-
-            progressMutex.lock();
+            
             this->_jsProgressCallback.Call({ jsProgressFeedback });
-            progressMutex.unlock();
         }
     }
 

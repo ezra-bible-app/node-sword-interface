@@ -1074,12 +1074,7 @@ int SwordFacade::installModule(string repoName, string moduleName)
         return -1;
     } else {
         int error = this->_installMgr->installModule(this->_mgrForInstall, 0, moduleName.c_str(), remoteSource);
-
-        progressMutex.lock();
-
         this->resetMgr();
-
-        progressMutex.unlock();
 
         if (error) {
             cerr << "Error installing module: " << moduleName << " (write permissions?)" << endl;
