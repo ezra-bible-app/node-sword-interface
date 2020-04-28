@@ -33,23 +33,24 @@
         "cflags!": [ "-fno-exceptions" ],
         "cflags_cc!": [ "-fno-exceptions -std=c++11 -pthread" ],
         "sources": [
-            "src/api_lock.cpp",
-            "src/file_system_helper.cpp",
-            "src/module_helper.cpp",
-            "src/string_helper.cpp",
-            "src/strongs_entry.cpp",
-            "src/sword_facade.cpp",
-            "src/repository_interface.cpp",
-            "src/sword_status_reporter.cpp",
-            "src/install_module_worker.cpp",
-            "src/module_search_worker.cpp",
-            "src/napi_sword_helper.cpp",
-            "src/node_sword_interface.cpp",
-            "src/binding.cpp"
+            "src/sword_backend/file_system_helper.cpp",
+            "src/sword_backend/module_helper.cpp",
+            "src/sword_backend/string_helper.cpp",
+            "src/sword_backend/strongs_entry.cpp",
+            "src/sword_backend/sword_facade.cpp",
+            "src/sword_backend/repository_interface.cpp",
+            "src/sword_backend/sword_status_reporter.cpp",
+            "src/napi_module/install_module_worker.cpp",
+            "src/napi_module/module_search_worker.cpp",
+            "src/napi_module/napi_sword_helper.cpp",
+            "src/napi_module/node_sword_interface.cpp",
+            "src/napi_module/api_lock.cpp",            
+            "src/napi_module/binding.cpp"
         ],
         "conditions":[
             ["OS=='linux'", {
                 'include_dirs': [
+                    "<(module_root_dir)/src/sword_backend",
                     "<!@(node -p \"require('node-addon-api').include\")",
                     "<!@(./scripts/get_sword_include_path.sh)"
                 ],
@@ -65,6 +66,7 @@
             }],
             ["OS=='mac'", {
                 'include_dirs': [
+                    "<(module_root_dir)/src/sword_backend",
                     "<!@(node -p \"require('node-addon-api').include\")",
                     "<!@(./scripts/get_sword_include_path.sh)"
                 ],
@@ -83,6 +85,7 @@
             }],
             ["OS=='win'", {
                 'include_dirs': [
+                    "<(module_root_dir)/src/sword_backend",
                     "<!@(node -p \"require('node-addon-api').include\")",
                     "<(module_root_dir)/build/sword-build-win32/include"
                 ],
