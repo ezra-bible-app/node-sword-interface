@@ -22,6 +22,7 @@
 #include "sword_facade.hpp"
 #include "string_helper.hpp"
 #include "module_helper.hpp"
+#include "module_store.hpp"
 #include "common_defs.hpp"
 
 using namespace std;
@@ -62,7 +63,7 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     object["name"] = swModule->getName();
     object["description"] = swModule->getDescription();
     object["language"] = swModule->getLanguage();
-    object["location"] = this->_swordFacade.getModuleDataPath(swModule);
+    object["location"] = this->_moduleStore.getModuleDataPath(swModule);
   
     object["abbreviation"] = this->getConfigEntry(swModule, "Abbreviation", env);
     object["about"] = this->getConfigEntry(swModule, "About", env);
@@ -93,7 +94,7 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
         object["unlockInfo"] = "";
     }
 
-    object["inUserDir"] = Napi::Boolean::New(env, this->_swordFacade.isModuleInUserDir(swModule));
+    object["inUserDir"] = Napi::Boolean::New(env, this->_moduleStore.isModuleInUserDir(swModule));
     object["hasStrongs"] = Napi::Boolean::New(env, this->_moduleHelper.moduleHasGlobalOption(swModule, "Strongs"));
     object["hasFootnotes"] = Napi::Boolean::New(env, this->_moduleHelper.moduleHasGlobalOption(swModule, "Footnotes"));
     object["hasHeadings"] = Napi::Boolean::New(env, this->_moduleHelper.moduleHasGlobalOption(swModule, "Headings"));

@@ -39,10 +39,10 @@ public:
     
     bool isModuleInUserDir(std::string moduleName);
     bool isModuleInUserDir(sword::SWModule* module);
+    std::string getModuleDataPath(sword::SWModule* module);
 
 private:
     void resetMgr();
-    std::string getModuleDataPath(sword::SWModule* module);
 
     sword::SWMgr* _mgr = 0;
     FileSystemHelper _fileSystemHelper;

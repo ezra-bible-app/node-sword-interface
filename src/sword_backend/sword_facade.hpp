@@ -56,19 +56,6 @@ public:
     SwordFacade(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper);
     virtual ~SwordFacade();
 
-    std::vector<sword::SWModule*> getAllLocalModules();
-    sword::SWModule* getLocalModule(std::string moduleName);
-    bool isModuleInUserDir(std::string moduleName);
-    bool isModuleInUserDir(sword::SWModule* module);
-
-    std::vector<Verse> getBibleText(std::string moduleName);
-    std::vector<Verse> getBookText(std::string moduleName, std::string bookCode, int startVerseNumber=-1, int verseCount=-1);
-    std::vector<Verse> getChapterText(std::string moduleName, std::string bookCode, int chapter);
-    std::string getBookIntroduction(std::string moduleName, std::string bookCode);
-
-    std::vector<std::string> getBookList(std::string moduleName);
-    std::map<std::string, std::vector<int>> getBibleChapterVerseCounts(std::string moduleName);
-
     StrongsEntry* getStrongsEntry(std::string key);
 
     int installModule(std::string moduleName);
@@ -81,33 +68,14 @@ public:
     std::string getSwordTranslation(std::string configPath, std::string originalString, std::string localeCode);
     std::string getSwordVersion();
 
-    void enableMarkup() { this->_markupEnabled = true; }
-    void disableMarkup() { this->_markupEnabled = false; }
-
-    std::string getModuleDataPath(sword::SWModule* module);
-
     SwordStatusReporter& getStatusReporter() {
         return this->_statusReporter;
     }
 
 private:
-    int getRepoCount();
-    std::vector<Verse> getText(std::string moduleName,
-                               std::string key,
-                               QueryLimit queryLimit=QueryLimit::none,
-                               int startVerseNr=-1,
-                               int verseCount=-1);
-
     void resetMgr();
     void initStrongs();
-
-    std::string getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup=false);
-    std::string getCurrentChapterHeading(sword::SWModule* module);
-    std::string getFilteredText(const std::string& text, bool hasStrongs=false);
-    std::string replaceSpacesInStrongs(const std::string& text);
-    bool moduleHasStrongsZeroPrefixes(sword::SWModule* module);
-
-    std::map<std::string, int> getAbsoluteVerseNumberMap(sword::SWModule* module);
+    sword::SWModule* getLocalSwordModule(std::string moduleName);
 
     RepositoryInterface* _repoInterface = 0;
 

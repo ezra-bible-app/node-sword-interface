@@ -92,7 +92,7 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     this->_moduleStore = new ModuleStore();
     this->_moduleHelper = new ModuleHelper(*(this->_moduleStore));
     this->_repoInterface = new RepositoryInterface(this->_swordStatusReporter, *(this->_moduleHelper));
-    this->_napiSwordHelper = new NapiSwordHelper(*(this->_swordFacade), *(this->_moduleHelper));
+    this->_napiSwordHelper = new NapiSwordHelper(*(this->_swordFacade), *(this->_moduleHelper), *(this->_moduleStore));
     this->_textProcessor = new TextProcessor(*(this->_moduleStore), *(this->_moduleHelper));
     this->_swordFacade = new SwordFacade(this->_swordStatusReporter, *(this->_moduleHelper));
     this->_moduleSearch = new ModuleSearch(*(this->_moduleStore), *(this->_moduleHelper), *(this->_textProcessor));
@@ -502,6 +502,7 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
     ModuleSearchWorker* worker = new ModuleSearchWorker(*(this->_swordFacade),
                                                         *(this->_moduleHelper),
                                                         *(this->_moduleSearch),
+                                                        *(this->_moduleStore),
                                                         *(this->_repoInterface),
                                                         jsProgressCallback,
                                                         callback,

@@ -21,12 +21,14 @@
 
 #include "worker.hpp"
 #include "module_search.hpp"
+#include "module_store.hpp"
 
 class ModuleSearchWorker : public ProgressWorker {
 public:
     ModuleSearchWorker(SwordFacade& facade,
                        ModuleHelper& moduleHelper,
                        ModuleSearch& moduleSearch,
+                       ModuleStore& moduleStore,
                        RepositoryInterface & repoInterface,
                        const Napi::Function& jsProgressCallback,
                        const Napi::Function& callback,
@@ -42,7 +44,7 @@ public:
         _searchType(searchType),
         _isCaseSensitive(isCaseSensitive) {
 
-        this->_napiSwordHelper = new NapiSwordHelper(facade, moduleHelper);
+        this->_napiSwordHelper = new NapiSwordHelper(facade, moduleHelper, moduleStore);
     }
 
     void searchProgressCB(char percent, void* userData);

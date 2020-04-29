@@ -23,8 +23,6 @@
 #include <iostream>
 
 #include "strongs_entry.hpp"
-#include "module_helper.hpp"
-#include "module_store.hpp"
 #include "common_defs.hpp"
 
 using namespace std;
@@ -34,11 +32,13 @@ namespace sword {
 }
 
 class SwordFacade;
+class ModuleHelper;
+class ModuleStore;
 
 class NapiSwordHelper {
 public:
-    NapiSwordHelper(SwordFacade& swordFacade, ModuleHelper& moduleHelper)
-        : _swordFacade(swordFacade), _moduleHelper(moduleHelper) {}
+    NapiSwordHelper(SwordFacade& swordFacade, ModuleHelper& moduleHelper, ModuleStore& moduleStore)
+        : _swordFacade(swordFacade), _moduleHelper(moduleHelper), _moduleStore(moduleStore) {}
 
     virtual ~NapiSwordHelper() {}
 
@@ -53,6 +53,7 @@ private:
 
     SwordFacade& _swordFacade;
     ModuleHelper& _moduleHelper;
+    ModuleStore& _moduleStore;
 };
 
 #endif // _NAPI_SWORD_HELPER
