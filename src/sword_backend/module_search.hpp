@@ -22,6 +22,8 @@
 #include <functional>
 #include <map>
 
+#include "verse.hpp"
+
 void setModuleSearchProgressCB(std::function<void(char, void*)>* moduleSearchProgressCB);
 void internalModuleSearchProgressCB(char percent, void* userData);
 
@@ -34,8 +36,6 @@ enum class SearchType {
     multiWord = -2,
     strongsNumber = -3
 };
-
-class Verse;
 
 class ModuleSearch
 {

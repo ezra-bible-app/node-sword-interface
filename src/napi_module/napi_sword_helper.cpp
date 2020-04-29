@@ -22,6 +22,7 @@
 #include "sword_facade.hpp"
 #include "string_helper.hpp"
 #include "module_helper.hpp"
+#include "verse.hpp"
 
 using namespace std;
 using namespace sword;

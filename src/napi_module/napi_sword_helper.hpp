@@ -24,6 +24,7 @@
 
 #include "strongs_entry.hpp"
 #include "module_helper.hpp"
+#include "verse.hpp"
 
 using namespace std;
 
@@ -32,7 +33,6 @@ namespace sword {
 }
 
 class SwordFacade;
-class Verse;
 
 class NapiSwordHelper {
 public:

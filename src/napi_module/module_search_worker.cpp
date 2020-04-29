@@ -20,6 +20,7 @@
 #include "worker.hpp"
 #include "module_search_worker.hpp"
 #include "sword_facade.hpp"
+#include "verse.hpp"
 
 static std::mutex searchMutex;
 
