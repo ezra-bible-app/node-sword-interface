@@ -41,10 +41,11 @@
 // Own includes
 #include "sword_facade.hpp"
 #include "sword_status_reporter.hpp"
+#include "module_helper.hpp"
 #include "string_helper.hpp"
 #include "strongs_entry.hpp"
 #include "percentage_calc.hpp"
-#include "verse.hpp"
+#include "common_defs.hpp"
 
 /* REGEX definitions from regex.h */
 /* POSIX `cflags' bits (i.e., information for `regcomp').  */
@@ -69,8 +70,8 @@ using namespace sword;
 char * sword::SWBuf::nullStr = (char *)"";
 #endif
 
-SwordFacade::SwordFacade(SwordStatusReporter& statusReporter)
-    : _statusReporter(statusReporter)
+SwordFacade::SwordFacade(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper)
+    : _statusReporter(statusReporter), _moduleHelper(moduleHelper)
 {
     //SWLog::getSystemLog()->setLogLevel(SWLog::LOG_DEBUG);
     this->_fileSystemHelper.createBasicDirectories();

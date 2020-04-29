@@ -35,9 +35,14 @@ public:
     virtual ~ModuleStore();
 
     sword::SWModule* getLocalModule(std::string moduleName);
+    std::vector<sword::SWModule*> getAllLocalModules();
+    
+    bool isModuleInUserDir(std::string moduleName);
+    bool isModuleInUserDir(sword::SWModule* module);
 
 private:
     void resetMgr();
+    std::string getModuleDataPath(sword::SWModule* module);
 
     sword::SWMgr* _mgr = 0;
     FileSystemHelper _fileSystemHelper;

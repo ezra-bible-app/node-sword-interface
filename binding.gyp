@@ -35,11 +35,13 @@
         "sources": [
             "src/sword_backend/file_system_helper.cpp",
             "src/sword_backend/module_helper.cpp",
+            "src/sword_backend/module_store.cpp",
             "src/sword_backend/string_helper.cpp",
             "src/sword_backend/strongs_entry.cpp",
             "src/sword_backend/sword_facade.cpp",
             "src/sword_backend/repository_interface.cpp",
             "src/sword_backend/sword_status_reporter.cpp",
+            "src/sword_backend/text_processor.cpp",
             "src/napi_module/install_module_worker.cpp",
             "src/napi_module/module_search_worker.cpp",
             "src/napi_module/napi_sword_helper.cpp",

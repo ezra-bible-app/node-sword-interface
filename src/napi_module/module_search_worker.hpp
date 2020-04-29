@@ -24,6 +24,7 @@
 class ModuleSearchWorker : public ProgressWorker {
 public:
     ModuleSearchWorker(SwordFacade& facade,
+                       ModuleHelper& moduleHelper,
                        RepositoryInterface & repoInterface,
                        const Napi::Function& jsProgressCallback,
                        const Napi::Function& callback,
@@ -38,7 +39,7 @@ public:
         _searchType(searchType),
         _isCaseSensitive(isCaseSensitive) {
 
-        this->_napiSwordHelper = new NapiSwordHelper(facade);
+        this->_napiSwordHelper = new NapiSwordHelper(facade, moduleHelper);
     }
 
     void searchProgressCB(char percent, void* userData);

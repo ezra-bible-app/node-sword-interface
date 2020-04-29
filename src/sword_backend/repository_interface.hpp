@@ -33,10 +33,11 @@ namespace sword {
 };
 
 class SwordStatusReporter;
+class ModuleHelper;
 
 class RepositoryInterface {
 public:
-    RepositoryInterface(SwordStatusReporter& statusReporter);
+    RepositoryInterface(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper);
     virtual ~RepositoryInterface(){}
 
     int refreshRepositoryConfig();
@@ -75,7 +76,7 @@ private:
     sword::InstallMgr* _installMgr = 0;
     SwordStatusReporter& _statusReporter;
     FileSystemHelper _fileSystemHelper;
-    ModuleHelper _moduleHelper;
+    ModuleHelper& _moduleHelper;
 };
 
 #endif // _REPOSITORY_INTERFACE

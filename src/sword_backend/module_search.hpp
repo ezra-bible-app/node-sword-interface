@@ -22,7 +22,7 @@
 #include <functional>
 #include <map>
 
-#include "verse.hpp"
+#include "common_defs.hpp"
 
 void setModuleSearchProgressCB(std::function<void(char, void*)>* moduleSearchProgressCB);
 void internalModuleSearchProgressCB(char percent, void* userData);

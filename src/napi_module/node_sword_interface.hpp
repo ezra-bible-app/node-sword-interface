@@ -24,7 +24,10 @@
 
 class SwordFacade;
 class RepositoryInterface;
+class ModuleStore;
+class TextProcessor;
 class NapiSwordHelper;
+class ModuleHelper;
 
 enum class ParamType {
     string,
@@ -80,9 +83,12 @@ private:
 
     int validateParams(const Napi::CallbackInfo& info, std::vector<ParamType> paramSpec);
 
+    ModuleHelper* _moduleHelper;
     NapiSwordHelper* _napiSwordHelper;
     SwordFacade* _swordFacade;
     RepositoryInterface* _repoInterface;
+    ModuleStore* _moduleStore;
+    TextProcessor* _textProcessor;
     SwordStatusReporter _swordStatusReporter;
 };
 

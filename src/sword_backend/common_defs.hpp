@@ -16,10 +16,16 @@
    along with node-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
-#ifndef _VERSE
-#define _VERSE
+#ifndef _COMMON_DEFS
+#define _COMMON_DEFS
 
 #include <string>
+
+enum class QueryLimit {
+    none,
+    chapter,
+    book
+};
 
 class Verse
 {
@@ -32,4 +38,4 @@ public:
     std::string content;
 };
 
-#endif // _VERSE
+#endif // _COMMON_DEFS

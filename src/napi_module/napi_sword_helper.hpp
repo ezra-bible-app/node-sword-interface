@@ -24,7 +24,8 @@
 
 #include "strongs_entry.hpp"
 #include "module_helper.hpp"
-#include "verse.hpp"
+#include "module_store.hpp"
+#include "common_defs.hpp"
 
 using namespace std;
 
@@ -36,8 +37,8 @@ class SwordFacade;
 
 class NapiSwordHelper {
 public:
-    NapiSwordHelper(SwordFacade& swordFacade)
-        : _swordFacade(swordFacade) {}
+    NapiSwordHelper(SwordFacade& swordFacade, ModuleHelper& moduleHelper)
+        : _swordFacade(swordFacade), _moduleHelper(moduleHelper) {}
 
     virtual ~NapiSwordHelper() {}
 
@@ -51,7 +52,7 @@ private:
     Napi::String getConfigEntry(sword::SWModule* swModule, std::string key, const Napi::Env& env);
 
     SwordFacade& _swordFacade;
-    ModuleHelper _moduleHelper;
+    ModuleHelper& _moduleHelper;
 };
 
 #endif // _NAPI_SWORD_HELPER

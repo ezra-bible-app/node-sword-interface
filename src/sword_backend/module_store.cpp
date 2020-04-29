@@ -16,6 +16,11 @@
    along with node-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
+// Std includes
+#include <regex>
+#include <string>
+
+// Sword includes
 #include <swmgr.h>
 #include <swmodule.h>
 
@@ -53,4 +58,62 @@ void ModuleStore::resetMgr()
 SWModule* ModuleStore::getLocalModule(string moduleName)
 {
     return this->_mgr->getModule(moduleName.c_str());
+}
+
+vector<SWModule*> ModuleStore::getAllLocalModules()
+{
+    vector<SWModule*> allLocalModules;
+
+    for (ModMap::iterator modIterator = this->_mgr->Modules.begin();
+         modIterator != this->_mgr->Modules.end();
+         modIterator++) {
+        
+        SWModule* currentModule = (SWModule*)modIterator->second;
+        string moduleType = string(currentModule->getType());
+
+        if (moduleType == string("Biblical Texts")) {
+            allLocalModules.push_back(currentModule);
+        }
+    }
+
+    return allLocalModules;
+}
+
+bool ModuleStore::isModuleInUserDir(sword::SWModule* module)
+{
+    if (module == 0) {
+        cerr << "isModuleInUserDir: module is zero pointer!" << endl;
+        return false;
+    } else {
+        string modulePath = this->getModuleDataPath(module);
+
+        if (modulePath == "") {
+            return false;
+        } else {
+            string userDir = this->_fileSystemHelper.getUserSwordDir();
+            return (modulePath.find(userDir) != string::npos);
+        }
+    }
+}
+
+bool ModuleStore::isModuleInUserDir(string moduleName)
+{
+    SWModule* module = this->getLocalModule(moduleName);
+    return this->isModuleInUserDir(module);
+}
+
+string ModuleStore::getModuleDataPath(sword::SWModule* module)
+{
+    if (module == 0) {
+        return "";
+    }
+
+    string dataPath = string(module->getConfigEntry("AbsoluteDataPath"));
+
+    #if _WIN32
+        static regex slash("/");
+        dataPath = regex_replace(dataPath, slash, "\\");
+    #endif
+
+    return dataPath;
 }

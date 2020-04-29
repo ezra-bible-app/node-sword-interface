@@ -31,6 +31,7 @@
 #include "module_helper.hpp"
 #include "strongs_entry.hpp"
 #include "repository_interface.hpp"
+#include "common_defs.hpp"
 
 namespace sword {
     class InstallMgr;
@@ -48,13 +49,8 @@ enum class SearchType {
     strongsNumber = -3
 };
 
-enum class QueryLimit {
-    none,
-    chapter,
-    book
-};
-
 class SwordStatusReporter;
+class ModuleHelper;
 class Verse;
 
 void setModuleSearchProgressCB(std::function<void(char, void*)>* moduleSearchProgressCB);
@@ -63,7 +59,7 @@ void internalModuleSearchProgressCB(char percent, void* userData);
 class SwordFacade
 {
 public:
-    SwordFacade(SwordStatusReporter& statusReporter);
+    SwordFacade(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper);
     virtual ~SwordFacade();
 
     std::vector<sword::SWModule*> getAllLocalModules();
@@ -132,7 +128,7 @@ private:
 
     SwordStatusReporter& _statusReporter;
     FileSystemHelper _fileSystemHelper;
-    ModuleHelper _moduleHelper;
+    ModuleHelper& _moduleHelper;
 
     sword::SWModule* _strongsHebrew = 0;
     sword::SWModule* _strongsGreek = 0;

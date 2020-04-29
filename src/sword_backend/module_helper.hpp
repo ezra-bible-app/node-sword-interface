@@ -20,6 +20,9 @@
 #define _MODULE_HELPER
 
 #include <string>
+#include <map>
+
+#include "module_store.hpp"
 
 namespace sword {
     class SWModule;
@@ -27,10 +30,15 @@ namespace sword {
 
 class ModuleHelper {
 public:
-    ModuleHelper(){};
-    virtual ~ModuleHelper(){};
+    ModuleHelper(ModuleStore& moduleStore) : _moduleStore(moduleStore) {}
+    virtual ~ModuleHelper(){}
 
     bool moduleHasGlobalOption(sword::SWModule* module, std::string globalOption);
+    std::vector<std::string> getBookList(std::string moduleName);
+    std::map<std::string, std::vector<int>> getBibleChapterVerseCounts(std::string moduleName);
+
+private:
+    ModuleStore& _moduleStore;
 };
 
 #endif // _MODULE_HELPER

@@ -31,6 +31,9 @@
 #include "module_search_worker.hpp"
 #include "sword_facade.hpp"
 #include "sword_status_reporter.hpp"
+#include "module_store.hpp"
+#include "module_helper.hpp"
+#include "text_processor.hpp"
 
 using namespace std;
 using namespace sword;
@@ -85,9 +88,12 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    this->_swordFacade = new SwordFacade(this->_swordStatusReporter);
-    this->_repoInterface = new RepositoryInterface(this->_swordStatusReporter);
-    this->_napiSwordHelper = new NapiSwordHelper(*(this->_swordFacade));
+    this->_moduleStore = new ModuleStore();
+    this->_moduleHelper = new ModuleHelper(*(this->_moduleStore));
+    this->_repoInterface = new RepositoryInterface(this->_swordStatusReporter, *(this->_moduleHelper));
+    this->_napiSwordHelper = new NapiSwordHelper(*(this->_swordFacade), *(this->_moduleHelper));
+    this->_textProcessor = new TextProcessor(*(this->_moduleStore), *(this->_moduleHelper));
+    this->_swordFacade = new SwordFacade(this->_swordStatusReporter, *(this->_moduleHelper));
 }
 
 #define THROW_JS_EXCEPTION(exceptionString) { \
@@ -214,7 +220,7 @@ Napi::Value NodeSwordInterface::isModuleInUserDir(const Napi::CallbackInfo& info
     lockApi();
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
-    bool moduleInUserDir = this->_swordFacade->isModuleInUserDir(moduleName);
+    bool moduleInUserDir = this->_moduleStore->isModuleInUserDir(moduleName);
     unlockApi();
     return Napi::Boolean::New(info.Env(), moduleInUserDir);
 }
@@ -234,7 +240,7 @@ Napi::Value NodeSwordInterface::getAllLocalModules(const Napi::CallbackInfo& inf
     lockApi();
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
-    vector<SWModule*> modules = this->_swordFacade->getAllLocalModules();
+    vector<SWModule*> modules = this->_moduleStore->getAllLocalModules();
     Napi::Array moduleArray = Napi::Array::New(env, modules.size());
 
     for (unsigned int i = 0; i < modules.size(); i++) {
@@ -349,7 +355,7 @@ Napi::Value NodeSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Object napiObject = Napi::Object::New(env);    
-    SWModule* swordModule = this->_swordFacade->getLocalModule(moduleName);
+    SWModule* swordModule = this->_moduleStore->getLocalModule(moduleName);
 
     if (swordModule == 0) {
         string errorMessage = "getLocalModule returned 0 for '" + string(moduleName) + "'";
@@ -367,7 +373,7 @@ Napi::Value NodeSwordInterface::enableMarkup(const Napi::CallbackInfo& info)
     lockApi();
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
-    this->_swordFacade->enableMarkup();
+    this->_textProcessor->enableMarkup();
     unlockApi();
     return info.Env().Undefined();
 }
@@ -380,7 +386,7 @@ Napi::Value NodeSwordInterface::getChapterText(const Napi::CallbackInfo& info)
     Napi::String bookCode = info[1].As<Napi::String>();
     Napi::Number chapterNumber = info[2].As<Napi::Number>();
 
-    vector<Verse> chapterText = this->_swordFacade->getChapterText(moduleName, bookCode, chapterNumber.Int32Value());
+    vector<Verse> chapterText = this->_textProcessor->getChapterText(moduleName, bookCode, chapterNumber.Int32Value());
     Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), string(moduleName), chapterText);
     unlockApi();
     return versesArray;
@@ -395,7 +401,7 @@ Napi::Value NodeSwordInterface::getBookText(const Napi::CallbackInfo& info)
     Napi::Number startVerseNr = info[2].As<Napi::Number>();
     Napi::Number verseCount = info[3].As<Napi::Number>();
 
-    vector<Verse> bookText = this->_swordFacade->getBookText(moduleName, bookCode, startVerseNr.Int32Value(), verseCount.Int32Value());
+    vector<Verse> bookText = this->_textProcessor->getBookText(moduleName, bookCode, startVerseNr.Int32Value(), verseCount.Int32Value());
     Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), string(moduleName), bookText);
     unlockApi();
     return versesArray;
@@ -407,7 +413,7 @@ Napi::Value NodeSwordInterface::getBibleText(const Napi::CallbackInfo& info)
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
 
-    vector<Verse> bibleText = this->_swordFacade->getBibleText(moduleName);
+    vector<Verse> bibleText = this->_textProcessor->getBibleText(moduleName);
     Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), string(moduleName), bibleText);
     unlockApi();
     return versesArray;
@@ -419,7 +425,7 @@ Napi::Value NodeSwordInterface::getBookList(const Napi::CallbackInfo& info)
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
 
-    vector<string> bookList = this->_swordFacade->getBookList(moduleName);
+    vector<string> bookList = this->_moduleHelper->getBookList(moduleName);
     Napi::Array bookArray = this->_napiSwordHelper->getNapiArrayFromStringVector(info.Env(), bookList);
     unlockApi();
     return bookArray;
@@ -432,7 +438,7 @@ Napi::Value NodeSwordInterface::getBibleChapterVerseCounts(const Napi::CallbackI
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
 
-    map<string, vector<int>> chapterVerseCounts = this->_swordFacade->getBibleChapterVerseCounts(moduleName);
+    map<string, vector<int>> chapterVerseCounts = this->_moduleHelper->getBibleChapterVerseCounts(moduleName);
     Napi::Object jsChapterVerseCounts = Napi::Object::New(env);
     
     for (const auto &book : chapterVerseCounts) {
@@ -457,7 +463,7 @@ Napi::Value NodeSwordInterface::getBookIntroduction(const Napi::CallbackInfo& in
     INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String bookCode = info[1].As<Napi::String>();
-    Napi::String introText = Napi::String::New(env, this->_swordFacade->getBookIntroduction(moduleName, bookCode));
+    Napi::String introText = Napi::String::New(env, this->_textProcessor->getBookIntroduction(moduleName, bookCode));
     unlockApi();
     return introText;
 }
@@ -492,6 +498,7 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
     }
 
     ModuleSearchWorker* worker = new ModuleSearchWorker(*(this->_swordFacade),
+                                                        *(this->_moduleHelper),
                                                         *(this->_repoInterface),
                                                         jsProgressCallback,
                                                         callback,
@@ -594,7 +601,7 @@ Napi::Value NodeSwordInterface::isModuleReadable(const Napi::CallbackInfo& info)
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
 
     Napi::String moduleName = info[0].As<Napi::String>();
-    SWModule* swordModule = this->_swordFacade->getLocalModule(moduleName);
+    SWModule* swordModule = this->_moduleStore->getLocalModule(moduleName);
 
     if (swordModule == 0) {
         string errorMessage = "getLocalModule returned 0 for '" + string(moduleName) + "'";

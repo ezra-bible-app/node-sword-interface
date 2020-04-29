@@ -28,6 +28,7 @@
 #include "sword_status_reporter.hpp"
 #include "percentage_calc.hpp"
 #include "string_helper.hpp"
+#include "module_helper.hpp"
 
 // Sword includes
 #include <installmgr.h>
@@ -38,7 +39,8 @@
 using namespace std;
 using namespace sword;
 
-RepositoryInterface::RepositoryInterface(SwordStatusReporter& statusReporter) : _statusReporter(statusReporter)
+RepositoryInterface::RepositoryInterface(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper) 
+    : _statusReporter(statusReporter), _moduleHelper(moduleHelper)
 {
     this->resetMgr();
 }
