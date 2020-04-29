@@ -44,6 +44,7 @@
 #include "string_helper.hpp"
 #include "strongs_entry.hpp"
 #include "percentage_calc.hpp"
+#include "verse.hpp"
 
 /* REGEX definitions from regex.h */
 /* POSIX `cflags' bits (i.e., information for `regcomp').  */

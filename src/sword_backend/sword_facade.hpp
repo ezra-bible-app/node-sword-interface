@@ -54,18 +54,8 @@ enum class QueryLimit {
     book
 };
 
-class Verse
-{
-public:
-    Verse() {}
-    virtual ~Verse() {}
-
-    std::string reference;
-    int absoluteVerseNumber;
-    std::string content;
-};
-
 class SwordStatusReporter;
+class Verse;
 
 void setModuleSearchProgressCB(std::function<void(char, void*)>* moduleSearchProgressCB);
 void internalModuleSearchProgressCB(char percent, void* userData);
