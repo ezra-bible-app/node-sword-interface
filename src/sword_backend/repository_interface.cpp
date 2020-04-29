@@ -20,8 +20,8 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
-#include <thread>
 #include <regex>
+#include <mutex>
 
 // Own includes
 #include "repository_interface.hpp"

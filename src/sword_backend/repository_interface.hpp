@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <string>
+#include <thread>
 
 #include "file_system_helper.hpp"
 #include "module_helper.hpp"
