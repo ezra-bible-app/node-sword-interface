@@ -28,6 +28,7 @@ class ModuleStore;
 class TextProcessor;
 class NapiSwordHelper;
 class ModuleHelper;
+class ModuleSearch;
 
 enum class ParamType {
     string,
@@ -89,6 +90,7 @@ private:
     RepositoryInterface* _repoInterface;
     ModuleStore* _moduleStore;
     TextProcessor* _textProcessor;
+    ModuleSearch* _moduleSearch;
     SwordStatusReporter _swordStatusReporter;
 };
 

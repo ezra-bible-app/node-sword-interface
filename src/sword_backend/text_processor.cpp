@@ -314,3 +314,14 @@ string TextProcessor::replaceSpacesInStrongs(const string& text)
 
     return filteredText;
 }
+
+
+bool TextProcessor::moduleHasStrongsZeroPrefixes(sword::SWModule* module)
+{
+    string key = "Gen 1:1";
+    module->setKey(key.c_str());
+    this->enableMarkup();
+    string verseText = this->getCurrentVerseText(module, true);
+    
+    return verseText.find("strong:H0") != string::npos;
+}

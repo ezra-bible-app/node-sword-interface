@@ -37,10 +37,15 @@ enum class SearchType {
     strongsNumber = -3
 };
 
+class ModuleStore;
+class ModuleHelper;
+class TextProcessor;
+
 class ModuleSearch
 {
 public:
-    ModuleSearch() {}
+    ModuleSearch(ModuleStore& moduleStore, ModuleHelper& moduleHelper, TextProcessor& textProcessor)
+        : _moduleStore(moduleStore), _moduleHelper(moduleHelper), _textProcessor(textProcessor) {}
     virtual ~ModuleSearch() {}
 
     std::vector<Verse> getModuleSearchResults(std::string moduleName,
@@ -50,6 +55,9 @@ public:
 
 private:
     std::map<std::string, int> getAbsoluteVerseNumberMap(sword::SWModule* module);
+    ModuleStore& _moduleStore;
+    ModuleHelper& _moduleHelper;
+    TextProcessor& _textProcessor;
 };
 
 #endif // _MODULE_SEARCH

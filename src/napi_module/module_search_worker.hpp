@@ -20,11 +20,13 @@
 #define _MODULE_SEARCH_WORKER
 
 #include "worker.hpp"
+#include "module_search.hpp"
 
 class ModuleSearchWorker : public ProgressWorker {
 public:
     ModuleSearchWorker(SwordFacade& facade,
                        ModuleHelper& moduleHelper,
+                       ModuleSearch& moduleSearch,
                        RepositoryInterface & repoInterface,
                        const Napi::Function& jsProgressCallback,
                        const Napi::Function& callback,
@@ -34,6 +36,7 @@ public:
                        bool isCaseSensitive=false)
 
         : ProgressWorker(facade, repoInterface, jsProgressCallback, callback),
+        _moduleSearch(moduleSearch),
         _moduleName(moduleName),
         _searchTerm(searchTerm),
         _searchType(searchType),
@@ -47,6 +50,7 @@ public:
     void OnOK();
 
 private:
+    ModuleSearch& _moduleSearch;
     NapiSwordHelper* _napiSwordHelper;
     std::vector<Verse> _stdSearchResults;
     Napi::Array _napiSearchResults;

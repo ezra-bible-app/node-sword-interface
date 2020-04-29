@@ -43,12 +43,6 @@ namespace sword {
     class LocaleMgr;
 };
 
-enum class SearchType {
-    phrase = -1,
-    multiWord = -2,
-    strongsNumber = -3
-};
-
 class SwordStatusReporter;
 class ModuleHelper;
 class Verse;
@@ -74,11 +68,6 @@ public:
 
     std::vector<std::string> getBookList(std::string moduleName);
     std::map<std::string, std::vector<int>> getBibleChapterVerseCounts(std::string moduleName);
-
-    std::vector<Verse> getModuleSearchResults(std::string moduleName,
-                                              std::string searchTerm,
-                                              SearchType searchType=SearchType::multiWord,
-                                              bool isCaseSensitive=false);
 
     StrongsEntry* getStrongsEntry(std::string key);
 

@@ -34,10 +34,10 @@ void ModuleSearchWorker::Execute(const ExecutionProgress& progress)
                                                                   std::placeholders::_1,
                                                                   std::placeholders::_2);
     setModuleSearchProgressCB(&searchProgressCB);
-    this->_stdSearchResults = this->_facade.getModuleSearchResults(this->_moduleName,
-                                                                   this->_searchTerm,
-                                                                   this->_searchType,
-                                                                   this->_isCaseSensitive);
+    this->_stdSearchResults = this->_moduleSearch.getModuleSearchResults(this->_moduleName,
+                                                                         this->_searchTerm,
+                                                                         this->_searchType,
+                                                                         this->_isCaseSensitive);
     setModuleSearchProgressCB(0);
     searchMutex.unlock();
     unlockApi();

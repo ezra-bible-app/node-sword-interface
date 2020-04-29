@@ -36,7 +36,10 @@ public:
     std::vector<Verse> getBibleText(std::string moduleName);
     std::vector<Verse> getBookText(std::string moduleName, std::string bookCode, int startVerseNumber=-1, int verseCount=-1);
     std::vector<Verse> getChapterText(std::string moduleName, std::string bookCode, int chapter);
+    std::string getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup=false);
     std::string getBookIntroduction(std::string moduleName, std::string bookCode);
+
+    bool moduleHasStrongsZeroPrefixes(sword::SWModule* module);
 
 private:
     std::vector<Verse> getText(std::string moduleName,
@@ -45,7 +48,6 @@ private:
                                int startVerseNr=-1,
                                int verseCount=-1);
 
-    std::string getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup=false);
     std::string getCurrentChapterHeading(sword::SWModule* module);
     std::string getFilteredText(const std::string& text, bool hasStrongs=false);
     std::string replaceSpacesInStrongs(const std::string& text);

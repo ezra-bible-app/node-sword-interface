@@ -34,6 +34,7 @@ public:
     virtual ~ModuleHelper(){}
 
     bool moduleHasGlobalOption(sword::SWModule* module, std::string globalOption);
+
     std::vector<std::string> getBookList(std::string moduleName);
     std::map<std::string, std::vector<int>> getBibleChapterVerseCounts(std::string moduleName);
 
