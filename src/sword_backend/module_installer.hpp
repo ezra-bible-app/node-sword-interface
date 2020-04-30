@@ -16,36 +16,41 @@
    along with node-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
-#ifndef _MODULE_STORE
-#define _MODULE_STORE
+#ifndef _MODULE_INSTALLER
+#define _MODULE_INSTALLER
 
 #include <string>
-
 #include "file_system_helper.hpp"
+#include "string_helper.hpp"
 
 namespace sword {
-    class SWMgr;
     class SWModule;
+    class SWMgr;
 };
 
-class ModuleStore
+class RepositoryInterface;
+class ModuleStore;
+
+class ModuleInstaller
 {
 public:
-    ModuleStore();
-    virtual ~ModuleStore();
+    ModuleInstaller(RepositoryInterface& repoInterface, ModuleStore& moduleStore);
+    virtual ~ModuleInstaller();
 
-    sword::SWModule* getLocalModule(std::string moduleName);
-    std::vector<sword::SWModule*> getAllLocalModules();
-    
-    bool isModuleInUserDir(std::string moduleName);
-    bool isModuleInUserDir(sword::SWModule* module);
-    std::string getModuleDataPath(sword::SWModule* module);
+    int installModule(std::string moduleName);
+    int installModule(std::string repoName, std::string moduleName);
+    int uninstallModule(std::string moduleName);
 
-    void resetMgr();
-    
+    int saveModuleUnlockKey(std::string moduleName, std::string key);
+    bool isModuleReadable(sword::SWModule* module, std::string key="John 1:1");
+
 private:
-    sword::SWMgr* _mgr = 0;
+    RepositoryInterface& _repoInterface;
+    ModuleStore& _moduleStore;
     FileSystemHelper _fileSystemHelper;
+    StringHelper _stringHelper;
+
+    sword::SWMgr* _mgrForInstall = 0;
 };
 
-#endif // _MODULE_STORE
+#endif // _MODULE_INSTALLER
