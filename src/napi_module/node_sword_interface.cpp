@@ -575,7 +575,7 @@ Napi::Value NodeSwordInterface::saveModuleUnlockKey(const Napi::CallbackInfo& in
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String key = info[1].As<Napi::String>();
 
-    int returnCode = this->_swordFacade->saveModuleUnlockKey(moduleName, key);
+    int returnCode = this->_moduleInstaller->saveModuleUnlockKey(moduleName, key);
 
     if (returnCode == 0) {
         unlockApi();
