@@ -325,3 +325,10 @@ bool TextProcessor::moduleHasStrongsZeroPrefixes(sword::SWModule* module)
     
     return verseText.find("strong:H0") != string::npos;
 }
+
+bool TextProcessor::isModuleReadable(sword::SWModule* module, std::string key)
+{
+    module->setKey(key.c_str());
+    string verseText = this->getCurrentVerseText(module, false);
+    return verseText.size() > 0;
+}

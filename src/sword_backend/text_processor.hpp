@@ -21,6 +21,10 @@
 
 #include "common_defs.hpp"
 
+namespace sword {
+    class SWModule;
+};
+
 class ModuleStore;
 class ModuleHelper;
 
@@ -40,6 +44,7 @@ public:
     std::string getBookIntroduction(std::string moduleName, std::string bookCode);
 
     bool moduleHasStrongsZeroPrefixes(sword::SWModule* module);
+    bool isModuleReadable(sword::SWModule* module, std::string key="John 1:1");
 
 private:
     std::vector<Verse> getText(std::string moduleName,

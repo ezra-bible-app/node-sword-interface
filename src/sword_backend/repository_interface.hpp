@@ -25,6 +25,7 @@
 
 #include "file_system_helper.hpp"
 #include "module_helper.hpp"
+#include "sword_status_reporter.hpp"
 
 namespace sword {
     class InstallMgr;
@@ -32,7 +33,6 @@ namespace sword {
     class SWModule;
 };
 
-class SwordStatusReporter;
 class ModuleHelper;
 
 class RepositoryInterface {
@@ -58,6 +58,10 @@ public:
     sword::InstallSource* getRemoteSource(std::string remoteSourceName);
 
     sword::InstallMgr* getInstallMgr();
+    
+    SwordStatusReporter& getStatusReporter() {
+        return this->_statusReporter;
+    }
 
 private:
     void resetMgr();

@@ -68,9 +68,9 @@ void InstallModuleWorker::Execute(const ExecutionProgress& progress)
                                                                                  std::placeholders::_1,
                                                                                  std::placeholders::_2);
 
-    SwordStatusReporter& statusReporter = this->_facade.getStatusReporter();
+    SwordStatusReporter& statusReporter = this->_repoInterface.getStatusReporter();
     statusReporter.setCallBacks(&_swordPreStatusCB, &_swordUpdateCB);
-    int ret = this->_facade.installModule(this->_moduleName);
+    int ret = this->_moduleInstaller.installModule(this->_moduleName);
     statusReporter.resetCallbacks();
     this->_isSuccessful = (ret == 0);
     unlockApi();

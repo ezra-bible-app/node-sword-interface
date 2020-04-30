@@ -21,11 +21,13 @@
 
 #include "worker.hpp"
 #include "percentage_calc.hpp"
+#include "module_installer.hpp"
 
 class InstallModuleWorker : public ProgressWorker {
 public:
     InstallModuleWorker(SwordFacade& facade,
                         RepositoryInterface& repoInterface,
+                        ModuleInstaller& moduleInstaller,
                         const Napi::Function& jsProgressCallback,
                         const Napi::Function& callback,
                         std::string moduleName)
@@ -34,6 +36,7 @@ public:
                          repoInterface,
                          jsProgressCallback,
                          callback),
+                         _moduleInstaller(moduleInstaller),
                          _moduleName(moduleName) {}
 
     void swordPreStatusCB(long totalBytes, long completedBytes, const char *message);
@@ -42,6 +45,7 @@ public:
     void OnOK();
 
 private:
+    ModuleInstaller& _moduleInstaller;
     bool _isSuccessful;
     std::string _moduleName;
     long _completedBytes = 0;

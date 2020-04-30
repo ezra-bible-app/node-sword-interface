@@ -32,6 +32,7 @@
 #include "sword_facade.hpp"
 #include "sword_status_reporter.hpp"
 #include "module_store.hpp"
+#include "module_installer.hpp"
 #include "module_helper.hpp"
 #include "text_processor.hpp"
 #include "module_search.hpp"
@@ -92,6 +93,7 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     this->_moduleStore = new ModuleStore();
     this->_moduleHelper = new ModuleHelper(*(this->_moduleStore));
     this->_repoInterface = new RepositoryInterface(this->_swordStatusReporter, *(this->_moduleHelper));
+    this->_moduleInstaller = new ModuleInstaller(*(this->_repoInterface), *(this->_moduleStore));
     this->_napiSwordHelper = new NapiSwordHelper(*(this->_swordFacade), *(this->_moduleHelper), *(this->_moduleStore));
     this->_textProcessor = new TextProcessor(*(this->_moduleStore), *(this->_moduleHelper));
     this->_swordFacade = new SwordFacade(this->_swordStatusReporter, *(this->_moduleHelper));
@@ -543,7 +545,13 @@ Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Function progressCallback = info[1].As<Napi::Function>();
     Napi::Function callback = info[2].As<Napi::Function>();
-    InstallModuleWorker* worker = new InstallModuleWorker(*(this->_swordFacade), *(this->_repoInterface), progressCallback, callback, moduleName);
+
+    InstallModuleWorker* worker = new InstallModuleWorker(*(this->_swordFacade),
+                                                          *(this->_repoInterface),
+                                                          *(this->_moduleInstaller),
+                                                          progressCallback,
+                                                          callback,
+                                                          moduleName);
     worker->Queue();
     return info.Env().Undefined();
 }
@@ -554,7 +562,7 @@ Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
     INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::function);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Function callback = info[1].As<Napi::Function>();
-    UninstallModuleWorker* worker = new UninstallModuleWorker(*(this->_swordFacade), *(this->_repoInterface), callback, moduleName);
+    UninstallModuleWorker* worker = new UninstallModuleWorker(*(this->_swordFacade), *(this->_repoInterface), *(this->_moduleInstaller), callback, moduleName);
     worker->Queue();
     return info.Env().Undefined();
 }
@@ -611,7 +619,7 @@ Napi::Value NodeSwordInterface::isModuleReadable(const Napi::CallbackInfo& info)
         string errorMessage = "getLocalModule returned 0 for '" + string(moduleName) + "'";
         THROW_JS_EXCEPTION(errorMessage);
     } else {
-        bool moduleReadable = this->_swordFacade->isModuleReadable(swordModule);
+        bool moduleReadable = this->_textProcessor->isModuleReadable(swordModule);
         unlockApi();
         return Napi::Boolean::New(info.Env(), moduleReadable);
     }

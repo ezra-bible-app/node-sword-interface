@@ -25,6 +25,7 @@
 class SwordFacade;
 class RepositoryInterface;
 class ModuleStore;
+class ModuleInstaller;
 class TextProcessor;
 class NapiSwordHelper;
 class ModuleHelper;
@@ -89,6 +90,7 @@ private:
     SwordFacade* _swordFacade;
     RepositoryInterface* _repoInterface;
     ModuleStore* _moduleStore;
+    ModuleInstaller* _moduleInstaller;
     TextProcessor* _textProcessor;
     ModuleSearch* _moduleSearch;
     SwordStatusReporter _swordStatusReporter;

@@ -28,6 +28,7 @@
 #include "repository_interface.hpp"
 #include "sword_status_reporter.hpp"
 #include "common_defs.hpp"
+#include "module_installer.hpp"
 
 using namespace std;
 
@@ -136,11 +137,11 @@ private:
 
 class UninstallModuleWorker : public BaseWorker {
 public:
-    UninstallModuleWorker(SwordFacade& facade, RepositoryInterface& repoInterface, const Napi::Function& callback, std::string moduleName)
-        : BaseWorker(facade, repoInterface, callback), _moduleName(moduleName) {}
+    UninstallModuleWorker(SwordFacade& facade, RepositoryInterface& repoInterface, ModuleInstaller& moduleInstaller, const Napi::Function& callback, std::string moduleName)
+        : BaseWorker(facade, repoInterface, callback), _moduleInstaller(moduleInstaller), _moduleName(moduleName) {}
 
     void Execute(const ExecutionProgress& progress) {
-        int ret = this->_facade.uninstallModule(this->_moduleName);
+        int ret = this->_moduleInstaller.uninstallModule(this->_moduleName);
         this->_isSuccessful = (ret == 0);
         unlockApi();
     }
@@ -152,6 +153,7 @@ public:
     }
 
 private:
+    ModuleInstaller& _moduleInstaller;
     bool _isSuccessful;
     std::string _moduleName;
 };
