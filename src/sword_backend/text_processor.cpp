@@ -41,11 +41,6 @@ TextProcessor::TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelpe
     this->initStrongs();
 }
 
-TextProcessor::~TextProcessor() {
-    if (this->_strongsHebrew != 0) delete this->_strongsHebrew;
-    if (this->_strongsGreek != 0) delete this->_strongsGreek;
-}
-
 void TextProcessor::initStrongs()
 {
     if (this->_strongsHebrew == 0 || this->_strongsGreek == 0) {

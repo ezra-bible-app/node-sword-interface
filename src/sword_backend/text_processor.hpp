@@ -33,7 +33,7 @@ class TextProcessor
 {
 public:
     TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelper);
-    virtual ~TextProcessor();
+    virtual ~TextProcessor() {}
 
     void initStrongs();
 
