@@ -4,6 +4,8 @@ project(node_sword_cli)
 
 set(CMAKE_CXX_FLAGS "-g -rdynamic -std=c++11")
 
+include_directories(${CMAKE_SOURCE_DIR}/src/sword_backend)
+
 include_directories(${CMAKE_SOURCE_DIR}/sword/include)
 
 # Include N-API wrappers
@@ -35,13 +37,15 @@ endif (WIN32)
 
 set(SOURCES
 ${CMAKE_SOURCE_DIR}/src/node_sword_cli.cpp
-${CMAKE_SOURCE_DIR}/src/strongs_entry.cpp
-${CMAKE_SOURCE_DIR}/src/sword_facade.cpp
-${CMAKE_SOURCE_DIR}/src/repository_interface.cpp
-${CMAKE_SOURCE_DIR}/src/sword_status_reporter.cpp
-${CMAKE_SOURCE_DIR}/src/module_helper.cpp
-${CMAKE_SOURCE_DIR}/src/string_helper.cpp
-${CMAKE_SOURCE_DIR}/src/file_system_helper.cpp
+${CMAKE_SOURCE_DIR}/src/sword_backend/strongs_entry.cpp
+${CMAKE_SOURCE_DIR}/src/sword_backend/repository_interface.cpp
+${CMAKE_SOURCE_DIR}/src/sword_backend/sword_status_reporter.cpp
+${CMAKE_SOURCE_DIR}/src/sword_backend/module_helper.cpp
+${CMAKE_SOURCE_DIR}/src/sword_backend/string_helper.cpp
+${CMAKE_SOURCE_DIR}/src/sword_backend/file_system_helper.cpp
+${CMAKE_SOURCE_DIR}/src/sword_backend/module_installer.cpp
+${CMAKE_SOURCE_DIR}/src/sword_backend/text_processor.cpp
+${CMAKE_SOURCE_DIR}/src/sword_backend/module_search.cpp
 )
 
 add_executable(node_sword_cli ${SOURCES})

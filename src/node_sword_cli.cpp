@@ -1,6 +1,10 @@
-#include "sword_facade.hpp"
 #include "repository_interface.hpp"
 #include "sword_status_reporter.hpp"
+#include "module_store.hpp"
+#include "text_processor.hpp"
+#include "module_helper.hpp"
+#include "module_installer.hpp"
+#include "strongs_entry.hpp"
 
 #include <vector>
 #include <iostream>
@@ -57,12 +61,12 @@ void show_modules(RepositoryInterface& repoInterface)
     cout << endl;
 }
 
-void get_local_module(SwordFacade& sword_facade)
+void get_local_module(ModuleStore& module_store)
 {
-    SWModule* m = sword_facade.getLocalModule("GerNeUe");
-    string path = sword_facade.getModuleDataPath(m);
+    SWModule* m = module_store.getLocalModule("GerNeUe");
+    string path = module_store.getModuleDataPath(m);
     cout << "GerNeUe path: " << path << endl;
-    cout << sword_facade.isModuleInUserDir("GerNeUe") << endl;
+    cout << module_store.isModuleInUserDir("GerNeUe") << endl;
 }
 
 void get_repo_module(RepositoryInterface& repoInterface)
@@ -80,46 +84,46 @@ void get_repo_module(RepositoryInterface& repoInterface)
     }
 }
 
-void get_module_text(SwordFacade& sword_facade)
+void get_module_text(TextProcessor& text_processor)
 {
     cout << "Text:" << endl;
-    sword_facade.enableMarkup();
-    vector<Verse> verses = sword_facade.getBookText("NA28", "John");
+    text_processor.enableMarkup();
+    vector<Verse> verses = text_processor.getBookText("NA28", "John");
     cout << "Got " << verses.size() << " verses!" << endl;
     for (int i = 0; i < verses.size(); i++) {
         cout << verses[i].reference << "|" << verses[i].content << endl;
     }
 }
 
-void get_book_intro(SwordFacade& sword_facade)
+void get_book_intro(TextProcessor& text_processor)
 {
     cout << "Text:" << endl;
-    sword_facade.enableMarkup();
-    string bookIntro = sword_facade.getBookIntroduction("NA28", "John");
+    text_processor.enableMarkup();
+    string bookIntro = text_processor.getBookIntroduction("NA28", "John");
     cout << bookIntro << endl;
 }
 
-void get_book_list(SwordFacade& sword_facade)
+void get_book_list(ModuleHelper& module_helper)
 {
-    vector<string> bookList = sword_facade.getBookList("GerNeUe");
+    vector<string> bookList = module_helper.getBookList("GerNeUe");
 
     for (int i = 0; i < bookList.size(); i++) {
         cout << bookList[i] << endl;
     }
 }
 
-void test_unlock_key(SwordFacade& sword_facade)
+void test_unlock_key(ModuleInstaller& module_installer, ModuleStore& module_store, TextProcessor& text_processor)
 {
-    sword_facade.uninstallModule("NA28");
-    sword_facade.installModule("NA28");
-    sword_facade.saveModuleUnlockKey("NA28", "");
-    SWModule* m = sword_facade.getLocalModule("NA28");
-    cout << "Module readable: " << sword_facade.isModuleReadable(m) << endl;
+    module_installer.uninstallModule("NA28");
+    module_installer.installModule("NA28");
+    module_installer.saveModuleUnlockKey("NA28", "");
+    SWModule* m = module_store.getLocalModule("NA28");
+    cout << "Module readable: " << text_processor.isModuleReadable(m) << endl;
 }
 
-void get_strongs_entry(SwordFacade& sword_facade)
+void get_strongs_entry(TextProcessor& text_processor)
 {
-    StrongsEntry* entry = sword_facade.getStrongsEntry("G2766");
+    StrongsEntry* entry = text_processor.getStrongsEntry("G2766");
     if (entry != 0) {
         cout << entry->key << endl;
         cout << entry->transcription << endl;
@@ -131,7 +135,7 @@ void get_strongs_entry(SwordFacade& sword_facade)
         cout << endl;
     }
 
-    entry = sword_facade.getStrongsEntry("H3069");
+    entry = text_processor.getStrongsEntry("H3069");
     if (entry != 0) {
         cout << entry->key << endl;
         cout << entry->transcription << endl;
@@ -145,9 +149,11 @@ void get_strongs_entry(SwordFacade& sword_facade)
 
 int main(int argc, char** argv)
 {
+    ModuleStore moduleStore;
+    ModuleHelper moduleHelper(moduleStore);
     SwordStatusReporter statusReporter;
-    SwordFacade sword_facade(statusReporter);
-    RepositoryInterface repoInterface(statusReporter);
+    RepositoryInterface repoInterface(statusReporter, moduleHelper);
+    ModuleInstaller moduleInstaller(repoInterface, moduleStore);
 
     /*std::vector<sword::SWModule*> localModules = sword_facade.getAllLocalModules();
     for (int i = 0; i < localModules.size(); i++) {
@@ -156,8 +162,6 @@ int main(int argc, char** argv)
     }*/
 
     //sword_facade.refreshRemoteSources(true);
-
-    cout << "SWORD version: " << sword_facade.getSwordVersion() << endl;
 
     //test_unlock_key(sword_facade);
 
@@ -177,7 +181,7 @@ int main(int argc, char** argv)
         cout << "Error installing module (write permissions?)\n";
     }*/
 
-    get_local_module(sword_facade);
+    get_local_module(moduleStore);
     
     //get_repo_module(repoInterface);
 
@@ -190,7 +194,7 @@ int main(int argc, char** argv)
 
     //get_book_intro(sword_facade);
 
-    get_book_list(sword_facade);
+    get_book_list(moduleHelper);
 
     //string translation = sword_facade.getSwordTranslation(string("/usr/share/sword/locales.d"), string("de"), string("locales"));
     //cout << translation << endl;
