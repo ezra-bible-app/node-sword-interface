@@ -21,6 +21,7 @@
 
 #include <napi.h>
 #include "sword_status_reporter.hpp"
+#include "sword_translation_helper.hpp"
 
 class SwordFacade;
 class RepositoryInterface;
@@ -94,6 +95,7 @@ private:
     TextProcessor* _textProcessor;
     ModuleSearch* _moduleSearch;
     SwordStatusReporter _swordStatusReporter;
+    SwordTranslationHelper _swordTranslationHelper;
 };
 
 #endif // _NODE_SWORD_INTERFACE

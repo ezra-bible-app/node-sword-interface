@@ -40,6 +40,11 @@
 using namespace std;
 using namespace sword;
 
+#if defined(_WIN32)
+// For some reason this symbol is missing in the sword.dll on Windows, hence we include it here.
+char * sword::SWBuf::nullStr = (char *)"";
+#endif
+
 Napi::FunctionReference NodeSwordInterface::constructor;
 
 Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
@@ -633,7 +638,7 @@ Napi::Value NodeSwordInterface::getSwordTranslation(const Napi::CallbackInfo& in
     Napi::String originalString = info[1].As<Napi::String>();
     Napi::String localeCode = info[2].As<Napi::String>();
 
-    Napi::String translation = Napi::String::New(info.Env(), this->_swordFacade->getSwordTranslation(
+    Napi::String translation = Napi::String::New(info.Env(), this->_swordTranslationHelper.getSwordTranslation(
         configDir,
         originalString,
         localeCode
@@ -648,7 +653,8 @@ Napi::Value NodeSwordInterface::getSwordVersion(const Napi::CallbackInfo& info)
     lockApi();
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
-    Napi::String swVersion = Napi::String::New(env, this->_swordFacade->getSwordVersion());
+    string version = "1.8.900-d5030c1";
+    Napi::String swVersion = Napi::String::New(env, version);
     unlockApi();
     return swVersion;
 }

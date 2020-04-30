@@ -53,9 +53,6 @@ public:
     SwordFacade(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper);
     virtual ~SwordFacade();
 
-    std::string getSwordTranslation(std::string configPath, std::string originalString, std::string localeCode);
-    std::string getSwordVersion();
-
     SwordStatusReporter& getStatusReporter() {
         return this->_statusReporter;
     }

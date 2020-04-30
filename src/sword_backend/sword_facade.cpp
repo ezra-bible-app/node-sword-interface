@@ -89,19 +89,3 @@ void SwordFacade::resetMgr()
 
     this->_mgrForInstall = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
 }
-
-string SwordFacade::getSwordTranslation(string configPath, string originalString, string localeCode)
-{
-    // We only initialize this at the first execution
-    if (this->_localeMgr == 0) {
-        this->_localeMgr = new LocaleMgr(configPath.c_str());
-    }
-    
-    string translation = string(this->_localeMgr->translate(originalString.c_str(), localeCode.c_str()));
-    return translation;
-}
-
-string SwordFacade::getSwordVersion()
-{
-    return string("1.8.900-d5030c1");
-}
