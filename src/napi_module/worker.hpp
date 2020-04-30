@@ -41,8 +41,8 @@ public:
 
 class BaseWorker : public Napi::AsyncProgressWorker<SwordProgressFeedback> {
 public:
-    BaseWorker(SwordFacade& facade, RepositoryInterface& repoInterface, const Napi::Function& callback)
-        : Napi::AsyncProgressWorker<SwordProgressFeedback>(callback), _facade(facade), _repoInterface(repoInterface) {}
+    BaseWorker(RepositoryInterface& repoInterface, const Napi::Function& callback)
+        : Napi::AsyncProgressWorker<SwordProgressFeedback>(callback), _repoInterface(repoInterface) {}
 
     virtual ~BaseWorker() {}
 
@@ -56,17 +56,15 @@ public:
     }
 
 protected:
-    SwordFacade& _facade;
     RepositoryInterface& _repoInterface;
 };
 
 class ProgressWorker : public BaseWorker {
 public:
-    ProgressWorker(SwordFacade& facade,
-                   RepositoryInterface& repoInterface,
+    ProgressWorker(RepositoryInterface& repoInterface,
                    const Napi::Function& jsProgressCallback,
                    const Napi::Function& callback)
-        : BaseWorker(facade, repoInterface, callback),
+        : BaseWorker(repoInterface, callback),
         _jsProgressCallback(Napi::Persistent(jsProgressCallback)) {}
 
     void OnProgress(const SwordProgressFeedback* progressFeedback, size_t /* count */) {
@@ -100,13 +98,12 @@ protected:
 
 class RefreshRemoteSourcesWorker : public ProgressWorker {
 public:
-    RefreshRemoteSourcesWorker(SwordFacade& facade,
-                               RepositoryInterface& repoInterface,
+    RefreshRemoteSourcesWorker(RepositoryInterface& repoInterface,
                                const Napi::Function& jsProgressCallback,
                                const Napi::Function& callback,
                                bool forced)
 
-        : ProgressWorker(facade, repoInterface, jsProgressCallback, callback),
+        : ProgressWorker(repoInterface, jsProgressCallback, callback),
           _forced(forced) {}
     
     void progressCallback(unsigned int progressPercentage) {
@@ -137,8 +134,8 @@ private:
 
 class UninstallModuleWorker : public BaseWorker {
 public:
-    UninstallModuleWorker(SwordFacade& facade, RepositoryInterface& repoInterface, ModuleInstaller& moduleInstaller, const Napi::Function& callback, std::string moduleName)
-        : BaseWorker(facade, repoInterface, callback), _moduleInstaller(moduleInstaller), _moduleName(moduleName) {}
+    UninstallModuleWorker(RepositoryInterface& repoInterface, ModuleInstaller& moduleInstaller, const Napi::Function& callback, std::string moduleName)
+        : BaseWorker(repoInterface, callback), _moduleInstaller(moduleInstaller), _moduleName(moduleName) {}
 
     void Execute(const ExecutionProgress& progress) {
         int ret = this->_moduleInstaller.uninstallModule(this->_moduleName);

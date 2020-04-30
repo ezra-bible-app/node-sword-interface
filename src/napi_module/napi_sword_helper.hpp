@@ -31,14 +31,13 @@ namespace sword {
     class SWModule;
 }
 
-class SwordFacade;
 class ModuleHelper;
 class ModuleStore;
 
 class NapiSwordHelper {
 public:
-    NapiSwordHelper(SwordFacade& swordFacade, ModuleHelper& moduleHelper, ModuleStore& moduleStore)
-        : _swordFacade(swordFacade), _moduleHelper(moduleHelper), _moduleStore(moduleStore) {}
+    NapiSwordHelper(ModuleHelper& moduleHelper, ModuleStore& moduleStore)
+        : _moduleHelper(moduleHelper), _moduleStore(moduleStore) {}
 
     virtual ~NapiSwordHelper() {}
 
@@ -51,7 +50,6 @@ private:
     void verseTextToNapiObject(std::string moduleCode, Verse rawVerse, Napi::Object& object);
     Napi::String getConfigEntry(sword::SWModule* swModule, std::string key, const Napi::Env& env);
 
-    SwordFacade& _swordFacade;
     ModuleHelper& _moduleHelper;
     ModuleStore& _moduleStore;
 };

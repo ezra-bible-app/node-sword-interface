@@ -23,7 +23,6 @@
 #include "sword_status_reporter.hpp"
 #include "sword_translation_helper.hpp"
 
-class SwordFacade;
 class RepositoryInterface;
 class ModuleStore;
 class ModuleInstaller;
@@ -88,7 +87,6 @@ private:
 
     ModuleHelper* _moduleHelper;
     NapiSwordHelper* _napiSwordHelper;
-    SwordFacade* _swordFacade;
     RepositoryInterface* _repoInterface;
     ModuleStore* _moduleStore;
     ModuleInstaller* _moduleInstaller;

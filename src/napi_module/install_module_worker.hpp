@@ -25,15 +25,13 @@
 
 class InstallModuleWorker : public ProgressWorker {
 public:
-    InstallModuleWorker(SwordFacade& facade,
-                        RepositoryInterface& repoInterface,
+    InstallModuleWorker(RepositoryInterface& repoInterface,
                         ModuleInstaller& moduleInstaller,
                         const Napi::Function& jsProgressCallback,
                         const Napi::Function& callback,
                         std::string moduleName)
 
-        : ProgressWorker(facade,
-                         repoInterface,
+        : ProgressWorker(repoInterface,
                          jsProgressCallback,
                          callback),
                          _moduleInstaller(moduleInstaller),

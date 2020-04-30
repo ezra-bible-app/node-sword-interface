@@ -99,9 +99,8 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     this->_moduleHelper = new ModuleHelper(*(this->_moduleStore));
     this->_repoInterface = new RepositoryInterface(this->_swordStatusReporter, *(this->_moduleHelper));
     this->_moduleInstaller = new ModuleInstaller(*(this->_repoInterface), *(this->_moduleStore));
-    this->_napiSwordHelper = new NapiSwordHelper(*(this->_swordFacade), *(this->_moduleHelper), *(this->_moduleStore));
+    this->_napiSwordHelper = new NapiSwordHelper(*(this->_moduleHelper), *(this->_moduleStore));
     this->_textProcessor = new TextProcessor(*(this->_moduleStore), *(this->_moduleHelper));
-    this->_swordFacade = new SwordFacade(this->_swordStatusReporter, *(this->_moduleHelper));
     this->_moduleSearch = new ModuleSearch(*(this->_moduleStore), *(this->_moduleHelper), *(this->_textProcessor));
 }
 
@@ -175,8 +174,7 @@ Napi::Value NodeSwordInterface::updateRepositoryConfig(const Napi::CallbackInfo&
     Napi::Boolean force = info[0].As<Napi::Boolean>();
     Napi::Function progressCallback = info[1].As<Napi::Function>();
     Napi::Function callback = info[2].As<Napi::Function>();
-    RefreshRemoteSourcesWorker* worker = new RefreshRemoteSourcesWorker(*(this->_swordFacade),
-                                                                        *(this->_repoInterface),
+    RefreshRemoteSourcesWorker* worker = new RefreshRemoteSourcesWorker(*(this->_repoInterface),
                                                                         progressCallback,
                                                                         callback,
                                                                         force.Value());
@@ -506,8 +504,7 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
         }
     }
 
-    ModuleSearchWorker* worker = new ModuleSearchWorker(*(this->_swordFacade),
-                                                        *(this->_moduleHelper),
+    ModuleSearchWorker* worker = new ModuleSearchWorker(*(this->_moduleHelper),
                                                         *(this->_moduleSearch),
                                                         *(this->_moduleStore),
                                                         *(this->_repoInterface),
@@ -551,8 +548,7 @@ Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
     Napi::Function progressCallback = info[1].As<Napi::Function>();
     Napi::Function callback = info[2].As<Napi::Function>();
 
-    InstallModuleWorker* worker = new InstallModuleWorker(*(this->_swordFacade),
-                                                          *(this->_repoInterface),
+    InstallModuleWorker* worker = new InstallModuleWorker(*(this->_repoInterface),
                                                           *(this->_moduleInstaller),
                                                           progressCallback,
                                                           callback,
@@ -567,7 +563,7 @@ Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
     INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::function);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Function callback = info[1].As<Napi::Function>();
-    UninstallModuleWorker* worker = new UninstallModuleWorker(*(this->_swordFacade), *(this->_repoInterface), *(this->_moduleInstaller), callback, moduleName);
+    UninstallModuleWorker* worker = new UninstallModuleWorker(*(this->_repoInterface), *(this->_moduleInstaller), callback, moduleName);
     worker->Queue();
     return info.Env().Undefined();
 }
