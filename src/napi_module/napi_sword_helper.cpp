@@ -19,7 +19,6 @@
 
 #include <swmodule.h>
 #include "napi_sword_helper.hpp"
-#include "sword_facade.hpp"
 #include "string_helper.hpp"
 #include "module_helper.hpp"
 #include "module_store.hpp"

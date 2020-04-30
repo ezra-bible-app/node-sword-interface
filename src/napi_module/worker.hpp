@@ -24,7 +24,6 @@
 
 #include "api_lock.hpp"
 #include "napi_sword_helper.hpp"
-#include "sword_facade.hpp"
 #include "repository_interface.hpp"
 #include "sword_status_reporter.hpp"
 #include "common_defs.hpp"

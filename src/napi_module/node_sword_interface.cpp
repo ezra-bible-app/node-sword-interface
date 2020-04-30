@@ -29,7 +29,6 @@
 #include "worker.hpp"
 #include "install_module_worker.hpp"
 #include "module_search_worker.hpp"
-#include "sword_facade.hpp"
 #include "sword_status_reporter.hpp"
 #include "module_store.hpp"
 #include "module_installer.hpp"
