@@ -57,14 +57,7 @@ public:
     virtual ~SwordFacade();
 
     StrongsEntry* getStrongsEntry(std::string key);
-
-    int installModule(std::string moduleName);
-    int installModule(std::string repoName, std::string moduleName);
-    int uninstallModule(std::string moduleName);
-
-    int saveModuleUnlockKey(std::string moduleName, std::string key);
-    bool isModuleReadable(sword::SWModule* module, std::string key="John 1:1");
-
+    
     std::string getSwordTranslation(std::string configPath, std::string originalString, std::string localeCode);
     std::string getSwordVersion();
 
