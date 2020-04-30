@@ -38,6 +38,7 @@ endif (WIN32)
 set(SOURCES
 ${CMAKE_SOURCE_DIR}/src/node_sword_cli.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/strongs_entry.cpp
+${CMAKE_SOURCE_DIR}/src/sword_backend/module_store.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/repository_interface.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/sword_status_reporter.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/module_helper.cpp
