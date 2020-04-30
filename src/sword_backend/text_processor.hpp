@@ -27,12 +27,15 @@ namespace sword {
 
 class ModuleStore;
 class ModuleHelper;
+class StrongsEntry;
 
 class TextProcessor
 {
 public:
-    TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelper) : _moduleStore(moduleStore), _moduleHelper(moduleHelper) {}
-    virtual ~TextProcessor() {}
+    TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelper);
+    virtual ~TextProcessor();
+
+    void initStrongs();
 
     void enableMarkup() { this->_markupEnabled = true; }
     void disableMarkup() { this->_markupEnabled = false; }
@@ -42,6 +45,8 @@ public:
     std::vector<Verse> getChapterText(std::string moduleName, std::string bookCode, int chapter);
     std::string getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup=false);
     std::string getBookIntroduction(std::string moduleName, std::string bookCode);
+
+    StrongsEntry* getStrongsEntry(std::string key);
 
     bool moduleHasStrongsZeroPrefixes(sword::SWModule* module);
     bool isModuleReadable(sword::SWModule* module, std::string key="John 1:1");
@@ -60,6 +65,9 @@ private:
     ModuleStore& _moduleStore;
     ModuleHelper& _moduleHelper;
     bool _markupEnabled;
+
+    sword::SWModule* _strongsHebrew = 0;
+    sword::SWModule* _strongsGreek = 0;
 };
 
 #endif // _TEXT_PROCESSOR

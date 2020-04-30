@@ -523,7 +523,7 @@ Napi::Value NodeSwordInterface::getStrongsEntry(const Napi::CallbackInfo& info)
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String strongsKey = info[0].As<Napi::String>();
     Napi::Object napiObject = Napi::Object::New(env);
-    StrongsEntry* strongsEntry = this->_swordFacade->getStrongsEntry(strongsKey);
+    StrongsEntry* strongsEntry = this->_textProcessor->getStrongsEntry(strongsKey);
 
     if (strongsEntry == 0) {
         string errorMessage = "getStrongsEntry returned 0 for '" + string(strongsKey) + "'";

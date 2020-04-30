@@ -47,17 +47,12 @@ class SwordStatusReporter;
 class ModuleHelper;
 class Verse;
 
-void setModuleSearchProgressCB(std::function<void(char, void*)>* moduleSearchProgressCB);
-void internalModuleSearchProgressCB(char percent, void* userData);
-
 class SwordFacade
 {
 public:
     SwordFacade(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper);
     virtual ~SwordFacade();
 
-    StrongsEntry* getStrongsEntry(std::string key);
-    
     std::string getSwordTranslation(std::string configPath, std::string originalString, std::string localeCode);
     std::string getSwordVersion();
 

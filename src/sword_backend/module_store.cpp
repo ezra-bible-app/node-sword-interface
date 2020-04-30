@@ -38,7 +38,9 @@ ModuleStore::ModuleStore()
 
 ModuleStore::~ModuleStore()
 {
-
+    if (this->_mgr != 0) {
+        delete this->_mgr;
+    }
 }
 
 void ModuleStore::resetMgr()

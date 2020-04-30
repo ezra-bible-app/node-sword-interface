@@ -30,9 +30,29 @@
 #include "text_processor.hpp"
 #include "module_helper.hpp"
 #include "string_helper.hpp"
+#include "strongs_entry.hpp"
 
 using namespace std;
 using namespace sword;
+
+TextProcessor::TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelper)
+    : _moduleStore(moduleStore), _moduleHelper(moduleHelper)
+{
+    this->initStrongs();
+}
+
+TextProcessor::~TextProcessor() {
+    if (this->_strongsHebrew != 0) delete this->_strongsHebrew;
+    if (this->_strongsGreek != 0) delete this->_strongsGreek;
+}
+
+void TextProcessor::initStrongs()
+{
+    if (this->_strongsHebrew == 0 || this->_strongsGreek == 0) {
+        this->_strongsHebrew = this->_moduleStore.getLocalModule("StrongsHebrew");
+        this->_strongsGreek = this->_moduleStore.getLocalModule("StrongsGreek");
+    }
+}
 
 string TextProcessor::getFilteredText(const string& text, bool hasStrongs)
 {
@@ -331,4 +351,26 @@ bool TextProcessor::isModuleReadable(sword::SWModule* module, std::string key)
     module->setKey(key.c_str());
     string verseText = this->getCurrentVerseText(module, false);
     return verseText.size() > 0;
+}
+
+StrongsEntry* TextProcessor::getStrongsEntry(string key)
+{
+    SWModule* module = 0;
+    char strongsType = key[0];
+
+    if (strongsType == 'H') {
+        module = this->_strongsHebrew;
+    } else if (strongsType == 'G') {
+        module = this->_strongsGreek;
+    } else {
+        return 0;
+    }
+
+    if (module == 0) {
+        cerr << "No valid Strong's module available!" << endl;
+        return 0;
+    }
+
+    StrongsEntry* entry = StrongsEntry::getStrongsEntry(module, key);
+    return entry;
 }

@@ -65,16 +65,6 @@ SwordFacade::SwordFacade(SwordStatusReporter& statusReporter, ModuleHelper& modu
 
 SwordFacade::~SwordFacade()
 {
-    if (this->_strongsHebrew != 0) delete this->_strongsHebrew;
-    if (this->_strongsGreek != 0) delete this->_strongsGreek;
-}
-
-void SwordFacade::initStrongs()
-{
-    if (this->_strongsHebrew == 0 || this->_strongsGreek == 0) {
-        this->_strongsHebrew = this->getLocalSwordModule("StrongsHebrew");
-        this->_strongsGreek = this->getLocalSwordModule("StrongsGreek");
-    }
 }
 
 void SwordFacade::resetMgr()
@@ -98,30 +88,6 @@ void SwordFacade::resetMgr()
 #endif
 
     this->_mgrForInstall = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
-
-    this->initStrongs();
-}
-
-StrongsEntry* SwordFacade::getStrongsEntry(string key)
-{
-    SWModule* module = 0;
-    char strongsType = key[0];
-
-    if (strongsType == 'H') {
-        module = this->_strongsHebrew;
-    } else if (strongsType == 'G') {
-        module = this->_strongsGreek;
-    } else {
-        return 0;
-    }
-
-    if (module == 0) {
-        cerr << "No valid Strong's module available!" << endl;
-        return 0;
-    }
-
-    StrongsEntry* entry = StrongsEntry::getStrongsEntry(module, key);
-    return entry;
 }
 
 string SwordFacade::getSwordTranslation(string configPath, string originalString, string localeCode)
@@ -133,11 +99,6 @@ string SwordFacade::getSwordTranslation(string configPath, string originalString
     
     string translation = string(this->_localeMgr->translate(originalString.c_str(), localeCode.c_str()));
     return translation;
-}
-
-SWModule* SwordFacade::getLocalSwordModule(string moduleName)
-{
-    return this->_mgr->getModule(moduleName.c_str());
 }
 
 string SwordFacade::getSwordVersion()
