@@ -34,7 +34,7 @@ using namespace sword;
 ModuleInstaller::ModuleInstaller(RepositoryInterface& repoInterface, ModuleStore& moduleStore)
     : _repoInterface(repoInterface), _moduleStore(moduleStore)
 {
-        this->_mgrForInstall = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
+    this->_mgrForInstall = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
 }
 
 ModuleInstaller::~ModuleInstaller()
@@ -42,6 +42,18 @@ ModuleInstaller::~ModuleInstaller()
     if (this->_mgrForInstall != 0) {
         delete this->_mgrForInstall;
     }
+}
+
+void ModuleInstaller::refreshMgr()
+{
+    this->_mgrForInstall->augmentModules(this->_fileSystemHelper.getUserSwordDir().c_str());
+}
+
+void ModuleInstaller::resetAllMgrs()
+{
+    this->_repoInterface.resetMgr();
+    this->_moduleStore.refreshMgr();
+    this->refreshMgr();
 }
 
 int ModuleInstaller::installModule(string moduleName)
@@ -72,7 +84,7 @@ int ModuleInstaller::installModule(string repoName, string moduleName)
         return -1;
     } else {
         int error = this->_repoInterface.getInstallMgr()->installModule(this->_mgrForInstall, 0, moduleName.c_str(), remoteSource);
-        this->_moduleStore.resetMgr();
+        this->resetAllMgrs();
 
         if (error) {
             cerr << "Error installing module: " << moduleName << " (write permissions?)" << endl;
@@ -87,7 +99,8 @@ int ModuleInstaller::installModule(string repoName, string moduleName)
 int ModuleInstaller::uninstallModule(string moduleName)
 {
     int error = this->_repoInterface.getInstallMgr()->removeModule(this->_mgrForInstall, moduleName.c_str());
-    this->_moduleStore.resetMgr();
+    this->_mgrForInstall->deleteModule(moduleName.c_str());
+    this->_moduleStore.deleteModule(moduleName);
 
     if (error) {
         cerr << "Error uninstalling module: " << moduleName << " (write permissions?)" << endl;
@@ -131,9 +144,9 @@ int ModuleInstaller::saveModuleUnlockKey(string moduleName, string key)
                 //-- save config file
                 config->save();
                 // Reset the mgr to reload the modules
-                this->_moduleStore.resetMgr();
+                //this->resetAllMgrs();
                 // Without this step we cannot load a remote module afterwards ...
-                this->_repoInterface.refreshRemoteSources(true);
+                //this->_repoInterface.refreshRemoteSources(true);
             } else {
                 // Section CipherKey not found!
                 returnCode = -2;

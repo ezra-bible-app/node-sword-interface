@@ -33,7 +33,13 @@ using namespace sword;
 ModuleStore::ModuleStore()
 {
     this->_fileSystemHelper.createBasicDirectories();
-    this->resetMgr();
+    
+    #ifdef _WIN32
+        this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
+        this->_mgr->augmentModules(this->_fileSystemHelper.getSystemSwordDir().c_str());
+    #else
+        this->_mgr = new SWMgr();
+    #endif
 }
 
 ModuleStore::~ModuleStore()
@@ -43,18 +49,14 @@ ModuleStore::~ModuleStore()
     }
 }
 
-void ModuleStore::resetMgr()
+void ModuleStore::refreshMgr()
 {
-    if (this->_mgr != 0) {
-        delete this->_mgr;
-    }
+    this->_mgr->augmentModules(this->_fileSystemHelper.getUserSwordDir().c_str());
+}
 
-    #ifdef _WIN32
-        this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
-        this->_mgr->augmentModules(this->_fileSystemHelper.getSystemSwordDir().c_str());
-    #else
-        this->_mgr = new SWMgr();
-    #endif
+void ModuleStore::deleteModule(string moduleName)
+{
+    this->_mgr->deleteModule(moduleName.c_str());
 }
 
 SWModule* ModuleStore::getLocalModule(string moduleName)

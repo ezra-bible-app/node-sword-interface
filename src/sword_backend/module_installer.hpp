@@ -45,6 +45,9 @@ public:
     bool isModuleReadable(sword::SWModule* module, std::string key="John 1:1");
 
 private:
+    void refreshMgr();
+    void resetAllMgrs();
+
     RepositoryInterface& _repoInterface;
     ModuleStore& _moduleStore;
     FileSystemHelper _fileSystemHelper;

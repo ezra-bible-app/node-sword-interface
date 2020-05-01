@@ -24,8 +24,8 @@
 #include "file_system_helper.hpp"
 
 namespace sword {
-    class SWMgr;
     class SWModule;
+    class SWMgr;
 };
 
 class ModuleStore
@@ -41,7 +41,8 @@ public:
     bool isModuleInUserDir(sword::SWModule* module);
     std::string getModuleDataPath(sword::SWModule* module);
 
-    void resetMgr();
+    void refreshMgr();
+    void deleteModule(std::string moduleName);
     
 private:
     sword::SWMgr* _mgr = 0;

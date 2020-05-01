@@ -31,6 +31,7 @@ namespace sword {
     class InstallMgr;
     class InstallSource;
     class SWModule;
+    class SWMGr;
 };
 
 class ModuleHelper;
@@ -39,6 +40,8 @@ class RepositoryInterface {
 public:
     RepositoryInterface(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper);
     virtual ~RepositoryInterface(){}
+
+    void resetMgr();
 
     int refreshRepositoryConfig();
     int refreshRemoteSources(bool force=false, std::function<void(unsigned int progress)>* progressCallback=0);
@@ -64,8 +67,6 @@ public:
     }
 
 private:
-    void resetMgr();
-
     int refreshIndividualRemoteSource(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
     std::thread getRemoteSourceRefreshThread(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
 
