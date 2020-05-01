@@ -9,6 +9,7 @@
 #include <vector>
 #include <iostream>
 #include <swmodule.h>
+#include <swmgr.h>
 #include <localemgr.h>
 
 using namespace std;
@@ -99,7 +100,7 @@ void get_book_intro(TextProcessor& text_processor)
 {
     cout << "Text:" << endl;
     text_processor.enableMarkup();
-    string bookIntro = text_processor.getBookIntroduction("NA28", "John");
+    string bookIntro = text_processor.getBookIntroduction("GerNeUe", "John");
     cout << bookIntro << endl;
 }
 
@@ -154,45 +155,46 @@ int main(int argc, char** argv)
     SwordStatusReporter statusReporter;
     RepositoryInterface repoInterface(statusReporter, moduleHelper);
     ModuleInstaller moduleInstaller(repoInterface, moduleStore);
+    TextProcessor textProcessor(moduleStore, moduleHelper);
 
-    /*std::vector<sword::SWModule*> localModules = sword_facade.getAllLocalModules();
+    /*std::vector<sword::SWModule*> localModules = moduleStore.getAllLocalModules();
     for (int i = 0; i < localModules.size(); i++) {
         sword::SWModule* module = localModules[i];
         cout << module->getName() << endl;
     }*/
 
-    //sword_facade.refreshRemoteSources(true);
+    //repoInterface.refreshRemoteSources(true);
 
-    //test_unlock_key(sword_facade);
+    //test_unlock_key(moduleInstaller, moduleStore, textProcessor);
 
     /*show_repos(repoInterface);
 
     show_modules(repoInterface);*/
 
-    /*int error = sword_facade.uninstallModule("KJV");
-
-    if (error) {
-        cout << "Error uninstalling module (write permissions?)\n";
-    }*/
-
-    /*int error = sword_facade.installModule("WLC");
+    int error = moduleInstaller.installModule("UKJV");
 
     if (error) {
         cout << "Error installing module (write permissions?)\n";
-    }*/
+    }
+    
+    error = moduleInstaller.uninstallModule("UKJV");
+
+    if (error) {
+        cout << "Error uninstalling module (write permissions?)\n";
+    }
 
     get_local_module(moduleStore);
     
-    //get_repo_module(repoInterface);
+    get_repo_module(repoInterface);
 
     /*sword_facade.installModule("StrongsHebrew");
     sword_facade.installModule("StrongsGreek");*/
 
-    //get_strongs_entry(sword_facade);
+    get_strongs_entry(textProcessor);
 
     //get_module_text(sword_facade);
 
-    //get_book_intro(sword_facade);
+    get_book_intro(textProcessor);
 
     get_book_list(moduleHelper);
 
