@@ -39,6 +39,7 @@
             "src/sword_backend/string_helper.cpp",
             "src/sword_backend/strongs_entry.cpp",
             "src/sword_backend/repository_interface.cpp",
+            "src/sword_backend/module_search.cpp",
             "src/sword_backend/module_installer.cpp",
             "src/sword_backend/sword_status_reporter.cpp",
             "src/sword_backend/text_processor.cpp",
