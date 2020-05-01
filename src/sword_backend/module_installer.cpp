@@ -144,9 +144,9 @@ int ModuleInstaller::saveModuleUnlockKey(string moduleName, string key)
                 //-- save config file
                 config->save();
                 // Reset the mgr to reload the modules
-                //this->resetAllMgrs();
+                this->resetAllMgrs();
                 // Without this step we cannot load a remote module afterwards ...
-                //this->_repoInterface.refreshRemoteSources(true);
+                this->_repoInterface.refreshRemoteSources(true);
             } else {
                 // Section CipherKey not found!
                 returnCode = -2;
