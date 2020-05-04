@@ -478,7 +478,13 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
 {
     lockApi();
     Napi::Env env = info.Env();
-    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::string, ParamType::boolean, ParamType::function, ParamType::function);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, // moduleName
+                            ParamType::string, // searchTerm
+                            ParamType::string, // searchType
+                            ParamType::boolean, // isCaseSensitive
+                            ParamType::function, // progressCallback
+                            ParamType::function); // final Callback
+
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String searchTerm = info[1].As<Napi::String>();
     string searchTypeString = string(info[2].As<Napi::String>());
