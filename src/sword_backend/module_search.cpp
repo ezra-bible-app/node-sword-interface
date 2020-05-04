@@ -20,6 +20,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <regex>
 
 // sword includes
 #include <swmodule.h>
@@ -31,19 +32,10 @@
 #include "module_helper.hpp"
 #include "text_processor.hpp"
 
-/* REGEX definitions from regex.h */
-/* POSIX `cflags' bits (i.e., information for `regcomp').  */
-
-/* If this bit is set, then use extended regular expression syntax.
-   If not set, then use basic regular expression syntax.  */
-#ifndef REG_EXTENDED
-#define REG_EXTENDED 1
-#endif
-
 /* If this bit is set, then ignore case when matching.
    If not set, then case is significant.  */
 #ifndef REG_ICASE
-#define REG_ICASE (REG_EXTENDED << 1)
+#define REG_ICASE std::regex::icase
 #endif
 
 using namespace std;
@@ -81,9 +73,9 @@ map<string, int> ModuleSearch::getAbsoluteVerseNumberMap(SWModule* module)
 }
 
 vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
-                                                  string searchTerm,
-                                                  SearchType searchType,
-                                                  bool isCaseSensitive)
+                                                   string searchTerm,
+                                                   SearchType searchType,
+                                                   bool isCaseSensitive)
 {
     SWModule* module = this->_moduleStore.getLocalModule(moduleName);
     ListKey listKey;
