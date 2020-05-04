@@ -5,6 +5,7 @@
 #include "module_helper.hpp"
 #include "module_installer.hpp"
 #include "strongs_entry.hpp"
+#include "module_search.hpp"
 
 #include <vector>
 #include <iostream>
@@ -156,6 +157,7 @@ int main(int argc, char** argv)
     RepositoryInterface repoInterface(statusReporter, moduleHelper);
     ModuleInstaller moduleInstaller(repoInterface, moduleStore);
     TextProcessor textProcessor(moduleStore, moduleHelper);
+    ModuleSearch moduleSearch(moduleStore, moduleHelper, textProcessor);
 
     /*std::vector<sword::SWModule*> localModules = moduleStore.getAllLocalModules();
     for (int i = 0; i < localModules.size(); i++) {
@@ -171,7 +173,7 @@ int main(int argc, char** argv)
 
     show_modules(repoInterface);*/
 
-    int error = moduleInstaller.installModule("UKJV");
+    /*int error = moduleInstaller.installModule("UKJV");
 
     if (error) {
         cout << "Error installing module (write permissions?)\n";
@@ -181,7 +183,7 @@ int main(int argc, char** argv)
 
     if (error) {
         cout << "Error uninstalling module (write permissions?)\n";
-    }
+    }*/
 
     get_local_module(moduleStore);
     
@@ -201,11 +203,11 @@ int main(int argc, char** argv)
     //string translation = sword_facade.getSwordTranslation(string("/usr/share/sword/locales.d"), string("de"), string("locales"));
     //cout << translation << endl;
 
-    /*vector<string> searchResults = sword_facade.getModuleSearchResults("ESV2001", "Lord");
-    cout << "Got " << searchResults.size() << " results!" << endl;*/
-    /*for (unsigned int i=0; i < searchResults.size(); i++) {
-        cout << searchResults[i] << endl;
-    }*/
+    vector<Verse> searchResults = moduleSearch.getModuleSearchResults("NASB", "Jesus faith");
+    cout << "Got " << searchResults.size() << " results!" << endl;
+    for (unsigned int i=0; i < searchResults.size(); i++) {
+        cout << searchResults[i].reference << endl;
+    }
 
     return 0;
 }
