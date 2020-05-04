@@ -21,9 +21,10 @@ link_directories(${CMAKE_SOURCE_DIR}/sword_build)
 find_package(ICU COMPONENTS uc i18n data REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(CURL REQUIRED)
+find_package(BZip2 REQUIRED)
 
 set(SWORD_LIBRARY_NAME "libsword.a")
-set(DEPENDENT_LIBS ICU::uc ICU::data ICU::i18n ${ZLIB_LIBRARIES} ${CURL_LIBRARIES})
+set(DEPENDENT_LIBS ICU::uc ICU::data ICU::i18n ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${BZIP2_LIBRARIES})
 
 if (UNIX)
     set(DEPENDENT_LIBS ${DEPENDENT_LIBS} pthread)
