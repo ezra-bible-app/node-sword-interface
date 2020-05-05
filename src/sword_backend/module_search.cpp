@@ -89,6 +89,9 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
         flags |= REG_ICASE;
     }
 
+    // Use strict search boundaries (only search within individual verses). TODO: Make this configurable.
+    flags |= SEARCHFLAG_STRICTBOUNDARIES;
+
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
