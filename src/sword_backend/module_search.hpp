@@ -51,7 +51,8 @@ public:
     std::vector<Verse> getModuleSearchResults(std::string moduleName,
                                               std::string searchTerm,
                                               SearchType searchType=SearchType::multiWord,
-                                              bool isCaseSensitive=false);
+                                              bool isCaseSensitive=false,
+                                              bool useExtendedVerseBoundaries=false);
 
 private:
     std::map<std::string, int> getAbsoluteVerseNumberMap(sword::SWModule* module);

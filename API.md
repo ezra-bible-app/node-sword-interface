@@ -52,7 +52,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getBibleChapterVerseCounts(moduleCode)](#NodeSwordInterface+getBibleChapterVerseCounts) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookIntroduction(moduleCode, bookCode)](#NodeSwordInterface+getBookIntroduction) ⇒ <code>String</code>
-    * [.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive, progressCB)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
+    * [.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive, useExtendedVerseBoundaries, progressCB)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
     * [.hebrewStrongsAvailable()](#NodeSwordInterface+hebrewStrongsAvailable) ⇒ <code>Boolean</code>
     * [.greekStrongsAvailable()](#NodeSwordInterface+greekStrongsAvailable) ⇒ <code>Boolean</code>
     * [.strongsAvailable()](#NodeSwordInterface+strongsAvailable) ⇒ <code>Boolean</code>
@@ -318,7 +318,7 @@ Returns the introduction of the given book.
 
 <a name="NodeSwordInterface+getModuleSearchResults"></a>
 
-### nodeSwordInterface.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive, progressCB) ⇒ <code>Promise</code>
+### nodeSwordInterface.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive, useExtendedVerseBoundaries, progressCB) ⇒ <code>Promise</code>
 Returns the results of a module search.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
@@ -327,8 +327,9 @@ Returns the results of a module search.
 | --- | --- | --- | --- |
 | moduleCode | <code>String</code> |  | The module code of the SWORD module. |
 | searchTerm | <code>String</code> |  | The term to search for. |
-| searchType | <code>String</code> | <code>multiWord</code> | Options: phrase, multiWord, strongsNumber |
+| searchType | <code>String</code> | <code>phrase</code> | Options: phrase, multiWord, strongsNumber |
 | isCaseSensitive | <code>Boolean</code> | <code>false</code> | Whether the search is case sensitive |
+| useExtendedVerseBoundaries | <code>Boolean</code> | <code>false</code> | Whether the search should use extended verse boundaries (Two verses instead of one) in case of a multi word search. |
 | progressCB | <code>function</code> |  | Optional callback function that is called on progress events. |
 
 <a name="NodeSwordInterface+hebrewStrongsAvailable"></a>

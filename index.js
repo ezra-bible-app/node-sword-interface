@@ -353,17 +353,18 @@ class NodeSwordInterface {
    * @param {String} searchTerm - The term to search for.
    * @param {String} searchType - Options: phrase, multiWord, strongsNumber
    * @param {Boolean} isCaseSensitive - Whether the search is case sensitive
+   * @param {Boolean} useExtendedVerseBoundaries - Whether the search should use extended verse boundaries (Two verses instead of one) in case of a multi word search.
    * @param {Function} progressCB - Optional callback function that is called on progress events.
    * @return {Promise}
    */
-  getModuleSearchResults(moduleCode, searchTerm, progressCB=undefined, searchType="multiWord", isCaseSensitive=false) {
+  getModuleSearchResults(moduleCode, searchTerm, progressCB=undefined, searchType="phrase", isCaseSensitive=false, useExtendedVerseBoundaries=false) {
     if (progressCB === undefined) {
       progressCB = function(progress) {};
     }
 
     return new Promise((resolve, reject) => {
       try {
-        this.nativeInterface.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive, progressCB, function(searchResults) {
+        this.nativeInterface.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive, useExtendedVerseBoundaries, progressCB, function(searchResults) {
           resolve(searchResults);
         });
       } catch (error) {

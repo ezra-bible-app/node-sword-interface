@@ -75,7 +75,8 @@ map<string, int> ModuleSearch::getAbsoluteVerseNumberMap(SWModule* module)
 vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
                                                    string searchTerm,
                                                    SearchType searchType,
-                                                   bool isCaseSensitive)
+                                                   bool isCaseSensitive,
+                                                   bool useExtendedVerseBoundaries)
 {
     SWModule* module = this->_moduleStore.getLocalModule(moduleName);
     ListKey listKey;
@@ -89,8 +90,10 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
         flags |= REG_ICASE;
     }
 
-    // Use strict search boundaries (only search within individual verses). TODO: Make this configurable.
-    flags |= SEARCHFLAG_STRICTBOUNDARIES;
+    if (!useExtendedVerseBoundaries) {
+        // Use strict search boundaries (only search within individual verses). TODO: Make this configurable.
+        flags |= SEARCHFLAG_STRICTBOUNDARIES;
+    }
 
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;

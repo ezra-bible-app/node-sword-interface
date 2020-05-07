@@ -34,14 +34,16 @@ public:
                        std::string moduleName,
                        std::string searchTerm,
                        SearchType searchType,
-                       bool isCaseSensitive=false)
+                       bool isCaseSensitive=false,
+                       bool useExtendedVerseBoundaries=false)
 
         : ProgressWorker(repoInterface, jsProgressCallback, callback),
         _moduleSearch(moduleSearch),
         _moduleName(moduleName),
         _searchTerm(searchTerm),
         _searchType(searchType),
-        _isCaseSensitive(isCaseSensitive) {
+        _isCaseSensitive(isCaseSensitive),
+        _useExtendedVerseBoundaries(useExtendedVerseBoundaries) {
 
         this->_napiSwordHelper = new NapiSwordHelper(moduleHelper, moduleStore);
     }
@@ -59,6 +61,7 @@ private:
     std::string _searchTerm;
     SearchType _searchType;
     bool _isCaseSensitive;
+    bool _useExtendedVerseBoundaries;
 };
 
 #endif // _MODULE_SEARCH_WORKER

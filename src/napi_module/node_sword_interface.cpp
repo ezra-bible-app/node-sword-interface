@@ -482,6 +482,7 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
                             ParamType::string, // searchTerm
                             ParamType::string, // searchType
                             ParamType::boolean, // isCaseSensitive
+                            ParamType::boolean, // useExtendedVerseBoundaries
                             ParamType::function, // progressCallback
                             ParamType::function); // final Callback
 
@@ -489,8 +490,9 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
     Napi::String searchTerm = info[1].As<Napi::String>();
     string searchTypeString = string(info[2].As<Napi::String>());
     Napi::Boolean isCaseSensitive = info[3].As<Napi::Boolean>();
-    Napi::Function jsProgressCallback = info[4].As<Napi::Function>();
-    Napi::Function callback = info[5].As<Napi::Function>();
+    Napi::Boolean useExtendedVerseBoundaries = info[4].As<Napi::Boolean>();
+    Napi::Function jsProgressCallback = info[5].As<Napi::Function>();
+    Napi::Function callback = info[6].As<Napi::Function>();
     SearchType searchType = SearchType::multiWord;
     
     if (searchTypeString == "phrase") {
@@ -518,7 +520,8 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
                                                         moduleName,
                                                         searchTerm,
                                                         searchType,
-                                                        isCaseSensitive);
+                                                        isCaseSensitive,
+                                                        useExtendedVerseBoundaries);
     worker->Queue();
     return env.Undefined();
 }
