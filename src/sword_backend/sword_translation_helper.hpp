@@ -20,7 +20,9 @@
 #define _SWORD_TRANSLATION_HELPER
 
 #include <string>
+#include <sstream>
 #include <localemgr.h>
+#include <swlocale.h>
 
 class SwordTranslationHelper
 {
@@ -34,6 +36,21 @@ public:
         
         std::string translation = std::string(this->_localeMgr->translate(originalString.c_str(), localeCode.c_str()));
         return translation;
+    }
+
+    inline std::string getBookAbbreviation(std::string configPath, std::string book, std::string localeCode) {
+        // We only initialize this at the first execution
+        if (this->_localeMgr == 0) {
+            this->_localeMgr = new sword::LocaleMgr(configPath.c_str());
+        }
+
+        std::stringstream bookTerm;
+        bookTerm << "prefAbbr_";
+        bookTerm << book;
+
+        sword::SWLocale* locale = this->_localeMgr->getLocale(localeCode.c_str());
+        std::string translatedAbbreviation = std::string(locale->translate(bookTerm.str().c_str()));
+        return translatedAbbreviation;
     }
 
 private:
