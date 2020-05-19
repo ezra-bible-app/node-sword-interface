@@ -11,8 +11,8 @@ function unzip {
 $AllProtocols = [System.Net.SecurityProtocolType]'Tls11,Tls12'
 [System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
 
-# --- Set the uri for the latest release
-$URI = "https://api.github.com/repos/tobias-klein/sword-build-win32/releases/latest"
+# --- Set the uri for the release
+$URI = "https://api.github.com/repos/tobias-klein/sword-build-win32/releases/tags/v1.8.900-2020-05-19"
 
 # --- Query the API to get the url of the zip
 $Response = Invoke-RestMethod -Method Get -Uri $URI
