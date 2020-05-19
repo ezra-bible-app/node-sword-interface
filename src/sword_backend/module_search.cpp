@@ -21,6 +21,7 @@
 #include <string>
 #include <vector>
 #include <regex>
+#include <algorithm>
 
 // sword includes
 #include <swmodule.h>
@@ -84,6 +85,7 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
     int flags = 0;
     // This holds the text that we will return
     vector<Verse> searchResults;
+    vector<string> searchResultReferences;
 
     if (!isCaseSensitive) {
         // for case insensitivity
@@ -131,11 +133,19 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
             module->setKey(listKey.getElement());
 
             string verseText = this->_textProcessor.getCurrentVerseText(module, hasStrongs);
-            Verse currentVerse;
-            currentVerse.reference = module->getKey()->getShortText();
-            currentVerse.absoluteVerseNumber = absoluteVerseNumbers[currentVerse.reference];
-            currentVerse.content = verseText;
-            searchResults.push_back(currentVerse);
+            string currentReference = module->getKey()->getShortText();
+
+            if (std::find(searchResultReferences.begin(),
+                          searchResultReferences.end(),                         // Only accept the result if we do not
+                          currentReference) == searchResultReferences.end()) {  // have it yet!
+            
+                Verse currentVerse;
+                currentVerse.reference = module->getKey()->getShortText();
+                currentVerse.absoluteVerseNumber = absoluteVerseNumbers[currentVerse.reference];
+                currentVerse.content = verseText;
+                searchResults.push_back(currentVerse);
+                searchResultReferences.push_back(currentReference);
+            }
 
             listKey++;
         }
