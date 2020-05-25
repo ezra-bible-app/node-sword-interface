@@ -38,15 +38,6 @@ using namespace sword;
 TextProcessor::TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelper)
     : _moduleStore(moduleStore), _moduleHelper(moduleHelper)
 {
-    this->initStrongs();
-}
-
-void TextProcessor::initStrongs()
-{
-    if (this->_strongsHebrew == 0 || this->_strongsGreek == 0) {
-        this->_strongsHebrew = this->_moduleStore.getLocalModule("StrongsHebrew");
-        this->_strongsGreek = this->_moduleStore.getLocalModule("StrongsGreek");
-    }
 }
 
 string TextProcessor::getFilteredText(const string& text, bool hasStrongs)
@@ -354,9 +345,9 @@ StrongsEntry* TextProcessor::getStrongsEntry(string key)
     char strongsType = key[0];
 
     if (strongsType == 'H') {
-        module = this->_strongsHebrew;
+        module = this->_moduleStore.getLocalModule("StrongsHebrew");
     } else if (strongsType == 'G') {
-        module = this->_strongsGreek;
+        module = this->_moduleStore.getLocalModule("StrongsGreek");
     } else {
         return 0;
     }

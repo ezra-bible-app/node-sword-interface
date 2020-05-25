@@ -35,8 +35,6 @@ public:
     TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelper);
     virtual ~TextProcessor() {}
 
-    void initStrongs();
-
     void enableMarkup() { this->_markupEnabled = true; }
     void disableMarkup() { this->_markupEnabled = false; }
 
@@ -65,9 +63,6 @@ private:
     ModuleStore& _moduleStore;
     ModuleHelper& _moduleHelper;
     bool _markupEnabled;
-
-    sword::SWModule* _strongsHebrew = 0;
-    sword::SWModule* _strongsGreek = 0;
 };
 
 #endif // _TEXT_PROCESSOR
