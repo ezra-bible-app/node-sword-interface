@@ -462,6 +462,18 @@ class NodeSwordInterface {
   }
 
   /**
+   * Uses the Sword LocaleMgr to translate a book abbreviation.
+   * 
+   * @param {String} moduleName
+   * @param {String} bookCode
+   * @param {String} localeCode
+   */
+  getBookAbbreviation(moduleName, bookCode, localeCode) {
+    var localesDir = path.join(__dirname, './locales.d');
+    return this.nativeInterface.getBookAbbreviation(localesDir, moduleName, bookCode, localeCode);
+  }
+
+  /**
    * Returns the version of the SWORD library
    * @return {String} SWORD library version.
    */  

@@ -79,6 +79,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("saveModuleUnlockKey", &NodeSwordInterface::saveModuleUnlockKey),
         InstanceMethod("isModuleReadable", &NodeSwordInterface::isModuleReadable),
         InstanceMethod("getSwordTranslation", &NodeSwordInterface::getSwordTranslation),
+        InstanceMethod("getBookAbbreviation", &NodeSwordInterface::getBookAbbreviation),
         InstanceMethod("getSwordVersion", &NodeSwordInterface::getSwordVersion)
     });
 
@@ -650,6 +651,33 @@ Napi::Value NodeSwordInterface::getSwordTranslation(const Napi::CallbackInfo& in
 
     unlockApi();
     return translation;
+}
+
+Napi::Value NodeSwordInterface::getBookAbbreviation(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::string, ParamType::string);
+    Napi::String configDir = info[0].As<Napi::String>();
+    Napi::String moduleName = info[1].As<Napi::String>();
+    Napi::String bookCode = info[2].As<Napi::String>();
+    Napi::String localeCode = info[3].As<Napi::String>();
+
+    SWModule* swordModule = this->_moduleStore->getLocalModule(moduleName);
+
+    if (swordModule == 0) {
+        string errorMessage = "getLocalModule returned 0 for '" + string(moduleName) + "'";
+        THROW_JS_EXCEPTION(errorMessage);
+    } else {
+        Napi::String abbreviation = Napi::String::New(info.Env(), this->_swordTranslationHelper.getBookAbbreviation(
+            configDir,
+            swordModule,
+            bookCode,
+            localeCode
+        ));
+
+        unlockApi();
+        return abbreviation;
+    }
 }
 
 Napi::Value NodeSwordInterface::getSwordVersion(const Napi::CallbackInfo& info)

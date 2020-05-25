@@ -61,6 +61,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.isModuleInUserDir(moduleCode)](#NodeSwordInterface+isModuleInUserDir) ⇒ <code>Boolean</code>
     * [.isModuleAvailableInRepo(moduleCode)](#NodeSwordInterface+isModuleAvailableInRepo) ⇒ <code>Boolean</code>
     * [.getSwordTranslation(originalString, localeCode)](#NodeSwordInterface+getSwordTranslation)
+    * [.getBookAbbreviation(moduleName, bookCode, localeCode)](#NodeSwordInterface+getBookAbbreviation)
     * [.getSwordVersion()](#NodeSwordInterface+getSwordVersion) ⇒ <code>String</code>
 
 <a name="NodeSwordInterface+repositoryConfigExisting"></a>
@@ -405,6 +406,19 @@ Uses the Sword LocaleMgr to translate a string. This can be used to translate bo
 | Param | Type |
 | --- | --- |
 | originalString | <code>String</code> | 
+| localeCode | <code>String</code> | 
+
+<a name="NodeSwordInterface+getBookAbbreviation"></a>
+
+### nodeSwordInterface.getBookAbbreviation(moduleName, bookCode, localeCode)
+Uses the Sword LocaleMgr to translate a book abbreviation.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+
+| Param | Type |
+| --- | --- |
+| moduleName | <code>String</code> | 
+| bookCode | <code>String</code> | 
 | localeCode | <code>String</code> | 
 
 <a name="NodeSwordInterface+getSwordVersion"></a>

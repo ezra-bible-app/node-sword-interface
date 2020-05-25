@@ -23,6 +23,7 @@
 // Sword includes
 #include <swmodule.h>
 #include <versekey.h>
+#include <localemgr.h>
 
 #include "module_helper.hpp"
 

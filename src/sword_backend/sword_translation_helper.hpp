@@ -21,8 +21,12 @@
 
 #include <string>
 #include <sstream>
+
 #include <localemgr.h>
 #include <swlocale.h>
+#include <swkey.h>
+#include <versekey.h>
+#include <swmodule.h>
 
 class SwordTranslationHelper
 {
@@ -32,24 +36,25 @@ public:
         // We only initialize this at the first execution
         if (this->_localeMgr == 0) {
             this->_localeMgr = new sword::LocaleMgr(configPath.c_str());
+            sword::LocaleMgr::setSystemLocaleMgr(this->_localeMgr);
         }
         
         std::string translation = std::string(this->_localeMgr->translate(originalString.c_str(), localeCode.c_str()));
         return translation;
     }
 
-    inline std::string getBookAbbreviation(std::string configPath, std::string book, std::string localeCode) {
+    inline std::string getBookAbbreviation(std::string configPath, sword::SWModule* module, std::string book, std::string localeCode) {
         // We only initialize this at the first execution
         if (this->_localeMgr == 0) {
             this->_localeMgr = new sword::LocaleMgr(configPath.c_str());
+            sword::LocaleMgr::setSystemLocaleMgr(this->_localeMgr);
         }
 
-        std::stringstream bookTerm;
-        bookTerm << "prefAbbr_";
-        bookTerm << book;
+        sword::VerseKey *vk = (sword::VerseKey *)module->getKey();
+        vk->setLocale(localeCode.c_str());
+        vk->setText(book.c_str());
+        std::string translatedAbbreviation = vk->getBookAbbrev();
 
-        sword::SWLocale* locale = this->_localeMgr->getLocale(localeCode.c_str());
-        std::string translatedAbbreviation = std::string(locale->translate(bookTerm.str().c_str()));
         return translatedAbbreviation;
     }
 
