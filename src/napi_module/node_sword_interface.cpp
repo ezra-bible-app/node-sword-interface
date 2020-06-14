@@ -27,6 +27,7 @@
 #include "node_sword_interface.hpp"
 #include "napi_sword_helper.hpp"
 #include "worker.hpp"
+#include "repository_interface.hpp"
 #include "install_module_worker.hpp"
 #include "module_search_worker.hpp"
 #include "sword_status_reporter.hpp"
@@ -260,16 +261,35 @@ Napi::Value NodeSwordInterface::getAllLocalModules(const Napi::CallbackInfo& inf
     return moduleArray;
 }
 
+ModuleType NodeSwordInterface::getModuleTypeFromString(std::string moduleTypeString)
+{
+    if (moduleTypeString == "BIBLE") {
+        return ModuleType::bible;
+    } else if (moduleTypeString == "DICT") {
+        return ModuleType::dict;
+    } else {
+        return ModuleType::any;
+    }
+}
+
 Napi::Value NodeSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo& info)
 {
     lockApi();
     Napi::Env env = info.Env();
-    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::boolean, ParamType::boolean);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::string, ParamType::boolean, ParamType::boolean);
     Napi::String repoName = info[0].As<Napi::String>();
     Napi::String languageCode = info[1].As<Napi::String>();
-    Napi::Boolean headersFilter = info[2].As<Napi::Boolean>();
-    Napi::Boolean strongsFilter = info[3].As<Napi::Boolean>();
-    vector<SWModule*> modules = this->_repoInterface->getRepoModulesByLang(repoName, languageCode, headersFilter, strongsFilter);
+    Napi::String moduleTypeString = info[2].As<Napi::String>();
+    Napi::Boolean headersFilter = info[3].As<Napi::Boolean>();
+    Napi::Boolean strongsFilter = info[4].As<Napi::Boolean>();
+
+    ModuleType moduleType = this->getModuleTypeFromString(moduleTypeString);
+
+    vector<SWModule*> modules = this->_repoInterface->getRepoModulesByLang(repoName,
+                                                                           languageCode,
+                                                                           moduleType,
+                                                                           headersFilter,
+                                                                           strongsFilter);
     Napi::Array moduleArray = Napi::Array::New(env, modules.size());
 
     for (unsigned int i = 0; i < modules.size(); i++) {

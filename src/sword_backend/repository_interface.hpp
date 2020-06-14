@@ -34,6 +34,12 @@ namespace sword {
     class SWMGr;
 };
 
+enum class ModuleType {
+    bible,
+    dict,
+    any
+};
+
 class ModuleHelper;
 
 class RepositoryInterface {
@@ -49,8 +55,12 @@ public:
     std::vector<std::string> getRepoNames();
     std::vector<sword::SWModule*> getAllRemoteModules();
     sword::SWModule* getRepoModule(std::string moduleName, std::string repoName="all");
-    std::vector<sword::SWModule*> getAllRepoModules(std::string repoName);
-    std::vector<sword::SWModule*> getRepoModulesByLang(std::string repoName, std::string languageCode, bool headersFilter=false, bool strongsFilter=false);
+    std::vector<sword::SWModule*> getAllRepoModules(std::string repoName, ModuleType moduleType=ModuleType::bible);
+    std::vector<sword::SWModule*> getRepoModulesByLang(std::string repoName,  
+                                                       std::string languageCode,
+                                                       ModuleType moduleType=ModuleType::bible,
+                                                       bool headersFilter=false,
+                                                       bool strongsFilter=false);
     unsigned int getRepoTranslationCount(std::string repoName);
     std::vector<std::string> getRepoLanguages(std::string repoName);
     unsigned int getRepoLanguageTranslationCount(std::string repoName, std::string languageCode);
@@ -75,6 +85,7 @@ private:
     std::vector<std::string> getAllRepoModuleIds();
     std::string getModuleIdFromFile(std::string moduleFileName);
     sword::SWModule* getModuleFromList(std::vector<sword::SWModule*>& moduleList, std::string moduleName);
+    std::string getModuleTypeString(ModuleType moduleType);
 
     unsigned int _remoteSourceCount = 0;
     unsigned int _remoteSourceUpdateCount = 0;

@@ -36,7 +36,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getRepoNames()](#NodeSwordInterface+getRepoNames) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoLanguages(repositoryName)](#NodeSwordInterface+getRepoLanguages) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getAllRepoModules(repositoryName)](#NodeSwordInterface+getAllRepoModules) ⇒ <code>Array.&lt;String&gt;</code>
-    * [.getRepoModulesByLang(repositoryName, language, headersFilter, strongsFilter)](#NodeSwordInterface+getRepoModulesByLang) ⇒ <code>Array.&lt;String&gt;</code>
+    * [.getRepoModulesByLang(repositoryName, language, moduleType, headersFilter, strongsFilter)](#NodeSwordInterface+getRepoModulesByLang) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoModule(moduleCode)](#NodeSwordInterface+getRepoModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
     * [.getAllLocalModules()](#NodeSwordInterface+getAllLocalModules) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
     * [.getRepoLanguageTranslationCount(repositoryName, language)](#NodeSwordInterface+getRepoLanguageTranslationCount) ⇒ <code>Number</code>
@@ -123,7 +123,7 @@ Returns all bible modules for the given repository.
 
 <a name="NodeSwordInterface+getRepoModulesByLang"></a>
 
-### nodeSwordInterface.getRepoModulesByLang(repositoryName, language, headersFilter, strongsFilter) ⇒ <code>Array.&lt;String&gt;</code>
+### nodeSwordInterface.getRepoModulesByLang(repositoryName, language, moduleType, headersFilter, strongsFilter) ⇒ <code>Array.&lt;String&gt;</code>
 Returns all bible modules for the given repository and language
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
@@ -133,6 +133,7 @@ Returns all bible modules for the given repository and language
 | --- | --- | --- | --- |
 | repositoryName | <code>String</code> |  | The name of the given repository. |
 | language | <code>String</code> |  | The language code that shall be used as a filter. |
+| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT) |
 | headersFilter | <code>Boolean</code> | <code>false</code> | Whether only modules with Headers shall be returned. |
 | strongsFilter | <code>Boolean</code> | <code>false</code> | Whether only modules with Strong's shall be returned. |
 

@@ -30,6 +30,7 @@ class TextProcessor;
 class NapiSwordHelper;
 class ModuleHelper;
 class ModuleSearch;
+enum class ModuleType;
 
 enum class ParamType {
     string,
@@ -85,6 +86,7 @@ private:
     Napi::Value getSwordVersion(const Napi::CallbackInfo& info);
 
     int validateParams(const Napi::CallbackInfo& info, std::vector<ParamType> paramSpec);
+    ModuleType getModuleTypeFromString(std::string moduleTypeString);
 
     ModuleHelper* _moduleHelper;
     NapiSwordHelper* _napiSwordHelper;

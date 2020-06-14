@@ -191,19 +191,20 @@ vector<SWModule*> RepositoryInterface::getAllRemoteModules()
     return allModules;
 }
 
-vector<SWModule*> RepositoryInterface::getAllRepoModules(string repoName)
+vector<SWModule*> RepositoryInterface::getAllRepoModules(string repoName, ModuleType moduleType)
 {
     vector<SWModule*> modules;
     InstallSource* remoteSource = this->getRemoteSource(repoName);
+    string moduleTypeString = this->getModuleTypeString(moduleType);
 
     if (remoteSource != 0) {
         SWMgr* mgr = remoteSource->getMgr();
 
         for (ModMap::const_iterator it = mgr->Modules.begin(); it != mgr->Modules.end(); it++) {
             SWModule* currentModule = it->second;
-            string moduleType = currentModule->getType();
+            string currentModuleType = currentModule->getType();
 
-            if (moduleType == "Biblical Texts") {
+            if (moduleTypeString == "ANY" || currentModuleType == moduleTypeString) {
                 modules.push_back(currentModule);
             }
         }
@@ -222,15 +223,39 @@ SWModule* RepositoryInterface::getRepoModule(string moduleName, string repoName)
     return this->getModuleFromList(modules, moduleName);
 }
 
-vector<SWModule*> RepositoryInterface::getRepoModulesByLang(string repoName, string languageCode, bool headersFilter, bool strongsFilter)
+string RepositoryInterface::getModuleTypeString(ModuleType moduleType)
 {
-    vector<SWModule*> allModules = this->getAllRepoModules(repoName);
+    string moduleTypeFilter = "";
+
+    switch (moduleType) {
+        case ModuleType::bible:
+            moduleTypeFilter = "Biblical Texts";
+            break;
+        case ModuleType::dict:
+            moduleTypeFilter = "Lexicons / Dictionaries";
+            break;
+        default:
+            moduleTypeFilter = "ANY";
+    }
+
+    return moduleTypeFilter;
+}
+
+vector<SWModule*> RepositoryInterface::getRepoModulesByLang(string repoName,
+                                                            string languageCode,
+                                                            ModuleType moduleType,
+                                                            bool headersFilter,
+                                                            bool strongsFilter)
+{
+    vector<SWModule*> allModules = this->getAllRepoModules(repoName, moduleType);
     vector<SWModule*> selectedLanguageModules;
+
+    string moduleTypeFilter = this->getModuleTypeString(moduleType);
 
     for (unsigned int i = 0; i < allModules.size(); i++) {
       SWModule* currentModule = allModules[i];
 
-      if ((currentModule->getType() == string("Biblical Texts")) &&
+      if ((moduleTypeFilter == "ANY" || currentModule->getType() == moduleTypeFilter) &&
           (currentModule->getLanguage() == languageCode)) {
 
         bool hasHeadings = this->_moduleHelper.moduleHasGlobalOption(currentModule, "Headings");
