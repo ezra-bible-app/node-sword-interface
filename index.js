@@ -179,12 +179,12 @@ class NodeSwordInterface {
   }
 
   /**
-   * Returns all bible modules installed locally.
-   *
+   * Returns all modules installed locally (default: bible modules).
+   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
    * @return {ModuleObject[]} An array of ModuleObjects which represents the locally installed bible modules.
    */
-  getAllLocalModules() {
-    return this.nativeInterface.getAllLocalModules();
+  getAllLocalModules(moduleType="BIBLE") {
+    return this.nativeInterface.getAllLocalModules(moduleType);
   }
 
   /**

@@ -27,6 +27,12 @@ enum class QueryLimit {
     book
 };
 
+enum class ModuleType {
+    bible,
+    dict,
+    any
+};
+
 class Verse
 {
 public:

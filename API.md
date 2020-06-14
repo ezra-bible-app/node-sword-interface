@@ -38,7 +38,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getAllRepoModules(repositoryName, moduleType)](#NodeSwordInterface+getAllRepoModules) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoModulesByLang(repositoryName, language, moduleType, headersFilter, strongsFilter)](#NodeSwordInterface+getRepoModulesByLang) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoModule(moduleCode)](#NodeSwordInterface+getRepoModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
-    * [.getAllLocalModules()](#NodeSwordInterface+getAllLocalModules) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
+    * [.getAllLocalModules(moduleType)](#NodeSwordInterface+getAllLocalModules) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
     * [.getRepoModuleCount(repositoryName, moduleType)](#NodeSwordInterface+getRepoModuleCount) ⇒ <code>Number</code>
     * [.getRepoLanguageModuleCount(repositoryName, language, moduleType)](#NodeSwordInterface+getRepoLanguageModuleCount) ⇒ <code>Number</code>
     * [.installModule(moduleCode, progressCB)](#NodeSwordInterface+installModule) ⇒ <code>Promise</code>
@@ -153,11 +153,16 @@ Returns an object representation of a SWORD module from a repository.
 
 <a name="NodeSwordInterface+getAllLocalModules"></a>
 
-### nodeSwordInterface.getAllLocalModules() ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
-Returns all bible modules installed locally.
+### nodeSwordInterface.getAllLocalModules(moduleType) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
+Returns all modules installed locally (default: bible modules).
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 **Returns**: [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject) - An array of ModuleObjects which represents the locally installed bible modules.  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT) |
+
 <a name="NodeSwordInterface+getRepoModuleCount"></a>
 
 ### nodeSwordInterface.getRepoModuleCount(repositoryName, moduleType) ⇒ <code>Number</code>

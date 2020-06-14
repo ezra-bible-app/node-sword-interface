@@ -21,6 +21,7 @@
 
 #include <string>
 
+#include "common_defs.hpp"
 #include "file_system_helper.hpp"
 
 namespace sword {
@@ -35,7 +36,7 @@ public:
     virtual ~ModuleStore();
 
     sword::SWModule* getLocalModule(std::string moduleName);
-    std::vector<sword::SWModule*> getAllLocalModules();
+    std::vector<sword::SWModule*> getAllLocalModules(ModuleType moduleType=ModuleType::bible);
     
     bool isModuleInUserDir(std::string moduleName);
     bool isModuleInUserDir(sword::SWModule* module);

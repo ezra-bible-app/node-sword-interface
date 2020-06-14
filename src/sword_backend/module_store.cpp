@@ -26,6 +26,7 @@
 
 // Own includes
 #include "module_store.hpp"
+#include "repository_interface.hpp"
 
 using namespace std;
 using namespace sword;
@@ -64,9 +65,10 @@ SWModule* ModuleStore::getLocalModule(string moduleName)
     return this->_mgr->getModule(moduleName.c_str());
 }
 
-vector<SWModule*> ModuleStore::getAllLocalModules()
+vector<SWModule*> ModuleStore::getAllLocalModules(ModuleType moduleType)
 {
     vector<SWModule*> allLocalModules;
+    string moduleTypeFilter = RepositoryInterface::getModuleTypeString(moduleType);
 
     for (ModMap::iterator modIterator = this->_mgr->Modules.begin();
          modIterator != this->_mgr->Modules.end();
@@ -75,7 +77,7 @@ vector<SWModule*> ModuleStore::getAllLocalModules()
         SWModule* currentModule = (SWModule*)modIterator->second;
         string moduleType = string(currentModule->getType());
 
-        if (moduleType == string("Biblical Texts")) {
+        if (moduleTypeFilter == "ANY" || moduleType == moduleTypeFilter) {
             allLocalModules.push_back(currentModule);
         }
     }

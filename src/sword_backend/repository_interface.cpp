@@ -195,7 +195,7 @@ vector<SWModule*> RepositoryInterface::getAllRepoModules(string repoName, Module
 {
     vector<SWModule*> modules;
     InstallSource* remoteSource = this->getRemoteSource(repoName);
-    string moduleTypeString = this->getModuleTypeString(moduleType);
+    string moduleTypeString = RepositoryInterface::getModuleTypeString(moduleType);
 
     if (remoteSource != 0) {
         SWMgr* mgr = remoteSource->getMgr();
@@ -223,24 +223,6 @@ SWModule* RepositoryInterface::getRepoModule(string moduleName, string repoName)
     return this->getModuleFromList(modules, moduleName);
 }
 
-string RepositoryInterface::getModuleTypeString(ModuleType moduleType)
-{
-    string moduleTypeFilter = "";
-
-    switch (moduleType) {
-        case ModuleType::bible:
-            moduleTypeFilter = "Biblical Texts";
-            break;
-        case ModuleType::dict:
-            moduleTypeFilter = "Lexicons / Dictionaries";
-            break;
-        default:
-            moduleTypeFilter = "ANY";
-    }
-
-    return moduleTypeFilter;
-}
-
 vector<SWModule*> RepositoryInterface::getRepoModulesByLang(string repoName,
                                                             string languageCode,
                                                             ModuleType moduleType,
@@ -250,7 +232,7 @@ vector<SWModule*> RepositoryInterface::getRepoModulesByLang(string repoName,
     vector<SWModule*> allModules = this->getAllRepoModules(repoName, moduleType);
     vector<SWModule*> selectedLanguageModules;
 
-    string moduleTypeFilter = this->getModuleTypeString(moduleType);
+    string moduleTypeFilter = RepositoryInterface::getModuleTypeString(moduleType);
 
     for (unsigned int i = 0; i < allModules.size(); i++) {
       SWModule* currentModule = allModules[i];

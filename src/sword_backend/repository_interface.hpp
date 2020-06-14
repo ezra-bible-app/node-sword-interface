@@ -23,6 +23,7 @@
 #include <string>
 #include <thread>
 
+#include "common_defs.hpp"
 #include "file_system_helper.hpp"
 #include "module_helper.hpp"
 #include "sword_status_reporter.hpp"
@@ -32,12 +33,6 @@ namespace sword {
     class InstallSource;
     class SWModule;
     class SWMGr;
-};
-
-enum class ModuleType {
-    bible,
-    dict,
-    any
 };
 
 class ModuleHelper;
@@ -76,6 +71,24 @@ public:
         return this->_statusReporter;
     }
 
+    static std::string getModuleTypeString(ModuleType moduleType)
+    {
+        std::string moduleTypeFilter = "";
+
+        switch (moduleType) {
+            case ModuleType::bible:
+                moduleTypeFilter = "Biblical Texts";
+                break;
+            case ModuleType::dict:
+                moduleTypeFilter = "Lexicons / Dictionaries";
+                break;
+            default:
+                moduleTypeFilter = "ANY";
+        }
+
+        return moduleTypeFilter;
+    }
+
 private:
     int refreshIndividualRemoteSource(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
     std::thread getRemoteSourceRefreshThread(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
@@ -85,7 +98,6 @@ private:
     std::vector<std::string> getAllRepoModuleIds();
     std::string getModuleIdFromFile(std::string moduleFileName);
     sword::SWModule* getModuleFromList(std::vector<sword::SWModule*>& moduleList, std::string moduleName);
-    std::string getModuleTypeString(ModuleType moduleType);
 
     unsigned int _remoteSourceCount = 0;
     unsigned int _remoteSourceUpdateCount = 0;

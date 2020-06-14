@@ -249,9 +249,13 @@ Napi::Value NodeSwordInterface::isModuleAvailableInRepo(const Napi::CallbackInfo
 Napi::Value NodeSwordInterface::getAllLocalModules(const Napi::CallbackInfo& info)
 {
     lockApi();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
+    Napi::String moduleTypeString = info[0].As<Napi::String>();
+    ModuleType moduleType = this->getModuleTypeFromString(moduleTypeString);
+
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
-    vector<SWModule*> modules = this->_moduleStore->getAllLocalModules();
+    vector<SWModule*> modules = this->_moduleStore->getAllLocalModules(moduleType);
     Napi::Array moduleArray = Napi::Array::New(env, modules.size());
 
     for (unsigned int i = 0; i < modules.size(); i++) {
