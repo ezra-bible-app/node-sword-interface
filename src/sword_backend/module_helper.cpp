@@ -32,19 +32,29 @@ using namespace sword;
 
 bool ModuleHelper::moduleHasGlobalOption(SWModule* module, string globalOption)
 {
-    bool hasGlobalOption = false;
-    ConfigEntMap::const_iterator it = module->getConfig().lower_bound("GlobalOptionFilter");
-    ConfigEntMap::const_iterator end = module->getConfig().upper_bound("GlobalOptionFilter");
+    return this->moduleHasKeyValuePair(module, "GlobalOptionFilter", globalOption);
+}
+
+bool ModuleHelper::moduleHasFeature(sword::SWModule* module, std::string feature)
+{
+    return this->moduleHasKeyValuePair(module, "Feature", feature);
+}
+
+bool ModuleHelper::moduleHasKeyValuePair(sword::SWModule* module, std::string key, std::string value)
+{
+    bool hasKeyValuePair = false;
+    ConfigEntMap::const_iterator it = module->getConfig().lower_bound(key.c_str());
+    ConfigEntMap::const_iterator end = module->getConfig().upper_bound(key.c_str());
 
     for(; it !=end; ++it) {
-        string currentOption = string(it->second.c_str());
-        if (currentOption.find(globalOption) != string::npos) {
-            hasGlobalOption = true;
+        string currentValue = string(it->second.c_str());
+        if (currentValue.find(value) != string::npos) {
+            hasKeyValuePair = true;
             break;
         }
     }
 
-    return hasGlobalOption;
+    return hasKeyValuePair;
 }
 
 vector<string> ModuleHelper::getBookList(string moduleName)

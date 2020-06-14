@@ -34,11 +34,13 @@ public:
     virtual ~ModuleHelper(){}
 
     bool moduleHasGlobalOption(sword::SWModule* module, std::string globalOption);
+    bool moduleHasFeature(sword::SWModule* module, std::string feature);
 
     std::vector<std::string> getBookList(std::string moduleName);
     std::map<std::string, std::vector<int>> getBibleChapterVerseCounts(std::string moduleName);
 
 private:
+    bool moduleHasKeyValuePair(sword::SWModule* module, std::string key, std::string value);
     ModuleStore& _moduleStore;
 };
 

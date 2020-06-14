@@ -99,6 +99,14 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     object["hasHeadings"] = Napi::Boolean::New(env, this->_moduleHelper.moduleHasGlobalOption(swModule, "Headings"));
     object["hasRedLetterWords"] = Napi::Boolean::New(env, this->_moduleHelper.moduleHasGlobalOption(swModule, "RedLetter"));
     object["hasCrossReferences"] = Napi::Boolean::New(env, this->_moduleHelper.moduleHasGlobalOption(swModule, "Scripref"));
+
+    bool moduleHasStrongsKeys = false;
+    if (this->_moduleHelper.moduleHasFeature(swModule, "GreekDef") ||
+        this->_moduleHelper.moduleHasFeature(swModule, "HebrewDef")) {
+        moduleHasStrongsKeys = true;
+    }
+
+    object["hasStrongsKeys"] = Napi::Boolean::New(env, moduleHasStrongsKeys);
 }
 
 Napi::String NapiSwordHelper::getConfigEntry(sword::SWModule* swModule, std::string key, const Napi::Env& env)

@@ -470,6 +470,7 @@ An object representation of a SWORD module.
 | inUserDir | <code>Boolean</code> | Information on whether the module is located in the user's directory |
 | locked | <code>Boolean</code> | Information on whether the module is locked |
 | hasStrongs | <code>Boolean</code> | Information on whether the module has Strong's numbers |
+| hasStrongsKeys | <code>Boolean</code> | Information on whether the module has Strong's based keys |
 | hasFootnotes | <code>Boolean</code> | Information on whether the module has footnotes |
 | hasHeadings | <code>Boolean</code> | Information on whether the module has headings |
 | hasRedLetterWords | <code>Boolean</code> | Information on whether the module has red letter words |

@@ -49,6 +49,7 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
  * @property {Boolean} inUserDir - Information on whether the module is located in the user's directory
  * @property {Boolean} locked - Information on whether the module is locked
  * @property {Boolean} hasStrongs - Information on whether the module has Strong's numbers
+ * @property {Boolean} hasStrongsKeys - Information on whether the module has Strong's based keys
  * @property {Boolean} hasFootnotes - Information on whether the module has footnotes
  * @property {Boolean} hasHeadings - Information on whether the module has headings
  * @property {Boolean} hasRedLetterWords - Information on whether the module has red letter words
