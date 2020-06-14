@@ -61,9 +61,9 @@ public:
                                                        ModuleType moduleType=ModuleType::bible,
                                                        bool headersFilter=false,
                                                        bool strongsFilter=false);
-    unsigned int getRepoTranslationCount(std::string repoName);
+    unsigned int getRepoModuleCount(std::string repoName, ModuleType moduleType=ModuleType::bible);
     std::vector<std::string> getRepoLanguages(std::string repoName, ModuleType moduleType=ModuleType::bible);
-    unsigned int getRepoLanguageTranslationCount(std::string repoName, std::string languageCode);
+    unsigned int getRepoLanguageModuleCount(std::string repoName, std::string languageCode, ModuleType moduleType=ModuleType::bible);
 
     bool isModuleAvailableInRepo(std::string moduleName, std::string repoName="all");
     

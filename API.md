@@ -35,11 +35,12 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.updateRepositoryConfig(progressCB)](#NodeSwordInterface+updateRepositoryConfig) ⇒ <code>Promise</code>
     * [.getRepoNames()](#NodeSwordInterface+getRepoNames) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoLanguages(repositoryName, moduleType)](#NodeSwordInterface+getRepoLanguages) ⇒ <code>Array.&lt;String&gt;</code>
-    * [.getAllRepoModules(repositoryName)](#NodeSwordInterface+getAllRepoModules) ⇒ <code>Array.&lt;String&gt;</code>
+    * [.getAllRepoModules(repositoryName, moduleType)](#NodeSwordInterface+getAllRepoModules) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoModulesByLang(repositoryName, language, moduleType, headersFilter, strongsFilter)](#NodeSwordInterface+getRepoModulesByLang) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoModule(moduleCode)](#NodeSwordInterface+getRepoModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
     * [.getAllLocalModules()](#NodeSwordInterface+getAllLocalModules) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
-    * [.getRepoLanguageTranslationCount(repositoryName, language)](#NodeSwordInterface+getRepoLanguageTranslationCount) ⇒ <code>Number</code>
+    * [.getRepoModuleCount(repositoryName, moduleType)](#NodeSwordInterface+getRepoModuleCount) ⇒ <code>Number</code>
+    * [.getRepoLanguageModuleCount(repositoryName, language, moduleType)](#NodeSwordInterface+getRepoLanguageModuleCount) ⇒ <code>Number</code>
     * [.installModule(moduleCode, progressCB)](#NodeSwordInterface+installModule) ⇒ <code>Promise</code>
     * [.uninstallModule(moduleCode)](#NodeSwordInterface+uninstallModule) ⇒ <code>Promise</code>
     * [.saveModuleUnlockKey(moduleCode, key)](#NodeSwordInterface+saveModuleUnlockKey)
@@ -112,15 +113,16 @@ Note that the languages are returned as language codes.
 
 <a name="NodeSwordInterface+getAllRepoModules"></a>
 
-### nodeSwordInterface.getAllRepoModules(repositoryName) ⇒ <code>Array.&lt;String&gt;</code>
-Returns all bible modules for the given repository.
+### nodeSwordInterface.getAllRepoModules(repositoryName, moduleType) ⇒ <code>Array.&lt;String&gt;</code>
+Returns all modules for the given repository (default: bible modules).
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 **Returns**: <code>Array.&lt;String&gt;</code> - An array of strings with the module codes for the bible modules of the given repository.  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| repositoryName | <code>String</code> | The name of the given repository. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| repositoryName | <code>String</code> |  | The name of the given repository. |
+| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT) |
 
 <a name="NodeSwordInterface+getRepoModulesByLang"></a>
 
@@ -156,18 +158,32 @@ Returns all bible modules installed locally.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 **Returns**: [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject) - An array of ModuleObjects which represents the locally installed bible modules.  
-<a name="NodeSwordInterface+getRepoLanguageTranslationCount"></a>
+<a name="NodeSwordInterface+getRepoModuleCount"></a>
 
-### nodeSwordInterface.getRepoLanguageTranslationCount(repositoryName, language) ⇒ <code>Number</code>
-Returns the number of bible modules for a given repository and language.
+### nodeSwordInterface.getRepoModuleCount(repositoryName, moduleType) ⇒ <code>Number</code>
+Returns the number of modules for a given repository (default: bible modules).
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 **Returns**: <code>Number</code> - The number of bible modules for the given repository and language.  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| repositoryName | <code>String</code> | The name of the given repository. |
-| language | <code>String</code> | The language code that shall be used as a filter. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| repositoryName | <code>String</code> |  | The name of the given repository. |
+| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT) |
+
+<a name="NodeSwordInterface+getRepoLanguageModuleCount"></a>
+
+### nodeSwordInterface.getRepoLanguageModuleCount(repositoryName, language, moduleType) ⇒ <code>Number</code>
+Returns the number of modules for a given repository and language (default: bible modules).
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: <code>Number</code> - The number of bible modules for the given repository and language.  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| repositoryName | <code>String</code> |  | The name of the given repository. |
+| language | <code>String</code> |  | The language code that shall be used as a filter. |
+| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT) |
 
 <a name="NodeSwordInterface+installModule"></a>
 

@@ -144,13 +144,14 @@ class NodeSwordInterface {
   }
 
   /**
-   * Returns all bible modules for the given repository.
+   * Returns all modules for the given repository (default: bible modules).
    *
    * @param {String} repositoryName - The name of the given repository.
+   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
    * @return {String[]} An array of strings with the module codes for the bible modules of the given repository.
    */
-  getAllRepoModules(repositoryName) {
-    return this.nativeInterface.getAllRepoModules(repositoryName);
+  getAllRepoModules(repositoryName, moduleType="BIBLE") {
+    return this.nativeInterface.getAllRepoModules(repositoryName, moduleType);
   }
 
   /**
@@ -187,14 +188,26 @@ class NodeSwordInterface {
   }
 
   /**
-   * Returns the number of bible modules for a given repository and language.
+   * Returns the number of modules for a given repository (default: bible modules).
+   *
+   * @param {String} repositoryName - The name of the given repository.
+   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
+   * @return {Number} The number of bible modules for the given repository and language.
+   */
+  getRepoModuleCount(repositoryName, moduleType="BIBLE") {
+    return this.nativeInterface.getRepoModuleCount(repositoryName, moduleType);
+  }
+
+  /**
+   * Returns the number of modules for a given repository and language (default: bible modules).
    *
    * @param {String} repositoryName - The name of the given repository.
    * @param {String} language - The language code that shall be used as a filter.
+   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
    * @return {Number} The number of bible modules for the given repository and language.
    */
-  getRepoLanguageTranslationCount(repositoryName, language) {
-    return this.nativeInterface.getRepoLanguageTranslationCount(repositoryName, language);
+  getRepoLanguageModuleCount(repositoryName, language, moduleType="BIBLE") {
+    return this.nativeInterface.getRepoLanguageModuleCount(repositoryName, language, moduleType);
   }
 
   /**

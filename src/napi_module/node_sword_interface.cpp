@@ -61,8 +61,8 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("isModuleInUserDir", &NodeSwordInterface::isModuleInUserDir),
         InstanceMethod("isModuleAvailableInRepo", &NodeSwordInterface::isModuleAvailableInRepo),
         InstanceMethod("getRepoLanguages", &NodeSwordInterface::getRepoLanguages),
-        InstanceMethod("getRepoTranslationCount", &NodeSwordInterface::getRepoTranslationCount),
-        InstanceMethod("getRepoLanguageTranslationCount", &NodeSwordInterface::getRepoLanguageTranslationCount),
+        InstanceMethod("getRepoModuleCount", &NodeSwordInterface::getRepoModuleCount),
+        InstanceMethod("getRepoLanguageModuleCount", &NodeSwordInterface::getRepoLanguageModuleCount),
         InstanceMethod("getRepoModule", &NodeSwordInterface::getRepoModule),
         InstanceMethod("getModuleDescription", &NodeSwordInterface::getModuleDescription),
         InstanceMethod("getLocalModule", &NodeSwordInterface::getLocalModule),
@@ -208,9 +208,12 @@ Napi::Value NodeSwordInterface::getAllRepoModules(const Napi::CallbackInfo& info
 {
     lockApi();
     Napi::Env env = info.Env();
-    INIT_SCOPE_AND_VALIDATE(ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
-    vector<SWModule*> modules = this->_repoInterface->getAllRepoModules(repoName);
+    Napi::String moduleTypeString = info[1].As<Napi::String>();
+    ModuleType moduleType = this->getModuleTypeFromString(moduleTypeString);
+
+    vector<SWModule*> modules = this->_repoInterface->getAllRepoModules(repoName, moduleType);
     Napi::Array moduleArray = Napi::Array::New(env, modules.size());
 
     for (unsigned int i = 0; i < modules.size(); i++) {
@@ -316,27 +319,33 @@ Napi::Value NodeSwordInterface::getRepoLanguages(const Napi::CallbackInfo& info)
     return languageArray;
 }
 
-Napi::Value NodeSwordInterface::getRepoTranslationCount(const Napi::CallbackInfo& info)
-{
-    lockApi();
-    INIT_SCOPE_AND_VALIDATE(ParamType::string);
-    Napi::String repoName = info[0].As<Napi::String>();
-    unsigned int translationCount = this->_repoInterface->getRepoTranslationCount(repoName);
-    Napi::Number jsTranslationCount = Napi::Number::New(info.Env(), translationCount);
-    unlockApi();
-    return jsTranslationCount;
-}
-
-Napi::Value NodeSwordInterface::getRepoLanguageTranslationCount(const Napi::CallbackInfo& info)
+Napi::Value NodeSwordInterface::getRepoModuleCount(const Napi::CallbackInfo& info)
 {
     lockApi();
     INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
-    Napi::String languageCode = info[1].As<Napi::String>();
-    unsigned int translationCount = this->_repoInterface->getRepoLanguageTranslationCount(repoName, languageCode);
-    Napi::Number jsTranslationCount = Napi::Number::New(info.Env(), translationCount);
+    Napi::String moduleTypeString = info[1].As<Napi::String>();
+    ModuleType moduleType = this->getModuleTypeFromString(moduleTypeString);
+
+    unsigned int moduleCount = this->_repoInterface->getRepoModuleCount(repoName, moduleType);
+    Napi::Number jsModuleCount = Napi::Number::New(info.Env(), moduleCount);
     unlockApi();
-    return jsTranslationCount;
+    return jsModuleCount;
+}
+
+Napi::Value NodeSwordInterface::getRepoLanguageModuleCount(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::string);
+    Napi::String repoName = info[0].As<Napi::String>();
+    Napi::String languageCode = info[1].As<Napi::String>();
+    Napi::String moduleTypeString = info[2].As<Napi::String>();
+    ModuleType moduleType = this->getModuleTypeFromString(moduleTypeString);
+
+    unsigned int moduleCount = this->_repoInterface->getRepoLanguageModuleCount(repoName, languageCode, moduleType);
+    Napi::Number jsModuleCount = Napi::Number::New(info.Env(), moduleCount);
+    unlockApi();
+    return jsModuleCount;
 }
 
 Napi::Value NodeSwordInterface::getRepoModule(const Napi::CallbackInfo& info)

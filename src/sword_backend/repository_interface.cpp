@@ -276,15 +276,15 @@ vector<SWModule*> RepositoryInterface::getRepoModulesByLang(string repoName,
     return selectedLanguageModules;
 }
 
-unsigned int RepositoryInterface::getRepoTranslationCount(string repoName)
+unsigned int RepositoryInterface::getRepoModuleCount(string repoName, ModuleType moduleType)
 {
-    vector<SWModule*> allModules = this->getAllRepoModules(repoName);
+    vector<SWModule*> allModules = this->getAllRepoModules(repoName, moduleType);
     return (unsigned int)allModules.size();
 }
 
-unsigned int RepositoryInterface::getRepoLanguageTranslationCount(string repoName, string languageCode)
+unsigned int RepositoryInterface::getRepoLanguageModuleCount(string repoName, string languageCode, ModuleType moduleType)
 {
-    vector<SWModule*> allModules = this->getRepoModulesByLang(repoName, languageCode);
+    vector<SWModule*> allModules = this->getRepoModulesByLang(repoName, languageCode, moduleType);
     return (unsigned int)allModules.size();
 }
 
