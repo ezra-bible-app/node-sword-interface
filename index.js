@@ -49,7 +49,8 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
  * @property {Boolean} inUserDir - Information on whether the module is located in the user's directory
  * @property {Boolean} locked - Information on whether the module is locked
  * @property {Boolean} hasStrongs - Information on whether the module has Strong's numbers
- * @property {Boolean} hasStrongsKeys - Information on whether the module has Strong's based keys
+ * @property {Boolean} hasGreekStrongsKeys - Information on whether the module has Strong's based keys (Greek)
+ * @property {Boolean} hasHebrewStrongsKeys - Information on whether the module has Strong's based keys (Hebrew)
  * @property {Boolean} hasFootnotes - Information on whether the module has footnotes
  * @property {Boolean} hasHeadings - Information on whether the module has headings
  * @property {Boolean} hasRedLetterWords - Information on whether the module has red letter words
@@ -131,14 +132,15 @@ class NodeSwordInterface {
   }
 
   /**
-   * Returns the available languages for the bible modules from a given repository.
+   * Returns the available languages for the modules from a given repository (default: bible modules).
    * Note that the languages are returned as language codes.
    *
    * @param {String} repositoryName - The name of the given repository.
+   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
    * @return {String[]} An array of strings with the languages codes for the bible modules from the given repository.
    */
-  getRepoLanguages(repositoryName) {
-    return this.nativeInterface.getRepoLanguages(repositoryName);
+  getRepoLanguages(repositoryName, moduleType="BIBLE") {
+    return this.nativeInterface.getRepoLanguages(repositoryName, moduleType);
   }
 
   /**

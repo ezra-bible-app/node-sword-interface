@@ -288,12 +288,12 @@ unsigned int RepositoryInterface::getRepoLanguageTranslationCount(string repoNam
     return (unsigned int)allModules.size();
 }
 
-vector<string> RepositoryInterface::getRepoLanguages(string repoName)
+vector<string> RepositoryInterface::getRepoLanguages(string repoName, ModuleType moduleType)
 {
     vector<SWModule*> modules;
     vector<string> languages;
 
-    modules = this->getAllRepoModules(repoName);
+    modules = this->getAllRepoModules(repoName, moduleType);
 
     for (unsigned int i = 0; i < modules.size(); i++) {
         SWModule* currentModule = modules[i];

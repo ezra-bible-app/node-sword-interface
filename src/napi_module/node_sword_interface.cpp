@@ -305,9 +305,12 @@ Napi::Value NodeSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo& i
 Napi::Value NodeSwordInterface::getRepoLanguages(const Napi::CallbackInfo& info)
 {
     lockApi();
-    INIT_SCOPE_AND_VALIDATE(ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
-    vector<string> repoLanguages = this->_repoInterface->getRepoLanguages(repoName);
+    Napi::String moduleTypeString = info[1].As<Napi::String>();
+    ModuleType moduleType = this->getModuleTypeFromString(moduleTypeString);
+
+    vector<string> repoLanguages = this->_repoInterface->getRepoLanguages(repoName, moduleType);
     Napi::Array languageArray = this->_napiSwordHelper->getNapiArrayFromStringVector(info.Env(), repoLanguages);
     unlockApi();
     return languageArray;

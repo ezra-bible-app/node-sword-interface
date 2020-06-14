@@ -34,7 +34,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.repositoryConfigExisting()](#NodeSwordInterface+repositoryConfigExisting) ⇒ <code>Boolean</code>
     * [.updateRepositoryConfig(progressCB)](#NodeSwordInterface+updateRepositoryConfig) ⇒ <code>Promise</code>
     * [.getRepoNames()](#NodeSwordInterface+getRepoNames) ⇒ <code>Array.&lt;String&gt;</code>
-    * [.getRepoLanguages(repositoryName)](#NodeSwordInterface+getRepoLanguages) ⇒ <code>Array.&lt;String&gt;</code>
+    * [.getRepoLanguages(repositoryName, moduleType)](#NodeSwordInterface+getRepoLanguages) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getAllRepoModules(repositoryName)](#NodeSwordInterface+getAllRepoModules) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoModulesByLang(repositoryName, language, moduleType, headersFilter, strongsFilter)](#NodeSwordInterface+getRepoModulesByLang) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoModule(moduleCode)](#NodeSwordInterface+getRepoModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
@@ -98,16 +98,17 @@ Returns the names of all available SWORD repositories.
 **Returns**: <code>Array.&lt;String&gt;</code> - An array of strings with the names of the available SWORD repositories.  
 <a name="NodeSwordInterface+getRepoLanguages"></a>
 
-### nodeSwordInterface.getRepoLanguages(repositoryName) ⇒ <code>Array.&lt;String&gt;</code>
-Returns the available languages for the bible modules from a given repository.
+### nodeSwordInterface.getRepoLanguages(repositoryName, moduleType) ⇒ <code>Array.&lt;String&gt;</code>
+Returns the available languages for the modules from a given repository (default: bible modules).
 Note that the languages are returned as language codes.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 **Returns**: <code>Array.&lt;String&gt;</code> - An array of strings with the languages codes for the bible modules from the given repository.  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| repositoryName | <code>String</code> | The name of the given repository. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| repositoryName | <code>String</code> |  | The name of the given repository. |
+| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT) |
 
 <a name="NodeSwordInterface+getAllRepoModules"></a>
 
@@ -470,7 +471,8 @@ An object representation of a SWORD module.
 | inUserDir | <code>Boolean</code> | Information on whether the module is located in the user's directory |
 | locked | <code>Boolean</code> | Information on whether the module is locked |
 | hasStrongs | <code>Boolean</code> | Information on whether the module has Strong's numbers |
-| hasStrongsKeys | <code>Boolean</code> | Information on whether the module has Strong's based keys |
+| hasGreekStrongsKeys | <code>Boolean</code> | Information on whether the module has Strong's based keys (Greek) |
+| hasHebrewStrongsKeys | <code>Boolean</code> | Information on whether the module has Strong's based keys (Hebrew) |
 | hasFootnotes | <code>Boolean</code> | Information on whether the module has footnotes |
 | hasHeadings | <code>Boolean</code> | Information on whether the module has headings |
 | hasRedLetterWords | <code>Boolean</code> | Information on whether the module has red letter words |
