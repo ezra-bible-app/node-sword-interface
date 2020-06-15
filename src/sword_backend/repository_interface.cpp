@@ -204,6 +204,10 @@ vector<SWModule*> RepositoryInterface::getAllRepoModules(string repoName, Module
             SWModule* currentModule = it->second;
             string currentModuleType = currentModule->getType();
 
+            if (moduleType == ModuleType::dict && !this->_moduleHelper.moduleHasStrongsKeys(currentModule)) {
+                continue;
+            }
+
             if (moduleTypeString == "ANY" || currentModuleType == moduleTypeString) {
                 modules.push_back(currentModule);
             }

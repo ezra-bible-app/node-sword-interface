@@ -35,6 +35,7 @@ public:
 
     bool moduleHasGlobalOption(sword::SWModule* module, std::string globalOption);
     bool moduleHasFeature(sword::SWModule* module, std::string feature);
+    bool moduleHasStrongsKeys(sword::SWModule* module);
 
     std::vector<std::string> getBookList(std::string moduleName);
     std::map<std::string, std::vector<int>> getBibleChapterVerseCounts(std::string moduleName);
