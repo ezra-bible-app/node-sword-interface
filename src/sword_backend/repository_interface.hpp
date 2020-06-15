@@ -48,7 +48,6 @@ public:
     int refreshRemoteSources(bool force=false, std::function<void(unsigned int progress)>* progressCallback=0);
 
     std::vector<std::string> getRepoNames();
-    std::vector<sword::SWModule*> getAllRemoteModules();
     sword::SWModule* getRepoModule(std::string moduleName, std::string repoName="all");
     std::vector<sword::SWModule*> getAllRepoModules(std::string repoName, ModuleType moduleType=ModuleType::bible);
     std::vector<sword::SWModule*> getRepoModulesByLang(std::string repoName,  

@@ -174,23 +174,6 @@ vector<string> RepositoryInterface::getRepoNames()
     return sourceNames;
 }
 
-vector<SWModule*> RepositoryInterface::getAllRemoteModules()
-{
-    vector<string> repoNames = this->getRepoNames();
-    vector<SWModule*> allModules;
-
-    for (unsigned int i = 0; i < repoNames.size(); i++) {
-        string currentRepo = repoNames[i];
-        vector<SWModule*> repoModules = this->getAllRepoModules(currentRepo);
-
-        for (unsigned int j = 0; j < repoModules.size(); j++) {
-            allModules.push_back(repoModules[j]);
-        }
-    }
-
-    return allModules;
-}
-
 vector<SWModule*> RepositoryInterface::getAllRepoModules(string repoName, ModuleType moduleType)
 {
     vector<SWModule*> modules;
