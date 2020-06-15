@@ -219,7 +219,7 @@ SWModule* RepositoryInterface::getRepoModule(string moduleName, string repoName)
         repoName = this->getModuleRepo(moduleName);
     }
     
-    vector<SWModule*> modules = this->getAllRepoModules(repoName);
+    vector<SWModule*> modules = this->getAllRepoModules(repoName, ModuleType::any);
     return this->getModuleFromList(modules, moduleName);
 }
 
