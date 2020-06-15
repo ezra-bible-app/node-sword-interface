@@ -162,10 +162,12 @@ class NodeSwordInterface {
    * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
    * @param {Boolean} headersFilter - Whether only modules with Headers shall be returned.
    * @param {Boolean} strongsFilter - Whether only modules with Strong's shall be returned.
+   * @param {Boolean} hebrewStrongsKeys - Whether only modules with Hebrew Strong's keys shall be returned (only applies to dictionaries).
+   * @param {Boolean} greekStrongsKeys - Whether only modules with Greek Strong's keys shall be returned (only applies to dictionaries).
    * @return {String[]} An array of strings with the module codes for the bible modules of the given repository and language.
    */
-  getRepoModulesByLang(repositoryName, language, moduleType="BIBLE", headersFilter=false, strongsFilter=false) {
-    return this.nativeInterface.getRepoModulesByLang(repositoryName, language, moduleType, headersFilter, strongsFilter);
+  getRepoModulesByLang(repositoryName, language, moduleType="BIBLE", headersFilter=false, strongsFilter=false, hebrewStrongsKeys=false, greekStrongsKeys=false) {
+    return this.nativeInterface.getRepoModulesByLang(repositoryName, language, moduleType, headersFilter, strongsFilter, hebrewStrongsKeys, greekStrongsKeys);
   }
 
   /**

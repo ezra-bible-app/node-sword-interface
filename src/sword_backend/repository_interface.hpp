@@ -55,7 +55,9 @@ public:
                                                        std::string languageCode,
                                                        ModuleType moduleType=ModuleType::bible,
                                                        bool headersFilter=false,
-                                                       bool strongsFilter=false);
+                                                       bool strongsFilter=false,
+                                                       bool hebrewStrongsKeys=false,
+                                                       bool greekStrongsKeys=false);
     unsigned int getRepoModuleCount(std::string repoName, ModuleType moduleType=ModuleType::bible);
     std::vector<std::string> getRepoLanguages(std::string repoName, ModuleType moduleType=ModuleType::bible);
     unsigned int getRepoLanguageModuleCount(std::string repoName, std::string languageCode, ModuleType moduleType=ModuleType::bible);

@@ -283,12 +283,14 @@ Napi::Value NodeSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo& i
 {
     lockApi();
     Napi::Env env = info.Env();
-    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::string, ParamType::boolean, ParamType::boolean);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::string, ParamType::boolean, ParamType::boolean, ParamType::boolean, ParamType::boolean);
     Napi::String repoName = info[0].As<Napi::String>();
     Napi::String languageCode = info[1].As<Napi::String>();
     Napi::String moduleTypeString = info[2].As<Napi::String>();
     Napi::Boolean headersFilter = info[3].As<Napi::Boolean>();
     Napi::Boolean strongsFilter = info[4].As<Napi::Boolean>();
+    Napi::Boolean hebrewStrongsKeys = info[5].As<Napi::Boolean>();
+    Napi::Boolean greekStrongsKeys = info[6].As<Napi::Boolean>();
 
     ModuleType moduleType = this->getModuleTypeFromString(moduleTypeString);
 
@@ -296,7 +298,9 @@ Napi::Value NodeSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo& i
                                                                            languageCode,
                                                                            moduleType,
                                                                            headersFilter,
-                                                                           strongsFilter);
+                                                                           strongsFilter,
+                                                                           hebrewStrongsKeys,
+                                                                           greekStrongsKeys);
     Napi::Array moduleArray = Napi::Array::New(env, modules.size());
 
     for (unsigned int i = 0; i < modules.size(); i++) {

@@ -227,7 +227,9 @@ vector<SWModule*> RepositoryInterface::getRepoModulesByLang(string repoName,
                                                             string languageCode,
                                                             ModuleType moduleType,
                                                             bool headersFilter,
-                                                            bool strongsFilter)
+                                                            bool strongsFilter,
+                                                            bool hebrewStrongsKeys,
+                                                            bool greekStrongsKeys)
 {
     vector<SWModule*> allModules = this->getAllRepoModules(repoName, moduleType);
     vector<SWModule*> selectedLanguageModules;
@@ -242,12 +244,28 @@ vector<SWModule*> RepositoryInterface::getRepoModulesByLang(string repoName,
 
         bool hasHeadings = this->_moduleHelper.moduleHasGlobalOption(currentModule, "Headings");
         bool hasStrongs = this->_moduleHelper.moduleHasGlobalOption(currentModule, "Strongs");
+
+        bool hasHebrewStrongsKeys = this->_moduleHelper.moduleHasFeature(currentModule, "HebrewDef");
+        bool hasGreekStrongsKeys = this->_moduleHelper.moduleHasFeature(currentModule, "GreekDef");
         
         if (headersFilter && !hasHeadings) {
             continue;
         }
 
         if (strongsFilter && !hasStrongs) {
+            continue;
+        }
+
+        if (moduleType == ModuleType::dict && !hasHebrewStrongsKeys && !hasGreekStrongsKeys) {
+            // In case of a dictionary module we ignore it if there are not Strong's keys
+            continue;
+        }
+
+        if (hebrewStrongsKeys && !hasHebrewStrongsKeys) {
+            continue;
+        }
+
+        if (greekStrongsKeys && !hasGreekStrongsKeys) {
             continue;
         }
 
