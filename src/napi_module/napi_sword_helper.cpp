@@ -60,6 +60,7 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     }
 
     object["name"] = swModule->getName();
+    object["type"] = swModule->getType();
     object["description"] = swModule->getDescription();
     object["language"] = swModule->getLanguage();
     object["location"] = this->_moduleStore.getModuleDataPath(swModule);

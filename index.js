@@ -36,6 +36,7 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
  * @typedef ModuleObject
  * @type {Object}
  * @property {String} name - The name/code of the SWORD module
+ * @property {String} type - The type of the SWORD module (Currently the following types are supported: Biblical Texts, Lexicons / Dictionaries)
  * @property {String} description - The description of the SWORD module
  * @property {String} language - The language code of the SWORD module
  * @property {String} distributionLicense - The distribution license of the SWORD module
