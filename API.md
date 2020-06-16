@@ -481,6 +481,7 @@ An object representation of a SWORD module.
 | Name | Type | Description |
 | --- | --- | --- |
 | name | <code>String</code> | The name/code of the SWORD module |
+| type | <code>String</code> | The type of the SWORD module (Currently the following types are supported: Biblical Texts, Lexicons / Dictionaries) |
 | description | <code>String</code> | The description of the SWORD module |
 | language | <code>String</code> | The language code of the SWORD module |
 | distributionLicense | <code>String</code> | The distribution license of the SWORD module |
