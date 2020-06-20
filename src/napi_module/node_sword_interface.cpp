@@ -441,10 +441,16 @@ Napi::Value NodeSwordInterface::getRawModuleEntry(const Napi::CallbackInfo& info
     }
 
     swordModule->setKey(string(key).c_str());
-    Napi::String entryText = Napi::String::New(env, swordModule->getRawEntry());
+    bool entryExisting = swordModule->hasEntry(swordModule->getKey());
 
-    unlockApi();
-    return entryText;
+    if (entryExisting) {
+      Napi::String entryText = Napi::String::New(env, swordModule->getRawEntry());
+      unlockApi();
+      return entryText;
+    } else {
+      unlockApi();
+      return env.Undefined();
+    }
 }
 
 Napi::Value NodeSwordInterface::getChapterText(const Napi::CallbackInfo& info)
