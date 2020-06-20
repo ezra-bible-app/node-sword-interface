@@ -301,6 +301,16 @@ class NodeSwordInterface {
   }
 
   /**
+   * Returns the text of an entry for the given module and key.
+   *
+   * @param {String} moduleCode - The module code of the SWORD module.
+   * @param {String} key - The key of the entry.
+   */
+  getRawModuleEntry(moduleCode, key) {
+    return this.nativeInterface.getRawModuleEntry(moduleCode, key);
+  }
+
+  /**
    * Returns the text of a chapter for the given module.
    *
    * @param {String} moduleCode - The module code of the SWORD module.

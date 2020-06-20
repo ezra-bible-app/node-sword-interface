@@ -47,6 +47,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.isModuleReadable(moduleCode)](#NodeSwordInterface+isModuleReadable) ⇒ <code>Boolean</code>
     * [.getModuleDescription(moduleCode)](#NodeSwordInterface+getModuleDescription) ⇒ <code>String</code>
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
+    * [.getRawModuleEntry(moduleCode, key)](#NodeSwordInterface+getRawModuleEntry)
     * [.getChapterText(moduleCode, bookCode, chapter)](#NodeSwordInterface+getChapterText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookText(moduleCode, bookCode, startVerseNr, verseCount)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookList(moduleCode)](#NodeSwordInterface+getBookList) ⇒ <code>Array.&lt;String&gt;</code>
@@ -265,6 +266,18 @@ Enables available markup (like Strongs, foot notes, etc.)
 This influences the output for getChapterText, getBookText and getBibleText.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+<a name="NodeSwordInterface+getRawModuleEntry"></a>
+
+### nodeSwordInterface.getRawModuleEntry(moduleCode, key)
+Returns the text of an entry for the given module and key.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleCode | <code>String</code> | The module code of the SWORD module. |
+| key | <code>String</code> | The key of the entry. |
+
 <a name="NodeSwordInterface+getChapterText"></a>
 
 ### nodeSwordInterface.getChapterText(moduleCode, bookCode, chapter) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)

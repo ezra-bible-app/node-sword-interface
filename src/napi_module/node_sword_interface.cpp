@@ -67,6 +67,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getModuleDescription", &NodeSwordInterface::getModuleDescription),
         InstanceMethod("getLocalModule", &NodeSwordInterface::getLocalModule),
         InstanceMethod("enableMarkup", &NodeSwordInterface::enableMarkup),
+        InstanceMethod("getRawModuleEntry", &NodeSwordInterface::getRawModuleEntry),
         InstanceMethod("getChapterText", &NodeSwordInterface::getChapterText),
         InstanceMethod("getBookText", &NodeSwordInterface::getBookText),
         InstanceMethod("getBibleText", &NodeSwordInterface::getBibleText),
@@ -423,6 +424,27 @@ Napi::Value NodeSwordInterface::enableMarkup(const Napi::CallbackInfo& info)
     this->_textProcessor->enableMarkup();
     unlockApi();
     return info.Env().Undefined();
+}
+
+Napi::Value NodeSwordInterface::getRawModuleEntry(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
+    Napi::Env env = info.Env();
+    Napi::String moduleName = info[0].As<Napi::String>();
+    Napi::String key = info[1].As<Napi::String>();
+
+    SWModule* swordModule = this->_moduleStore->getLocalModule(moduleName);
+    if (swordModule == 0) {
+        string errorMessage = "getLocalModule returned 0 for '" + string(moduleName) + "'";
+        THROW_JS_EXCEPTION(errorMessage);
+    }
+
+    swordModule->setKey(string(key).c_str());
+    Napi::String entryText = Napi::String::New(env, swordModule->getRawEntry());
+
+    unlockApi();
+    return entryText;
 }
 
 Napi::Value NodeSwordInterface::getChapterText(const Napi::CallbackInfo& info)
