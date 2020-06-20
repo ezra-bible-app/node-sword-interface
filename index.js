@@ -302,9 +302,11 @@ class NodeSwordInterface {
 
   /**
    * Returns the text of an entry for the given module and key.
+   * If no entry exists for the given key the return value is undefined.
    *
    * @param {String} moduleCode - The module code of the SWORD module.
    * @param {String} key - The key of the entry.
+   * @return {String}
    */
   getRawModuleEntry(moduleCode, key) {
     return this.nativeInterface.getRawModuleEntry(moduleCode, key);

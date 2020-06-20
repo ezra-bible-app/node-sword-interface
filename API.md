@@ -47,7 +47,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.isModuleReadable(moduleCode)](#NodeSwordInterface+isModuleReadable) ⇒ <code>Boolean</code>
     * [.getModuleDescription(moduleCode)](#NodeSwordInterface+getModuleDescription) ⇒ <code>String</code>
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
-    * [.getRawModuleEntry(moduleCode, key)](#NodeSwordInterface+getRawModuleEntry)
+    * [.getRawModuleEntry(moduleCode, key)](#NodeSwordInterface+getRawModuleEntry) ⇒ <code>String</code>
     * [.getChapterText(moduleCode, bookCode, chapter)](#NodeSwordInterface+getChapterText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookText(moduleCode, bookCode, startVerseNr, verseCount)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookList(moduleCode)](#NodeSwordInterface+getBookList) ⇒ <code>Array.&lt;String&gt;</code>
@@ -268,8 +268,9 @@ This influences the output for getChapterText, getBookText and getBibleText.
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 <a name="NodeSwordInterface+getRawModuleEntry"></a>
 
-### nodeSwordInterface.getRawModuleEntry(moduleCode, key)
+### nodeSwordInterface.getRawModuleEntry(moduleCode, key) ⇒ <code>String</code>
 Returns the text of an entry for the given module and key.
+If no entry exists for the given key the return value is undefined.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 
