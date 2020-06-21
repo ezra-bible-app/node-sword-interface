@@ -17,31 +17,61 @@ node-sword-interface focusses on discovery, installation/removal and text loadin
 - Search within a bible module
 - Retrieve info based on Strong's number
 
-## Example
+## Example: Installing the KJV module
+
+The following example can be executed (after building node-sword-interface) using the following command:
+
+    node examples/install_kjv.js
 
 ```javascript
 const NodeSwordInterface = require('node-sword-interface');
 var interface = new NodeSwordInterface();
 
-interface.updateRepositoryConfig();
+async function installKJV() {
+  console.log("Updating repository configuration ...");
+  await interface.updateRepositoryConfig();
 
-// Install the King James Version
-interface.installModule('KJV');
-
-// Print some module information
-var kjv = interface.getLocalModule('KJV');
-console.log(kjv.description);
-console.log(kjv.about);
-
-// Get the verses of the Gospel of Matthew
-var verses = interface.getBookText('KJV', 'Mat');
-
-// Do something with the verses
-for (var i = 0; i < verses.length; i++) {
-    var currentVerse = verses[i];
-    var verseReference = currentVerse.chapter + ':' + currentVerse.verseNr;
-    console.log(verseReference + ' '  + currentVerse.content);
+  console.log("Installing King James module");
+  // Install the King James Version (Uses the internet connection to download and install the module)
+  await interface.installModule('KJV');
 }
+
+installKJV().then(() => {
+  console.log("Installation of KJV successfully completed!");
+});
+```
+
+## Example: Printing module info and the Gospel of Matthew (KJV)
+
+The following example can be executed (after building node-sword-interface) using the following command:
+
+  node examples/print_kjv_matthew.js
+
+```javascript
+const NodeSwordInterface = require('node-sword-interface');
+var interface = new NodeSwordInterface();
+
+function printKjvInfo() {
+  // Print some module information
+  var kjv = interface.getLocalModule('KJV');
+  console.log(kjv.description);
+  console.log(kjv.about);
+}
+
+function printMatthew() {
+  // Get the verses of the Gospel of Matthew
+  var verses = interface.getBookText('KJV', 'Mat');
+
+  // Do something with the verses
+  for (var i = 0; i < verses.length; i++) {
+      var currentVerse = verses[i];
+      var verseReference = currentVerse.chapter + ':' + currentVerse.verseNr;
+      console.log(verseReference + ' '  + currentVerse.content);
+  }
+}
+
+printKjvInfo();
+printMatthew();
 ```
 
 ## API Docs
