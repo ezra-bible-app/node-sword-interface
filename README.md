@@ -64,9 +64,9 @@ function printMatthew() {
 
   // Do something with the verses
   for (var i = 0; i < verses.length; i++) {
-      var currentVerse = verses[i];
-      var verseReference = currentVerse.chapter + ':' + currentVerse.verseNr;
-      console.log(verseReference + ' '  + currentVerse.content);
+    var currentVerse = verses[i];
+    var verseReference = currentVerse.chapter + ':' + currentVerse.verseNr;
+    console.log(verseReference + ' '  + currentVerse.content);
   }
 }
 
