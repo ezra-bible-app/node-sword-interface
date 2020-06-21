@@ -45,7 +45,7 @@ installKJV().then(() => {
 
 The following example can be executed (after building node-sword-interface) using the following command:
 
-  node examples/print_kjv_matthew.js
+    node examples/print_kjv_matthew.js
 
 ```javascript
 const NodeSwordInterface = require('node-sword-interface');
