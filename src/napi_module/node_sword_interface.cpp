@@ -113,7 +113,7 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     return info.Env().Null(); \
 }
 
-#define VALIDATE_SW_MODULE(moduleName) { \
+#define ASSERT_SW_MODULE_EXISTS(moduleName) { \
     SWModule* validatedSwordModule = this->_moduleStore->getLocalModule(moduleName); \
     if (validatedSwordModule == 0) { \
         string invalidModuleErrorMessage = "getLocalModule returned 0 for '" + string(moduleName) + "'"; \
@@ -419,15 +419,10 @@ Napi::Value NodeSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Object napiObject = Napi::Object::New(env);    
+    ASSERT_SW_MODULE_EXISTS(moduleName);
+
     SWModule* swordModule = this->_moduleStore->getLocalModule(moduleName);
-
-    if (swordModule == 0) {
-        string errorMessage = "getLocalModule returned 0 for '" + string(moduleName) + "'";
-        THROW_JS_EXCEPTION(errorMessage);
-    } else {
-        this->_napiSwordHelper->swordModuleToNapiObject(env, swordModule, napiObject);
-    }
-
+    this->_napiSwordHelper->swordModuleToNapiObject(env, swordModule, napiObject);
     unlockApi();
     return napiObject;
 }
@@ -449,13 +444,9 @@ Napi::Value NodeSwordInterface::getRawModuleEntry(const Napi::CallbackInfo& info
     Napi::Env env = info.Env();
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String key = info[1].As<Napi::String>();
+    ASSERT_SW_MODULE_EXISTS(moduleName);
 
     SWModule* swordModule = this->_moduleStore->getLocalModule(moduleName);
-    if (swordModule == 0) {
-        string errorMessage = "getLocalModule returned 0 for '" + string(moduleName) + "'";
-        THROW_JS_EXCEPTION(errorMessage);
-    }
-
     swordModule->setKey(string(key).c_str());
     bool entryExisting = swordModule->hasEntry(swordModule->getKey());
 
@@ -476,6 +467,7 @@ Napi::Value NodeSwordInterface::getChapterText(const Napi::CallbackInfo& info)
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String bookCode = info[1].As<Napi::String>();
     Napi::Number chapterNumber = info[2].As<Napi::Number>();
+    ASSERT_SW_MODULE_EXISTS(moduleName);
 
     vector<Verse> chapterText = this->_textProcessor->getChapterText(moduleName, bookCode, chapterNumber.Int32Value());
     Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), string(moduleName), chapterText);
@@ -491,6 +483,7 @@ Napi::Value NodeSwordInterface::getBookText(const Napi::CallbackInfo& info)
     Napi::String bookCode = info[1].As<Napi::String>();
     Napi::Number startVerseNr = info[2].As<Napi::Number>();
     Napi::Number verseCount = info[3].As<Napi::Number>();
+    ASSERT_SW_MODULE_EXISTS(moduleName);
 
     vector<Verse> bookText = this->_textProcessor->getBookText(moduleName, bookCode, startVerseNr.Int32Value(), verseCount.Int32Value());
     Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), string(moduleName), bookText);
@@ -503,6 +496,7 @@ Napi::Value NodeSwordInterface::getBibleText(const Napi::CallbackInfo& info)
     lockApi();
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
+    ASSERT_SW_MODULE_EXISTS(moduleName);
 
     vector<Verse> bibleText = this->_textProcessor->getBibleText(moduleName);
     Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), string(moduleName), bibleText);
@@ -516,8 +510,7 @@ Napi::Value NodeSwordInterface::getVersesFromReferences(const Napi::CallbackInfo
     INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::array);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Array inputReferences = info[1].As<Napi::Array>();
-
-    VALIDATE_SW_MODULE(moduleName);
+    ASSERT_SW_MODULE_EXISTS(moduleName);
 
     std::vector<std::string> references;
     for (unsigned int i = 0; i < inputReferences.Length(); i++) {
@@ -727,18 +720,13 @@ Napi::Value NodeSwordInterface::isModuleReadable(const Napi::CallbackInfo& info)
 {
     lockApi();
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
-
     Napi::String moduleName = info[0].As<Napi::String>();
-    SWModule* swordModule = this->_moduleStore->getLocalModule(moduleName);
+    ASSERT_SW_MODULE_EXISTS(moduleName);
 
-    if (swordModule == 0) {
-        string errorMessage = "getLocalModule returned 0 for '" + string(moduleName) + "'";
-        THROW_JS_EXCEPTION(errorMessage);
-    } else {
-        bool moduleReadable = this->_textProcessor->isModuleReadable(swordModule);
-        unlockApi();
-        return Napi::Boolean::New(info.Env(), moduleReadable);
-    }
+    SWModule* swordModule = this->_moduleStore->getLocalModule(moduleName);
+    bool moduleReadable = this->_textProcessor->isModuleReadable(swordModule);
+    unlockApi();
+    return Napi::Boolean::New(info.Env(), moduleReadable);
 }
 
 Napi::Value NodeSwordInterface::getSwordTranslation(const Napi::CallbackInfo& info)
@@ -767,23 +755,19 @@ Napi::Value NodeSwordInterface::getBookAbbreviation(const Napi::CallbackInfo& in
     Napi::String moduleName = info[1].As<Napi::String>();
     Napi::String bookCode = info[2].As<Napi::String>();
     Napi::String localeCode = info[3].As<Napi::String>();
+    ASSERT_SW_MODULE_EXISTS(moduleName);
 
     SWModule* swordModule = this->_moduleStore->getLocalModule(moduleName);
 
-    if (swordModule == 0) {
-        string errorMessage = "getLocalModule returned 0 for '" + string(moduleName) + "'";
-        THROW_JS_EXCEPTION(errorMessage);
-    } else {
-        Napi::String abbreviation = Napi::String::New(info.Env(), this->_swordTranslationHelper.getBookAbbreviation(
-            configDir,
-            swordModule,
-            bookCode,
-            localeCode
-        ));
+    Napi::String abbreviation = Napi::String::New(info.Env(), this->_swordTranslationHelper.getBookAbbreviation(
+        configDir,
+        swordModule,
+        bookCode,
+        localeCode
+    ));
 
-        unlockApi();
-        return abbreviation;
-    }
+    unlockApi();
+    return abbreviation;
 }
 
 Napi::Value NodeSwordInterface::getSwordVersion(const Napi::CallbackInfo& info)
