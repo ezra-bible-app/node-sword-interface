@@ -19,6 +19,7 @@
 // Std includes
 #include <string>
 #include <vector>
+#include <map>
 
 // Sword includes
 #include <swmodule.h>
@@ -151,4 +152,35 @@ map<string, vector<int>> ModuleHelper::getBibleChapterVerseCounts(std::string mo
     }
 
     return bibleChapterVerseCounts;
+}
+
+map<string, int> ModuleHelper::getAbsoluteVerseNumberMap(SWModule* module)
+{
+    string lastBookName = "";
+    string lastKey = "";
+    int currentAbsoluteVerseNumber = 1;
+
+    std::map<std::string, int> absoluteVerseNumbers;
+    module->setKey("Gen 1:1");
+
+    for (;;) {
+        VerseKey currentVerseKey(module->getKey());
+        string currentBookName(currentVerseKey.getBookAbbrev());
+        string currentKey(module->getKey()->getShortText());
+
+        // Stop, once the newly read key is the same as the previously read key
+        if (currentKey == lastKey) { break; }
+
+        // Reset the currentAbsoluteVerseNumber when a new book is started
+        if ((currentAbsoluteVerseNumber > 0) && (currentBookName != lastBookName)) { currentAbsoluteVerseNumber = 1; }
+
+        absoluteVerseNumbers[currentKey] = currentAbsoluteVerseNumber;
+
+        module->increment();
+        currentAbsoluteVerseNumber++;
+        lastBookName = currentBookName;
+        lastKey = currentKey;
+    }
+
+    return absoluteVerseNumbers;
 }

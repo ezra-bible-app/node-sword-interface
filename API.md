@@ -50,6 +50,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getRawModuleEntry(moduleCode, key)](#NodeSwordInterface+getRawModuleEntry) ⇒ <code>String</code>
     * [.getChapterText(moduleCode, bookCode, chapter)](#NodeSwordInterface+getChapterText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookText(moduleCode, bookCode, startVerseNr, verseCount)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
+    * [.getVersesFromReferences(moduleCode, references)](#NodeSwordInterface+getVersesFromReferences) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookList(moduleCode)](#NodeSwordInterface+getBookList) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getBibleChapterVerseCounts(moduleCode)](#NodeSwordInterface+getBibleChapterVerseCounts) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
@@ -307,6 +308,19 @@ Returns the text of a book for the given module.
 | bookCode | <code>String</code> | The book code of the SWORD module. |
 | startVerseNr | <code>Number</code> | The start verse number (absolute) where we start reading (Optional) |
 | verseCount | <code>Number</code> | The number of verses that shall be returned (Optional) |
+
+<a name="NodeSwordInterface+getVersesFromReferences"></a>
+
+### nodeSwordInterface.getVersesFromReferences(moduleCode, references) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
+Returns an array of verses based on the given array of verse references
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject) - An array of verse objects.  
+
+| Param | Type |
+| --- | --- |
+| moduleCode | <code>String</code> | 
+| references | <code>Array</code> | 
 
 <a name="NodeSwordInterface+getBookList"></a>
 

@@ -50,36 +50,6 @@
 using namespace std;
 using namespace sword;
 
-map<string, int> ModuleSearch::getAbsoluteVerseNumberMap(SWModule* module)
-{
-    string lastBookName = "";
-    string lastKey = "";
-    int currentAbsoluteVerseNumber = 1;
-
-    std::map<std::string, int> absoluteVerseNumbers;
-    module->setKey("Gen 1:1");
-
-    for (;;) {
-        VerseKey currentVerseKey(module->getKey());
-        string currentBookName(currentVerseKey.getBookAbbrev());
-        string currentKey(module->getKey()->getShortText());
-
-        // Stop, once the newly read key is the same as the previously read key
-        if (currentKey == lastKey) { break; }
-
-        // Reset the currentAbsoluteVerseNumber when a new book is started
-        if ((currentAbsoluteVerseNumber > 0) && (currentBookName != lastBookName)) { currentAbsoluteVerseNumber = 1; }
-
-        absoluteVerseNumbers[currentKey] = currentAbsoluteVerseNumber;
-
-        module->increment();
-        currentAbsoluteVerseNumber++;
-        lastBookName = currentBookName;
-        lastKey = currentKey;
-    }
-
-    return absoluteVerseNumbers;
-}
 
 vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
                                                    string searchTerm,
@@ -131,7 +101,7 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
             searchTerm = "Word//Lemma./" + searchTerm;
         }
 
-        map<string, int> absoluteVerseNumbers = this->getAbsoluteVerseNumberMap(module);
+        map<string, int> absoluteVerseNumbers = this->_moduleHelper.getAbsoluteVerseNumberMap(module);
 
         // Perform search
         listKey = module->search(searchTerm.c_str(), int(searchType), flags, scope, 0, internalModuleSearchProgressCB);

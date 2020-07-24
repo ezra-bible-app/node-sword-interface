@@ -182,6 +182,28 @@ vector<Verse> TextProcessor::getChapterText(string moduleName, string bookCode, 
     return this->getText(moduleName, key.str(), QueryLimit::chapter);
 }
 
+vector<Verse> TextProcessor::getVersesFromReferences(string moduleName, vector<string>& references)
+{
+    vector<Verse> verses;
+    SWModule* module = this->_moduleStore.getLocalModule(moduleName);
+    map<string, int> absoluteVerseNumbers = this->_moduleHelper.getAbsoluteVerseNumberMap(module);
+
+    for (unsigned int i = 0; i < references.size(); i++) {
+        string currentReference = references[i];
+
+        module->setKey(currentReference.c_str());
+        string currentVerseText = this->getCurrentVerseText(module, false);
+
+        Verse currentVerse;
+        currentVerse.reference = module->getKey()->getShortText();
+        currentVerse.absoluteVerseNumber = absoluteVerseNumbers[currentVerse.reference];
+        currentVerse.content = currentVerseText;
+        verses.push_back(currentVerse);
+    }
+
+    return verses;
+}
+
 vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit queryLimit, int startVerseNumber, int verseCount)
 {
     SWModule* module = this->_moduleStore.getLocalModule(moduleName);

@@ -338,6 +338,17 @@ class NodeSwordInterface {
   }
 
   /**
+   * Returns an array of verses based on the given array of verse references
+   * 
+   * @param {String} moduleCode 
+   * @param {Array} references 
+   * @return {VerseObject[]} An array of verse objects.
+   */
+  getVersesFromReferences(moduleCode, references) {
+    return this.nativeInterface.getVersesFromReferences(moduleCode, references);
+  }
+
+  /**
    * Returns the list of books available in the given module.
    * 
    * @param {String} moduleCode - The module code of the SWORD module.

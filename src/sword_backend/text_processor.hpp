@@ -41,6 +41,7 @@ public:
     std::vector<Verse> getBibleText(std::string moduleName);
     std::vector<Verse> getBookText(std::string moduleName, std::string bookCode, int startVerseNumber=-1, int verseCount=-1);
     std::vector<Verse> getChapterText(std::string moduleName, std::string bookCode, int chapter);
+    std::vector<Verse> getVersesFromReferences(std::string moduleName, std::vector<std::string>& references);
     std::string getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup=false);
     std::string getBookIntroduction(std::string moduleName, std::string bookCode);
 

@@ -71,6 +71,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getChapterText", &NodeSwordInterface::getChapterText),
         InstanceMethod("getBookText", &NodeSwordInterface::getBookText),
         InstanceMethod("getBibleText", &NodeSwordInterface::getBibleText),
+        InstanceMethod("getVersesFromReferences", &NodeSwordInterface::getVersesFromReferences),
         InstanceMethod("getBookList", &NodeSwordInterface::getBookList),
         InstanceMethod("getBibleChapterVerseCounts", &NodeSwordInterface::getBibleChapterVerseCounts),
         InstanceMethod("getBookIntroduction", &NodeSwordInterface::getBookIntroduction),
@@ -149,6 +150,13 @@ int NodeSwordInterface::validateParams(const Napi::CallbackInfo& info, vector<Pa
                     if (!info[i].IsBoolean()) {
                         string booleanError = "Boolean expected for argument " + to_string(i + 1);
                         Napi::TypeError::New(env, booleanError).ThrowAsJavaScriptException();
+                        return -1;
+                    }
+                    break;
+                case ParamType::array:
+                    if (!info[i].IsArray()) {
+                        string arrayError = "Array expected for argument " + to_string(i + 1);
+                        Napi::TypeError::New(env, arrayError).ThrowAsJavaScriptException();
                         return -1;
                     }
                     break;
@@ -490,6 +498,26 @@ Napi::Value NodeSwordInterface::getBibleText(const Napi::CallbackInfo& info)
 
     vector<Verse> bibleText = this->_textProcessor->getBibleText(moduleName);
     Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), string(moduleName), bibleText);
+    unlockApi();
+    return versesArray;
+}
+
+Napi::Value NodeSwordInterface::getVersesFromReferences(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::array);
+    Napi::String moduleName = info[0].As<Napi::String>();
+    Napi::Array inputReferences = info[1].As<Napi::Array>();
+
+    std::vector<std::string> references;
+    for (unsigned int i = 0; i < inputReferences.Length(); i++) {
+        Napi::Value currentInputReference = inputReferences[i];
+        references.push_back(string(currentInputReference.As<Napi::String>()));
+    }
+
+    vector<Verse> rawVerses = this->_textProcessor->getVersesFromReferences(moduleName, references);
+    Napi::Array versesArray = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(info.Env(), string(moduleName), rawVerses);
+
     unlockApi();
     return versesArray;
 }

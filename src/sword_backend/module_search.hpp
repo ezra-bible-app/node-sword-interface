@@ -55,7 +55,6 @@ public:
                                               bool useExtendedVerseBoundaries=false);
 
 private:
-    std::map<std::string, int> getAbsoluteVerseNumberMap(sword::SWModule* module);
     ModuleStore& _moduleStore;
     ModuleHelper& _moduleHelper;
     TextProcessor& _textProcessor;
