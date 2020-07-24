@@ -113,6 +113,14 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     return info.Env().Null(); \
 }
 
+#define VALIDATE_SW_MODULE(moduleName) { \
+    SWModule* validatedSwordModule = this->_moduleStore->getLocalModule(moduleName); \
+    if (validatedSwordModule == 0) { \
+        string invalidModuleErrorMessage = "getLocalModule returned 0 for '" + string(moduleName) + "'"; \
+        THROW_JS_EXCEPTION(invalidModuleErrorMessage); \
+    } \
+}
+
 #define INIT_SCOPE_AND_VALIDATE(...) {\
     Napi::Env env = info.Env(); \
     Napi::HandleScope scope(env);\
@@ -508,6 +516,8 @@ Napi::Value NodeSwordInterface::getVersesFromReferences(const Napi::CallbackInfo
     INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::array);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Array inputReferences = info[1].As<Napi::Array>();
+
+    VALIDATE_SW_MODULE(moduleName);
 
     std::vector<std::string> references;
     for (unsigned int i = 0; i < inputReferences.Length(); i++) {
