@@ -190,9 +190,14 @@ vector<Verse> TextProcessor::getVersesFromReferences(string moduleName, vector<s
 
     for (unsigned int i = 0; i < references.size(); i++) {
         string currentReference = references[i];
+        string currentVerseText = "";
 
         module->setKey(currentReference.c_str());
-        string currentVerseText = this->getCurrentVerseText(module, false);
+        bool entryExisting = module->hasEntry(module->getKey());
+
+        if (entryExisting) {
+          currentVerseText = this->getCurrentVerseText(module, false);
+        }
 
         Verse currentVerse;
         currentVerse.reference = module->getKey()->getShortText();
