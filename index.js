@@ -349,6 +349,7 @@ class NodeSwordInterface {
   }
 
   /**
+   * Returns an array of individual verse references based on an OSIS reference range expression.
    * 
    * @param {String} referenceRange - An OSIS reference range expression. (like 'Gal.1.15-Gal.1.16')
    * @return {String[]} An array of OSIS references.
