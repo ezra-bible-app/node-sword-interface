@@ -340,12 +340,21 @@ class NodeSwordInterface {
   /**
    * Returns an array of verses based on the given array of verse references
    * 
-   * @param {String} moduleCode 
-   * @param {Array} references 
+   * @param {String} moduleCode - The module code of the SWORD module.
+   * @param {Array} references - A list of OSIS references. (like ['Gal.5.1', '1Cor.2.4'])
    * @return {VerseObject[]} An array of verse objects.
    */
   getVersesFromReferences(moduleCode, references) {
     return this.nativeInterface.getVersesFromReferences(moduleCode, references);
+  }
+
+  /**
+   * 
+   * @param {String} referenceRange - An OSIS reference range expression. (like 'Gal.1.15-Gal.1.16')
+   * @return {String[]} An array of OSIS references.
+   */
+  getReferencesFromReferenceRange(referenceRange) {
+    return this.nativeInterface.getReferencesFromReferenceRange(referenceRange);
   }
 
   /**

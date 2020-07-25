@@ -23,6 +23,7 @@
 
 // Sword includes
 #include <versekey.h>
+#include <listkey.h>
 #include <swmodule.h>
 #include <swkey.h>
 
@@ -207,6 +208,22 @@ vector<Verse> TextProcessor::getVersesFromReferences(string moduleName, vector<s
     }
 
     return verses;
+}
+
+vector<string> TextProcessor::getReferencesFromReferenceRange(std::string referenceRange)
+{
+    vector<string> references;
+    VerseKey parser;
+    ListKey result;
+
+    result = parser.parseVerseList(referenceRange.c_str(), parser, true);
+
+    for (result = TOP; !result.popError(); result++) {
+        VerseKey currentKey(result.getShortText());
+        references.push_back(string(currentKey.getOSISRef()));
+    }
+
+    return references;
 }
 
 vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit queryLimit, int startVerseNumber, int verseCount)

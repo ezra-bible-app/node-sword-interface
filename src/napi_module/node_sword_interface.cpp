@@ -72,6 +72,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getBookText", &NodeSwordInterface::getBookText),
         InstanceMethod("getBibleText", &NodeSwordInterface::getBibleText),
         InstanceMethod("getVersesFromReferences", &NodeSwordInterface::getVersesFromReferences),
+        InstanceMethod("getReferencesFromReferenceRange", &NodeSwordInterface::getReferencesFromReferenceRange),
         InstanceMethod("getBookList", &NodeSwordInterface::getBookList),
         InstanceMethod("getBibleChapterVerseCounts", &NodeSwordInterface::getBibleChapterVerseCounts),
         InstanceMethod("getBookIntroduction", &NodeSwordInterface::getBookIntroduction),
@@ -523,6 +524,19 @@ Napi::Value NodeSwordInterface::getVersesFromReferences(const Napi::CallbackInfo
 
     unlockApi();
     return versesArray;
+}
+
+Napi::Value NodeSwordInterface::getReferencesFromReferenceRange(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
+    Napi::String referenceRange = info[0].As<Napi::String>();
+
+    vector<string> references = this->_textProcessor->getReferencesFromReferenceRange(referenceRange);
+    Napi::Array napiReferences = this->_napiSwordHelper->getNapiArrayFromStringVector(info.Env(), references);
+
+    unlockApi();
+    return napiReferences;
 }
 
 Napi::Value NodeSwordInterface::getBookList(const Napi::CallbackInfo& info)
