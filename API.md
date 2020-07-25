@@ -326,6 +326,8 @@ Returns an array of verses based on the given array of verse references
 <a name="NodeSwordInterface+getReferencesFromReferenceRange"></a>
 
 ### nodeSwordInterface.getReferencesFromReferenceRange(referenceRange) ⇒ <code>Array.&lt;String&gt;</code>
+Returns an array of individual verse references based on an OSIS reference range expression.
+
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 **Returns**: <code>Array.&lt;String&gt;</code> - An array of OSIS references.  
 
