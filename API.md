@@ -51,6 +51,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getChapterText(moduleCode, bookCode, chapter)](#NodeSwordInterface+getChapterText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookText(moduleCode, bookCode, startVerseNr, verseCount)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getVersesFromReferences(moduleCode, references)](#NodeSwordInterface+getVersesFromReferences) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
+    * [.getReferencesFromReferenceRange(referenceRange)](#NodeSwordInterface+getReferencesFromReferenceRange) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getBookList(moduleCode)](#NodeSwordInterface+getBookList) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getBibleChapterVerseCounts(moduleCode)](#NodeSwordInterface+getBibleChapterVerseCounts) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
@@ -317,10 +318,20 @@ Returns an array of verses based on the given array of verse references
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 **Returns**: [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject) - An array of verse objects.  
 
-| Param | Type |
-| --- | --- |
-| moduleCode | <code>String</code> | 
-| references | <code>Array</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleCode | <code>String</code> | The module code of the SWORD module. |
+| references | <code>Array</code> | A list of OSIS references. (like ['Gal.5.1', '1Cor.2.4']) |
+
+<a name="NodeSwordInterface+getReferencesFromReferenceRange"></a>
+
+### nodeSwordInterface.getReferencesFromReferenceRange(referenceRange) ⇒ <code>Array.&lt;String&gt;</code>
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: <code>Array.&lt;String&gt;</code> - An array of OSIS references.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| referenceRange | <code>String</code> | An OSIS reference range expression. (like 'Gal.1.15-Gal.1.16') |
 
 <a name="NodeSwordInterface+getBookList"></a>
 
