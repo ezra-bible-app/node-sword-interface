@@ -62,6 +62,9 @@ private:
     std::string getFilteredText(const std::string& text, bool hasStrongs=false);
     std::string replaceSpacesInStrongs(const std::string& text);
 
+    std::string getBookFromReference(std::string reference);
+    std::vector<std::string> getBookListFromReferences(std::vector<std::string>& references);
+
     ModuleStore& _moduleStore;
     ModuleHelper& _moduleHelper;
     bool _markupEnabled;

@@ -18,6 +18,7 @@
 
 // Std includes
 #include <string>
+#include <sstream>
 #include <vector>
 #include <map>
 
@@ -154,32 +155,44 @@ map<string, vector<int>> ModuleHelper::getBibleChapterVerseCounts(std::string mo
     return bibleChapterVerseCounts;
 }
 
-map<string, int> ModuleHelper::getAbsoluteVerseNumberMap(SWModule* module)
+map<string, int> ModuleHelper::getAbsoluteVerseNumberMap(SWModule* module, vector<string> bookList)
 {
     string lastBookName = "";
     string lastKey = "";
     int currentAbsoluteVerseNumber = 1;
 
     std::map<std::string, int> absoluteVerseNumbers;
-    module->setKey("Gen 1:1");
 
-    for (;;) {
-        VerseKey currentVerseKey(module->getKey());
-        string currentBookName(currentVerseKey.getBookAbbrev());
-        string currentKey(module->getKey()->getShortText());
+    if (bookList.size() == 0) {
+        bookList = this->getBookList(string(module->getName()));
+    }
 
-        // Stop, once the newly read key is the same as the previously read key
-        if (currentKey == lastKey) { break; }
+    for (unsigned int i = 0; i < bookList.size(); i++) {
+        string currentBook = bookList[i];
+        stringstream currentKey;
+        currentKey << currentBook << " " << "1:1";
+        currentAbsoluteVerseNumber = 1;
 
-        // Reset the currentAbsoluteVerseNumber when a new book is started
-        if ((currentAbsoluteVerseNumber > 0) && (currentBookName != lastBookName)) { currentAbsoluteVerseNumber = 1; }
+        module->setKey(currentKey.str().c_str());
 
-        absoluteVerseNumbers[currentKey] = currentAbsoluteVerseNumber;
+        for (;;) {
+            VerseKey currentVerseKey(module->getKey());
+            string currentBookName(currentVerseKey.getBookAbbrev());
+            string currentKey(module->getKey()->getShortText());
 
-        module->increment();
-        currentAbsoluteVerseNumber++;
-        lastBookName = currentBookName;
-        lastKey = currentKey;
+            // Stop, once the newly read key is the same as the previously read key
+            if (currentKey == lastKey) { break; }
+
+            // Stop once we finished the book
+            if ((currentAbsoluteVerseNumber > 0) && (currentBookName != lastBookName)) { break; }
+
+            absoluteVerseNumbers[currentKey] = currentAbsoluteVerseNumber;
+
+            module->increment();
+            currentAbsoluteVerseNumber++;
+            lastBookName = currentBookName;
+            lastKey = currentKey;
+        }
     }
 
     return absoluteVerseNumbers;

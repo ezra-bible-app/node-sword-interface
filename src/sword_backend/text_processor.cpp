@@ -183,11 +183,34 @@ vector<Verse> TextProcessor::getChapterText(string moduleName, string bookCode, 
     return this->getText(moduleName, key.str(), QueryLimit::chapter);
 }
 
+string TextProcessor::getBookFromReference(string reference)
+{
+    VerseKey key(reference.c_str());
+    return string(key.getOSISBookName());
+}
+
+vector<string> TextProcessor::getBookListFromReferences(vector<string>& references)
+{
+    vector<string> bookList;
+
+    for (unsigned int i = 0; i < references.size(); i++) {
+        string currentReference = references[i];
+        string book = this->getBookFromReference(currentReference);
+
+        if (find(bookList.begin(), bookList.end(), book) == bookList.end()) {
+            bookList.push_back(book);
+        }
+    }
+
+    return bookList;
+}
+
 vector<Verse> TextProcessor::getVersesFromReferences(string moduleName, vector<string>& references)
 {
     vector<Verse> verses;
     SWModule* module = this->_moduleStore.getLocalModule(moduleName);
-    map<string, int> absoluteVerseNumbers = this->_moduleHelper.getAbsoluteVerseNumberMap(module);
+    vector<string> bookList = this->getBookListFromReferences(references);
+    map<string, int> absoluteVerseNumbers = this->_moduleHelper.getAbsoluteVerseNumberMap(module, bookList);
 
     for (unsigned int i = 0; i < references.size(); i++) {
         string currentReference = references[i];
