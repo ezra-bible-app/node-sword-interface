@@ -157,9 +157,10 @@ map<string, vector<int>> ModuleHelper::getBibleChapterVerseCounts(std::string mo
 
 map<string, int> ModuleHelper::getAbsoluteVerseNumberMap(SWModule* module, vector<string> bookList)
 {
-    string lastBookName = "";
     string lastKey = "";
     int currentAbsoluteVerseNumber = 1;
+    string lastBookName = "";
+    string currentBookName = "";
 
     std::map<std::string, int> absoluteVerseNumbers;
 
@@ -169,16 +170,20 @@ map<string, int> ModuleHelper::getAbsoluteVerseNumberMap(SWModule* module, vecto
 
     for (unsigned int i = 0; i < bookList.size(); i++) {
         string currentBook = bookList[i];
-        stringstream currentKey;
-        currentKey << currentBook << " " << "1:1";
+        stringstream initialKey;
+        initialKey << currentBook << " " << "1:1";
         currentAbsoluteVerseNumber = 1;
 
-        module->setKey(currentKey.str().c_str());
+        module->setKey(initialKey.str().c_str());
+
+        VerseKey currentVerseKey(module->getKey());
+        currentBookName = currentVerseKey.getBookAbbrev();
+        lastBookName = currentBookName;
 
         for (;;) {
-            VerseKey currentVerseKey(module->getKey());
-            string currentBookName(currentVerseKey.getBookAbbrev());
-            string currentKey(module->getKey()->getShortText());
+            currentVerseKey = module->getKey();
+            currentBookName = currentVerseKey.getBookAbbrev();
+            string currentKey(currentVerseKey.getShortText());
 
             // Stop, once the newly read key is the same as the previously read key
             if (currentKey == lastKey) { break; }
@@ -190,8 +195,8 @@ map<string, int> ModuleHelper::getAbsoluteVerseNumberMap(SWModule* module, vecto
 
             module->increment();
             currentAbsoluteVerseNumber++;
-            lastBookName = currentBookName;
             lastKey = currentKey;
+            lastBookName = currentBookName;
         }
     }
 
