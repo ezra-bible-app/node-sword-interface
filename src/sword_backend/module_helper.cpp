@@ -78,28 +78,13 @@ vector<string> ModuleHelper::getBookList(string moduleName)
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
-        module->setKey("Gen 1:1");
+        VerseKey *vk = (VerseKey *)module->getKey();
 
-        for (;;) {
-            VerseKey currentVerseKey(module->getKey());
-            currentBookName = currentVerseKey.getBookAbbrev();
-            string currentKey(module->getKey()->getShortText());
-
-            // Stop, once the newly read key is the same as the previously read key
-            if (currentKey == lastKey) { break; }
-
-            if (currentBookName != lastBookName) {
-                string firstVerseText = string(module->getRawEntry());
-
-                if (firstVerseText.length() != 0) {
-                    // We assume the book is existing if the first verse has content
-                    bookList.push_back(currentBookName);
-                }
+        for ((*vk) = TOP; !vk->popError(); vk->setBook(vk->getBook()+1)) {
+            if (module->hasEntry(vk)) {
+                currentBookName = vk->getBookAbbrev();
+                bookList.push_back(currentBookName);
             }
-
-            module->increment();
-            lastBookName = currentBookName;
-            lastKey = currentKey;
         }
     }
 
