@@ -70,8 +70,6 @@ bool ModuleHelper::moduleHasKeyValuePair(sword::SWModule* module, std::string ke
 vector<string> ModuleHelper::getBookList(string moduleName)
 {
     string currentBookName = "";
-    string lastBookName = "";
-    string lastKey = "";
     vector<string> bookList;
     SWModule* module = this->_moduleStore.getLocalModule(moduleName);
 
