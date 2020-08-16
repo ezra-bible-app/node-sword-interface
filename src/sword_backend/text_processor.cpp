@@ -69,7 +69,7 @@ string TextProcessor::getFilteredText(const string& text, bool hasStrongs)
     static regex divineNameStartElement = regex("<divineName>");
     static regex divineNameEndElement = regex("</divineName>");
     static regex strongsWElement = regex("<w lemma=");
-    //static regex selfClosing = regex("/>");
+    static regex selfClosing = regex("(<div.*?)(/>)");
 
     static regex fullStopWithoutSpace = regex("[.]<");
     static regex questionMarkWithoutSpace = regex("[?]<");
@@ -106,7 +106,7 @@ string TextProcessor::getFilteredText(const string& text, bool hasStrongs)
     filteredText = regex_replace(filteredText, divineNameStartElement, "");
     filteredText = regex_replace(filteredText, divineNameEndElement, "");
     filteredText = regex_replace(filteredText, strongsWElement, "<w class=");
-    //filteredText = regex_replace(filteredText, selfClosing, "></div>");
+    filteredText = regex_replace(filteredText, selfClosing, "$1></div>");
 
     filteredText = regex_replace(filteredText, fullStopWithoutSpace, ". <");
     filteredText = regex_replace(filteredText, questionMarkWithoutSpace, "? <");
@@ -300,7 +300,9 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
             }
 
             // Chapter heading
-            if (firstVerseInChapter) {
+            // We only add it when we're looking at the first verse of a chapter
+            // and if the requested verse count is more than one.
+            if (firstVerseInChapter && verseCount > 1) {
                 verseText += this->getCurrentChapterHeading(module);
             }
 
