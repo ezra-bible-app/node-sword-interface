@@ -67,7 +67,7 @@ bool ModuleHelper::moduleHasKeyValuePair(sword::SWModule* module, std::string ke
     return hasKeyValuePair;
 }
 
-vector<string> ModuleHelper::getBookList(string moduleName)
+vector<string> ModuleHelper::getBookList(string moduleName, bool localized)
 {
     string currentBookName = "";
     vector<string> bookList;
@@ -80,7 +80,11 @@ vector<string> ModuleHelper::getBookList(string moduleName)
 
         for ((*vk) = TOP; !vk->popError(); vk->setBook(vk->getBook()+1)) {
             if (module->hasEntry(vk)) {
-                currentBookName = vk->getBookAbbrev();
+                if (localized) {
+                    currentBookName = vk->getBookAbbrev();
+                } else {
+                    currentBookName = vk->getOSISBookName();
+                }
                 bookList.push_back(currentBookName);
             }
         }

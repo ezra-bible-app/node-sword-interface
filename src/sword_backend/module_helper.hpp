@@ -37,7 +37,7 @@ public:
     bool moduleHasFeature(sword::SWModule* module, std::string feature);
     bool moduleHasStrongsKeys(sword::SWModule* module);
 
-    std::vector<std::string> getBookList(std::string moduleName);
+    std::vector<std::string> getBookList(std::string moduleName, bool localized=false);
     std::map<std::string, std::vector<int>> getBibleChapterVerseCounts(std::string moduleName);
     std::map<std::string, int> getAbsoluteVerseNumberMap(sword::SWModule* module, std::vector<std::string> bookList={});
 

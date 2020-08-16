@@ -359,13 +359,14 @@ class NodeSwordInterface {
   }
 
   /**
-   * Returns the list of books available in the given module.
+   * Returns the list of books available in the given module. By default the book codes will be in OSIS format.
    * 
    * @param {String} moduleCode - The module code of the SWORD module.
+   * @param {String} localized - Whether or not the returned book codes should be localized (instead of OSIS).
    * @return {String[]} An array of book codes.
    */
-  getBookList(moduleCode) {
-    return this.nativeInterface.getBookList(moduleCode);
+  getBookList(moduleCode, localized=false) {
+    return this.nativeInterface.getBookList(moduleCode, localized);
   }
 
   /**

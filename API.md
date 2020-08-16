@@ -52,7 +52,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getBookText(moduleCode, bookCode, startVerseNr, verseCount)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getVersesFromReferences(moduleCode, references)](#NodeSwordInterface+getVersesFromReferences) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getReferencesFromReferenceRange(referenceRange)](#NodeSwordInterface+getReferencesFromReferenceRange) ⇒ <code>Array.&lt;String&gt;</code>
-    * [.getBookList(moduleCode)](#NodeSwordInterface+getBookList) ⇒ <code>Array.&lt;String&gt;</code>
+    * [.getBookList(moduleCode, localized)](#NodeSwordInterface+getBookList) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getBibleChapterVerseCounts(moduleCode)](#NodeSwordInterface+getBibleChapterVerseCounts) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookIntroduction(moduleCode, bookCode)](#NodeSwordInterface+getBookIntroduction) ⇒ <code>String</code>
@@ -337,15 +337,16 @@ Returns an array of individual verse references based on an OSIS reference range
 
 <a name="NodeSwordInterface+getBookList"></a>
 
-### nodeSwordInterface.getBookList(moduleCode) ⇒ <code>Array.&lt;String&gt;</code>
-Returns the list of books available in the given module.
+### nodeSwordInterface.getBookList(moduleCode, localized) ⇒ <code>Array.&lt;String&gt;</code>
+Returns the list of books available in the given module. By default the book codes will be in OSIS format.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 **Returns**: <code>Array.&lt;String&gt;</code> - An array of book codes.  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| moduleCode | <code>String</code> | The module code of the SWORD module. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| moduleCode | <code>String</code> |  | The module code of the SWORD module. |
+| localized | <code>String</code> | <code>false</code> | Whether or not the returned book codes should be localized (instead of OSIS). |
 
 <a name="NodeSwordInterface+getBibleChapterVerseCounts"></a>
 
