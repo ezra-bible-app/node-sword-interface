@@ -542,7 +542,7 @@ Napi::Value NodeSwordInterface::getReferencesFromReferenceRange(const Napi::Call
 Napi::Value NodeSwordInterface::getBookList(const Napi::CallbackInfo& info)
 {
     lockApi();
-    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::boolean);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
 
     vector<string> bookList = this->_moduleHelper->getBookList(moduleName);
