@@ -69,7 +69,7 @@ string TextProcessor::getFilteredText(const string& text, bool hasStrongs)
     static regex divineNameStartElement = regex("<divineName>");
     static regex divineNameEndElement = regex("</divineName>");
     static regex strongsWElement = regex("<w lemma=");
-    static regex selfClosing = regex("/>");
+    //static regex selfClosing = regex("/>");
 
     static regex fullStopWithoutSpace = regex("[.]<");
     static regex questionMarkWithoutSpace = regex("[?]<");
@@ -106,7 +106,7 @@ string TextProcessor::getFilteredText(const string& text, bool hasStrongs)
     filteredText = regex_replace(filteredText, divineNameStartElement, "");
     filteredText = regex_replace(filteredText, divineNameEndElement, "");
     filteredText = regex_replace(filteredText, strongsWElement, "<w class=");
-    filteredText = regex_replace(filteredText, selfClosing, "></div>");
+    //filteredText = regex_replace(filteredText, selfClosing, "></div>");
 
     filteredText = regex_replace(filteredText, fullStopWithoutSpace, ". <");
     filteredText = regex_replace(filteredText, questionMarkWithoutSpace, "? <");
