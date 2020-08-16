@@ -15,7 +15,8 @@
     "build": "node-gyp rebuild",
     "clean": "node-gyp clean",
     "doc": "jsdoc2md index.js > API.md",
-    "pub": "rm -rf build node_modules sword sword_build test && npm publish ./"
+    "pub": "rm -rf build node_modules sword sword_build test && npm publish ./",
+    "deploy": "scripts/deploy_local.sh"
   },
   "author": "Tobias Klein",
   "license": "GPL-3.0",
