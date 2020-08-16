@@ -544,9 +544,8 @@ Napi::Value NodeSwordInterface::getBookList(const Napi::CallbackInfo& info)
     lockApi();
     INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::boolean);
     Napi::String moduleName = info[0].As<Napi::String>();
-    Napi::Boolean localized = info[1].As<Napi::Boolean>();
 
-    vector<string> bookList = this->_moduleHelper->getBookList(moduleName, localized);
+    vector<string> bookList = this->_moduleHelper->getBookList(moduleName);
     Napi::Array bookArray = this->_napiSwordHelper->getNapiArrayFromStringVector(info.Env(), bookList);
     unlockApi();
     return bookArray;
@@ -790,7 +789,7 @@ Napi::Value NodeSwordInterface::getSwordVersion(const Napi::CallbackInfo& info)
     lockApi();
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
-    string version = "1.8.900-8edcfc";
+    string version = "1.8.900-b2baf2 (SVN Rev. 3779)";
     Napi::String swVersion = Napi::String::New(env, version);
     unlockApi();
     return swVersion;
