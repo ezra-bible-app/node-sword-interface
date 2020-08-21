@@ -58,7 +58,7 @@ void FileSystemHelper::setCustomHomeDir(std::string customHomeDir)
 {
     if (this->fileExists(customHomeDir)) {
         this->_customHomeDir = customHomeDir;
-    } else {
+    } else if (customHomeDir != "") {
         cerr << "ERROR: The directory " << customHomeDir << " is not existing!" << endl;
     }
 }

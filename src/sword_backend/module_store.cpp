@@ -36,8 +36,6 @@ ModuleStore::ModuleStore(string customHomeDir)
     this->_fileSystemHelper.setCustomHomeDir(customHomeDir);
     this->_fileSystemHelper.createBasicDirectories();
 
-    cout << customHomeDir << endl;
-
     if (customHomeDir == "") {
         #ifdef _WIN32
             this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
@@ -47,10 +45,10 @@ ModuleStore::ModuleStore(string customHomeDir)
         #endif
     } else {
         this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str(),
-                                true, // autoload
-                                0, // filterMgr
-                                false, // multiMod
-                                false); // augmentHome
+                               true, // autoload
+                               0, // filterMgr
+                               false, // multiMod
+                               false); // augmentHome
     }
 }
 

@@ -125,7 +125,7 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     std::string customHomeDir = "";
     FileSystemHelper fsHelper;
     bool homeDirError = false;
-
+    
     if (info[0].IsString()) {
         customHomeDir = string(info[0].As<Napi::String>());
 
