@@ -39,7 +39,7 @@ class ModuleHelper;
 
 class RepositoryInterface {
 public:
-    RepositoryInterface(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper);
+    RepositoryInterface(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper, std::string customHomeDir="");
     virtual ~RepositoryInterface(){}
 
     void resetMgr();

@@ -32,7 +32,7 @@ namespace sword {
 class ModuleStore
 {
 public:
-    ModuleStore();
+    ModuleStore(std::string customHomeDir="");
     virtual ~ModuleStore();
 
     sword::SWModule* getLocalModule(std::string moduleName);

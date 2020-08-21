@@ -31,16 +31,27 @@
 using namespace std;
 using namespace sword;
 
-ModuleStore::ModuleStore()
+ModuleStore::ModuleStore(string customHomeDir)
 {
+    this->_fileSystemHelper.setCustomHomeDir(customHomeDir);
     this->_fileSystemHelper.createBasicDirectories();
-    
-    #ifdef _WIN32
-        this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
-        this->_mgr->augmentModules(this->_fileSystemHelper.getSystemSwordDir().c_str());
-    #else
-        this->_mgr = new SWMgr();
-    #endif
+
+    cout << customHomeDir << endl;
+
+    if (customHomeDir == "") {
+        #ifdef _WIN32
+            this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
+            this->_mgr->augmentModules(this->_fileSystemHelper.getSystemSwordDir().c_str());
+        #else
+            this->_mgr = new SWMgr();
+        #endif
+    } else {
+        this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str(),
+                                true, // autoload
+                                0, // filterMgr
+                                false, // multiMod
+                                false); // augmentHome
+    }
 }
 
 ModuleStore::~ModuleStore()

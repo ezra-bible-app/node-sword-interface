@@ -81,8 +81,8 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
 
 /** This is the main class of node-sword-interface and it provides a set of static functions that wrap SWORD library functionality. */
 class NodeSwordInterface {
-  constructor() {
-    this.nativeInterface = new nodeSwordInterfaceModule.NodeSwordInterface();
+  constructor(customHomeDir=undefined) {
+    this.nativeInterface = new nodeSwordInterfaceModule.NodeSwordInterface(customHomeDir);
   }
 
   /**

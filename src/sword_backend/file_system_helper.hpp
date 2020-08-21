@@ -25,6 +25,7 @@ public:
     FileSystemHelper();
     virtual ~FileSystemHelper();
 
+    void setCustomHomeDir(std::string customHomeDir);
     void createBasicDirectories();
     bool isSwordConfExisting();
     std::string getModuleDir();
@@ -34,12 +35,14 @@ public:
     std::string getSystemSwordDir();
     std::vector<std::string> getFilesInDir(std::string dirName);
     std::string getPathSeparator();
+    
+    bool fileExists(std::string fileName);
 
 private:
-    bool fileExists(std::string fileName);
     int makeDirectory(std::string dirName);
     std::string getUserDir();
     std::string getSystemDir();
+    std::string _customHomeDir;
 };
 
 #endif // _FILE_SYSTEM_HELPER

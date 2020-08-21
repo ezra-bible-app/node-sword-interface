@@ -45,6 +45,29 @@ using namespace sword;
 char * sword::SWBuf::nullStr = (char *)"";
 #endif
 
+#define THROW_JS_EXCEPTION(exceptionString) { \
+    Napi::Error::New(info.Env(), exceptionString).ThrowAsJavaScriptException(); \
+    unlockApi(); \
+    return info.Env().Null(); \
+}
+
+#define ASSERT_SW_MODULE_EXISTS(moduleName) { \
+    SWModule* validatedSwordModule = this->_moduleStore->getLocalModule(moduleName); \
+    if (validatedSwordModule == 0) { \
+        string invalidModuleErrorMessage = "getLocalModule returned 0 for '" + string(moduleName) + "'"; \
+        THROW_JS_EXCEPTION(invalidModuleErrorMessage); \
+    } \
+}
+
+#define INIT_SCOPE_AND_VALIDATE(...) {\
+    Napi::Env env = info.Env(); \
+    Napi::HandleScope scope(env);\
+    if (this->validateParams(info, { __VA_ARGS__ }) != 0) { \
+        unlockApi(); \
+        return env.Null(); \
+    } \
+}
+
 Napi::FunctionReference NodeSwordInterface::constructor;
 
 Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
@@ -99,36 +122,30 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    this->_moduleStore = new ModuleStore();
-    this->_moduleHelper = new ModuleHelper(*(this->_moduleStore));
-    this->_repoInterface = new RepositoryInterface(this->_swordStatusReporter, *(this->_moduleHelper));
-    this->_moduleInstaller = new ModuleInstaller(*(this->_repoInterface), *(this->_moduleStore));
-    this->_napiSwordHelper = new NapiSwordHelper(*(this->_moduleHelper), *(this->_moduleStore));
-    this->_textProcessor = new TextProcessor(*(this->_moduleStore), *(this->_moduleHelper));
-    this->_moduleSearch = new ModuleSearch(*(this->_moduleStore), *(this->_moduleHelper), *(this->_textProcessor));
-}
+    std::string customHomeDir = "";
+    FileSystemHelper fsHelper;
+    bool homeDirError = false;
 
-#define THROW_JS_EXCEPTION(exceptionString) { \
-    Napi::Error::New(info.Env(), exceptionString).ThrowAsJavaScriptException(); \
-    unlockApi(); \
-    return info.Env().Null(); \
-}
+    if (info[0].IsString()) {
+        customHomeDir = string(info[0].As<Napi::String>());
 
-#define ASSERT_SW_MODULE_EXISTS(moduleName) { \
-    SWModule* validatedSwordModule = this->_moduleStore->getLocalModule(moduleName); \
-    if (validatedSwordModule == 0) { \
-        string invalidModuleErrorMessage = "getLocalModule returned 0 for '" + string(moduleName) + "'"; \
-        THROW_JS_EXCEPTION(invalidModuleErrorMessage); \
-    } \
-}
+        if (!fsHelper.fileExists(customHomeDir)) {
+            std::stringstream errorMessage;
+            errorMessage << "The given directory " << customHomeDir << " does not exist!";
+            Napi::Error::New(info.Env(), errorMessage.str()).ThrowAsJavaScriptException();
+            homeDirError = true;
+        }
+    }
 
-#define INIT_SCOPE_AND_VALIDATE(...) {\
-    Napi::Env env = info.Env(); \
-    Napi::HandleScope scope(env);\
-    if (this->validateParams(info, { __VA_ARGS__ }) != 0) { \
-        unlockApi(); \
-        return env.Null(); \
-    } \
+    if (!homeDirError) { // We only proceed if there has not been any issue with the homeDir
+        this->_moduleStore = new ModuleStore(customHomeDir);
+        this->_moduleHelper = new ModuleHelper(*(this->_moduleStore));
+        this->_repoInterface = new RepositoryInterface(this->_swordStatusReporter, *(this->_moduleHelper), customHomeDir);
+        this->_moduleInstaller = new ModuleInstaller(*(this->_repoInterface), *(this->_moduleStore), customHomeDir);
+        this->_napiSwordHelper = new NapiSwordHelper(*(this->_moduleHelper), *(this->_moduleStore));
+        this->_textProcessor = new TextProcessor(*(this->_moduleStore), *(this->_moduleHelper));
+        this->_moduleSearch = new ModuleSearch(*(this->_moduleStore), *(this->_moduleHelper), *(this->_textProcessor));
+    }
 }
 
 int NodeSwordInterface::validateParams(const Napi::CallbackInfo& info, vector<ParamType> paramSpec) {
@@ -789,7 +806,7 @@ Napi::Value NodeSwordInterface::getSwordVersion(const Napi::CallbackInfo& info)
     lockApi();
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
-    string version = "1.8.900-b2baf2 (SVN Rev. 3779)";
+    string version = "1.8.900-8edcfc (SVN Rev. 3747)";
     Napi::String swVersion = Napi::String::New(env, version);
     unlockApi();
     return swVersion;

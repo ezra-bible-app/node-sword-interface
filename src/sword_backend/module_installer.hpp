@@ -34,7 +34,7 @@ class ModuleStore;
 class ModuleInstaller
 {
 public:
-    ModuleInstaller(RepositoryInterface& repoInterface, ModuleStore& moduleStore);
+    ModuleInstaller(RepositoryInterface& repoInterface, ModuleStore& moduleStore, std::string customHomeDir="");
     virtual ~ModuleInstaller();
 
     int installModule(std::string moduleName);

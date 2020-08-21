@@ -47,10 +47,20 @@ using namespace std;
 
 FileSystemHelper::FileSystemHelper()
 {
+    this->_customHomeDir = "";
 }
 
 FileSystemHelper::~FileSystemHelper()
 {
+}
+
+void FileSystemHelper::setCustomHomeDir(std::string customHomeDir)
+{
+    if (this->fileExists(customHomeDir)) {
+        this->_customHomeDir = customHomeDir;
+    } else {
+        cerr << "ERROR: The directory " << customHomeDir << " is not existing!" << endl;
+    }
 }
 
 void FileSystemHelper::createBasicDirectories()
@@ -156,11 +166,20 @@ string FileSystemHelper::getPathSeparator()
 
 string FileSystemHelper::getUserDir()
 {
-#if defined(__linux__) || defined(__APPLE__)
-    string userDir = string(getenv("HOME"));
-#elif _WIN32
-    string userDir = string(getenv("APPDATA"));
-#endif
+    string userDir;
+
+    if (this->_customHomeDir == "") {
+
+        #if defined(__linux__) || defined(__APPLE__)
+            userDir = string(getenv("HOME"));
+        #elif _WIN32
+            userDir = string(getenv("APPDATA"));
+        #endif
+
+    } else {
+        userDir = this->_customHomeDir;
+    }
+
     return userDir;
 }
 

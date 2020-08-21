@@ -31,9 +31,10 @@
 using namespace std;
 using namespace sword;
 
-ModuleInstaller::ModuleInstaller(RepositoryInterface& repoInterface, ModuleStore& moduleStore)
+ModuleInstaller::ModuleInstaller(RepositoryInterface& repoInterface, ModuleStore& moduleStore, string customHomeDir)
     : _repoInterface(repoInterface), _moduleStore(moduleStore)
 {
+    this->_fileSystemHelper.setCustomHomeDir(customHomeDir);
     this->_mgrForInstall = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
 }
 
