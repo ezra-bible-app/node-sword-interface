@@ -39,9 +39,10 @@
 using namespace std;
 using namespace sword;
 
-RepositoryInterface::RepositoryInterface(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper) 
+RepositoryInterface::RepositoryInterface(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper, string customHomeDir) 
     : _statusReporter(statusReporter), _moduleHelper(moduleHelper)
 {
+    this->_fileSystemHelper.setCustomHomeDir(customHomeDir);
     this->resetMgr();
 }
 
