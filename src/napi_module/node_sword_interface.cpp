@@ -103,6 +103,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getStrongsEntry", &NodeSwordInterface::getStrongsEntry),
         InstanceMethod("installModule", &NodeSwordInterface::installModule),
         InstanceMethod("uninstallModule", &NodeSwordInterface::uninstallModule),
+        InstanceMethod("refreshLocalModules", &NodeSwordInterface::refreshLocalModules),
         InstanceMethod("saveModuleUnlockKey", &NodeSwordInterface::saveModuleUnlockKey),
         InstanceMethod("isModuleReadable", &NodeSwordInterface::isModuleReadable),
         InstanceMethod("getSwordTranslation", &NodeSwordInterface::getSwordTranslation),
@@ -707,6 +708,14 @@ Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
     return info.Env().Undefined();
 }
 
+Napi::Value NodeSwordInterface::refreshLocalModules(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    this->_moduleInstaller->resetAllMgrs();
+    unlockApi();
+    return info.Env().Undefined();
+}
+
 Napi::Value NodeSwordInterface::saveModuleUnlockKey(const Napi::CallbackInfo& info)
 {
     lockApi();
@@ -745,6 +754,7 @@ Napi::Value NodeSwordInterface::saveModuleUnlockKey(const Napi::CallbackInfo& in
     }
 
     unlockApi();
+    return info.Env().Undefined();
 }
 
 Napi::Value NodeSwordInterface::isModuleReadable(const Napi::CallbackInfo& info)

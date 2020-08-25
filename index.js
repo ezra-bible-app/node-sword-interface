@@ -262,6 +262,14 @@ class NodeSwordInterface {
   }
 
   /**
+   * Refresh the local module database. This function is purely for testing.
+   * It will usually be called after changing the SWORD module database outside of the actual application.
+   */
+  refreshLocalModules() {
+    this.nativeInterface.refreshLocalModules();
+  }
+
+  /**
    * Persistently saves the unlock key of the corresponding module in the module's .conf file
    * (in ~/.sword/mods.d/<modname>.conf)
    * 

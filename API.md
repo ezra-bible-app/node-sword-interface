@@ -43,6 +43,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getRepoLanguageModuleCount(repositoryName, language, moduleType)](#NodeSwordInterface+getRepoLanguageModuleCount) ⇒ <code>Number</code>
     * [.installModule(moduleCode, progressCB)](#NodeSwordInterface+installModule) ⇒ <code>Promise</code>
     * [.uninstallModule(moduleCode)](#NodeSwordInterface+uninstallModule) ⇒ <code>Promise</code>
+    * [.refreshLocalModules()](#NodeSwordInterface+refreshLocalModules)
     * [.saveModuleUnlockKey(moduleCode, key)](#NodeSwordInterface+saveModuleUnlockKey)
     * [.isModuleReadable(moduleCode)](#NodeSwordInterface+isModuleReadable) ⇒ <code>Boolean</code>
     * [.getModuleDescription(moduleCode)](#NodeSwordInterface+getModuleDescription) ⇒ <code>String</code>
@@ -225,6 +226,13 @@ This function works asynchronously and returns a Promise object.
 | --- | --- | --- |
 | moduleCode | <code>String</code> | The module code of the SWORD module that shall be uninstalled. |
 
+<a name="NodeSwordInterface+refreshLocalModules"></a>
+
+### nodeSwordInterface.refreshLocalModules()
+Refresh the local module database. This function is purely for testing.
+It will usually be called after changing the SWORD module database outside of the actual application.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 <a name="NodeSwordInterface+saveModuleUnlockKey"></a>
 
 ### nodeSwordInterface.saveModuleUnlockKey(moduleCode, key)

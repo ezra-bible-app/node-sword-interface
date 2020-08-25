@@ -44,9 +44,10 @@ public:
     int saveModuleUnlockKey(std::string moduleName, std::string key);
     bool isModuleReadable(sword::SWModule* module, std::string key="John 1:1");
 
+    void resetAllMgrs();
+
 private:
     void refreshMgr();
-    void resetAllMgrs();
 
     RepositoryInterface& _repoInterface;
     ModuleStore& _moduleStore;
