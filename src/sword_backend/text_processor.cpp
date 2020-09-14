@@ -56,7 +56,10 @@ string TextProcessor::getFilteredText(const string& text, bool hasStrongs)
     static regex headEndElementFilter = regex("</head>");
     static regex appStartElementFilter = regex("<app");
     static regex appEndElementFilter = regex("</app>");
-    static regex rtxtFilter = regex("<rtxt type=\"omit\"/>");
+    static regex rtxtStartElementFilter1 = regex("<rtxt type=");
+    static regex rtxtStartElementFilter2 = regex("<rtxt rend=");
+    static regex rtxtEndElementFilter = regex("</rtxt>");
+    static regex pbElementFilter = regex("<pb.*?/>");
     static regex quoteJesusElementFilter = regex("<q marker=\"\" who=\"Jesus\">");
     static regex quoteElementFilter = regex("<q ");
     static regex titleStartElementFilter = regex("<title");
@@ -92,7 +95,10 @@ string TextProcessor::getFilteredText(const string& text, bool hasStrongs)
     filteredText = regex_replace(filteredText, headEndElementFilter, "</div>");
     filteredText = regex_replace(filteredText, appStartElementFilter, "<div class=\"sword-markup sword-app\" ");
     filteredText = regex_replace(filteredText, appEndElementFilter, "</div>");
-    filteredText = regex_replace(filteredText, rtxtFilter, "");
+    filteredText = regex_replace(filteredText, rtxtStartElementFilter1, "<div class=\"sword-markup sword-rtxt\" type=");
+    filteredText = regex_replace(filteredText, rtxtStartElementFilter2, "<div class=\"sword-markup sword-rtxt\" rend=");
+    filteredText = regex_replace(filteredText, rtxtEndElementFilter, "</div>");
+    filteredText = regex_replace(filteredText, pbElementFilter, "");
 
     filteredText = regex_replace(filteredText, titleStartElementFilter, "<div class=\"sword-markup sword-section-title\"");
     filteredText = regex_replace(filteredText, titleEndElementFilter, "</div>");
