@@ -39,9 +39,9 @@ class ModuleHelper;
 
 class SwordInstallManager : public sword::InstallMgr {
 public:
-    SwordInstallManager::SwordInstallManager(const char *privatePath = "./",
-                                             sword::StatusReporter *statusReporter = 0) : 
-                                             sword::InstallMgr(privatePath, statusReporter) {}
+    SwordInstallManager(const char *privatePath = "./",
+                        sword::StatusReporter *statusReporter = 0) : 
+                        sword::InstallMgr(privatePath, statusReporter) {}
 
     bool isUserDisclaimerConfirmed() const { return true; }
 };
