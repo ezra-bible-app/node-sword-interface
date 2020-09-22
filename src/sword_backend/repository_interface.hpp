@@ -27,15 +27,24 @@
 #include "file_system_helper.hpp"
 #include "module_helper.hpp"
 #include "sword_status_reporter.hpp"
+#include "installmgr.h"
 
 namespace sword {
-    class InstallMgr;
     class InstallSource;
     class SWModule;
     class SWMGr;
 };
 
 class ModuleHelper;
+
+class SwordInstallManager : public sword::InstallMgr {
+public:
+    SwordInstallManager::SwordInstallManager(const char *privatePath = "./",
+                                             sword::StatusReporter *statusReporter = 0) : 
+                                             sword::InstallMgr(privatePath, statusReporter) {}
+
+    bool isUserDisclaimerConfirmed() const { return true; }
+};
 
 class RepositoryInterface {
 public:
