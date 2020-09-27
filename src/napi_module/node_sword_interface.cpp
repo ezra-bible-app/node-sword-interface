@@ -40,11 +40,6 @@
 using namespace std;
 using namespace sword;
 
-#if defined(_WIN32)
-// For some reason this symbol is missing in the sword.dll on Windows, hence we include it here.
-char * sword::SWBuf::nullStr = (char *)"";
-#endif
-
 #define THROW_JS_EXCEPTION(exceptionString) { \
     Napi::Error::New(info.Env(), exceptionString).ThrowAsJavaScriptException(); \
     unlockApi(); \

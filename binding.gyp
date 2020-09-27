@@ -108,7 +108,7 @@
                 "dependencies": [
                     'sword'
                 ],
-                'defines': [ '_HAS_EXCEPTIONS=1' ]
+                'defines': [ 'SWUSINGDLL' ]
             }]
         ], 
         'dependencies': [

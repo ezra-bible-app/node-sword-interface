@@ -52,7 +52,8 @@ void RepositoryInterface::resetMgr()
         delete this->_installMgr;
     }
 
-    this->_installMgr = new SwordInstallManager(this->_fileSystemHelper.getInstallMgrDir().c_str(), &this->_statusReporter);
+    this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), &this->_statusReporter);
+    this->_installMgr->setUserDisclaimerConfirmed(true);
 }
 
 int RepositoryInterface::refreshRepositoryConfig()

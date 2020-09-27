@@ -37,15 +37,6 @@ namespace sword {
 
 class ModuleHelper;
 
-class SwordInstallManager : public sword::InstallMgr {
-public:
-    SwordInstallManager(const char *privatePath = "./",
-                        sword::StatusReporter *statusReporter = 0) : 
-                        sword::InstallMgr(privatePath, statusReporter) {}
-
-    bool isUserDisclaimerConfirmed() const { return true; }
-};
-
 class RepositoryInterface {
 public:
     RepositoryInterface(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper, std::string customHomeDir="");
