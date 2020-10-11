@@ -19,7 +19,21 @@
 #ifndef _API_LOCK
 #define _API_LOCK
 
-void lockApi();
-void unlockApi();
+#if defined(__linux__) || defined(__APPLE__)
+    #include <pthread.h>
+#elif _WIN32
+    #include <windows.h>
+    #include <process.h>
+#endif
+
+#if defined(__linux__) || defined(__APPLE__)
+    #define MUTEX pthread_mutex_t
+#elif _WIN32
+    #define MUTEX HANDLE
+#endif
+
+bool initLock();
+bool lockApi();
+bool unlockApi();
 
 #endif // _API_LOCK
