@@ -21,11 +21,9 @@
 #include "module_search_worker.hpp"
 #include "common_defs.hpp"
 
-static std::mutex searchMutex;
-
 void ModuleSearchWorker::Execute(const ExecutionProgress& progress)
 {
-    searchMutex.lock();
+    this->_searchMutex.lock();
     this->_executionProgress = &progress;
     
     std::function<void(char, void*)> searchProgressCB = std::bind(&ModuleSearchWorker::searchProgressCB,
@@ -39,7 +37,7 @@ void ModuleSearchWorker::Execute(const ExecutionProgress& progress)
                                                                          this->_isCaseSensitive,
                                                                          this->_useExtendedVerseBoundaries);
     setModuleSearchProgressCB(0);
-    searchMutex.unlock();
+    this->_searchMutex.unlock();
     unlockApi();
 }
 

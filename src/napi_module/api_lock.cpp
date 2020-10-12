@@ -18,38 +18,19 @@
 
 #include "api_lock.hpp"
 
-static MUTEX apiMutex;
+static Mutex apiMutex;
 
 bool initLock()
 {
-    #if defined(__linux__) || defined(__APPLE__)
-        return pthread_mutex_init(&apiMutex, NULL);
-    #elif _WIN32
-        apiMutex = CreateMutex(0, FALSE, 0);
-        return (apiMutex == 0);
-    #endif
-
-    return false;
+    return apiMutex.init();
 }
 
 bool lockApi()
 {
-    #if defined(__linux__) || defined(__APPLE__)
-        return pthread_mutex_lock(&apiMutex) == 0;
-    #elif _WIN32
-        return (WaitForSingleObject(&apiMutex, INFINITE) == WAIT_FAILED ? false : true);
-    #endif
-
-    return false;
+    return apiMutex.lock();
 }
 
 bool unlockApi()
 {
-    #if defined(__linux__) || defined(__APPLE__)
-        return pthread_mutex_unlock(&apiMutex) == 0;
-    #elif _WIN32
-        return (ReleaseMutex(&apiMutex) == 0);
-    #endif
-
-    return false;
+    return apiMutex.unlock();
 }

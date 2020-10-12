@@ -21,7 +21,6 @@
 #include <sstream>
 #include <fstream>
 #include <regex>
-#include <mutex>
 
 // Own includes
 #include "repository_interface.hpp"
@@ -29,6 +28,7 @@
 #include "percentage_calc.hpp"
 #include "string_helper.hpp"
 #include "module_helper.hpp"
+#include "mutex.hpp"
 
 // Sword includes
 #include <installmgr.h>
@@ -39,11 +39,14 @@
 using namespace std;
 using namespace sword;
 
+static Mutex remoteSourceUpdateMutex;
+
 RepositoryInterface::RepositoryInterface(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper, string customHomeDir) 
     : _statusReporter(statusReporter), _moduleHelper(moduleHelper)
 {
     this->_fileSystemHelper.setCustomHomeDir(customHomeDir);
     this->resetMgr();
+    remoteSourceUpdateMutex.init();
 }
 
 void RepositoryInterface::resetMgr()
@@ -98,8 +101,6 @@ int RepositoryInterface::refreshRemoteSources(bool force, std::function<void(uns
 
     return 0;
 }
-
-static std::mutex remoteSourceUpdateMutex;
 
 int RepositoryInterface::refreshIndividualRemoteSource(string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback)
 {

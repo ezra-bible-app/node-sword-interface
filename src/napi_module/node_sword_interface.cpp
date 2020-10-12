@@ -36,6 +36,7 @@
 #include "module_helper.hpp"
 #include "text_processor.hpp"
 #include "module_search.hpp"
+#include "mutex.hpp"
 
 using namespace std;
 using namespace sword;
@@ -62,6 +63,8 @@ using namespace sword;
         return env.Null(); \
     } \
 }
+
+static Mutex searchMutex;
 
 Napi::FunctionReference NodeSwordInterface::constructor;
 
@@ -123,6 +126,7 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     bool homeDirError = false;
 
     initLock();
+    searchMutex.init();
     
     if (info[0].IsString()) {
         customHomeDir = string(info[0].As<Napi::String>());
@@ -644,6 +648,7 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
                                                         *(this->_moduleSearch),
                                                         *(this->_moduleStore),
                                                         *(this->_repoInterface),
+                                                        searchMutex,
                                                         jsProgressCallback,
                                                         callback,
                                                         moduleName,

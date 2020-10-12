@@ -16,13 +16,33 @@
    along with node-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
-#ifndef _API_LOCK
-#define _API_LOCK
+#ifndef _MUTEX
+#define _MUTEX
 
-#include "mutex.hpp"
+#if defined(__linux__) || defined(__APPLE__)
+    #include <pthread.h>
+#elif _WIN32
+    #include <windows.h>
+    #include <process.h>
+#endif
 
-bool initLock();
-bool lockApi();
-bool unlockApi();
+#if defined(__linux__) || defined(__APPLE__)
+    #define MUTEX pthread_mutex_t
+#elif _WIN32
+    #define MUTEX HANDLE
+#endif
 
-#endif // _API_LOCK
+class Mutex {
+public:
+    Mutex();
+    ~Mutex(){};
+
+    bool init();
+    bool lock();
+    bool unlock();
+
+private:
+    MUTEX _mutex;
+};
+
+#endif // _MUTEX

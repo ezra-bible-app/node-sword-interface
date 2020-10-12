@@ -33,6 +33,7 @@
         "cflags!": [ "-fno-exceptions" ],
         "cflags_cc!": [ "-fno-exceptions -std=c++11 -pthread" ],
         "sources": [
+            "src/sword_backend/mutex.cpp",
             "src/sword_backend/file_system_helper.cpp",
             "src/sword_backend/module_helper.cpp",
             "src/sword_backend/module_store.cpp",

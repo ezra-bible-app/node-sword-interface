@@ -22,6 +22,7 @@
 #include "worker.hpp"
 #include "module_search.hpp"
 #include "module_store.hpp"
+#include "mutex.hpp"
 
 class ModuleSearchWorker : public ProgressWorker {
 public:
@@ -29,6 +30,7 @@ public:
                        ModuleSearch& moduleSearch,
                        ModuleStore& moduleStore,
                        RepositoryInterface & repoInterface,
+                       Mutex& searchMutex,
                        const Napi::Function& jsProgressCallback,
                        const Napi::Function& callback,
                        std::string moduleName,
@@ -38,6 +40,7 @@ public:
                        bool useExtendedVerseBoundaries=false)
 
         : ProgressWorker(repoInterface, jsProgressCallback, callback),
+        _searchMutex(searchMutex),
         _moduleSearch(moduleSearch),
         _moduleName(moduleName),
         _searchTerm(searchTerm),
@@ -53,6 +56,7 @@ public:
     void OnOK();
 
 private:
+    Mutex& _searchMutex;
     ModuleSearch& _moduleSearch;
     NapiSwordHelper* _napiSwordHelper;
     std::vector<Verse> _stdSearchResults;
