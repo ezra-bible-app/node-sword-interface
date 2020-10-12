@@ -85,7 +85,7 @@ string TextProcessor::getFilteredText(const string& text, bool hasStrongs)
     filteredText = regex_replace(filteredText, schlachterMarkupFilter, "");
     filteredText = regex_replace(filteredText, chapterFilter, "");
     filteredText = regex_replace(filteredText, lbBeginParagraph, "");
-    filteredText = regex_replace(filteredText, lbEndParagraph, "&nbsp;<div class=\"sword-markup sword-paragraph-end\"><br/></div>");
+    filteredText = regex_replace(filteredText, lbEndParagraph, "&nbsp;<div class=\"sword-markup sword-paragraph-end\"><br></div>");
     filteredText = regex_replace(filteredText, lbElementFilter, "<div class=\"sword-markup sword-lb\" ");
     filteredText = regex_replace(filteredText, lElementFilter, "<div class=\"sword-markup sword-l\" ");
     filteredText = regex_replace(filteredText, lgElementFilter, "<div class=\"sword-markup sword-lg\" ");
