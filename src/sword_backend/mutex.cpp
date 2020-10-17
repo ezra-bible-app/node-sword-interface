@@ -18,6 +18,12 @@
 
 #include "mutex.hpp"
 
+Mutex::~Mutex() {
+    #if _WIN32
+        CloseHandle(this->_mutex);
+    #endif
+}
+
 bool Mutex::init()
 {
     #if defined(__linux__) || defined(__APPLE__)

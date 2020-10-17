@@ -35,7 +35,7 @@
 class Mutex {
 public:
     Mutex(){};
-    ~Mutex(){};
+    ~Mutex();
 
     bool init();
     bool lock();
