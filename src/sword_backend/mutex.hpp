@@ -20,14 +20,14 @@
 #define _MUTEX
 
 #if defined(__linux__) || defined(__APPLE__)
-    #include <pthread.h>
+    #include <mutex>
 #elif _WIN32
     #include <windows.h>
     #include <process.h>
 #endif
 
 #if defined(__linux__) || defined(__APPLE__)
-    #define MUTEX pthread_mutex_t
+    #define MUTEX std::mutex
 #elif _WIN32
     #define MUTEX HANDLE
 #endif

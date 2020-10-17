@@ -21,10 +21,10 @@
 bool Mutex::init()
 {
     #if defined(__linux__) || defined(__APPLE__)
-        return pthread_mutex_init(&(this->_mutex), NULL);
+        return true;
     #elif _WIN32
         this->_mutex = CreateMutex(0, FALSE, 0);
-        return (apiMutex == 0);
+        return (this->_mutex != NULL);
     #endif
 
     return false;
@@ -33,7 +33,7 @@ bool Mutex::init()
 bool Mutex::lock()
 {
     #if defined(__linux__) || defined(__APPLE__)
-        return pthread_mutex_lock(&(this->_mutex)) == 0;
+        return this->_mutex.try_lock();
     #elif _WIN32
         return (WaitForSingleObject(&(this->_mutex), INFINITE) == WAIT_FAILED ? false : true);
     #endif
@@ -44,7 +44,8 @@ bool Mutex::lock()
 bool Mutex::unlock()
 {
     #if defined(__linux__) || defined(__APPLE__)
-        return pthread_mutex_unlock(&(this->_mutex)) == 0;
+        this->_mutex.unlock();
+        return true;
     #elif _WIN32
         return (ReleaseMutex(&(this->_mutex)) == 0);
     #endif
