@@ -1,5 +1,5 @@
 # node-sword-interface
-node-sword-interface is a [nodejs](https://nodejs.org) module that wraps the [SWORD library](http://www.crosswire.org/sword/) which gives access to bible text modules and related ressources. It has been created for use within the [Ezra Project](https://github.com/tobias-klein/ezra-project) bible study software, but it can also be used for any other nodejs-based software that needs to interface with the SWORD library. The focus of node-sword-interface is on bible modules. Other types of SWORD modules are currently not supported. node-sword-interface works on Linux, macOS and Windows.
+node-sword-interface is a [nodejs](https://nodejs.org) module that wraps the [SWORD library](http://www.crosswire.org/sword/) which gives access to bible text modules and related ressources. It has been created for use within the [Ezra Project](https://github.com/tobias-klein/ezra-project) bible study software, but it can also be used for any other nodejs-based software that needs to interface with the SWORD library. node-sword-interface supports bible modules and dictionary modules that are keyed with Strong's numbers. node-sword-interface works on Linux, macOS and Windows.
 
 ## Features
 
@@ -7,11 +7,11 @@ node-sword-interface focusses on discovery, installation/removal and text loadin
 
 - Update SWORD repository configuration
 - List SWORD repositories
-- List remote bible modules
-- List local bible modules
-- Install a bible module
-- Uninstall a bible module
-- Get information about a bible module
+- List remote modules (bible modules or dictionary modules)
+- List local modules (bible modules or dictionary modules)
+- Install a module
+- Uninstall a module
+- Get information about a module
 - Get the text of a bible book
 - Get the text of the whole bible
 - Search within a bible module
