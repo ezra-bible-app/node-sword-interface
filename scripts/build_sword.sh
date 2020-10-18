@@ -22,6 +22,7 @@ case "$(uname -s)" in
 #    ;;
     Darwin)
     # We only apply the following patch on macOS
+        export MACOSX_DEPLOYMENT_TARGET=10.10
         export CMAKE_PREFIX_PATH=/usr/local/opt/icu4c
 #        patch --batch --forward -d sword -p 0 < patch/sword_mac.patch
     ;;
