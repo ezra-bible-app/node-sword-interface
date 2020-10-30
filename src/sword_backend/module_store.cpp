@@ -74,9 +74,9 @@ SWModule* ModuleStore::getLocalModule(string moduleName)
     return this->_mgr->getModule(moduleName.c_str());
 }
 
-vector<SWModule*> ModuleStore::getAllLocalModules(ModuleType moduleType)
+vector<string> ModuleStore::getModuleLanguages(ModuleType moduleType)
 {
-    vector<SWModule*> allLocalModules;
+    vector<string> languages;
     string moduleTypeFilter = RepositoryInterface::getModuleTypeString(moduleType);
 
     for (ModMap::iterator modIterator = this->_mgr->Modules.begin();
@@ -85,9 +85,42 @@ vector<SWModule*> ModuleStore::getAllLocalModules(ModuleType moduleType)
         
         SWModule* currentModule = (SWModule*)modIterator->second;
         string moduleType = string(currentModule->getType());
+        string moduleLanguage = string(currentModule->getLanguage());
 
         if (moduleTypeFilter == "ANY" || moduleType == moduleTypeFilter) {
-            allLocalModules.push_back(currentModule);
+
+            if (std::find(languages.begin(),
+                          languages.end(),                       // Only accept add the language if we do not
+                          moduleLanguage) == languages.end()) {  // have it yet!
+
+                languages.push_back(moduleLanguage);
+            }
+        }
+    }
+
+    return languages;
+}
+
+vector<SWModule*> ModuleStore::getAllLocalModules(ModuleType moduleType)
+{
+    vector<SWModule*> allLocalModules;
+    string moduleTypeFilter = RepositoryInterface::getModuleTypeString(moduleType);
+    vector<string> languages = this->getModuleLanguages(moduleType);
+
+    for (unsigned int i = 0; i < languages.size(); i++) {
+        string currentLanguage = languages[i];
+
+        for (ModMap::iterator modIterator = this->_mgr->Modules.begin();
+            modIterator != this->_mgr->Modules.end();
+            modIterator++) {
+            
+            SWModule* currentModule = (SWModule*)modIterator->second;
+            string moduleType = string(currentModule->getType());
+            string moduleLanguage = string(currentModule->getLanguage());
+
+            if ((moduleTypeFilter == "ANY" || moduleType == moduleTypeFilter) && (moduleLanguage == currentLanguage)) {
+                allLocalModules.push_back(currentModule);
+            }
         }
     }
 

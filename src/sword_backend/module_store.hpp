@@ -46,6 +46,7 @@ public:
     void deleteModule(std::string moduleName);
     
 private:
+    std::vector<std::string> getModuleLanguages(ModuleType moduleType=ModuleType::bible);
     sword::SWMgr* _mgr = 0;
     FileSystemHelper _fileSystemHelper;
 };
