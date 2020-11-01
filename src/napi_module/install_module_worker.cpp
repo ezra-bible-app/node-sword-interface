@@ -70,15 +70,14 @@ void InstallModuleWorker::Execute(const ExecutionProgress& progress)
 
     SwordStatusReporter& statusReporter = this->_repoInterface.getStatusReporter();
     statusReporter.setCallBacks(&_swordPreStatusCB, &_swordUpdateCB);
-    int ret = this->_moduleInstaller.installModule(this->_moduleName);
+    this->_result = this->_moduleInstaller.installModule(this->_moduleName);
     statusReporter.resetCallbacks();
-    this->_isSuccessful = (ret == 0);
     unlockApi();
 }
 
 void InstallModuleWorker::OnOK()
 {
     Napi::HandleScope scope(this->Env());
-    Napi::Boolean isSuccessful = Napi::Boolean::New(this->Env(), this->_isSuccessful);
-    Callback().Call({ isSuccessful });
+    Napi::Number result = Napi::Number::New(this->Env(), this->_result);
+    Callback().Call({ result });
 }

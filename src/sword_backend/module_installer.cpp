@@ -84,17 +84,22 @@ int ModuleInstaller::installModule(string repoName, string moduleName)
         cerr << "Did not find module " << moduleName << " in repository " << repoName << endl;
         return -1;
     } else {
-        int error = this->_repoInterface.getInstallMgr()->installModule(this->_mgrForInstall, 0, moduleName.c_str(), remoteSource);
+        int result = this->_repoInterface.getInstallMgr()->installModule(this->_mgrForInstall, 0, moduleName.c_str(), remoteSource);
         this->resetAllMgrs();
 
-        if (error) {
-            cerr << "Error installing module: " << moduleName << " (write permissions?)" << endl;
-            return -1;
+        if (result != 0) {
+            //cerr << "Error installing module: " << moduleName << " (write permissions?)" << endl;
+            return result;
         } else {
-            cout << "Installed module: " << moduleName << endl;
+            //cout << "Installed module: " << moduleName << endl;
             return 0;
         }
     }
+}
+
+void ModuleInstaller::cancelInstallation()
+{
+    this->_repoInterface.getInstallMgr()->terminate();
 }
 
 int ModuleInstaller::uninstallModule(string moduleName)

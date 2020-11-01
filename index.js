@@ -220,6 +220,10 @@ class NodeSwordInterface {
    * distance to the SWORD repository server.
    *
    * This function works asynchronously and returns a Promise object.
+   * 
+   * If the installation fails, the Promise will be rejected with the following status codes (based on SWORD):
+   * -1: General installation issue
+   * -9: Installation cancelled by user or internet connection suddenly interrupted
    *
    * @param {String} moduleCode - The module code of the SWORD module that shall be installed.
    * @param {Function} progressCB - Optional callback function that is called on progress events.
@@ -231,14 +235,21 @@ class NodeSwordInterface {
     }
 
     return new Promise((resolve, reject) => {
-      this.nativeInterface.installModule(moduleCode, progressCB, function(installSuccessful) {
-        if (installSuccessful) {
+      this.nativeInterface.installModule(moduleCode, progressCB, function(result) {
+        if (result == 0) {
           resolve();
         } else {
-          reject();
+          reject(result);
         }
       });
     });
+  }
+
+  /**
+   * Cancels an ongoing module installation.
+   */
+  cancelInstallation() {
+    return this.nativeInterface.cancelInstallation();
   }
 
   /**

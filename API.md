@@ -42,6 +42,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getRepoModuleCount(repositoryName, moduleType)](#NodeSwordInterface+getRepoModuleCount) ⇒ <code>Number</code>
     * [.getRepoLanguageModuleCount(repositoryName, language, moduleType)](#NodeSwordInterface+getRepoLanguageModuleCount) ⇒ <code>Number</code>
     * [.installModule(moduleCode, progressCB)](#NodeSwordInterface+installModule) ⇒ <code>Promise</code>
+    * [.cancelInstallation()](#NodeSwordInterface+cancelInstallation)
     * [.uninstallModule(moduleCode)](#NodeSwordInterface+uninstallModule) ⇒ <code>Promise</code>
     * [.refreshLocalModules()](#NodeSwordInterface+refreshLocalModules)
     * [.saveModuleUnlockKey(moduleCode, key)](#NodeSwordInterface+saveModuleUnlockKey)
@@ -206,6 +207,10 @@ distance to the SWORD repository server.
 
 This function works asynchronously and returns a Promise object.
 
+If the installation fails, the Promise will be rejected with the following status codes (based on SWORD):
+-1: General installation issue
+-9: Installation cancelled by user or internet connection suddenly interrupted
+
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 
 | Param | Type | Description |
@@ -213,6 +218,12 @@ This function works asynchronously and returns a Promise object.
 | moduleCode | <code>String</code> | The module code of the SWORD module that shall be installed. |
 | progressCB | <code>function</code> | Optional callback function that is called on progress events. |
 
+<a name="NodeSwordInterface+cancelInstallation"></a>
+
+### nodeSwordInterface.cancelInstallation()
+Cancels an ongoing module installation.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 <a name="NodeSwordInterface+uninstallModule"></a>
 
 ### nodeSwordInterface.uninstallModule(moduleCode) ⇒ <code>Promise</code>

@@ -100,6 +100,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getModuleSearchResults", &NodeSwordInterface::getModuleSearchResults),
         InstanceMethod("getStrongsEntry", &NodeSwordInterface::getStrongsEntry),
         InstanceMethod("installModule", &NodeSwordInterface::installModule),
+        InstanceMethod("cancelInstallation", &NodeSwordInterface::cancelInstallation),
         InstanceMethod("uninstallModule", &NodeSwordInterface::uninstallModule),
         InstanceMethod("refreshLocalModules", &NodeSwordInterface::refreshLocalModules),
         InstanceMethod("saveModuleUnlockKey", &NodeSwordInterface::saveModuleUnlockKey),
@@ -696,6 +697,14 @@ Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
                                                           callback,
                                                           moduleName);
     worker->Queue();
+    return info.Env().Undefined();
+}
+
+Napi::Value NodeSwordInterface::cancelInstallation(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+    this->_moduleInstaller->cancelInstallation();
     return info.Env().Undefined();
 }
 

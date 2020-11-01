@@ -44,7 +44,7 @@ public:
 
 private:
     ModuleInstaller& _moduleInstaller;
-    bool _isSuccessful;
+    int _result;
     std::string _moduleName;
     long _completedBytes = 0;
     long _totalBytes = 0;

@@ -39,6 +39,7 @@ public:
 
     int installModule(std::string moduleName);
     int installModule(std::string repoName, std::string moduleName);
+    void cancelInstallation();
     int uninstallModule(std::string moduleName);
 
     int saveModuleUnlockKey(std::string moduleName, std::string key);
