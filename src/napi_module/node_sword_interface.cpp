@@ -827,7 +827,7 @@ Napi::Value NodeSwordInterface::getSwordVersion(const Napi::CallbackInfo& info)
     lockApi();
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
-    string version = "1.8.900-0d03ad (SVN Rev. 3820)";
+    string version = "1.8.900-412026 (SVN Rev. 3823)";
     Napi::String swVersion = Napi::String::New(env, version);
     unlockApi();
     return swVersion;
