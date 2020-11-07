@@ -53,4 +53,4 @@ patch --batch --forward -d sword -p 0 < patch/sword_globconf.patch
 mkdir -p sword_build
 cd sword_build
 cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 ../sword
-make -j2 sword_static
+make -j4 sword_static
