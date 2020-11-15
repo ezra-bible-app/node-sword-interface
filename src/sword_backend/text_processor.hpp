@@ -59,7 +59,7 @@ private:
                                int verseCount=-1);
 
     std::string getCurrentChapterHeading(sword::SWModule* module);
-    std::string getFilteredText(const std::string& text, bool hasStrongs=false);
+    std::string getFilteredText(const std::string& text, int chapter, bool hasStrongs=false);
     std::string replaceSpacesInStrongs(const std::string& text);
 
     std::string getBookFromReference(std::string reference);

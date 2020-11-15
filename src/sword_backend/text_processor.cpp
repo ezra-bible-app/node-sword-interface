@@ -41,7 +41,7 @@ TextProcessor::TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelpe
 {
 }
 
-string TextProcessor::getFilteredText(const string& text, bool hasStrongs)
+string TextProcessor::getFilteredText(const string& text, int chapter, bool hasStrongs)
 {
     static regex schlachterMarkupFilter = regex("<H.*> ");
     static regex chapterFilter = regex("<chapter.*/>");
@@ -100,7 +100,11 @@ string TextProcessor::getFilteredText(const string& text, bool hasStrongs)
     filteredText = regex_replace(filteredText, rtxtEndElementFilter, "</div>");
     filteredText = regex_replace(filteredText, pbElementFilter, "");
 
-    filteredText = regex_replace(filteredText, titleStartElementFilter, "<div class=\"sword-markup sword-section-title\"");
+    stringstream sectionTitleElement;
+    sectionTitleElement << "<div class=\"sword-markup sword-section-title\" ";
+    sectionTitleElement << "chapter=\"" << chapter << "\"";
+
+    filteredText = regex_replace(filteredText, titleStartElementFilter, sectionTitleElement.str());
     filteredText = regex_replace(filteredText, titleEndElementFilter, "</div>");
     filteredText = regex_replace(filteredText, divMilestoneFilter, "<div class=\"sword-markup sword-x-milestone\"");
     filteredText = regex_replace(filteredText, milestoneFilter, "<div class=\"sword-markup sword-milestone\"");
@@ -131,7 +135,8 @@ string TextProcessor::getFilteredText(const string& text, bool hasStrongs)
 string TextProcessor::getCurrentChapterHeading(sword::SWModule* module)
 {
     string chapterHeading = "";
-    VerseKey currentVerseKey(module->getKey());
+    VerseKey currentVerseKey = module->getKey();
+    int currentChapter = currentVerseKey.getChapter();
 
     if (currentVerseKey.getVerse() == 1) { // X:1, set key to X:0
         // Include chapter/book/testament/module intros
@@ -147,7 +152,7 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module)
         module->setKey(currentVerseKey);
     }
 
-    chapterHeading = this->getFilteredText(chapterHeading);
+    chapterHeading = this->getFilteredText(chapterHeading, currentChapter);
     return chapterHeading;
 }
 
@@ -157,9 +162,11 @@ string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStron
     string filteredText;
 
     if (this->_markupEnabled && !forceNoMarkup) {
+        VerseKey currentVerseKey = module->getKey();
+        int currentChapter = currentVerseKey.getChapter();
         verseText = string(module->getRawEntry());
         StringHelper::trim(verseText);
-        filteredText = this->getFilteredText(verseText, hasStrongs);
+        filteredText = this->getFilteredText(verseText, currentChapter, hasStrongs);
     } else {
         verseText = string(module->stripText());
         StringHelper::trim(verseText);
