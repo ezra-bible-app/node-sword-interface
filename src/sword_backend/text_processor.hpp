@@ -68,6 +68,7 @@ private:
     ModuleStore& _moduleStore;
     ModuleHelper& _moduleHelper;
     bool _markupEnabled;
+    bool _rawMarkupEnabled;
 };
 
 #endif // _TEXT_PROCESSOR

@@ -39,12 +39,14 @@ using namespace sword;
 TextProcessor::TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelper)
     : _moduleStore(moduleStore), _moduleHelper(moduleHelper)
 {
+    this->_markupEnabled = false;
+    this->_rawMarkupEnabled = false;
 }
 
 string TextProcessor::getFilteredText(const string& text, int chapter, bool hasStrongs)
 {
     static regex schlachterMarkupFilter = regex("<H.*> ");
-    static regex chapterFilter = regex("<chapter.*/>");
+    static regex chapterFilter = regex("<chapter.*?/>");
     static regex lbBeginParagraph = regex("<lb type=\"x-begin-paragraph\"/>");
     static regex lbEndParagraph = regex("<lb type=\"x-end-paragraph\"/>");
     static regex lbElementFilter = regex("<lb ");
@@ -144,6 +146,7 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module)
         currentVerseKey.setVerse(0);
 
         module->setKey(currentVerseKey);
+        
         chapterHeading = string(module->getRawEntry());
         StringHelper::trim(chapterHeading);
 
@@ -152,7 +155,10 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module)
         module->setKey(currentVerseKey);
     }
 
-    chapterHeading = this->getFilteredText(chapterHeading, currentChapter);
+    if (this->_markupEnabled && !this->_rawMarkupEnabled) {
+        chapterHeading = this->getFilteredText(chapterHeading, currentChapter);
+    }
+
     return chapterHeading;
 }
 
@@ -166,7 +172,11 @@ string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStron
         int currentChapter = currentVerseKey.getChapter();
         verseText = string(module->getRawEntry());
         StringHelper::trim(verseText);
-        filteredText = this->getFilteredText(verseText, currentChapter, hasStrongs);
+        filteredText = verseText;
+
+        if (!this->_rawMarkupEnabled) {
+            filteredText = this->getFilteredText(verseText, currentChapter, hasStrongs);
+        }
     } else {
         verseText = string(module->stripText());
         StringHelper::trim(verseText);
@@ -314,8 +324,8 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
 
             // Chapter heading
             // We only add it when we're looking at the first verse of a chapter
-            // and if the requested verse count is more than one.
-            if (firstVerseInChapter && verseCount > 1) {
+            // and if the requested verse count is more than one or the default (-1 / all verses).
+            if (firstVerseInChapter && (verseCount > 1 || verseCount == -1)) {
                 verseText += this->getCurrentChapterHeading(module);
             }
 
@@ -410,8 +420,11 @@ bool TextProcessor::moduleHasStrongsZeroPrefixes(sword::SWModule* module)
 {
     string key = "Gen 1:1";
     module->setKey(key.c_str());
+
+    bool previousMarkupSetting = this->_markupEnabled;    
     this->enableMarkup();
     string verseText = this->getCurrentVerseText(module, true);
+    this->_markupEnabled = previousMarkupSetting;
     
     return verseText.find("strong:H0") != string::npos;
 }
