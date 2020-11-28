@@ -39,6 +39,8 @@ public:
 
     std::vector<std::string> getBookList(std::string moduleName);
     std::map<std::string, std::vector<int>> getBibleChapterVerseCounts(std::string moduleName);
+    int getBookChapterCount(std::string moduleName, std::string bookCode);
+    int getChapterVerseCount(std::string moduleName, std::string bookCode, int chapter);
     std::map<std::string, int> getAbsoluteVerseNumberMap(sword::SWModule* module, std::vector<std::string> bookList={});
 
 private:

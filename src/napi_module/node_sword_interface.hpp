@@ -75,6 +75,8 @@ private:
     Napi::Value getReferencesFromReferenceRange(const Napi::CallbackInfo& info);
     Napi::Value getBookList(const Napi::CallbackInfo& info);
     Napi::Value getBibleChapterVerseCounts(const Napi::CallbackInfo& info);
+    Napi::Value getBookChapterCount(const Napi::CallbackInfo& info);
+    Napi::Value getChapterVerseCount(const Napi::CallbackInfo& info);
     Napi::Value getBookIntroduction(const Napi::CallbackInfo& info);
 
     Napi::Value getModuleSearchResults(const Napi::CallbackInfo& info);

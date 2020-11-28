@@ -138,6 +138,47 @@ map<string, vector<int>> ModuleHelper::getBibleChapterVerseCounts(std::string mo
     return bibleChapterVerseCounts;
 }
 
+int ModuleHelper::getBookChapterCount(std::string moduleName, std::string bookCode)
+{
+    SWModule* module = this->_moduleStore.getLocalModule(moduleName);
+    int bookChapterCount = -1;
+
+    if (module == 0) {
+        cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
+    } else {
+        stringstream key;
+        key << bookCode;
+        key << " 1:1";
+
+        module->setKey(key.str().c_str());
+        VerseKey currentVerseKey(module->getKey());
+
+        bookChapterCount = currentVerseKey.getChapterMax();
+    }
+
+    return bookChapterCount;
+}
+
+int ModuleHelper::getChapterVerseCount(std::string moduleName, std::string bookCode, int chapter)
+{
+    SWModule* module = this->_moduleStore.getLocalModule(moduleName);
+    int chapterVerseCount = -1;
+
+    if (module == 0) {
+        cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
+    } else {
+        stringstream key;
+        key << bookCode << " " << chapter << ":1";
+
+        module->setKey(key.str().c_str());
+        VerseKey currentVerseKey(module->getKey());
+
+        chapterVerseCount = currentVerseKey.getVerseMax();
+    }
+
+    return chapterVerseCount;
+}
+
 map<string, int> ModuleHelper::getAbsoluteVerseNumberMap(SWModule* module, vector<string> bookList)
 {
     string lastKey = "";

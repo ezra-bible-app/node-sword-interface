@@ -96,6 +96,8 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getReferencesFromReferenceRange", &NodeSwordInterface::getReferencesFromReferenceRange),
         InstanceMethod("getBookList", &NodeSwordInterface::getBookList),
         InstanceMethod("getBibleChapterVerseCounts", &NodeSwordInterface::getBibleChapterVerseCounts),
+        InstanceMethod("getBookChapterCount", &NodeSwordInterface::getBookChapterCount),
+        InstanceMethod("getChapterVerseCount", &NodeSwordInterface::getChapterVerseCount),
         InstanceMethod("getBookIntroduction", &NodeSwordInterface::getBookIntroduction),
         InstanceMethod("getModuleSearchResults", &NodeSwordInterface::getModuleSearchResults),
         InstanceMethod("getStrongsEntry", &NodeSwordInterface::getStrongsEntry),
@@ -594,6 +596,35 @@ Napi::Value NodeSwordInterface::getBibleChapterVerseCounts(const Napi::CallbackI
 
     unlockApi();
     return jsChapterVerseCounts;
+}
+
+Napi::Value NodeSwordInterface::getBookChapterCount(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    Napi::Env env = info.Env();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
+    Napi::String moduleName = info[0].As<Napi::String>();
+    Napi::String bookCode = info[1].As<Napi::String>();
+
+    Napi::Number bookChapterCount = Napi::Number::New(env, this->_moduleHelper->getBookChapterCount(moduleName, bookCode));
+
+    unlockApi();
+    return bookChapterCount;
+}
+
+Napi::Value NodeSwordInterface::getChapterVerseCount(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    Napi::Env env = info.Env();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::number);
+    Napi::String moduleName = info[0].As<Napi::String>();
+    Napi::String bookCode = info[1].As<Napi::String>();
+    Napi::Number chapter = info[2].As<Napi::Number>();
+
+    Napi::Number chapterVerseCount = Napi::Number::New(env, this->_moduleHelper->getChapterVerseCount(moduleName, bookCode, chapter));
+
+    unlockApi();
+    return chapterVerseCount;
 }
 
 Napi::Value NodeSwordInterface::getBookIntroduction(const Napi::CallbackInfo& info)
