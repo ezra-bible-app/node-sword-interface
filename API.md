@@ -55,7 +55,6 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getVersesFromReferences(moduleCode, references)](#NodeSwordInterface+getVersesFromReferences) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getReferencesFromReferenceRange(referenceRange)](#NodeSwordInterface+getReferencesFromReferenceRange) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getBookList(moduleCode)](#NodeSwordInterface+getBookList) ⇒ <code>Array.&lt;String&gt;</code>
-    * [.getBibleChapterVerseCounts(moduleCode)](#NodeSwordInterface+getBibleChapterVerseCounts) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getBookChapterCount(moduleCode, bookCode)](#NodeSwordInterface+getBookChapterCount)
     * [.getChapterVerseCount(moduleCode, bookCode, chapter)](#NodeSwordInterface+getChapterVerseCount)
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
@@ -363,18 +362,6 @@ Returns the list of books available in the given module. By default the book cod
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 **Returns**: <code>Array.&lt;String&gt;</code> - An array of book codes.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| moduleCode | <code>String</code> | The module code of the SWORD module. |
-
-<a name="NodeSwordInterface+getBibleChapterVerseCounts"></a>
-
-### nodeSwordInterface.getBibleChapterVerseCounts(moduleCode) ⇒ <code>Array.&lt;Object&gt;</code>
-Returns the chapter verse count statistics for the given module.
-
-**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - An associative array that maps each book to an array with the verse counts for each chapter.  
 
 | Param | Type | Description |
 | --- | --- | --- |

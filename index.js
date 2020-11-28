@@ -388,16 +388,6 @@ class NodeSwordInterface {
   }
 
   /**
-   * Returns the chapter verse count statistics for the given module.
-   *
-   * @param {String} moduleCode - The module code of the SWORD module.
-   * @return {Object[]} An associative array that maps each book to an array with the verse counts for each chapter.
-   */
-  getBibleChapterVerseCounts(moduleCode) {
-    return this.nativeInterface.getBibleChapterVerseCounts(moduleCode);
-  }
-
-  /**
    * Returns the chapter count of the given book.
    * 
    * @param {String} moduleCode - The module code of the SWORD module.

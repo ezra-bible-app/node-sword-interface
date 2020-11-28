@@ -89,55 +89,6 @@ vector<string> ModuleHelper::getBookList(string moduleName)
     return bookList;
 }
 
-map<string, vector<int>> ModuleHelper::getBibleChapterVerseCounts(std::string moduleName)
-{
-    string currentBookName = "";
-    string lastBookName = "";
-    string lastKey = "";
-    int lastChapter = -1;
-    int currentChapterCount = 0;
-    map<string, vector<int>> bibleChapterVerseCounts;
-    SWModule* module = this->_moduleStore.getLocalModule(moduleName);
-
-    if (module == 0) {
-        cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
-    } else {
-        module->setKey("Gen 1:1");
-
-        for (;;) {
-            VerseKey currentVerseKey(module->getKey());
-            currentBookName = currentVerseKey.getBookAbbrev();
-            int currentChapter = currentVerseKey.getChapter();
-            string currentKey(module->getKey()->getShortText());
-
-            // Stop, once the newly read key is the same as the previously read key
-            if (currentKey == lastKey) { break; }
-
-            if (currentBookName != lastBookName) {
-                // Init a new chapter verse count vector for the new book
-                vector<int> currentChapterVerseCounts;
-                bibleChapterVerseCounts[currentBookName] = currentChapterVerseCounts;
-            }
-
-            if (lastChapter != -1 && (currentChapter != lastChapter || currentBookName != lastBookName)) {
-                bibleChapterVerseCounts[lastBookName].push_back(currentChapterCount);
-                currentChapterCount = 0;
-            }
-
-            currentChapterCount = currentVerseKey.getVerseMax();
-
-            module->increment(currentChapterCount);
-            lastChapter = currentChapter;
-            lastBookName = currentBookName;
-            lastKey = currentKey;
-        }
-
-        bibleChapterVerseCounts[currentBookName].push_back(currentChapterCount);
-    }
-
-    return bibleChapterVerseCounts;
-}
-
 int ModuleHelper::getBookChapterCount(std::string moduleName, std::string bookCode)
 {
     SWModule* module = this->_moduleStore.getLocalModule(moduleName);
