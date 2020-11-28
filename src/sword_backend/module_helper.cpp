@@ -124,9 +124,9 @@ map<string, vector<int>> ModuleHelper::getBibleChapterVerseCounts(std::string mo
                 currentChapterCount = 0;
             }
 
-            currentChapterCount++;
+            currentChapterCount = currentVerseKey.getVerseMax();
 
-            module->increment();
+            module->increment(currentChapterCount);
             lastChapter = currentChapter;
             lastBookName = currentBookName;
             lastKey = currentKey;
