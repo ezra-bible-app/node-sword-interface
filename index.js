@@ -402,7 +402,7 @@ class NodeSwordInterface {
    * 
    * @param {String} moduleCode - The module code of the SWORD module. 
    * @param {String} bookCode - The book code of the SWORD module.
-   * @param {String} chapter - The chapter of the book.
+   * @param {Number} chapter - The chapter of the book.
    */
   getChapterVerseCount(moduleCode, bookCode, chapter) {
     return this.nativeInterface.getChapterVerseCount(moduleCode, bookCode, chapter);

@@ -390,7 +390,7 @@ Returns the number of verses in the given chapter.
 | --- | --- | --- |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
 | bookCode | <code>String</code> | The book code of the SWORD module. |
-| chapter | <code>String</code> | The chapter of the book. |
+| chapter | <code>Number</code> | The chapter of the book. |
 
 <a name="NodeSwordInterface+getBibleText"></a>
 
