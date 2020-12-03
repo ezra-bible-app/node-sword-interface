@@ -69,6 +69,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
     static regex titleStartElementFilter = regex("<title");
     static regex titleEndElementFilter = regex("</title>");
     static regex divTitleElementFilter = regex("<div class=\"title\"");
+    static regex divSectionElementFilter = regex("<div type=\"section\".*?>");
     static regex secHeadClassFilter = regex("class=\"sechead\"");
     static regex divMilestoneFilter = regex("<div type=\"x-milestone\"");
     static regex milestoneFilter = regex("<milestone");
@@ -107,6 +108,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
     filteredText = regex_replace(filteredText, rtxtStartElementFilter2, "<div class=\"sword-markup sword-rtxt\" rend=");
     filteredText = regex_replace(filteredText, rtxtEndElementFilter, "</div>");
     filteredText = regex_replace(filteredText, pbElementFilter, "");
+    filteredText = regex_replace(filteredText, divSectionElementFilter, "");
 
     stringstream sectionTitleElement;
     sectionTitleElement << "<div class=\"sword-markup sword-section-title\" ";
