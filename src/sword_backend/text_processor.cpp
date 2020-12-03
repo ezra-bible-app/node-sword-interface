@@ -256,6 +256,7 @@ vector<Verse> TextProcessor::getVersesFromReferences(string moduleName, vector<s
     SWModule* module = this->_moduleStore.getLocalModule(moduleName);
     vector<string> bookList = this->getBookListFromReferences(references);
     map<string, int> absoluteVerseNumbers = this->_moduleHelper.getAbsoluteVerseNumberMap(module, bookList);
+    bool moduleMarkupIsBroken = this->_moduleHelper.isBrokenMarkupModule(moduleName);
 
     for (unsigned int i = 0; i < references.size(); i++) {
         string currentReference = references[i];
@@ -265,7 +266,7 @@ vector<Verse> TextProcessor::getVersesFromReferences(string moduleName, vector<s
         bool entryExisting = module->hasEntry(module->getKey());
 
         if (entryExisting) {
-          currentVerseText = this->getCurrentVerseText(module, false);
+          currentVerseText = this->getCurrentVerseText(module, false, moduleMarkupIsBroken);
         }
 
         Verse currentVerse;
@@ -302,6 +303,7 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
     string lastBookName = "";
     int lastChapter = -1;
     bool currentBookExisting = true;
+    bool moduleMarkupIsBroken = this->_moduleHelper.isBrokenMarkupModule(moduleName);
 
     // This holds the text that we will return
     vector<Verse> text;
@@ -344,8 +346,9 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
 
             // Chapter heading
             // We only add it when we're looking at the first verse of a chapter
+            // and if the module markup is not broken
             // and if the requested verse count is more than one or the default (-1 / all verses).
-            if (firstVerseInChapter && (verseCount > 1 || verseCount == -1)) {
+            if (firstVerseInChapter && !moduleMarkupIsBroken && (verseCount > 1 || verseCount == -1)) {
                 string chapterHeading = this->getCurrentChapterHeading(module);
                 verseText += chapterHeading;
 
@@ -355,7 +358,11 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
             }
 
             // Current verse text
-            verseText += this->getCurrentVerseText(module, hasStrongs);
+            verseText += this->getCurrentVerseText(module,
+                                                   hasStrongs,
+                                                   // Note that if markup is broken this will enforce
+                                                   // the usage of the "stripped" / non-markup variant of the text
+                                                   moduleMarkupIsBroken);
 
             // If the current verse does not have any content and if it is the first verse in this book
             // we assume that the book is not existing.

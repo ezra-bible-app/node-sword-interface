@@ -21,6 +21,7 @@
 #include <sstream>
 #include <vector>
 #include <map>
+#include <algorithm>
 
 // Sword includes
 #include <swmodule.h>
@@ -176,4 +177,11 @@ map<string, int> ModuleHelper::getAbsoluteVerseNumberMap(SWModule* module, vecto
     }
 
     return absoluteVerseNumbers;
+}
+
+bool ModuleHelper::isBrokenMarkupModule(std::string moduleName)
+{
+    return std::find(this->_brokenMarkupModules.begin(),
+                     this->_brokenMarkupModules.end(),
+                     moduleName) != this->_brokenMarkupModules.end();
 }
