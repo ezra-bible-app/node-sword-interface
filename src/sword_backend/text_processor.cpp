@@ -58,6 +58,8 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
     static regex headEndElementFilter = regex("</head>");
     static regex appStartElementFilter = regex("<app");
     static regex appEndElementFilter = regex("</app>");
+    static regex scripRefStartElementFilter = regex("<scripRef");
+    static regex scripRefEndElementFilter = regex("</scripRef>");
     static regex rtxtStartElementFilter1 = regex("<rtxt type=");
     static regex rtxtStartElementFilter2 = regex("<rtxt rend=");
     static regex rtxtEndElementFilter = regex("</rtxt>");
@@ -66,6 +68,8 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
     static regex quoteElementFilter = regex("<q ");
     static regex titleStartElementFilter = regex("<title");
     static regex titleEndElementFilter = regex("</title>");
+    static regex divTitleElementFilter = regex("<div class=\"title\"");
+    static regex secHeadClassFilter = regex("class=\"sechead\"");
     static regex divMilestoneFilter = regex("<div type=\"x-milestone\"");
     static regex milestoneFilter = regex("<milestone");
     static regex xBrFilter = regex("x-br\"/>");
@@ -97,6 +101,8 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
     filteredText = regex_replace(filteredText, headEndElementFilter, "</div>");
     filteredText = regex_replace(filteredText, appStartElementFilter, "<div class=\"sword-markup sword-app\" ");
     filteredText = regex_replace(filteredText, appEndElementFilter, "</div>");
+    filteredText = regex_replace(filteredText, scripRefStartElementFilter, "<div class=\"sword-markup sword-scripref\" ");
+    filteredText = regex_replace(filteredText, scripRefEndElementFilter, "</div>");
     filteredText = regex_replace(filteredText, rtxtStartElementFilter1, "<div class=\"sword-markup sword-rtxt\" type=");
     filteredText = regex_replace(filteredText, rtxtStartElementFilter2, "<div class=\"sword-markup sword-rtxt\" rend=");
     filteredText = regex_replace(filteredText, rtxtEndElementFilter, "</div>");
@@ -105,8 +111,14 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
     stringstream sectionTitleElement;
     sectionTitleElement << "<div class=\"sword-markup sword-section-title\" ";
     sectionTitleElement << "chapter=\"" << chapter << "\"";
-
     filteredText = regex_replace(filteredText, titleStartElementFilter, sectionTitleElement.str());
+    filteredText = regex_replace(filteredText, divTitleElementFilter, sectionTitleElement.str());
+
+    stringstream secHead;
+    secHead << "class=\"sword-markup sword-section-title\" ";
+    secHead << "chapter=\"" << chapter << "\"";
+    filteredText = regex_replace(filteredText, secHeadClassFilter, secHead.str());
+
     filteredText = regex_replace(filteredText, titleEndElementFilter, "</div>");
     filteredText = regex_replace(filteredText, divMilestoneFilter, "<div class=\"sword-markup sword-x-milestone\"");
     filteredText = regex_replace(filteredText, milestoneFilter, "<div class=\"sword-markup sword-milestone\"");
