@@ -148,9 +148,11 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
 
 string TextProcessor::getCurrentChapterHeading(sword::SWModule* module)
 {
+    string currentModuleName = string(module->getName());
     string chapterHeading = "";
     VerseKey currentVerseKey = module->getKey();
     int currentChapter = currentVerseKey.getChapter();
+    int currentVerse = currentVerseKey.getVerse();
 
     if (currentVerseKey.getVerse() == 1) { // X:1, set key to X:0
         // Include chapter/book/testament/module intros
@@ -168,7 +170,13 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module)
     }
 
     if (this->_markupEnabled && !this->_rawMarkupEnabled) {
-        chapterHeading = this->getFilteredText(chapterHeading, currentChapter);
+        // The chapter headings in the ISV are screwed up somehow for 1:1
+        // Therefore we do not render chapter headings for the first verse of the book in this case.
+        if (currentChapter == 1 && currentVerse == 1 && currentModuleName == "ISV") {
+            chapterHeading = "";
+        } else {
+            chapterHeading = this->getFilteredText(chapterHeading, currentChapter);
+        }
     }
 
     return chapterHeading;
@@ -338,7 +346,12 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
             // We only add it when we're looking at the first verse of a chapter
             // and if the requested verse count is more than one or the default (-1 / all verses).
             if (firstVerseInChapter && (verseCount > 1 || verseCount == -1)) {
-                verseText += this->getCurrentChapterHeading(module);
+                string chapterHeading = this->getCurrentChapterHeading(module);
+                verseText += chapterHeading;
+
+                /*string currentVerseText = this->getCurrentVerseText(module, hasStrongs);
+                cout << "HEADING: " << chapterHeading << endl; 
+                cout << "VERSE: " << currentVerseText << endl;*/
             }
 
             // Current verse text
