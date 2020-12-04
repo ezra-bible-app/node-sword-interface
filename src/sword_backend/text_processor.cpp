@@ -45,32 +45,26 @@ TextProcessor::TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelpe
 
 string TextProcessor::getFilteredText(const string& text, int chapter, bool hasStrongs)
 {
-    static regex schlachterMarkupFilter = regex("<H.*> ");
-    static regex chapterFilter = regex("<chapter.*?/>");
+    //static regex schlachterMarkupFilter = regex("<H.*> ");
+    static string chapterFilter = "<chapter";
 
     static string lbBeginParagraph = "<lb type=\"x-begin-paragraph\"/>";
     static string lbEndParagraph = "<lb type=\"x-end-paragraph\"/>";
     static string lbElementFilter = "<lb ";
-
     static string lElementFilter = "<l ";
     static string lgElementFilter = "<lg ";
-
     static string noteStartElementFilter = "<note";
     static string noteEndElementFilter = "</note>";
     static string headStartElementFilter = "<head";
     static string headEndElementFilter = "</head>";
-
     static string appStartElementFilter = "<app";
     static string appEndElementFilter = "</app>";
     static string scripRefStartElementFilter = "<scripRef";
     static string scripRefEndElementFilter = "</scripRef>";
-
     static string rtxtStartElementFilter1 = "<rtxt type=";
     static string rtxtStartElementFilter2 = "<rtxt rend=";
     static string rtxtEndElementFilter = "</rtxt>";
-
-    static regex pbElementFilter = regex("<pb.*?/>");
-
+    static string pbElementFilter = "<pb";
     static string quoteJesusElementFilter = "<q marker=\"\" who=\"Jesus\">";
     static string quoteElementFilter = "<q ";
     static string titleStartElementFilter = "<title";
@@ -87,8 +81,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
     static string divineNameEndElement = "</divineName>";
     static string strongsWElement = "<w lemma=";
 
-    static regex selfClosingW = regex("(<w[\\w:=\"\\- ]*?)(/>)");
-    static regex selfClosingDiv = regex("(<div.*?)(/>)");
+    static regex selfClosingElement = regex("(<)([wdiv]{1,3}) ([\\w:=\"\\- ]*?)(/>)");
 
     static string fullStopWithoutSpace = ".<";
     static string questionMarkWithoutSpace = "?<";
@@ -98,30 +91,25 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
     static string colonWithoutSpace = ":<";
 
     string filteredText = text;
-    filteredText = regex_replace(filteredText, schlachterMarkupFilter, "");
-    filteredText = regex_replace(filteredText, chapterFilter, "");
+    //filteredText = regex_replace(filteredText, schlachterMarkupFilter, "");
+    this->findAndReplaceAll(filteredText, chapterFilter, "<chapter class=\"sword-markup sword-chapter\"");
     this->findAndReplaceAll(filteredText, lbBeginParagraph, "");
     this->findAndReplaceAll(filteredText, lbEndParagraph, "&nbsp;<div class=\"sword-markup sword-paragraph-end\"><br></div>");
     this->findAndReplaceAll(filteredText, lbElementFilter, "<div class=\"sword-markup sword-lb\" ");
-
     this->findAndReplaceAll(filteredText, lElementFilter, "<div class=\"sword-markup sword-l\" ");
     this->findAndReplaceAll(filteredText, lgElementFilter, "<div class=\"sword-markup sword-lg\" ");
-
     this->findAndReplaceAll(filteredText, noteStartElementFilter, "<div class=\"sword-markup sword-note\" ");
     this->findAndReplaceAll(filteredText, noteEndElementFilter, "</div>");
     this->findAndReplaceAll(filteredText, headStartElementFilter, "<div class=\"sword-markup sword-head\" ");
     this->findAndReplaceAll(filteredText, headEndElementFilter, "</div>");
-
     this->findAndReplaceAll(filteredText, appStartElementFilter, "<div class=\"sword-markup sword-app\" ");
     this->findAndReplaceAll(filteredText, appEndElementFilter, "</div>");
     this->findAndReplaceAll(filteredText, scripRefStartElementFilter, "<div class=\"sword-markup sword-scripref\" ");
     this->findAndReplaceAll(filteredText, scripRefEndElementFilter, "</div>");
-
     this->findAndReplaceAll(filteredText, rtxtStartElementFilter1, "<div class=\"sword-markup sword-rtxt\" type=");
     this->findAndReplaceAll(filteredText, rtxtStartElementFilter2, "<div class=\"sword-markup sword-rtxt\" rend=");
     this->findAndReplaceAll(filteredText, rtxtEndElementFilter, "</div>");
-
-    filteredText = regex_replace(filteredText, pbElementFilter, "");
+    this->findAndReplaceAll(filteredText, pbElementFilter, "<pb class=\"sword-markup sword-pb\"");
     this->findAndReplaceAll(filteredText, divSectionElementFilter, "");
 
     stringstream sectionTitleElement;
@@ -147,8 +135,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
     this->findAndReplaceAll(filteredText, divineNameEndElement, "");
     this->findAndReplaceAll(filteredText, strongsWElement, "<w class=");
 
-    filteredText = regex_replace(filteredText, selfClosingW, "$1></w>");
-    filteredText = regex_replace(filteredText, selfClosingDiv, "$1></div>");
+    filteredText = regex_replace(filteredText, selfClosingElement, "<$2 $3></$2>");
 
     this->findAndReplaceAll(filteredText, fullStopWithoutSpace, ". <");
     this->findAndReplaceAll(filteredText, questionMarkWithoutSpace, "? <");
@@ -369,10 +356,6 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
             if (firstVerseInChapter && !moduleMarkupIsBroken && (verseCount > 1 || verseCount == -1)) {
                 string chapterHeading = this->getCurrentChapterHeading(module);
                 verseText += chapterHeading;
-
-                /*string currentVerseText = this->getCurrentVerseText(module, hasStrongs);
-                cout << "HEADING: " << chapterHeading << endl; 
-                cout << "VERSE: " << currentVerseText << endl;*/
             }
 
             // Current verse text
@@ -508,17 +491,22 @@ StrongsEntry* TextProcessor::getStrongsEntry(string key)
     return entry;
 }
 
-void TextProcessor::findAndReplaceAll(std::string & data, std::string toSearch, std::string replaceStr)
+unsigned int TextProcessor::findAndReplaceAll(std::string & data, std::string toSearch, std::string replaceStr)
 {
+    unsigned int count = 0;
+
     // Get the first occurrence
     size_t pos = data.find(toSearch);
 
     // Repeat till end is reached
     while(pos != std::string::npos)
     {
+        count++;
         // Replace this occurrence of Sub String
         data.replace(pos, toSearch.size(), replaceStr);
         // Get the next occurrence from the current position
         pos = data.find(toSearch, pos + replaceStr.size());
     }
+
+    return count;
 }
