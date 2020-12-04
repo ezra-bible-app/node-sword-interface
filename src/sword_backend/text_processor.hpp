@@ -61,6 +61,7 @@ private:
     std::string getCurrentChapterHeading(sword::SWModule* module);
     std::string getFilteredText(const std::string& text, int chapter, bool hasStrongs=false);
     std::string replaceSpacesInStrongs(const std::string& text);
+    void findAndReplaceAll(std::string & data, std::string toSearch, std::string replaceStr);
 
     std::string getBookFromReference(std::string reference);
     std::vector<std::string> getBookListFromReferences(std::vector<std::string>& references);

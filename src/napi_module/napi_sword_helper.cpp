@@ -131,8 +131,8 @@ void NapiSwordHelper::verseTextToNapiObject(string moduleCode, Verse rawVerse, N
     string chapterVerseReference = splittedReference[1];
 
     vector<string> splittedChapterVerseReference = StringHelper::split(chapterVerseReference, ":");
-    string chapter = splittedChapterVerseReference[0];
-    string verseNr = splittedChapterVerseReference[1];
+    int chapter = std::stoi(splittedChapterVerseReference[0]);
+    int verseNr = std::stoi(splittedChapterVerseReference[1]);
 
     object["moduleCode"] = moduleCode;
     object["bibleBookShortTitle"] = book;

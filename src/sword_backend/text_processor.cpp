@@ -47,99 +47,115 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
 {
     static regex schlachterMarkupFilter = regex("<H.*> ");
     static regex chapterFilter = regex("<chapter.*?/>");
-    static regex lbBeginParagraph = regex("<lb type=\"x-begin-paragraph\"/>");
-    static regex lbEndParagraph = regex("<lb type=\"x-end-paragraph\"/>");
-    static regex lbElementFilter = regex("<lb ");
-    static regex lElementFilter = regex("<l ");
-    static regex lgElementFilter = regex("<lg ");
-    static regex noteStartElementFilter = regex("<note");
-    static regex noteEndElementFilter = regex("</note>");
-    static regex headStartElementFilter = regex("<head");
-    static regex headEndElementFilter = regex("</head>");
-    static regex appStartElementFilter = regex("<app");
-    static regex appEndElementFilter = regex("</app>");
-    static regex scripRefStartElementFilter = regex("<scripRef");
-    static regex scripRefEndElementFilter = regex("</scripRef>");
-    static regex rtxtStartElementFilter1 = regex("<rtxt type=");
-    static regex rtxtStartElementFilter2 = regex("<rtxt rend=");
-    static regex rtxtEndElementFilter = regex("</rtxt>");
-    static regex pbElementFilter = regex("<pb.*?/>");
-    static regex quoteJesusElementFilter = regex("<q marker=\"\" who=\"Jesus\">");
-    static regex quoteElementFilter = regex("<q ");
-    static regex titleStartElementFilter = regex("<title");
-    static regex titleEndElementFilter = regex("</title>");
-    static regex divTitleElementFilter = regex("<div class=\"title\"");
-    static regex divSectionElementFilter = regex("<div type=\"section\".*?>");
-    static regex secHeadClassFilter = regex("class=\"sechead\"");
-    static regex divMilestoneFilter = regex("<div type=\"x-milestone\"");
-    static regex milestoneFilter = regex("<milestone");
-    static regex xBrFilter = regex("x-br\"/>");
-    static regex divSIDFilter = regex("<div sID=");
-    static regex divEIDFilter = regex("<div eID=");
-    static regex divineNameStartElement = regex("<divineName>");
-    static regex divineNameEndElement = regex("</divineName>");
-    static regex strongsWElement = regex("<w lemma=");
-    static regex selfClosing = regex("(<div.*?)(/>)");
 
-    static regex fullStopWithoutSpace = regex("[.]<");
-    static regex questionMarkWithoutSpace = regex("[?]<");
-    static regex exclamationMarkWithoutSpace = regex("!<");
-    static regex commaWithoutSpace = regex(",<");
-    static regex semiColonWithoutSpace = regex(";<");
-    static regex colonWithoutSpace = regex(":<");
+    static string lbBeginParagraph = "<lb type=\"x-begin-paragraph\"/>";
+    static string lbEndParagraph = "<lb type=\"x-end-paragraph\"/>";
+    static string lbElementFilter = "<lb ";
+
+    static string lElementFilter = "<l ";
+    static string lgElementFilter = "<lg ";
+
+    static string noteStartElementFilter = "<note";
+    static string noteEndElementFilter = "</note>";
+    static string headStartElementFilter = "<head";
+    static string headEndElementFilter = "</head>";
+
+    static string appStartElementFilter = "<app";
+    static string appEndElementFilter = "</app>";
+    static string scripRefStartElementFilter = "<scripRef";
+    static string scripRefEndElementFilter = "</scripRef>";
+
+    static string rtxtStartElementFilter1 = "<rtxt type=";
+    static string rtxtStartElementFilter2 = "<rtxt rend=";
+    static string rtxtEndElementFilter = "</rtxt>";
+
+    static regex pbElementFilter = regex("<pb.*?/>");
+
+    static string quoteJesusElementFilter = "<q marker=\"\" who=\"Jesus\">";
+    static string quoteElementFilter = "<q ";
+    static string titleStartElementFilter = "<title";
+    static string titleEndElementFilter = "</title>";
+    static string divTitleElementFilter = "<div class=\"title\"";
+    static string divSectionElementFilter = "<div type=\"section\".*?>";
+    static string secHeadClassFilter = "class=\"sechead\"";
+    static string divMilestoneFilter = "<div type=\"x-milestone\"";
+    static string milestoneFilter = "<milestone";
+    static string xBrFilter = "x-br\"/>";
+    static string divSIDFilter = "<div sID=";
+    static string divEIDFilter = "<div eID=";
+    static string divineNameStartElement = "<divineName>";
+    static string divineNameEndElement = "</divineName>";
+    static string strongsWElement = "<w lemma=";
+
+    static regex selfClosingW = regex("(<w[\\w:=\"\\- ]*?)(/>)");
+    static regex selfClosingDiv = regex("(<div.*?)(/>)");
+
+    static string fullStopWithoutSpace = ".<";
+    static string questionMarkWithoutSpace = "?<";
+    static string exclamationMarkWithoutSpace = "!<";
+    static string commaWithoutSpace = ",<";
+    static string semiColonWithoutSpace = ";<";
+    static string colonWithoutSpace = ":<";
 
     string filteredText = text;
     filteredText = regex_replace(filteredText, schlachterMarkupFilter, "");
     filteredText = regex_replace(filteredText, chapterFilter, "");
-    filteredText = regex_replace(filteredText, lbBeginParagraph, "");
-    filteredText = regex_replace(filteredText, lbEndParagraph, "&nbsp;<div class=\"sword-markup sword-paragraph-end\"><br></div>");
-    filteredText = regex_replace(filteredText, lbElementFilter, "<div class=\"sword-markup sword-lb\" ");
-    filteredText = regex_replace(filteredText, lElementFilter, "<div class=\"sword-markup sword-l\" ");
-    filteredText = regex_replace(filteredText, lgElementFilter, "<div class=\"sword-markup sword-lg\" ");
-    filteredText = regex_replace(filteredText, noteStartElementFilter, "<div class=\"sword-markup sword-note\" ");
-    filteredText = regex_replace(filteredText, noteEndElementFilter, "</div>");
-    filteredText = regex_replace(filteredText, headStartElementFilter, "<div class=\"sword-markup sword-head\" ");
-    filteredText = regex_replace(filteredText, headEndElementFilter, "</div>");
-    filteredText = regex_replace(filteredText, appStartElementFilter, "<div class=\"sword-markup sword-app\" ");
-    filteredText = regex_replace(filteredText, appEndElementFilter, "</div>");
-    filteredText = regex_replace(filteredText, scripRefStartElementFilter, "<div class=\"sword-markup sword-scripref\" ");
-    filteredText = regex_replace(filteredText, scripRefEndElementFilter, "</div>");
-    filteredText = regex_replace(filteredText, rtxtStartElementFilter1, "<div class=\"sword-markup sword-rtxt\" type=");
-    filteredText = regex_replace(filteredText, rtxtStartElementFilter2, "<div class=\"sword-markup sword-rtxt\" rend=");
-    filteredText = regex_replace(filteredText, rtxtEndElementFilter, "</div>");
+    this->findAndReplaceAll(filteredText, lbBeginParagraph, "");
+    this->findAndReplaceAll(filteredText, lbEndParagraph, "&nbsp;<div class=\"sword-markup sword-paragraph-end\"><br></div>");
+    this->findAndReplaceAll(filteredText, lbElementFilter, "<div class=\"sword-markup sword-lb\" ");
+
+    this->findAndReplaceAll(filteredText, lElementFilter, "<div class=\"sword-markup sword-l\" ");
+    this->findAndReplaceAll(filteredText, lgElementFilter, "<div class=\"sword-markup sword-lg\" ");
+
+    this->findAndReplaceAll(filteredText, noteStartElementFilter, "<div class=\"sword-markup sword-note\" ");
+    this->findAndReplaceAll(filteredText, noteEndElementFilter, "</div>");
+    this->findAndReplaceAll(filteredText, headStartElementFilter, "<div class=\"sword-markup sword-head\" ");
+    this->findAndReplaceAll(filteredText, headEndElementFilter, "</div>");
+
+    this->findAndReplaceAll(filteredText, appStartElementFilter, "<div class=\"sword-markup sword-app\" ");
+    this->findAndReplaceAll(filteredText, appEndElementFilter, "</div>");
+    this->findAndReplaceAll(filteredText, scripRefStartElementFilter, "<div class=\"sword-markup sword-scripref\" ");
+    this->findAndReplaceAll(filteredText, scripRefEndElementFilter, "</div>");
+
+    this->findAndReplaceAll(filteredText, rtxtStartElementFilter1, "<div class=\"sword-markup sword-rtxt\" type=");
+    this->findAndReplaceAll(filteredText, rtxtStartElementFilter2, "<div class=\"sword-markup sword-rtxt\" rend=");
+    this->findAndReplaceAll(filteredText, rtxtEndElementFilter, "</div>");
+
     filteredText = regex_replace(filteredText, pbElementFilter, "");
-    filteredText = regex_replace(filteredText, divSectionElementFilter, "");
+    this->findAndReplaceAll(filteredText, divSectionElementFilter, "");
 
     stringstream sectionTitleElement;
     sectionTitleElement << "<div class=\"sword-markup sword-section-title\" ";
     sectionTitleElement << "chapter=\"" << chapter << "\"";
-    filteredText = regex_replace(filteredText, titleStartElementFilter, sectionTitleElement.str());
-    filteredText = regex_replace(filteredText, divTitleElementFilter, sectionTitleElement.str());
+    this->findAndReplaceAll(filteredText, titleStartElementFilter, sectionTitleElement.str());
+    this->findAndReplaceAll(filteredText, divTitleElementFilter, sectionTitleElement.str());
 
     stringstream secHead;
     secHead << "class=\"sword-markup sword-section-title\" ";
     secHead << "chapter=\"" << chapter << "\"";
-    filteredText = regex_replace(filteredText, secHeadClassFilter, secHead.str());
+    this->findAndReplaceAll(filteredText, secHeadClassFilter, secHead.str());
 
-    filteredText = regex_replace(filteredText, titleEndElementFilter, "</div>");
-    filteredText = regex_replace(filteredText, divMilestoneFilter, "<div class=\"sword-markup sword-x-milestone\"");
-    filteredText = regex_replace(filteredText, milestoneFilter, "<div class=\"sword-markup sword-milestone\"");
-    filteredText = regex_replace(filteredText, xBrFilter, "x-br\"/> ");
-    filteredText = regex_replace(filteredText, divSIDFilter, "<div class=\"sword-markup sword-sid\" sID=");
-    filteredText = regex_replace(filteredText, divEIDFilter, "<div class=\"sword-markup sword-eid\" eID=");
-    filteredText = regex_replace(filteredText, quoteJesusElementFilter, "<div class=\"sword-markup sword-quote-jesus\"/>");
-    filteredText = regex_replace(filteredText, quoteElementFilter, "&quot;<div class=\"sword-markup sword-quote\" ");
-    filteredText = regex_replace(filteredText, divineNameStartElement, "");
-    filteredText = regex_replace(filteredText, divineNameEndElement, "");
-    filteredText = regex_replace(filteredText, strongsWElement, "<w class=");
-    filteredText = regex_replace(filteredText, selfClosing, "$1></div>");
+    this->findAndReplaceAll(filteredText, titleEndElementFilter, "</div>");
+    this->findAndReplaceAll(filteredText, divMilestoneFilter, "<div class=\"sword-markup sword-x-milestone\"");
+    this->findAndReplaceAll(filteredText, milestoneFilter, "<div class=\"sword-markup sword-milestone\"");
+    this->findAndReplaceAll(filteredText, xBrFilter, "x-br\"/> ");
+    this->findAndReplaceAll(filteredText, divSIDFilter, "<div class=\"sword-markup sword-sid\" sID=");
+    this->findAndReplaceAll(filteredText, divEIDFilter, "<div class=\"sword-markup sword-eid\" eID=");
+    this->findAndReplaceAll(filteredText, quoteJesusElementFilter, "<div class=\"sword-markup sword-quote-jesus\"/>");
+    this->findAndReplaceAll(filteredText, quoteElementFilter, "&quot;<div class=\"sword-markup sword-quote\" ");
+    this->findAndReplaceAll(filteredText, divineNameStartElement, "");
+    this->findAndReplaceAll(filteredText, divineNameEndElement, "");
+    this->findAndReplaceAll(filteredText, strongsWElement, "<w class=");
 
-    filteredText = regex_replace(filteredText, fullStopWithoutSpace, ". <");
-    filteredText = regex_replace(filteredText, questionMarkWithoutSpace, "? <");
-    filteredText = regex_replace(filteredText, exclamationMarkWithoutSpace, "! <");
-    filteredText = regex_replace(filteredText, commaWithoutSpace, ", <");
-    filteredText = regex_replace(filteredText, semiColonWithoutSpace, "; <");
-    filteredText = regex_replace(filteredText, colonWithoutSpace, ": <");
+    filteredText = regex_replace(filteredText, selfClosingW, "$1></w>");
+    filteredText = regex_replace(filteredText, selfClosingDiv, "$1></div>");
+
+    this->findAndReplaceAll(filteredText, fullStopWithoutSpace, ". <");
+    this->findAndReplaceAll(filteredText, questionMarkWithoutSpace, "? <");
+    this->findAndReplaceAll(filteredText, exclamationMarkWithoutSpace, "! <");
+    this->findAndReplaceAll(filteredText, commaWithoutSpace, ", <");
+    this->findAndReplaceAll(filteredText, semiColonWithoutSpace, "; <");
+    this->findAndReplaceAll(filteredText, colonWithoutSpace, ": <");
 
     if (hasStrongs) {
         filteredText = this->replaceSpacesInStrongs(filteredText);
@@ -490,4 +506,19 @@ StrongsEntry* TextProcessor::getStrongsEntry(string key)
 
     StrongsEntry* entry = StrongsEntry::getStrongsEntry(module, key);
     return entry;
+}
+
+void TextProcessor::findAndReplaceAll(std::string & data, std::string toSearch, std::string replaceStr)
+{
+    // Get the first occurrence
+    size_t pos = data.find(toSearch);
+
+    // Repeat till end is reached
+    while(pos != std::string::npos)
+    {
+        // Replace this occurrence of Sub String
+        data.replace(pos, toSearch.size(), replaceStr);
+        // Get the next occurrence from the current position
+        pos = data.find(toSearch, pos + replaceStr.size());
+    }
 }
