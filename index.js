@@ -82,7 +82,8 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
 /** This is the main class of node-sword-interface and it provides a set of static functions that wrap SWORD library functionality. */
 class NodeSwordInterface {
   constructor(customHomeDir=undefined) {
-    this.nativeInterface = new nodeSwordInterfaceModule.NodeSwordInterface(customHomeDir);
+    var localesDir = path.join(__dirname, './locales.d');
+    this.nativeInterface = new nodeSwordInterfaceModule.NodeSwordInterface(customHomeDir, localesDir);
   }
 
   /**
@@ -540,8 +541,7 @@ class NodeSwordInterface {
    * @param {String} localeCode 
    */
   getSwordTranslation(originalString, localeCode) {
-    var localesDir = path.join(__dirname, './locales.d');
-    return this.nativeInterface.getSwordTranslation(localesDir, originalString, localeCode);
+    return this.nativeInterface.getSwordTranslation(originalString, localeCode);
   }
 
   /**
@@ -552,8 +552,7 @@ class NodeSwordInterface {
    * @param {String} localeCode
    */
   getBookAbbreviation(moduleName, bookCode, localeCode) {
-    var localesDir = path.join(__dirname, './locales.d');
-    return this.nativeInterface.getBookAbbreviation(localesDir, moduleName, bookCode, localeCode);
+    return this.nativeInterface.getBookAbbreviation(moduleName, bookCode, localeCode);
   }
 
   /**

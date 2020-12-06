@@ -118,14 +118,31 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
     return exports;
 }
 
+bool NodeSwordInterface::dirExists(const Napi::CallbackInfo& info, std::string dirName)
+{
+    bool dirExists = true;
+    FileSystemHelper fsHelper;
+
+    if (!fsHelper.fileExists(dirName)) {
+        std::stringstream errorMessage;
+        errorMessage << "The given directory " << dirName << " does not exist!";
+        Napi::Error::New(info.Env(), errorMessage.str()).ThrowAsJavaScriptException();
+        dirExists = false;
+    }
+
+    return dirExists;
+}
+
 NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::ObjectWrap<NodeSwordInterface>(info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
     std::string customHomeDir = "";
+    std::string localeDir = "";
     FileSystemHelper fsHelper;
     bool homeDirError = false;
+    bool localeDirError = false;
 
     initLock();
     searchMutex.init();
@@ -133,15 +150,22 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     if (info[0].IsString()) {
         customHomeDir = string(info[0].As<Napi::String>());
 
-        if (!fsHelper.fileExists(customHomeDir)) {
-            std::stringstream errorMessage;
-            errorMessage << "The given directory " << customHomeDir << " does not exist!";
-            Napi::Error::New(info.Env(), errorMessage.str()).ThrowAsJavaScriptException();
+        if (!this->dirExists(info, customHomeDir)) {
             homeDirError = true;
         }
     }
 
-    if (!homeDirError) { // We only proceed if there has not been any issue with the homeDir
+    if (info[1].IsString()) {
+      localeDir = string(info[1].As<Napi::String>());
+
+        if (!this->dirExists(info, localeDir)) {
+            localeDirError = true;
+        }
+    } else {
+        localeDirError = true;
+    }
+
+    if (!homeDirError && !localeDirError) { // We only proceed if there has not been any issue with the homeDir or localeDir
         this->_moduleStore = new ModuleStore(customHomeDir);
         this->_moduleHelper = new ModuleHelper(*(this->_moduleStore));
         this->_repoInterface = new RepositoryInterface(this->_swordStatusReporter, *(this->_moduleHelper), customHomeDir);
@@ -149,6 +173,7 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
         this->_napiSwordHelper = new NapiSwordHelper(*(this->_moduleHelper), *(this->_moduleStore));
         this->_textProcessor = new TextProcessor(*(this->_moduleStore), *(this->_moduleHelper));
         this->_moduleSearch = new ModuleSearch(*(this->_moduleStore), *(this->_moduleHelper), *(this->_textProcessor));
+        this->_swordTranslationHelper = new SwordTranslationHelper(localeDir);
     }
 }
 
@@ -789,13 +814,11 @@ Napi::Value NodeSwordInterface::isModuleReadable(const Napi::CallbackInfo& info)
 Napi::Value NodeSwordInterface::getSwordTranslation(const Napi::CallbackInfo& info)
 {
     lockApi();
-    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::string);
-    Napi::String configDir = info[0].As<Napi::String>();
-    Napi::String originalString = info[1].As<Napi::String>();
-    Napi::String localeCode = info[2].As<Napi::String>();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
+    Napi::String originalString = info[0].As<Napi::String>();
+    Napi::String localeCode = info[1].As<Napi::String>();
 
-    Napi::String translation = Napi::String::New(info.Env(), this->_swordTranslationHelper.getSwordTranslation(
-        configDir,
+    Napi::String translation = Napi::String::New(info.Env(), this->_swordTranslationHelper->getSwordTranslation(
         originalString,
         localeCode
     ));
@@ -807,17 +830,15 @@ Napi::Value NodeSwordInterface::getSwordTranslation(const Napi::CallbackInfo& in
 Napi::Value NodeSwordInterface::getBookAbbreviation(const Napi::CallbackInfo& info)
 {
     lockApi();
-    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::string, ParamType::string);
-    Napi::String configDir = info[0].As<Napi::String>();
-    Napi::String moduleName = info[1].As<Napi::String>();
-    Napi::String bookCode = info[2].As<Napi::String>();
-    Napi::String localeCode = info[3].As<Napi::String>();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::string);
+    Napi::String moduleName = info[0].As<Napi::String>();
+    Napi::String bookCode = info[1].As<Napi::String>();
+    Napi::String localeCode = info[2].As<Napi::String>();
     ASSERT_SW_MODULE_EXISTS(moduleName);
 
     SWModule* swordModule = this->_moduleStore->getLocalModule(moduleName);
 
-    Napi::String abbreviation = Napi::String::New(info.Env(), this->_swordTranslationHelper.getBookAbbreviation(
-        configDir,
+    Napi::String abbreviation = Napi::String::New(info.Env(), this->_swordTranslationHelper->getBookAbbreviation(
         swordModule,
         bookCode,
         localeCode

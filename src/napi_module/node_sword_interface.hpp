@@ -94,6 +94,7 @@ private:
 
     int validateParams(const Napi::CallbackInfo& info, std::vector<ParamType> paramSpec);
     ModuleType getModuleTypeFromString(std::string moduleTypeString);
+    bool dirExists(const Napi::CallbackInfo& info, std::string dirName);
 
     ModuleHelper* _moduleHelper;
     NapiSwordHelper* _napiSwordHelper;
@@ -102,8 +103,8 @@ private:
     ModuleInstaller* _moduleInstaller;
     TextProcessor* _textProcessor;
     ModuleSearch* _moduleSearch;
+    SwordTranslationHelper* _swordTranslationHelper;
     SwordStatusReporter _swordStatusReporter;
-    SwordTranslationHelper _swordTranslationHelper;
 };
 
 #endif // _NODE_SWORD_INTERFACE
