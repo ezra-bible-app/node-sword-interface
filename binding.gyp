@@ -4,7 +4,7 @@
         'target_name': 'sword',
         'type': 'none',
         'conditions': [
-            [ "OS != 'win'", {
+            [ "OS == 'mac'", {
                 'actions': [
                     {
                         'action_name': 'build_sword',
@@ -12,6 +12,28 @@
                         'inputs': [],
                         'outputs': ['sword_build/libsword.a'],
                         'action': ['./scripts/build_sword.sh'],
+                    }
+                ]
+            }],
+            [ "OS == 'linux'", {
+                'actions': [
+                    {
+                        'action_name': 'build_sword',
+                        'message': 'Building sword library...',
+                        'inputs': [],
+                        'outputs': ['sword_build/libsword.a'],
+                        'action': ['./scripts/build_sword.sh'],
+                    }
+                ]
+            }],
+            [ "OS == 'android'", {
+                'actions': [
+                    {
+                        'action_name': 'build_sword',
+                        'message': 'Building sword library...',
+                        'inputs': [],
+                        'outputs': ['sword_build/libsword.a'],
+                        'action': ['./scripts/build_sword.sh --android'],
                     }
                 ]
             }],
@@ -52,7 +74,7 @@
             "src/napi_module/binding.cpp"
         ],
         "conditions":[
-            ["OS=='linux'", {
+            [=='linux'", {
                 'include_dirs': [
                     "<(module_root_dir)/src/sword_backend",
                     "<!@(node -p \"require('node-addon-api').include\")",

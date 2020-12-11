@@ -52,5 +52,16 @@ patch --batch --forward -d sword -p 0 < patch/sword_globconf.patch
 # BUILD
 mkdir -p sword_build
 cd sword_build
-cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 ../sword
+
+if [ "$1" = "--android" ] ; then
+  cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 \
+  -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
+  -DANDROID_NDK=$ANDROID_NDK_HOME \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DANDROID_ABI="armeabi-v7a" \
+  ../sword
+else
+  cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 ../sword
+fi
+
 make -j4 sword_static
