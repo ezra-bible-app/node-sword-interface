@@ -74,7 +74,23 @@
             "src/napi_module/binding.cpp"
         ],
         "conditions":[
-            [=='linux'", {
+            ["OS=='linux'", {
+                'include_dirs': [
+                    "<(module_root_dir)/src/sword_backend",
+                    "<!@(node -p \"require('node-addon-api').include\")",
+                    "<!@(./scripts/get_sword_include_path.sh)"
+                ],
+                "libraries": [
+                    '<!@(./scripts/get_sword_library.sh \"../sword_build/libsword.a\")',
+                    '<!@(pkg-config --libs libcurl)',
+                    '<!@(pkg-config --libs icu-uc icu-io)'
+                ],
+                "dependencies": [
+                    "<!(node -p \"require('node-addon-api').gyp\")",
+                    'sword'
+                ]
+            }],
+            ["OS=='android'", {
                 'include_dirs': [
                     "<(module_root_dir)/src/sword_backend",
                     "<!@(node -p \"require('node-addon-api').include\")",
