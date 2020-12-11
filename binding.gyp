@@ -33,7 +33,7 @@
                         'message': 'Building sword library...',
                         'inputs': [],
                         'outputs': ['sword_build/libsword.a'],
-                        'action': ['./scripts/build_sword.sh --android'],
+                        'action': ['./scripts/build_sword.sh', '--android'],
                     }
                 ]
             }],
