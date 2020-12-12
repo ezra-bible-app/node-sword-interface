@@ -48,7 +48,9 @@ public:
     int refreshRemoteSources(bool force=false, std::function<void(unsigned int progress)>* progressCallback=0);
 
     std::vector<std::string> getRepoNames();
+#ifndef __ANDROID__
     sword::SWModule* getRepoModule(std::string moduleName, std::string repoName="all");
+#endif
     std::vector<sword::SWModule*> getAllRepoModules(std::string repoName, ModuleType moduleType=ModuleType::bible);
     std::vector<sword::SWModule*> getRepoModulesByLang(std::string repoName,  
                                                        std::string languageCode,
@@ -61,7 +63,9 @@ public:
     std::vector<std::string> getRepoLanguages(std::string repoName, ModuleType moduleType=ModuleType::bible);
     unsigned int getRepoLanguageModuleCount(std::string repoName, std::string languageCode, ModuleType moduleType=ModuleType::bible);
 
+#ifndef __ANDROID__
     bool isModuleAvailableInRepo(std::string moduleName, std::string repoName="all");
+#endif
     
     std::string getModuleRepo(std::string moduleName);
     sword::InstallSource* getRemoteSource(std::string remoteSourceName);
@@ -95,9 +99,13 @@ private:
     std::thread getRemoteSourceRefreshThread(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
 
     int getRepoCount();
+
+#ifndef __ANDROID__
     std::vector<std::string> getRepoModuleIds(std::string repoName);
     std::vector<std::string> getAllRepoModuleIds();
     std::string getModuleIdFromFile(std::string moduleFileName);
+#endif
+
     sword::SWModule* getModuleFromList(std::vector<sword::SWModule*>& moduleList, std::string moduleName);
 
     unsigned int _remoteSourceCount = 0;

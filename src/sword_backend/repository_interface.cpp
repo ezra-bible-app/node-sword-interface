@@ -19,7 +19,11 @@
 // STD C++ includes
 #include <iostream>
 #include <sstream>
+
+#ifndef __ANDROID__
 #include <fstream>
+#endif
+
 #include <regex>
 
 // Own includes
@@ -202,6 +206,7 @@ vector<SWModule*> RepositoryInterface::getAllRepoModules(string repoName, Module
     return modules;
 }
 
+#ifndef __ANDROID__
 SWModule* RepositoryInterface::getRepoModule(string moduleName, string repoName)
 {    
     if (repoName == "all") {
@@ -211,6 +216,7 @@ SWModule* RepositoryInterface::getRepoModule(string moduleName, string repoName)
     vector<SWModule*> modules = this->getAllRepoModules(repoName, ModuleType::any);
     return this->getModuleFromList(modules, moduleName);
 }
+#endif
 
 vector<SWModule*> RepositoryInterface::getRepoModulesByLang(string repoName,
                                                             string languageCode,
@@ -314,12 +320,13 @@ SWModule* RepositoryInterface::getModuleFromList(vector<SWModule*>& moduleList, 
     return 0;
 }
 
+#ifndef __ANDROID__
 string RepositoryInterface::getModuleIdFromFile(string moduleFileName)
 {
     static regex parentheses = regex("[\\[\\]]");
     static regex lineBreaks = regex("[\\r\\n]");
-    ifstream moduleFile(moduleFileName);
     string moduleId = "";
+    ifstream moduleFile(moduleFileName);
 
     if (moduleFile.is_open()) {
         string line;
@@ -338,7 +345,9 @@ string RepositoryInterface::getModuleIdFromFile(string moduleFileName)
     moduleFile.close();
     return moduleId;
 }
+#endif
 
+#ifndef __ANDROID__
 vector<string> RepositoryInterface::getRepoModuleIds(string repoName)
 {
     vector<string> moduleIds;
@@ -424,6 +433,7 @@ bool RepositoryInterface::isModuleAvailableInRepo(string moduleName, string repo
 
     return false;
 }
+#endif
 
 sword::InstallMgr* RepositoryInterface::getInstallMgr()
 {
