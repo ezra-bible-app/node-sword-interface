@@ -54,11 +54,27 @@ mkdir -p sword_build
 cd sword_build
 
 if [ "$1" = "--android" ] ; then
+  git clone https://github.com/karlkleinpaste/biblesync.git
+  git -C biblesync checkout 2.1.0
+
+  echo "-- TARGET ARCH: $2"
+  TARGET_ARCH=$2
+
+  if [ "$TARGET_ARCH" = "arm64" ] ; then
+    ANDROID_ABI="arm64-v8a"
+  elif [ "$TARGET_ARCH" = "arm" ]; then
+    ANDROID_ABI="armeabi-v7a"
+  elif [ "$TARGET_ARCH" = "x86" ]; then
+    ANDROID_ABI="x86"
+  elif [ "$TARGET_ARCH" = "x86_64" ]; then
+    ANDROID_ABI="x86_64"
+  fi
+
   cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 \
   -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
   -DANDROID_NDK=$ANDROID_NDK_HOME \
   -DCMAKE_BUILD_TYPE=Release \
-  -DANDROID_ABI="armeabi-v7a" \
+  -DANDROID_ABI="$ANDROID_ABI" \
   ../sword
 else
   cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 ../sword
