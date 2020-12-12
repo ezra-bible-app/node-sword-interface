@@ -65,9 +65,8 @@ public:
 
 #ifndef __ANDROID__
     bool isModuleAvailableInRepo(std::string moduleName, std::string repoName="all");
-#endif
-    
     std::string getModuleRepo(std::string moduleName);
+#endif
     sword::InstallSource* getRemoteSource(std::string remoteSourceName);
 
     sword::InstallMgr* getInstallMgr();

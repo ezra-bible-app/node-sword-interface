@@ -104,7 +104,9 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getBookIntroduction", &NodeSwordInterface::getBookIntroduction),
         InstanceMethod("getModuleSearchResults", &NodeSwordInterface::getModuleSearchResults),
         InstanceMethod("getStrongsEntry", &NodeSwordInterface::getStrongsEntry),
+#ifndef __ANDROID__
         InstanceMethod("installModule", &NodeSwordInterface::installModule),
+#endif
         InstanceMethod("cancelInstallation", &NodeSwordInterface::cancelInstallation),
         InstanceMethod("uninstallModule", &NodeSwordInterface::uninstallModule),
         InstanceMethod("refreshLocalModules", &NodeSwordInterface::refreshLocalModules),
@@ -723,6 +725,7 @@ Napi::Value NodeSwordInterface::getStrongsEntry(const Napi::CallbackInfo& info)
     return napiObject;
 }
 
+#ifndef __ANDROID__
 Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
 {
     lockApi();
@@ -739,6 +742,7 @@ Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
     worker->Queue();
     return info.Env().Undefined();
 }
+#endif
 
 Napi::Value NodeSwordInterface::cancelInstallation(const Napi::CallbackInfo& info)
 {

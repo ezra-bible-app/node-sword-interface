@@ -87,7 +87,9 @@ private:
     Napi::Value getModuleSearchResults(const Napi::CallbackInfo& info);
     Napi::Value getStrongsEntry(const Napi::CallbackInfo& info);
 
+#ifndef __ANDROID__
     Napi::Value installModule(const Napi::CallbackInfo& info);
+#endif
     Napi::Value cancelInstallation(const Napi::CallbackInfo& info);
     Napi::Value uninstallModule(const Napi::CallbackInfo& info);
     Napi::Value saveModuleUnlockKey(const Napi::CallbackInfo& info);

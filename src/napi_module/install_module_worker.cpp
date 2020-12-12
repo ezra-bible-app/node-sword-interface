@@ -70,7 +70,9 @@ void InstallModuleWorker::Execute(const ExecutionProgress& progress)
 
     SwordStatusReporter& statusReporter = this->_repoInterface.getStatusReporter();
     statusReporter.setCallBacks(&_swordPreStatusCB, &_swordUpdateCB);
+#ifndef __ANDROID__
     this->_result = this->_moduleInstaller.installModule(this->_moduleName);
+#endif
     statusReporter.resetCallbacks();
     unlockApi();
 }
