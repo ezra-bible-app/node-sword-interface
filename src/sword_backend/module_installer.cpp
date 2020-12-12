@@ -57,7 +57,6 @@ void ModuleInstaller::resetAllMgrs()
     this->refreshMgr();
 }
 
-#ifndef __ANDROID__
 int ModuleInstaller::installModule(string moduleName)
 {
     string repoName = this->_repoInterface.getModuleRepo(moduleName);
@@ -69,7 +68,6 @@ int ModuleInstaller::installModule(string moduleName)
 
     return this->installModule(repoName, moduleName);
 }
-#endif
 
 int ModuleInstaller::installModule(string repoName, string moduleName)
 {

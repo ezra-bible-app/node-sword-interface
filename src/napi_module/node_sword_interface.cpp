@@ -80,16 +80,12 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getRepoModulesByLang", &NodeSwordInterface::getRepoModulesByLang),
         InstanceMethod("getAllLocalModules", &NodeSwordInterface::getAllLocalModules),
         InstanceMethod("isModuleInUserDir", &NodeSwordInterface::isModuleInUserDir),
-#ifndef __ANDROID__
         InstanceMethod("isModuleAvailableInRepo", &NodeSwordInterface::isModuleAvailableInRepo),
-#endif
         InstanceMethod("getRepoLanguages", &NodeSwordInterface::getRepoLanguages),
         InstanceMethod("getRepoModuleCount", &NodeSwordInterface::getRepoModuleCount),
         InstanceMethod("getRepoLanguageModuleCount", &NodeSwordInterface::getRepoLanguageModuleCount),
-#ifndef __ANDROID__
         InstanceMethod("getRepoModule", &NodeSwordInterface::getRepoModule),
         InstanceMethod("getModuleDescription", &NodeSwordInterface::getModuleDescription),
-#endif
         InstanceMethod("getLocalModule", &NodeSwordInterface::getLocalModule),
         InstanceMethod("enableMarkup", &NodeSwordInterface::enableMarkup),
         InstanceMethod("getRawModuleEntry", &NodeSwordInterface::getRawModuleEntry),
@@ -104,9 +100,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getBookIntroduction", &NodeSwordInterface::getBookIntroduction),
         InstanceMethod("getModuleSearchResults", &NodeSwordInterface::getModuleSearchResults),
         InstanceMethod("getStrongsEntry", &NodeSwordInterface::getStrongsEntry),
-#ifndef __ANDROID__
         InstanceMethod("installModule", &NodeSwordInterface::installModule),
-#endif
         InstanceMethod("cancelInstallation", &NodeSwordInterface::cancelInstallation),
         InstanceMethod("uninstallModule", &NodeSwordInterface::uninstallModule),
         InstanceMethod("refreshLocalModules", &NodeSwordInterface::refreshLocalModules),
@@ -306,7 +300,6 @@ Napi::Value NodeSwordInterface::isModuleInUserDir(const Napi::CallbackInfo& info
     return Napi::Boolean::New(info.Env(), moduleInUserDir);
 }
 
-#ifndef __ANDROID__
 Napi::Value NodeSwordInterface::isModuleAvailableInRepo(const Napi::CallbackInfo& info)
 {
     lockApi();
@@ -316,7 +309,6 @@ Napi::Value NodeSwordInterface::isModuleAvailableInRepo(const Napi::CallbackInfo
     unlockApi();
     return Napi::Boolean::New(info.Env(), moduleAvailable);
 }
-#endif
 
 Napi::Value NodeSwordInterface::getAllLocalModules(const Napi::CallbackInfo& info)
 {
@@ -428,7 +420,6 @@ Napi::Value NodeSwordInterface::getRepoLanguageModuleCount(const Napi::CallbackI
     return jsModuleCount;
 }
 
-#ifndef __ANDROID__
 Napi::Value NodeSwordInterface::getRepoModule(const Napi::CallbackInfo& info)
 {
     lockApi();
@@ -448,9 +439,7 @@ Napi::Value NodeSwordInterface::getRepoModule(const Napi::CallbackInfo& info)
     unlockApi();
     return napiObject;
 }
-#endif
 
-#ifndef __ANDROID__
 Napi::Value NodeSwordInterface::getModuleDescription(const Napi::CallbackInfo& info)
 {
     lockApi();
@@ -469,7 +458,6 @@ Napi::Value NodeSwordInterface::getModuleDescription(const Napi::CallbackInfo& i
     unlockApi();
     return napiModuleDescription;
 }
-#endif
 
 Napi::Value NodeSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
 {
@@ -725,7 +713,6 @@ Napi::Value NodeSwordInterface::getStrongsEntry(const Napi::CallbackInfo& info)
     return napiObject;
 }
 
-#ifndef __ANDROID__
 Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
 {
     lockApi();
@@ -742,7 +729,6 @@ Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
     worker->Queue();
     return info.Env().Undefined();
 }
-#endif
 
 Napi::Value NodeSwordInterface::cancelInstallation(const Napi::CallbackInfo& info)
 {

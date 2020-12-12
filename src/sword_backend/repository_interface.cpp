@@ -20,7 +20,11 @@
 #include <iostream>
 #include <sstream>
 
-#ifndef __ANDROID__
+#ifdef __ANDROID__
+#include <sys/cdefs.h>
+#include <stdio.h>
+#include <stdlib.h>
+#else
 #include <fstream>
 #endif
 
@@ -206,7 +210,6 @@ vector<SWModule*> RepositoryInterface::getAllRepoModules(string repoName, Module
     return modules;
 }
 
-#ifndef __ANDROID__
 SWModule* RepositoryInterface::getRepoModule(string moduleName, string repoName)
 {    
     if (repoName == "all") {
@@ -216,7 +219,6 @@ SWModule* RepositoryInterface::getRepoModule(string moduleName, string repoName)
     vector<SWModule*> modules = this->getAllRepoModules(repoName, ModuleType::any);
     return this->getModuleFromList(modules, moduleName);
 }
-#endif
 
 vector<SWModule*> RepositoryInterface::getRepoModulesByLang(string repoName,
                                                             string languageCode,
@@ -320,25 +322,64 @@ SWModule* RepositoryInterface::getModuleFromList(vector<SWModule*>& moduleList, 
     return 0;
 }
 
-#ifndef __ANDROID__
-string RepositoryInterface::getModuleIdFromFile(string moduleFileName)
+string RepositoryInterface::getModuleIdFromLine(string line)
 {
     static regex parentheses = regex("[\\[\\]]");
     static regex lineBreaks = regex("[\\r\\n]");
+
+    string moduleId = "";
+    char firstChar = line[0];
+    char lastChar = line[line.size() - 1];
+    
+    if (firstChar == '[' && lastChar == ']') {
+        // Remove parentheses and line breaks from the first line
+        // What's left is the module id
+        moduleId = regex_replace(line, parentheses, "");
+        moduleId = regex_replace(moduleId, lineBreaks, "");
+    }
+
+    return moduleId;
+}
+
+#ifdef __ANDROID__
+string RepositoryInterface::getModuleIdFromFile(string moduleFileName)
+{
+    string moduleId = "";
+    FILE * fp;
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read_count;
+
+    fp = fopen(moduleFileName.c_str(), "r");
+
+    if (fp != NULL) {
+        read_count = getline(&line, &len, fp);
+
+        if (read_count != -1) {
+            string std_line = string(line);
+            moduleId = this->getModuleIdFromLine(std_line);
+        }
+    }
+
+    fclose(fp);
+    if (line) {
+        free(line);
+    }
+
+    return moduleId;
+}
+#else
+string RepositoryInterface::getModuleIdFromFile(string moduleFileName)
+{
     string moduleId = "";
     ifstream moduleFile(moduleFileName);
 
     if (moduleFile.is_open()) {
         string line;
         std::getline(moduleFile, line);
-        char firstChar = line[0];
-        char lastChar = line[line.size() - 1];
-        
-        if (firstChar == '[' && lastChar == ']') {
-            // Remove parentheses and line breaks from the first line
-            // What's left is the module id
-            moduleId = regex_replace(line, parentheses, "");
-            moduleId = regex_replace(moduleId, lineBreaks, "");
+
+        if (line.size() >= 1) {
+            moduleId = this->getModuleIdFromLine(line);
         }
     }
 
@@ -347,7 +388,6 @@ string RepositoryInterface::getModuleIdFromFile(string moduleFileName)
 }
 #endif
 
-#ifndef __ANDROID__
 vector<string> RepositoryInterface::getRepoModuleIds(string repoName)
 {
     vector<string> moduleIds;
@@ -433,7 +473,6 @@ bool RepositoryInterface::isModuleAvailableInRepo(string moduleName, string repo
 
     return false;
 }
-#endif
 
 sword::InstallMgr* RepositoryInterface::getInstallMgr()
 {

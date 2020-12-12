@@ -56,19 +56,14 @@ private:
     Napi::Value getRepoModulesByLang(const Napi::CallbackInfo& info);
     Napi::Value getRepoLanguages(const Napi::CallbackInfo& info);
     Napi::Value getRepoModuleCount(const Napi::CallbackInfo& info);
-
-#ifndef __ANDROID__
     Napi::Value getRepoModule(const Napi::CallbackInfo& info);
-#endif
 
     Napi::Value getRepoLanguageModuleCount(const Napi::CallbackInfo& info);
     Napi::Value getAllLocalModules(const Napi::CallbackInfo& info);
     Napi::Value isModuleInUserDir(const Napi::CallbackInfo& info);
 
-#ifndef __ANDROID__
     Napi::Value isModuleAvailableInRepo(const Napi::CallbackInfo& info);
     Napi::Value getModuleDescription(const Napi::CallbackInfo& info);
-#endif
     Napi::Value getLocalModule(const Napi::CallbackInfo& info);
 
     Napi::Value enableMarkup(const Napi::CallbackInfo& info);
@@ -87,9 +82,7 @@ private:
     Napi::Value getModuleSearchResults(const Napi::CallbackInfo& info);
     Napi::Value getStrongsEntry(const Napi::CallbackInfo& info);
 
-#ifndef __ANDROID__
     Napi::Value installModule(const Napi::CallbackInfo& info);
-#endif
     Napi::Value cancelInstallation(const Napi::CallbackInfo& info);
     Napi::Value uninstallModule(const Napi::CallbackInfo& info);
     Napi::Value saveModuleUnlockKey(const Napi::CallbackInfo& info);

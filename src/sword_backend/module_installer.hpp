@@ -37,9 +37,7 @@ public:
     ModuleInstaller(RepositoryInterface& repoInterface, ModuleStore& moduleStore, std::string customHomeDir="");
     virtual ~ModuleInstaller();
 
-#ifndef __ANDROID__
     int installModule(std::string moduleName);
-#endif
     int installModule(std::string repoName, std::string moduleName);
     void cancelInstallation();
     int uninstallModule(std::string moduleName);
