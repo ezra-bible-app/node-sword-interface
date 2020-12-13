@@ -16,7 +16,7 @@
    along with node-sword-interface. See the file COPYING.
    If not, see <http://www.gnu.org/licenses/>. */
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__ANDROID__)
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -65,12 +65,20 @@ void FileSystemHelper::setCustomHomeDir(std::string customHomeDir)
 
 void FileSystemHelper::createBasicDirectories()
 {
+    int ret = 0;
+
     if (!this->fileExists(this->getUserSwordDir())) {
-        this->makeDirectory(this->getUserSwordDir());
+        ret = this->makeDirectory(this->getUserSwordDir());
+        if (ret != 0) {
+            cerr << "Failed to create user sword dir at " << this->getUserSwordDir() << endl;
+        }
     }
 
     if (!this->fileExists(this->getModuleDir())) {
-        this->makeDirectory(this->getModuleDir());
+        ret = this->makeDirectory(this->getModuleDir());
+        if (ret != 0) {
+            cerr << "Failed to create module dir at " << this->getModuleDir() << endl;
+        }
     }
 }
 
@@ -105,7 +113,9 @@ string FileSystemHelper::getUserSwordDir()
     stringstream swordDir;
     swordDir << this->getUserDir() << this->getPathSeparator();
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__ANDROID__)
+    swordDir << "sword";
+#elif defined(__linux__) || defined(__APPLE__)
     swordDir << ".sword";
 #elif _WIN32
     swordDir << "sword";
@@ -119,7 +129,7 @@ string FileSystemHelper::getSystemSwordDir()
     stringstream swordDir;
     swordDir << this->getSystemDir() << this->getPathSeparator();
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__ANDROID__)
     swordDir << this->getPathSeparator() << "sword" << this->getPathSeparator();
 #elif _WIN32
     swordDir << "Application Data" << this->getPathSeparator() << "sword" << this->getPathSeparator();
@@ -134,7 +144,7 @@ bool FileSystemHelper::fileExists(string fileName)
 {
     bool exists = false;
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__ANDROID__)
     if (access(fileName.c_str(), F_OK) != -1 ) {
 #elif _WIN32
     if( (_access(fileName.c_str(), 0 )) != -1 ) {
@@ -147,7 +157,7 @@ bool FileSystemHelper::fileExists(string fileName)
 
 int FileSystemHelper::makeDirectory(string dirName)
 {
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__ANDROID__)
     return mkdir(dirName.c_str(), 0700);
 #elif _WIN32
     return _mkdir(dirName.c_str());
@@ -156,7 +166,7 @@ int FileSystemHelper::makeDirectory(string dirName)
 
 string FileSystemHelper::getPathSeparator()
 {
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__ANDROID__)
     string pathSeparator = "/";
 #elif _WIN32
     string pathSeparator = "\\";
@@ -170,7 +180,9 @@ string FileSystemHelper::getUserDir()
 
     if (this->_customHomeDir == "") {
 
-        #if defined(__linux__) || defined(__APPLE__)
+        #if defined(__ANDROID__)
+            userDir = "/sdcard";
+        #elif defined(__linux__) || defined(__APPLE__)
             userDir = string(getenv("HOME"));
         #elif _WIN32
             userDir = string(getenv("APPDATA"));
