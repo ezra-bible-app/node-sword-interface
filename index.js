@@ -196,7 +196,7 @@ class NodeSwordInterface {
    *
    * @param {String} repositoryName - The name of the given repository.
    * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
-   * @return {Number} The number of bible modules for the given repository and language.
+   * @return {Number} The number of bible modules for the given repository and moduleType.
    */
   getRepoModuleCount(repositoryName, moduleType="BIBLE") {
     return this.nativeInterface.getRepoModuleCount(repositoryName, moduleType);
