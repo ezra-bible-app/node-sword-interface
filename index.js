@@ -196,7 +196,7 @@ class NodeSwordInterface {
    *
    * @param {String} repositoryName - The name of the given repository.
    * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
-   * @return {Number} The number of bible modules for the given repository and moduleType.
+   * @return {Number} The number of bible modules for the given repository and module type.
    */
   getRepoModuleCount(repositoryName, moduleType="BIBLE") {
     return this.nativeInterface.getRepoModuleCount(repositoryName, moduleType);
@@ -208,7 +208,7 @@ class NodeSwordInterface {
    * @param {String} repositoryName - The name of the given repository.
    * @param {String} language - The language code that shall be used as a filter.
    * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
-   * @return {Number} The number of bible modules for the given repository and language.
+   * @return {Number} The number of bible modules for the given repository, language and module type.
    */
   getRepoLanguageModuleCount(repositoryName, language, moduleType="BIBLE") {
     return this.nativeInterface.getRepoLanguageModuleCount(repositoryName, language, moduleType);
