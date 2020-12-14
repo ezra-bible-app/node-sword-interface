@@ -355,7 +355,7 @@ string RepositoryInterface::getModuleIdFromFile(string moduleFileName)
     if (fp != NULL) {
         read_count = getline(&line, &len, fp);
 
-        if (read_count != -1) {
+        if (read_count >= 1) {
             string std_line = string(line);
             moduleId = this->getModuleIdFromLine(std_line);
         }
