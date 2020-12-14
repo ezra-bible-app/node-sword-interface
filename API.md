@@ -41,7 +41,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getAllLocalModules(moduleType)](#NodeSwordInterface+getAllLocalModules) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
     * [.getRepoModuleCount(repositoryName, moduleType)](#NodeSwordInterface+getRepoModuleCount) ⇒ <code>Number</code>
     * [.getRepoLanguageModuleCount(repositoryName, language, moduleType)](#NodeSwordInterface+getRepoLanguageModuleCount) ⇒ <code>Number</code>
-    * [.installModule(moduleCode, progressCB)](#NodeSwordInterface+installModule) ⇒ <code>Promise</code>
+    * [.installModule(progressCB, moduleCode)](#NodeSwordInterface+installModule) ⇒ <code>Promise</code>
     * [.cancelInstallation()](#NodeSwordInterface+cancelInstallation)
     * [.uninstallModule(moduleCode)](#NodeSwordInterface+uninstallModule) ⇒ <code>Promise</code>
     * [.refreshLocalModules()](#NodeSwordInterface+refreshLocalModules)
@@ -59,7 +59,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getChapterVerseCount(moduleCode, bookCode, chapter)](#NodeSwordInterface+getChapterVerseCount)
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookIntroduction(moduleCode, bookCode)](#NodeSwordInterface+getBookIntroduction) ⇒ <code>String</code>
-    * [.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive, useExtendedVerseBoundaries, progressCB)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
+    * [.getModuleSearchResults(progressCB, moduleCode, searchTerm, searchType, isCaseSensitive, useExtendedVerseBoundaries)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
     * [.hebrewStrongsAvailable()](#NodeSwordInterface+hebrewStrongsAvailable) ⇒ <code>Boolean</code>
     * [.greekStrongsAvailable()](#NodeSwordInterface+greekStrongsAvailable) ⇒ <code>Boolean</code>
     * [.strongsAvailable()](#NodeSwordInterface+strongsAvailable) ⇒ <code>Boolean</code>
@@ -177,7 +177,7 @@ Returns all modules installed locally (default: bible modules).
 Returns the number of modules for a given repository (default: bible modules).
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
-**Returns**: <code>Number</code> - The number of bible modules for the given repository and language.  
+**Returns**: <code>Number</code> - The number of bible modules for the given repository and module type.  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -190,7 +190,7 @@ Returns the number of modules for a given repository (default: bible modules).
 Returns the number of modules for a given repository and language (default: bible modules).
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
-**Returns**: <code>Number</code> - The number of bible modules for the given repository and language.  
+**Returns**: <code>Number</code> - The number of bible modules for the given repository, language and module type.  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -200,7 +200,7 @@ Returns the number of modules for a given repository and language (default: bibl
 
 <a name="NodeSwordInterface+installModule"></a>
 
-### nodeSwordInterface.installModule(moduleCode, progressCB) ⇒ <code>Promise</code>
+### nodeSwordInterface.installModule(progressCB, moduleCode) ⇒ <code>Promise</code>
 Installs a module. The repository is automatically determined. The module is downloaded
 from the corresponding repository and then installed in the local SWORD directory.
 This operation may take some time depending on the available bandwidth and geographical
@@ -216,8 +216,8 @@ If the installation fails, the Promise will be rejected with the following statu
 
 | Param | Type | Description |
 | --- | --- | --- |
+| progressCB | <code>function</code> | Callback function that is called on progress events. |
 | moduleCode | <code>String</code> | The module code of the SWORD module that shall be installed. |
-| progressCB | <code>function</code> | Optional callback function that is called on progress events. |
 
 <a name="NodeSwordInterface+cancelInstallation"></a>
 
@@ -418,19 +418,19 @@ Returns the introduction of the given book.
 
 <a name="NodeSwordInterface+getModuleSearchResults"></a>
 
-### nodeSwordInterface.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive, useExtendedVerseBoundaries, progressCB) ⇒ <code>Promise</code>
+### nodeSwordInterface.getModuleSearchResults(progressCB, moduleCode, searchTerm, searchType, isCaseSensitive, useExtendedVerseBoundaries) ⇒ <code>Promise</code>
 Returns the results of a module search.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
+| progressCB | <code>function</code> |  | Optional callback function that is called on progress events. |
 | moduleCode | <code>String</code> |  | The module code of the SWORD module. |
 | searchTerm | <code>String</code> |  | The term to search for. |
 | searchType | <code>String</code> | <code>phrase</code> | Options: phrase, multiWord, strongsNumber |
 | isCaseSensitive | <code>Boolean</code> | <code>false</code> | Whether the search is case sensitive |
 | useExtendedVerseBoundaries | <code>Boolean</code> | <code>false</code> | Whether the search should use extended verse boundaries (Two verses instead of one) in case of a multi word search. |
-| progressCB | <code>function</code> |  | Optional callback function that is called on progress events. |
 
 <a name="NodeSwordInterface+hebrewStrongsAvailable"></a>
 

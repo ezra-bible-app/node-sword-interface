@@ -226,11 +226,11 @@ class NodeSwordInterface {
    * -1: General installation issue
    * -9: Installation cancelled by user or internet connection suddenly interrupted
    *
+   * @param {Function} progressCB - Callback function that is called on progress events.
    * @param {String} moduleCode - The module code of the SWORD module that shall be installed.
-   * @param {Function} progressCB - Optional callback function that is called on progress events.
    * @return {Promise}
    */
-  installModule(moduleCode, progressCB=undefined) {
+  installModule(progressCB, moduleCode) {
     if (progressCB === undefined) {
       progressCB = function(progress) {};
     }
@@ -433,15 +433,15 @@ class NodeSwordInterface {
   /**
    * Returns the results of a module search.
    *
+   * @param {Function} progressCB - Optional callback function that is called on progress events.
    * @param {String} moduleCode - The module code of the SWORD module.
    * @param {String} searchTerm - The term to search for.
    * @param {String} searchType - Options: phrase, multiWord, strongsNumber
    * @param {Boolean} isCaseSensitive - Whether the search is case sensitive
    * @param {Boolean} useExtendedVerseBoundaries - Whether the search should use extended verse boundaries (Two verses instead of one) in case of a multi word search.
-   * @param {Function} progressCB - Optional callback function that is called on progress events.
    * @return {Promise}
    */
-  getModuleSearchResults(moduleCode, searchTerm, progressCB=undefined, searchType="phrase", isCaseSensitive=false, useExtendedVerseBoundaries=false) {
+  getModuleSearchResults(progressCB, moduleCode, searchTerm, searchType="phrase", isCaseSensitive=false, useExtendedVerseBoundaries=false) {
     if (progressCB === undefined) {
       progressCB = function(progress) {};
     }
