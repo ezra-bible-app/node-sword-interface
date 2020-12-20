@@ -466,12 +466,17 @@ Napi::Value NodeSwordInterface::getLocalModule(const Napi::CallbackInfo& info)
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::Object napiObject = Napi::Object::New(env);    
-    ASSERT_SW_MODULE_EXISTS(moduleName);
 
     SWModule* swordModule = this->_moduleStore->getLocalModule(moduleName);
-    this->_napiSwordHelper->swordModuleToNapiObject(env, swordModule, napiObject);
-    unlockApi();
-    return napiObject;
+
+    if (swordModule != 0) {
+      this->_napiSwordHelper->swordModuleToNapiObject(env, swordModule, napiObject);
+      unlockApi();
+      return napiObject;
+    } else {
+      unlockApi();
+      return info.Env().Undefined();
+    }
 }
 
 Napi::Value NodeSwordInterface::enableMarkup(const Napi::CallbackInfo& info)
