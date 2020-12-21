@@ -465,7 +465,8 @@ Returns the Strong's entry for a given key.
 <a name="NodeSwordInterface+getLocalModule"></a>
 
 ### nodeSwordInterface.getLocalModule(moduleCode) ⇒ [<code>ModuleObject</code>](#ModuleObject)
-Returns an object representation of a locally installed SWORD module.
+Returns an object representation of a locally installed SWORD module. If the requested `moduleCode` is not available
+`undefined` will be returned.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 

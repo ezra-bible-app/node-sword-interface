@@ -505,7 +505,8 @@ class NodeSwordInterface {
   }
 
   /**
-   * Returns an object representation of a locally installed SWORD module.
+   * Returns an object representation of a locally installed SWORD module. If the requested `moduleCode` is not available
+   * `undefined` will be returned.
    *
    * @param {String} moduleCode - The module code of the SWORD module.
    * @return {ModuleObject}
