@@ -209,17 +209,20 @@ vector<string> FileSystemHelper::getFilesInDir(string dirName)
 {
     vector<string> files;
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__ANDROID__) || defined(__APPLE__)
     DIR *dir;
     struct dirent *ent;
 
-    if ((dir = opendir (dirName.c_str())) != NULL) {
+    if ((dir = opendir(dirName.c_str())) != NULL) {
         while ((ent = readdir(dir)) != NULL) {
             if (ent->d_type == DT_REG) {
                 files.push_back(ent->d_name);
             }
         }
-        closedir (dir);
+
+        closedir(dir);
+    } else {
+      cerr << "getFilesInDir: ERROR calling opendir for " << dirName << " / errno: " << errno << endl;
     }
 
 #elif _WIN32

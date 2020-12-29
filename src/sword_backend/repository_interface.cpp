@@ -63,6 +63,8 @@ void RepositoryInterface::resetMgr()
         delete this->_installMgr;
     }
 
+    cout << "Initializing InstallMgr at " << this->_fileSystemHelper.getInstallMgrDir() << endl;
+
     this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), &this->_statusReporter);
     this->_installMgr->setUserDisclaimerConfirmed(true);
 }
@@ -141,7 +143,7 @@ InstallSource* RepositoryInterface::getRemoteSource(string remoteSourceName)
 {
     InstallSourceMap::iterator source = this->_installMgr->sources.find(remoteSourceName.c_str());
     if (source == this->_installMgr->sources.end()) {
-        cerr << "Could not find remote source " << remoteSourceName << endl;
+        cerr << "getRemoteSource: Could not find remote source '" << remoteSourceName << "'" << endl;
     } else {
         return source->second;
     }
@@ -205,6 +207,8 @@ vector<SWModule*> RepositoryInterface::getAllRepoModules(string repoName, Module
                 modules.push_back(currentModule);
             }
         }
+    } else {
+      cerr << "getAllRepoModules: Could not find remote source for repository '" << repoName << "'" << endl;
     }
 
     return modules;
@@ -319,6 +323,8 @@ SWModule* RepositoryInterface::getModuleFromList(vector<SWModule*>& moduleList, 
       }
     }
 
+    cerr << "getModuleFromList: Did not find module " << moduleName << " in modulelist!" << endl;
+
     return 0;
 }
 
@@ -327,10 +333,12 @@ string RepositoryInterface::getModuleIdFromLine(string line)
     static regex parentheses = regex("[\\[\\]]");
     static regex lineBreaks = regex("[\\r\\n]");
 
+    StringHelper::trim(line);
+
     string moduleId = "";
     char firstChar = line[0];
     char lastChar = line[line.size() - 1];
-    
+
     if (firstChar == '[' && lastChar == ']') {
         // Remove parentheses and line breaks from the first line
         // What's left is the module id
@@ -355,15 +363,21 @@ string RepositoryInterface::getModuleIdFromFile(string moduleFileName)
     if (fp != NULL) {
         read_count = getline(&line, &len, fp);
 
+        /*if (read_count == -1) {
+            cerr << "getModuleIdFromFile: Failed getting line from file " << moduleFileName << " / errno: " << errno << endl;
+        }*/
+
         if (read_count >= 1) {
             string std_line = string(line);
             moduleId = this->getModuleIdFromLine(std_line);
         }
-    }
 
-    fclose(fp);
-    if (line) {
-        free(line);
+        fclose(fp);
+        if (line) {
+            free(line);
+        }
+    } else {
+      cerr << "getModuleIdFromFile: Could not open file " << moduleFileName << " / errno: " << errno << endl;
     }
 
     return moduleId;
@@ -398,7 +412,15 @@ vector<string> RepositoryInterface::getRepoModuleIds(string repoName)
     if (remoteSource != 0) {
         //cout << remoteSource->localShadow << endl;
         repoModuleDir << remoteSource->localShadow << fs.getPathSeparator() << "mods.d";
+
+        cout << "getRepoModuleIds: Looking for files in directory " << repoModuleDir.str() << endl;
         vector<string> filesInRepoDir = fs.getFilesInDir(repoModuleDir.str());
+
+        if (filesInRepoDir.size() == 0) {
+            cerr << "getRepoModuleIds: Got 0 files in directory " << repoModuleDir.str() << endl;
+
+            return moduleIds;
+        }
 
         for (unsigned int i = 0; i < filesInRepoDir.size(); i++) {
             // Skip files that do not end with .conf
@@ -412,8 +434,12 @@ vector<string> RepositoryInterface::getRepoModuleIds(string repoName)
 
             if (currentModuleId != "") {
                 moduleIds.push_back(currentModuleId);
-            }
+            }/* else {
+                cerr << "getRepoModuleIds: Could not read module id from file " << moduleFileName.str() << endl;
+            }*/
         }
+    } else {
+      cerr << "getRepoModuleIds: Could not find remote source for repository '" << repoName << "'" << endl;
     }
 
     return moduleIds; 
@@ -440,9 +466,18 @@ string RepositoryInterface::getModuleRepo(string moduleName)
 {
     vector<string> repositories = this->getRepoNames();
 
+    if (repositories.size() == 0) {
+      cerr << "getModuleRepo: Got 0 repository names!" << endl;
+      return "";
+    }
+
     for (unsigned int i = 0; i < repositories.size(); i++) {
         string repo = repositories[i];
         vector<string> repoModuleIds = this->getRepoModuleIds(repo);
+
+        if (repoModuleIds.size() == 0) {
+          cerr << "getRepoModule: Got 0 repo module ids for repo " << repo << endl;
+        }
 
         for (unsigned int j = 0; j < repoModuleIds.size(); j++) {
             string currentId = repoModuleIds[j];
@@ -452,6 +487,7 @@ string RepositoryInterface::getModuleRepo(string moduleName)
         }
     }
 
+    cerr << "getModuleRepo: Could not find repository for module '" << moduleName << "'" << endl;
     return "";
 }
 
