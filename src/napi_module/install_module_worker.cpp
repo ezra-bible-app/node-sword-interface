@@ -22,8 +22,12 @@
 
 void InstallModuleWorker::swordPreStatusCB(long totalBytes, long completedBytes, const char *message)
 {
+    // This callback is fired initially when downloading the next file.
+    // At this point we need to reset the file percentage to 0.
+    this->_filePercent = 0;
 
-    this->sendExecutionProgress(0, 0, string(message));
+    this->sendExecutionProgress(this->_totalPercent, this->_filePercent, string(message));
+
     this->_completedBytes = completedBytes;
     this->_totalBytes = totalBytes;
 }
@@ -45,32 +49,39 @@ void InstallModuleWorker::swordUpdateCB(double dltotal, double dlnow)
     if (dlnow < 0.0) // Special care (see warning above)
         dlnow = 0.0;
 
-    const int totalPercent = calculateIntPercentage<double>(dlnow + this->_completedBytes,
-                                                            this->_totalBytes);
-    const int filePercent  = calculateIntPercentage(dlnow, dltotal);
+    this->_totalPercent = calculateIntPercentage<double>(dlnow + this->_completedBytes, this->_totalBytes);
+    this->_filePercent  = calculateIntPercentage(dlnow, dltotal);
 
-
-    this->sendExecutionProgress(totalPercent, filePercent, "");
+    this->sendExecutionProgress(this->_totalPercent, this->_filePercent, "");
 }
 
 void InstallModuleWorker::Execute(const ExecutionProgress& progress)
 {
     this->_executionProgress = &progress;
 
-    std::function<void(long, long, const char*)> _swordPreStatusCB = std::bind(&InstallModuleWorker::swordPreStatusCB,
-                                                                               this,
-                                                                               std::placeholders::_1,
-                                                                               std::placeholders::_2,
-                                                                               std::placeholders::_3);
+    std::function<void(long, long, const char*)> _swordPreStatusCB = std::bind(
+        &InstallModuleWorker::swordPreStatusCB,
+        this,
+        std::placeholders::_1,
+        std::placeholders::_2,
+        std::placeholders::_3
+    );
     
-    std::function<void(unsigned long, unsigned long)> _swordUpdateCB = std::bind(&InstallModuleWorker::swordUpdateCB,
-                                                                                 this,
-                                                                                 std::placeholders::_1,
-                                                                                 std::placeholders::_2);
+    std::function<void(unsigned long, unsigned long)> _swordUpdateCB = std::bind(
+        &InstallModuleWorker::swordUpdateCB,
+        this,
+        std::placeholders::_1,
+        std::placeholders::_2
+    );
 
     SwordStatusReporter& statusReporter = this->_repoInterface.getStatusReporter();
     statusReporter.setCallBacks(&_swordPreStatusCB, &_swordUpdateCB);
+
+    this->_totalPercent = 0;
+    this->_filePercent = 0;
+
     this->_result = this->_moduleInstaller.installModule(this->_moduleName);
+
     statusReporter.resetCallbacks();
     unlockApi();
 }

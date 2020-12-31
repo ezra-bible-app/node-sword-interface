@@ -48,6 +48,8 @@ private:
     std::string _moduleName;
     long _completedBytes = 0;
     long _totalBytes = 0;
+    int _totalPercent = 0;
+    int _filePercent = 0;
 };
 
 #endif // _INSTALL_MODULE_WORKER
