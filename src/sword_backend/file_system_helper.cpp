@@ -69,10 +69,17 @@ void FileSystemHelper::createBasicDirectories()
 {
     int ret = 0;
 
-    if (this->hasOldInstallMgrDir()) {
-        cout << "Detected old InstallMgr directory installMgr." << endl;
-        this->fixInstallMgrDir();
-    }
+#ifndef __ANDROID__
+    #if defined(__linux__) || defined(__APPLE__)
+        // On Unix we fix the situation with two different InstallMgr directories (installMgr and InstallMgr)
+        // This does not work on Windows or Android, because there we deal with case-insensitive filesystems
+
+        if (this->hasOldInstallMgrDir()) {
+            cout << "Detected old InstallMgr directory installMgr." << endl;
+            this->fixInstallMgrDir();
+        }
+    #endif
+#endif
 
     if (!this->fileExists(this->getUserSwordDir())) {
         ret = this->makeDirectory(this->getUserSwordDir());
