@@ -31,6 +31,13 @@ public:
     std::string getModuleDir();
     std::string getSwordConfPath();
     std::string getInstallMgrDir();
+
+    // We started out with installMgr instead of InstallMgr (lowercase instead of uppercase first letter).
+    // These two methods are fixing this situation.
+    std::string getOldInstallMgrDir();
+    bool hasOldInstallMgrDir();
+    void fixInstallMgrDir();
+
     std::string getUserSwordDir();
     std::string getSystemSwordDir();
     std::vector<std::string> getFilesInDir(std::string dirName);
@@ -40,6 +47,7 @@ public:
 
 private:
     int makeDirectory(std::string dirName);
+    int renameFile(std::string oldFileName, std::string newFileName);
     std::string getUserDir();
     std::string getSystemDir();
     std::string _customHomeDir;

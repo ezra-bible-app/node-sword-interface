@@ -34,6 +34,7 @@
 
 #endif
 
+#include <stdio.h>
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -66,6 +67,11 @@ void FileSystemHelper::setCustomHomeDir(std::string customHomeDir)
 void FileSystemHelper::createBasicDirectories()
 {
     int ret = 0;
+
+    if (this->hasOldInstallMgrDir()) {
+        cout << "Detected old InstallMgr directory installMgr. Renaming it to InstallMgr!" << endl;
+        this->fixInstallMgrDir();
+    }
 
     if (!this->fileExists(this->getUserSwordDir())) {
         ret = this->makeDirectory(this->getUserSwordDir());
@@ -101,10 +107,34 @@ string FileSystemHelper::getSwordConfPath()
     return configPath.str();
 }
 
-string FileSystemHelper::getInstallMgrDir()
+string FileSystemHelper::getOldInstallMgrDir()
 {
     stringstream installMgrDir;
     installMgrDir << this->getUserSwordDir() << this->getPathSeparator() << "installMgr";
+    return installMgrDir.str();
+}
+
+bool FileSystemHelper::hasOldInstallMgrDir()
+{
+    string oldInstallMgrDir = this->getOldInstallMgrDir();
+    return this->fileExists(oldInstallMgrDir);
+}
+
+void FileSystemHelper::fixInstallMgrDir()
+{
+    string oldInstallMgrDir = this->getOldInstallMgrDir();
+    string newInstallMgrDir = this->getInstallMgrDir();
+
+    int result = this->renameFile(oldInstallMgrDir, newInstallMgrDir);
+    if (result != 0) {
+        cerr << "Fixing InstallMgr dir failed!" << endl;
+    }
+}
+
+string FileSystemHelper::getInstallMgrDir()
+{
+    stringstream installMgrDir;
+    installMgrDir << this->getUserSwordDir() << this->getPathSeparator() << "InstallMgr";
     return installMgrDir.str();
 }
 
@@ -162,6 +192,16 @@ int FileSystemHelper::makeDirectory(string dirName)
 #elif _WIN32
     return _mkdir(dirName.c_str());
 #endif
+}
+
+int FileSystemHelper::renameFile(string oldFileName, string newFileName)
+{
+    int result = rename(oldFileName.c_str(), newFileName.c_str());
+    if (result != 0) {
+        cerr << "Could not rename " << oldFileName << " to " << newFileName << endl;
+    }
+
+    return result;
 }
 
 string FileSystemHelper::getPathSeparator()
