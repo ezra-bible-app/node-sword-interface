@@ -32,12 +32,18 @@ public:
     std::string getSwordConfPath();
     std::string getInstallMgrDir();
 
+#ifndef __ANDROID__
+    #if defined(__linux__) || defined(__APPLE__)
+
     // We started out with installMgr instead of InstallMgr (lowercase instead of uppercase first letter).
     // These methods are fixing this situation by renaming installMgr to InstallMgr, which is the default
     // also used by other SWORD frontends.
     std::string getOldInstallMgrDir();
     bool hasOldInstallMgrDir();
     void fixInstallMgrDir();
+
+    #endif
+#endif
 
     std::string getUserSwordDir();
     std::string getSystemSwordDir();
@@ -49,7 +55,15 @@ public:
 private:
     int makeDirectory(std::string dirName);
     int renameFile(std::string oldFileName, std::string newFileName);
+
+#ifndef __ANDROID__
+    #if defined(__linux__) || defined(__APPLE__)
+
     void removeDir(std::string dirName);
+
+    #endif
+#endif
+
     std::string getUserDir();
     std::string getSystemDir();
     std::string _customHomeDir;
