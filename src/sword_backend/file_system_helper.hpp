@@ -33,7 +33,8 @@ public:
     std::string getInstallMgrDir();
 
     // We started out with installMgr instead of InstallMgr (lowercase instead of uppercase first letter).
-    // These two methods are fixing this situation.
+    // These methods are fixing this situation by renaming installMgr to InstallMgr, which is the default
+    // also used by other SWORD frontends.
     std::string getOldInstallMgrDir();
     bool hasOldInstallMgrDir();
     void fixInstallMgrDir();
@@ -48,6 +49,7 @@ public:
 private:
     int makeDirectory(std::string dirName);
     int renameFile(std::string oldFileName, std::string newFileName);
+    void removeDir(std::string dirName);
     std::string getUserDir();
     std::string getSystemDir();
     std::string _customHomeDir;

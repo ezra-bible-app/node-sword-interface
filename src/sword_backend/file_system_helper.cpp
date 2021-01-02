@@ -35,6 +35,7 @@
 #endif
 
 #include <stdio.h>
+#include <string.h>
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -69,7 +70,7 @@ void FileSystemHelper::createBasicDirectories()
     int ret = 0;
 
     if (this->hasOldInstallMgrDir()) {
-        cout << "Detected old InstallMgr directory installMgr. Renaming it to InstallMgr!" << endl;
+        cout << "Detected old InstallMgr directory installMgr." << endl;
         this->fixInstallMgrDir();
     }
 
@@ -125,8 +126,22 @@ void FileSystemHelper::fixInstallMgrDir()
     string oldInstallMgrDir = this->getOldInstallMgrDir();
     string newInstallMgrDir = this->getInstallMgrDir();
 
-    int result = this->renameFile(oldInstallMgrDir, newInstallMgrDir);
-    if (result != 0) {
+    stringstream temporaryInstallMgrDir;
+    temporaryInstallMgrDir << newInstallMgrDir << "_";
+    
+    // We need to rename in two steps, because on Windows and Android filesystems may be case-insensitive
+    // and the difference of the InstallMgr directory names is only in case (first character of InstallMgr)
+    int result1 = this->renameFile(oldInstallMgrDir, temporaryInstallMgrDir.str());
+    int result2 = 0;
+
+    if (!this->fileExists(newInstallMgrDir)) {
+        result2 = this->renameFile(temporaryInstallMgrDir.str(), newInstallMgrDir);
+    } else {
+        cout << "Deleting previously used InstallMgr dir!" << endl;
+        this->removeDir(temporaryInstallMgrDir.str());
+    }
+
+    if (result1 != 0 || result2 != 0) {
         cerr << "Fixing InstallMgr dir failed!" << endl;
     }
 }
@@ -294,4 +309,60 @@ vector<string> FileSystemHelper::getFilesInDir(string dirName)
 #endif
 
     return files;
+}
+
+void FileSystemHelper::removeDir(std::string dirName)
+{
+    const char *path = dirName.c_str();
+
+#if defined(__linux__) || defined(__ANDROID__) || defined(__APPLE__)
+    struct dirent *entry = NULL;
+    DIR *dir = NULL;
+    dir = opendir(path);
+
+    while ((entry = readdir(dir))) {   
+        DIR *sub_dir = NULL;
+        FILE *file = NULL;
+        char* abs_path = new char[257];
+
+        if ((*(entry->d_name) != '.') || ((strlen(entry->d_name) > 1) && (entry->d_name[1] != '.'))) {   
+            sprintf(abs_path, "%s/%s", path, entry->d_name);
+
+            if((sub_dir = opendir(abs_path))) {
+                closedir(sub_dir);
+                this->removeDir(string(abs_path));
+            } else {
+                if ((file = fopen(abs_path, "r"))) {
+                    fclose(file);
+                    remove(abs_path);
+                }
+            }
+        }
+
+        delete[] abs_path;
+    }
+
+    remove(path);
+
+#elif _WIN32
+    std::wstring search_path = std::wstring(path) + _T("/*.*");
+    std::wstring s_p = std::wstring(folder) + _T("/");
+    WIN32_FIND_DATA fd;
+    HANDLE hFind = ::FindFirstFile(search_path.c_str(), &fd);
+
+    if (hFind != INVALID_HANDLE_VALUE) {
+        do {
+            if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                if (wcscmp(fd.cFileName, _T(".")) != 0 && wcscmp(fd.cFileName, _T("..")) != 0) {
+                    this->removeDir((wchar_t*)(s_p + fd.cFileName).c_str());
+                }
+            } else {
+                DeleteFile((s_p + fd.cFileName).c_str());
+            }
+        } while (::FindNextFile(hFind, &fd));
+
+        ::FindClose(hFind);
+        _wrmdir(folder);
+    }
+#endif
 }
