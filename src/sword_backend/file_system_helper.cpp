@@ -323,7 +323,8 @@ vector<string> FileSystemHelper::getFilesInDir(string dirName)
     return files;
 }
 
-#if defined(__linux__) || defined(__ANDROID__) || defined(__APPLE__)
+#ifndef __ANDROID__
+#if defined(__linux__) || defined(__APPLE__)
 void FileSystemHelper::removeDir(std::string dirName)
 {
     const char *path = dirName.c_str();
@@ -355,4 +356,5 @@ void FileSystemHelper::removeDir(std::string dirName)
 
     remove(path);
 }
+#endif
 #endif
