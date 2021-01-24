@@ -145,7 +145,7 @@
                 "dependencies": [
                     'sword'
                 ],
-                'defines': [ 'SWUSINGDLL' ]
+                'defines': [ 'SWUSINGDLL', '_UNICODE' ]
             }]
         ], 
         'dependencies': [
