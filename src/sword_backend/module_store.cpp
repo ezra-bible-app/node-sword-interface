@@ -50,7 +50,7 @@ ModuleStore::ModuleStore(string customHomeDir)
     } else {
         #ifdef _WIN32
             this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
-            this->_mgr->augmentModules(this->_fileSystemHelper.getSystemSwordDir().c_str());
+            //this->_mgr->augmentModules(this->_fileSystemHelper.getSystemSwordDir().c_str());
         #else
             this->_mgr = new SWMgr();
         #endif
