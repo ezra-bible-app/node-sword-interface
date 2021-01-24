@@ -199,7 +199,7 @@ string FileSystemHelper::getSystemSwordDir()
 // PRIVATE METHODS
 
 #if defined(_WIN32)
-std::wstring convertFromUtf8ToUtf16(const std::string& str)
+std::wstring FileSystemHelper::convertFromUtf8ToUtf16(const std::string& str)
 {
     std::wstring convertedString;
     int requiredSize = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, 0, 0);
