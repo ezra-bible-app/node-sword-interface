@@ -198,6 +198,22 @@ string FileSystemHelper::getSystemSwordDir()
 
 // PRIVATE METHODS
 
+#if defined(_WIN32)
+std::wstring convertFromUtf8ToUtf16(const std::string& str)
+{
+    std::wstring convertedString;
+    int requiredSize = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, 0, 0);
+    if(requiredSize > 0)
+    {
+        std::vector<wchar_t> buffer(requiredSize);
+        MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &buffer[0], requiredSize);
+        convertedString.assign(buffer.begin(), buffer.end() - 1);
+    }
+ 
+    return convertedString;
+}
+#endif
+
 bool FileSystemHelper::fileExists(string fileName)
 {
     bool exists = false;
@@ -205,7 +221,9 @@ bool FileSystemHelper::fileExists(string fileName)
 #if defined(__linux__) || defined(__APPLE__) || defined(__ANDROID__)
     if (access(fileName.c_str(), F_OK) != -1 ) {
 #elif _WIN32
-    if (_access(fileName.c_str(), 0) != -1) {
+    wstring wFileName = this->convertFromUtf8ToUtf16(fileName);
+
+    if (_waccess(wFileName.c_str(), 0) != -1) {
 #endif
         exists = true;
     }

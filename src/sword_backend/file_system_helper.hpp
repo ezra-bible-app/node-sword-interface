@@ -56,6 +56,10 @@ private:
     int makeDirectory(std::string dirName);
     int renameFile(std::string oldFileName, std::string newFileName);
 
+#if defined(_WIN32)
+    std::wstring convertFromUtf8ToUtf16(const std::string& str);
+#endif
+
 #ifndef __ANDROID__
     #if defined(__linux__) || defined(__APPLE__)
 
