@@ -205,33 +205,9 @@ bool FileSystemHelper::fileExists(string fileName)
 #if defined(__linux__) || defined(__APPLE__) || defined(__ANDROID__)
     if (access(fileName.c_str(), F_OK) != -1 ) {
 #elif _WIN32
-
-    const char * cFileName = fileName.c_str();
-    
-    // newsize describes the length of the
-    // wchar_t string called wcstring in terms of the number
-    // of wide characters, not the number of bytes.
-    size_t newsize = strlen(cFileName) + 1;
-
-    // The following creates a buffer large enough to contain
-    // the exact number of characters in the original string
-    // in the new format. If you want to add more characters
-    // to the end of the string, increase the value of newsize
-    // to increase the size of the buffer.
-    wchar_t * wFileName = new wchar_t[newsize];
-
-    // Convert char* string to a wchar_t* string.
-    size_t convertedChars = 0;
-    mbstowcs_s(&convertedChars, wFileName, newsize, cFileName, _TRUNCATE);
-
-    wcout << "Checking whether this file exists: " << wFileName << endl;
-
-    if (_waccess(wFileName, 0) != -1) {
+    if (_access(fileName.c_str(), 0) != -1) {
 #endif
-        cout << "Result: true" << endl;
         exists = true;
-    } else {
-        cout << "Result: false" << endl;
     }
 
     return exists;
