@@ -224,9 +224,14 @@ bool FileSystemHelper::fileExists(string fileName)
     size_t convertedChars = 0;
     mbstowcs_s(&convertedChars, wFileName, newsize, cFileName, _TRUNCATE);
 
+    wcout << "Checking whether this file exists: " << wFileName << endl;
+
     if (_waccess(wFileName, 0) != -1) {
 #endif
+        cout << "Result: true" << endl;
         exists = true;
+    } else {
+        cout << "Result: false" << endl;
     }
 
     return exists;
