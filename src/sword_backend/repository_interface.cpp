@@ -413,7 +413,7 @@ vector<string> RepositoryInterface::getRepoModuleIds(string repoName)
         //cout << remoteSource->localShadow << endl;
         repoModuleDir << remoteSource->localShadow << fs.getPathSeparator() << "mods.d";
 
-        cout << "getRepoModuleIds: Looking for files in directory " << repoModuleDir.str() << endl;
+        //cout << "getRepoModuleIds: Looking for files in directory " << repoModuleDir.str() << endl;
         vector<string> filesInRepoDir = fs.getFilesInDir(repoModuleDir.str());
 
         if (filesInRepoDir.size() == 0) {
