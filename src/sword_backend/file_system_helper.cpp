@@ -31,6 +31,8 @@
 #include <windows.h>
 #include <tchar.h>
 #include <strsafe.h>
+#include <codecvt>
+#include <locale>
 
 #endif
 
@@ -204,7 +206,10 @@ bool FileSystemHelper::fileExists(string fileName)
 #if defined(__linux__) || defined(__APPLE__) || defined(__ANDROID__)
     if (access(fileName.c_str(), F_OK) != -1 ) {
 #elif _WIN32
-    if( (_access(fileName.c_str(), 0 )) != -1 ) {
+
+    const wstring wstringFileName = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(fileName);
+
+    if (_waccess(wstringFileName.c_str(), 0) != -1) {
 #endif
         exists = true;
     }
