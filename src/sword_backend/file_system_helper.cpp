@@ -25,9 +25,6 @@
 
 #elif _WIN32
 
-#define UNICODE
-#define _UNICODE
-
 #include <direct.h>
 #include <io.h>  
 #include <stdio.h>
@@ -336,25 +333,26 @@ vector<string> FileSystemHelper::getFilesInDir(string dirName)
     // https://docs.microsoft.com/en-us/windows/win32/fileio/listing-the-files-in-a-directory
     wstring wDirName = this->convertUtf8StringToUtf16(dirName);
     
-    WIN32_FIND_DATA ffd;
-    TCHAR szDir[MAX_PATH];
+    WIN32_FIND_DATAW ffd;
+    WCHAR szDir[MAX_PATH];
     HANDLE hFind = INVALID_HANDLE_VALUE;
 
     // Prepare string for use with FindFile functions.  First, copy the
     // string to a buffer, then append '\*' to the directory name.
-    StringCchCopy(szDir, MAX_PATH, wDirName.c_str());
-    StringCchCat(szDir, MAX_PATH, TEXT("\\*"));
+    StringCchCopyW(szDir, MAX_PATH, wDirName.c_str());
+    StringCchCatW(szDir, MAX_PATH, L"\\*");
 
     // Find the first file in the directory.
-    hFind = FindFirstFile(szDir, &ffd);
+    hFind = FindFirstFileW(szDir, &ffd);
 
     if (INVALID_HANDLE_VALUE != hFind) {
         do {
             if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-                string stdFileName = string(ffd.cFileName);
-                files.push_back(stdFileName);
+                wstring stdFileName = wstring(ffd.cFileName);
+                string utf8FileName = this->convertUtf16StringToUtf8(stdFileName);
+                files.push_back(utf8FileName);
             }
-        } while (FindNextFile(hFind, &ffd) != 0);
+        } while (FindNextFileW(hFind, &ffd) != 0);
 
         FindClose(hFind);
     }
