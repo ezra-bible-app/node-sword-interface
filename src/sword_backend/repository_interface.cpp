@@ -389,7 +389,7 @@ string RepositoryInterface::getModuleIdFromFile(string moduleFileName)
 
     #if _WIN32
       wstring utf16ModuleFileName = this->_fileSystemHelper.convertUtf8StringToUtf16(moduleFileName);
-      wifstream moduleFile(utf16ModuleFileName);
+      ifstream moduleFile(utf16ModuleFileName);
     #else
       ifstream moduleFile(moduleFileName);
     #endif
