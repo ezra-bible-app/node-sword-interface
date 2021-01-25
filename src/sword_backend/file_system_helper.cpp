@@ -25,6 +25,9 @@
 
 #elif _WIN32
 
+#define UNICODE
+#define _UNICODE
+
 #include <direct.h>
 #include <io.h>  
 #include <stdio.h>
@@ -331,6 +334,7 @@ vector<string> FileSystemHelper::getFilesInDir(string dirName)
 #elif _WIN32
     // The following code is based on
     // https://docs.microsoft.com/en-us/windows/win32/fileio/listing-the-files-in-a-directory
+    wstring wDirName = this->convertUtf8StringToUtf16(dirName);
     
     WIN32_FIND_DATA ffd;
     TCHAR szDir[MAX_PATH];
@@ -338,7 +342,7 @@ vector<string> FileSystemHelper::getFilesInDir(string dirName)
 
     // Prepare string for use with FindFile functions.  First, copy the
     // string to a buffer, then append '\*' to the directory name.
-    StringCchCopy(szDir, MAX_PATH, dirName.c_str());
+    StringCchCopy(szDir, MAX_PATH, wDirName.c_str());
     StringCchCat(szDir, MAX_PATH, TEXT("\\*"));
 
     // Find the first file in the directory.
