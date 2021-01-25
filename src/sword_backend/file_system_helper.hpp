@@ -52,14 +52,14 @@ public:
     
     bool fileExists(std::string fileName);
 
-private:
-    int makeDirectory(std::string dirName);
-    int renameFile(std::string oldFileName, std::string newFileName);
-
 #if defined(_WIN32)
     std::wstring convertUtf8StringToUtf16(const std::string& str);
     std::string convertUtf16StringToUtf8(const std::wstring& wstr);
 #endif
+
+private:
+    int makeDirectory(std::string dirName);
+    int renameFile(std::string oldFileName, std::string newFileName);
 
 #ifndef __ANDROID__
     #if defined(__linux__) || defined(__APPLE__)

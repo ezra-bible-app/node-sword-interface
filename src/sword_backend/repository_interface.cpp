@@ -386,7 +386,13 @@ string RepositoryInterface::getModuleIdFromFile(string moduleFileName)
 string RepositoryInterface::getModuleIdFromFile(string moduleFileName)
 {
     string moduleId = "";
-    ifstream moduleFile(moduleFileName);
+
+    #if _WIN32
+      wstring utf16ModuleFileName = this->_fileSystemHelper.convertUtf8StringToUtf16(moduleFileName);
+      wifstream moduleFile(utf16ModuleFileName);
+    #else
+      ifstream moduleFile(moduleFileName);
+    #endif
 
     if (moduleFile.is_open()) {
         string line;
@@ -434,9 +440,9 @@ vector<string> RepositoryInterface::getRepoModuleIds(string repoName)
 
             if (currentModuleId != "") {
                 moduleIds.push_back(currentModuleId);
-            }/* else {
+            } else {
                 cerr << "getRepoModuleIds: Could not read module id from file " << moduleFileName.str() << endl;
-            }*/
+            }
         }
     } else {
       cerr << "getRepoModuleIds: Could not find remote source for repository '" << repoName << "'" << endl;
