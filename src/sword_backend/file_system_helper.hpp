@@ -58,6 +58,7 @@ private:
 
 #if defined(_WIN32)
     std::wstring convertUtf8StringToUtf16(const std::string& str);
+    std::string convertUtf16StringToUtf8(const std::wstring& wstr);
 #endif
 
 #ifndef __ANDROID__

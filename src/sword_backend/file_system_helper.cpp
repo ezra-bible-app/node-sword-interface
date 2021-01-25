@@ -199,6 +199,20 @@ string FileSystemHelper::getSystemSwordDir()
 // PRIVATE METHODS
 
 #if defined(_WIN32)
+std::string FileSystemHelper::convertUtf16StringToUtf8(const wstring& wstr)
+{
+    string convertedString;
+    int requiredSize = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, 0, 0, 0, 0);
+
+    if(requiredSize > 0) {
+        vector<char> buffer(requiredSize);
+        WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &buffer[0], requiredSize, 0, 0);
+        convertedString.assign(buffer.begin(), buffer.end() - 1);
+    }
+
+    return convertedString;
+}
+
 wstring FileSystemHelper::convertUtf8StringToUtf16(const string& str)
 {
     wstring convertedString;
@@ -273,7 +287,8 @@ string FileSystemHelper::getUserDir()
         #elif defined(__linux__) || defined(__APPLE__)
             userDir = string(getenv("HOME"));
         #elif _WIN32
-            userDir = string(getenv("APPDATA"));
+            wstring wUserDir = wstring(_wgetenv("APPDATA"));
+            userDir = this->convertUtf16StringToUtf8(wUserDir);
         #endif
 
     } else {
