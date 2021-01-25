@@ -57,7 +57,7 @@ private:
     int renameFile(std::string oldFileName, std::string newFileName);
 
 #if defined(_WIN32)
-    std::wstring convertFromUtf8ToUtf16(const std::string& str);
+    std::wstring convertUtf8StringToUtf16(const std::string& str);
 #endif
 
 #ifndef __ANDROID__

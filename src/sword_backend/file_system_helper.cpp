@@ -199,13 +199,13 @@ string FileSystemHelper::getSystemSwordDir()
 // PRIVATE METHODS
 
 #if defined(_WIN32)
-std::wstring FileSystemHelper::convertFromUtf8ToUtf16(const std::string& str)
+wstring FileSystemHelper::convertUtf8StringToUtf16(const string& str)
 {
-    std::wstring convertedString;
+    wstring convertedString;
     int requiredSize = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, 0, 0);
-    if(requiredSize > 0)
-    {
-        std::vector<wchar_t> buffer(requiredSize);
+
+    if(requiredSize > 0) {
+        vector<wchar_t> buffer(requiredSize);
         MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &buffer[0], requiredSize);
         convertedString.assign(buffer.begin(), buffer.end() - 1);
     }
@@ -221,7 +221,7 @@ bool FileSystemHelper::fileExists(string fileName)
 #if defined(__linux__) || defined(__APPLE__) || defined(__ANDROID__)
     if (access(fileName.c_str(), F_OK) != -1 ) {
 #elif _WIN32
-    wstring wFileName = this->convertFromUtf8ToUtf16(fileName);
+    wstring wFileName = this->convertUtf8StringToUtf16(fileName);
 
     if (_waccess(wFileName.c_str(), 0) != -1) {
 #endif
@@ -236,7 +236,9 @@ int FileSystemHelper::makeDirectory(string dirName)
 #if defined(__linux__) || defined(__APPLE__) || defined(__ANDROID__)
     return mkdir(dirName.c_str(), 0700);
 #elif _WIN32
-    return _mkdir(dirName.c_str());
+    wstring wDirName = this->convertUtf8StringToUtf16(dirName);
+
+    return _wmkdir(wDirName.c_str());
 #endif
 }
 
