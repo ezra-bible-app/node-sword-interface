@@ -287,7 +287,7 @@ string FileSystemHelper::getUserDir()
         #elif defined(__linux__) || defined(__APPLE__)
             userDir = string(getenv("HOME"));
         #elif _WIN32
-            wstring wUserDir = wstring(_wgetenv("APPDATA"));
+            wstring wUserDir = wstring(_wgetenv(L"APPDATA"));
             userDir = this->convertUtf16StringToUtf8(wUserDir);
         #endif
 
