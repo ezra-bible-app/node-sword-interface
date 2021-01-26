@@ -440,9 +440,9 @@ vector<string> RepositoryInterface::getRepoModuleIds(string repoName)
 
             if (currentModuleId != "") {
                 moduleIds.push_back(currentModuleId);
-            } else {
+            } /* else {
                 cerr << "getRepoModuleIds: Could not read module id from file " << moduleFileName.str() << endl;
-            }
+            } */
         }
     } else {
       cerr << "getRepoModuleIds: Could not find remote source for repository '" << repoName << "'" << endl;

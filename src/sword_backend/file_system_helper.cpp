@@ -196,8 +196,6 @@ string FileSystemHelper::getSystemSwordDir()
     return swordDir.str();
 }
 
-// PRIVATE METHODS
-
 #if defined(_WIN32)
 std::string FileSystemHelper::convertUtf16StringToUtf8(const wstring& wstr)
 {
@@ -227,6 +225,8 @@ wstring FileSystemHelper::convertUtf8StringToUtf16(const string& str)
     return convertedString;
 }
 #endif
+
+// PRIVATE METHODS
 
 bool FileSystemHelper::fileExists(string fileName)
 {
