@@ -361,7 +361,7 @@ string RepositoryInterface::getModuleIdFromFile(string moduleFileName)
     fp = fopen(moduleFileName.c_str(), "r");
 
     if (fp != NULL) {
-        while ((read_count = getLine(&line, &len, fp)) != -1) {
+        while ((read_count = getline(&line, &len, fp)) != -1) {
           if (read_count >= 1) {
               string std_line = string(line);
               StringHelper::trim(std_line);
