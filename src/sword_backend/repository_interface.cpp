@@ -361,15 +361,17 @@ string RepositoryInterface::getModuleIdFromFile(string moduleFileName)
     fp = fopen(moduleFileName.c_str(), "r");
 
     if (fp != NULL) {
-        read_count = getline(&line, &len, fp);
+        while ((read_count = getLine(&line, &len, fp)) != -1) {
+          if (read_count >= 1) {
+              string std_line = string(line);
+              StringHelper::trim(std_line);
+              char firstChar = std_line[0];
 
-        /*if (read_count == -1) {
-            cerr << "getModuleIdFromFile: Failed getting line from file " << moduleFileName << " / errno: " << errno << endl;
-        }*/
-
-        if (read_count >= 1) {
-            string std_line = string(line);
-            moduleId = this->getModuleIdFromLine(std_line);
+              if (firstChar == '[') {
+                moduleId = this->getModuleIdFromLine(std_line);
+                break;
+              }
+          }
         }
 
         fclose(fp);
@@ -396,10 +398,19 @@ string RepositoryInterface::getModuleIdFromFile(string moduleFileName)
 
     if (moduleFile.is_open()) {
         string line;
-        std::getline(moduleFile, line);
 
-        if (line.size() >= 1) {
-            moduleId = this->getModuleIdFromLine(line);
+        while (!moduleFile.eof() && !moduleFile.fail()) {
+          std::getline(moduleFile, line);
+
+          if (line.size() >= 1) {
+            StringHelper::trim(line);
+            char firstChar = line[0];
+
+            if (firstChar == '[') {
+              moduleId = this->getModuleIdFromLine(line);
+              break;
+            }
+          }
         }
     }
 
