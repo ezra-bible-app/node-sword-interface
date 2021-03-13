@@ -31,7 +31,7 @@ fi
 
 # CHECKOUT
 git clone https://github.com/bibletime/crosswire-sword-mirror sword
-git -C sword checkout 412026
+git -C sword checkout 60b6e1
 
 # PATCHES
 case "$(uname -s)" in
