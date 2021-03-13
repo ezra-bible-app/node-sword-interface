@@ -63,7 +63,7 @@ void RepositoryInterface::resetMgr()
         delete this->_installMgr;
     }
 
-    cout << "Initializing InstallMgr at " << this->_fileSystemHelper.getInstallMgrDir() << endl;
+    // cout << "Initializing InstallMgr at " << this->_fileSystemHelper.getInstallMgrDir() << endl;
 
     this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), &this->_statusReporter);
     this->_installMgr->setUserDisclaimerConfirmed(true);
