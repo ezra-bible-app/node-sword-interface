@@ -90,11 +90,11 @@ void get_module_text(TextProcessor& text_processor)
 {
     cout << "Text:" << endl;
     text_processor.enableMarkup();
-    vector<Verse> verses = text_processor.getBookText("NASB", "James");
+    vector<Verse> verses = text_processor.getBookText("NASB", "Ps");
     cout << "Got " << verses.size() << " verses!" << endl;
-    for (int i = 0; i < verses.size(); i++) {
+    /*for (int i = 0; i < verses.size(); i++) {
         cout << verses[i].reference << "|" << verses[i].content << endl;
-    }
+    }*/
 }
 
 void get_book_intro(TextProcessor& text_processor)
@@ -165,7 +165,10 @@ int main(int argc, char** argv)
         cout << module->getName() << endl;
     }*/
 
-    //repoInterface.refreshRemoteSources(true);
+    /*for (unsigned int i = 0; i < 20; i++) {
+        cout << "Refreshing remote sources [" << i << "]" << endl;
+        repoInterface.refreshRemoteSources(true);
+    }*/
 
     //test_unlock_key(moduleInstaller, moduleStore, textProcessor);
 
@@ -185,20 +188,20 @@ int main(int argc, char** argv)
         cout << "Error uninstalling module (write permissions?)\n";
     }*/
 
-    get_local_module(moduleStore);
+    /*get_local_module(moduleStore);
     
-    get_repo_module(repoInterface);
+    get_repo_module(repoInterface);*/
 
     /*sword_facade.installModule("StrongsHebrew");
     sword_facade.installModule("StrongsGreek");*/
 
-    get_strongs_entry(textProcessor);
+    //get_strongs_entry(textProcessor);
 
     get_module_text(textProcessor);
 
-    get_book_intro(textProcessor);
+    //get_book_intro(textProcessor);
 
-    get_book_list(moduleHelper);
+    //get_book_list(moduleHelper);
 
     //string translation = sword_facade.getSwordTranslation(string("/usr/share/sword/locales.d"), string("de"), string("locales"));
     //cout << translation << endl;
