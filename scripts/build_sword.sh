@@ -31,7 +31,7 @@ fi
 
 # CHECKOUT
 git clone https://github.com/bibletime/crosswire-sword-mirror sword
-git -C sword checkout 60b6e1
+git -C sword checkout 412026
 
 # PATCHES
 case "$(uname -s)" in
@@ -56,6 +56,9 @@ cd sword_build
 if [ "$1" = "--android" ] ; then
   git clone https://github.com/karlkleinpaste/biblesync.git
   git -C biblesync checkout 2.1.0
+
+  # Use a newer version of SWORD on ANDROID, which brings built-in Unicode support
+  git -C ../sword checkout 60b6e1
 
   echo "-- TARGET ARCH: $2"
   TARGET_ARCH=$2
