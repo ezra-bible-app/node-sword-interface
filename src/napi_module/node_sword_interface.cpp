@@ -283,6 +283,7 @@ Napi::Value NodeSwordInterface::getAllRepoModules(const Napi::CallbackInfo& info
     for (unsigned int i = 0; i < modules.size(); i++) {
         Napi::Object napiObject = Napi::Object::New(env);
         this->_napiSwordHelper->swordModuleToNapiObject(env, modules[i], napiObject);
+        napiObject["repository"] = repoName;
         moduleArray.Set(i, napiObject);
     }
 
@@ -370,6 +371,7 @@ Napi::Value NodeSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo& i
     for (unsigned int i = 0; i < modules.size(); i++) {
         Napi::Object napiObject = Napi::Object::New(env);
         this->_napiSwordHelper->swordModuleToNapiObject(env, modules[i], napiObject);
+        napiObject["repository"] = repoName;
         moduleArray.Set(i, napiObject); 
     }
 
@@ -427,13 +429,16 @@ Napi::Value NodeSwordInterface::getRepoModule(const Napi::CallbackInfo& info)
     INIT_SCOPE_AND_VALIDATE(ParamType::string);
     Napi::Object napiObject = Napi::Object::New(env);
     Napi::String moduleName = info[0].As<Napi::String>();
-    SWModule* swordModule = this->_repoInterface->getRepoModule(moduleName);
+
+    std::string repoName = this->_repoInterface->getModuleRepo(moduleName);
+    SWModule* swordModule = this->_repoInterface->getRepoModule(moduleName, repoName);
 
     if (swordModule == 0) {
         string errorMessage = "getRepoModule returned 0 for '" + string(moduleName) + "'";
         THROW_JS_EXCEPTION(errorMessage);
     } else {
         this->_napiSwordHelper->swordModuleToNapiObject(env, swordModule, napiObject);
+        napiObject["repository"] = repoName;
     }
 
     unlockApi();

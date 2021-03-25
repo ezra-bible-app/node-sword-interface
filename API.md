@@ -562,6 +562,7 @@ An object representation of a SWORD module.
 | distributionLicense | <code>String</code> | The distribution license of the SWORD module |
 | shortCopyright | <code>String</code> | The short copyright information of the SWORD module |
 | version | <code>String</code> | The version of the SWORD module |
+| repository | <code>String</code> | The repository of the SWORD module (only returned by methods interacting with module repositories) |
 | about | <code>String</code> | Extended description of the SWORD module |
 | abbreviation | <code>String</code> | The abbreviation of the SWORD module |
 | size | <code>Number</code> | The file size of the SWORD module (in KB) |
