@@ -99,6 +99,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getChapterVerseCount", &NodeSwordInterface::getChapterVerseCount),
         InstanceMethod("getBookIntroduction", &NodeSwordInterface::getBookIntroduction),
         InstanceMethod("getModuleSearchResults", &NodeSwordInterface::getModuleSearchResults),
+        InstanceMethod("terminateModuleSearch", &NodeSwordInterface::terminateModuleSearch),
         InstanceMethod("getStrongsEntry", &NodeSwordInterface::getStrongsEntry),
         InstanceMethod("installModule", &NodeSwordInterface::installModule),
         InstanceMethod("cancelInstallation", &NodeSwordInterface::cancelInstallation),
@@ -146,7 +147,8 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
 
     initLock();
     searchMutex.init();
-    
+    this->_currentModuleSearchWorker = 0;
+
     if (info[0].IsString()) {
         customHomeDir = string(info[0].As<Napi::String>());
 
@@ -685,20 +687,32 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
         }
     }
 
-    ModuleSearchWorker* worker = new ModuleSearchWorker(*(this->_moduleHelper),
-                                                        *(this->_moduleSearch),
-                                                        *(this->_moduleStore),
-                                                        *(this->_repoInterface),
-                                                        searchMutex,
-                                                        jsProgressCallback,
-                                                        callback,
-                                                        moduleName,
-                                                        searchTerm,
-                                                        searchType,
-                                                        isCaseSensitive,
-                                                        useExtendedVerseBoundaries);
-    worker->Queue();
+    this->_currentModuleSearchWorker = new ModuleSearchWorker(*(this->_moduleHelper),
+                                                              *(this->_moduleSearch),
+                                                              *(this->_moduleStore),
+                                                              *(this->_repoInterface),
+                                                              searchMutex,
+                                                              jsProgressCallback,
+                                                              callback,
+                                                              moduleName,
+                                                              searchTerm,
+                                                              searchType,
+                                                              isCaseSensitive,
+                                                              useExtendedVerseBoundaries);
+    this->_currentModuleSearchWorker->Queue();
     return env.Undefined();
+}
+
+Napi::Value NodeSwordInterface::terminateModuleSearch(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (this->_currentModuleSearchWorker != 0) {
+        this->_currentModuleSearchWorker->terminateSearch();
+    }
+
+    return info.Env().Undefined();
 }
 
 Napi::Value NodeSwordInterface::getStrongsEntry(const Napi::CallbackInfo& info)

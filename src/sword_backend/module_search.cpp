@@ -57,6 +57,7 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
                                                    bool isCaseSensitive,
                                                    bool useExtendedVerseBoundaries)
 {
+    this->_currentModuleName = moduleName;
     SWModule* module = this->_moduleStore.getLocalModule(moduleName);
     ListKey listKey;
     ListKey *scope = 0;
@@ -76,7 +77,9 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
     }
 
     if (module == 0) {
-        cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
+        cerr << "ModuleSearch::getModuleSearchResults: getLocalModule returned zero pointer for " << moduleName << endl;
+    } else if (searchTerm == "") {
+        cerr << "ModuleSearch::getModuleSearchResults: cannot work with empty search term!" << endl;
     } else {
         bool hasStrongs = this->_moduleHelper.moduleHasGlobalOption(module, "Strongs");
 
@@ -129,7 +132,18 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
         }
     }
 
+    this->_currentModuleName = "";
+
     return searchResults;
+}
+
+void ModuleSearch::terminate()
+{
+    if (this->_currentModuleName != "") {
+        SWModule* module = this->_moduleStore.getLocalModule(this->_currentModuleName);
+        module->terminateSearch = true;
+        this->_currentModuleName = "";
+    }
 }
 
 static std::function<void(char, void*)>* _moduleSearchProgressCB = 0;

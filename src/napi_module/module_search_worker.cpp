@@ -52,3 +52,8 @@ void ModuleSearchWorker::OnOK()
     this->_napiSearchResults = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(this->Env(), this->_moduleName, this->_stdSearchResults);
     Callback().Call({ this->_napiSearchResults });
 }
+
+void ModuleSearchWorker::terminateSearch()
+{
+    this->_moduleSearch.terminate();
+}

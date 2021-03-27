@@ -459,6 +459,13 @@ class NodeSwordInterface {
   }
 
   /**
+   * Terminates the currently ongoing module search.
+   */
+  terminateModuleSearch() {
+    return this.nativeInterface.terminateModuleSearch();
+  }
+
+  /**
    * Checks whether Hebrew Strong's definitions are available
    * 
    * @return {Boolean}

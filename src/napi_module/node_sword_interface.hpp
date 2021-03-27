@@ -30,6 +30,7 @@ class TextProcessor;
 class NapiSwordHelper;
 class ModuleHelper;
 class ModuleSearch;
+class ModuleSearchWorker;
 enum class ModuleType;
 
 enum class ParamType {
@@ -80,6 +81,7 @@ private:
     Napi::Value getBookIntroduction(const Napi::CallbackInfo& info);
 
     Napi::Value getModuleSearchResults(const Napi::CallbackInfo& info);
+    Napi::Value terminateModuleSearch(const Napi::CallbackInfo& info);
     Napi::Value getStrongsEntry(const Napi::CallbackInfo& info);
 
     Napi::Value installModule(const Napi::CallbackInfo& info);
@@ -106,6 +108,7 @@ private:
     ModuleSearch* _moduleSearch;
     SwordTranslationHelper* _swordTranslationHelper;
     SwordStatusReporter _swordStatusReporter;
+    ModuleSearchWorker* _currentModuleSearchWorker;
 };
 
 #endif // _NODE_SWORD_INTERFACE

@@ -45,7 +45,7 @@ class ModuleSearch
 {
 public:
     ModuleSearch(ModuleStore& moduleStore, ModuleHelper& moduleHelper, TextProcessor& textProcessor)
-        : _moduleStore(moduleStore), _moduleHelper(moduleHelper), _textProcessor(textProcessor) {}
+        : _moduleStore(moduleStore), _moduleHelper(moduleHelper), _textProcessor(textProcessor), _currentModuleName("") {}
     virtual ~ModuleSearch() {}
 
     std::vector<Verse> getModuleSearchResults(std::string moduleName,
@@ -53,11 +53,14 @@ public:
                                               SearchType searchType=SearchType::multiWord,
                                               bool isCaseSensitive=false,
                                               bool useExtendedVerseBoundaries=false);
+    
+    void terminate();
 
 private:
     ModuleStore& _moduleStore;
     ModuleHelper& _moduleHelper;
     TextProcessor& _textProcessor;
+    std::string _currentModuleName;
 };
 
 #endif // _MODULE_SEARCH

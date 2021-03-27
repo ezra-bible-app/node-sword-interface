@@ -60,6 +60,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookIntroduction(moduleCode, bookCode)](#NodeSwordInterface+getBookIntroduction) ⇒ <code>String</code>
     * [.getModuleSearchResults(progressCB, moduleCode, searchTerm, searchType, isCaseSensitive, useExtendedVerseBoundaries)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
+    * [.terminateModuleSearch()](#NodeSwordInterface+terminateModuleSearch)
     * [.hebrewStrongsAvailable()](#NodeSwordInterface+hebrewStrongsAvailable) ⇒ <code>Boolean</code>
     * [.greekStrongsAvailable()](#NodeSwordInterface+greekStrongsAvailable) ⇒ <code>Boolean</code>
     * [.strongsAvailable()](#NodeSwordInterface+strongsAvailable) ⇒ <code>Boolean</code>
@@ -432,6 +433,12 @@ Returns the results of a module search.
 | isCaseSensitive | <code>Boolean</code> | <code>false</code> | Whether the search is case sensitive |
 | useExtendedVerseBoundaries | <code>Boolean</code> | <code>false</code> | Whether the search should use extended verse boundaries (Two verses instead of one) in case of a multi word search. |
 
+<a name="NodeSwordInterface+terminateModuleSearch"></a>
+
+### nodeSwordInterface.terminateModuleSearch()
+Terminates the currently ongoing module search.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 <a name="NodeSwordInterface+hebrewStrongsAvailable"></a>
 
 ### nodeSwordInterface.hebrewStrongsAvailable() ⇒ <code>Boolean</code>

@@ -54,6 +54,7 @@ public:
     void searchProgressCB(char percent, void* userData);
     void Execute(const ExecutionProgress& progress);    
     void OnOK();
+    void terminateSearch();
 
 private:
     Mutex& _searchMutex;
