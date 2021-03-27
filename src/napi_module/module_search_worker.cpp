@@ -25,6 +25,7 @@ void ModuleSearchWorker::Execute(const ExecutionProgress& progress)
 {
     this->_searchMutex.lock();
     this->_executionProgress = &progress;
+    this->_searchTerminated = false;
     
     std::function<void(char, void*)> searchProgressCB = std::bind(&ModuleSearchWorker::searchProgressCB,
                                                                   this,
@@ -36,6 +37,11 @@ void ModuleSearchWorker::Execute(const ExecutionProgress& progress)
                                                                          this->_searchType,
                                                                          this->_isCaseSensitive,
                                                                          this->_useExtendedVerseBoundaries);
+    
+    if (this->_searchTerminated) {
+      this->_stdSearchResults.clear();
+    }
+
     setModuleSearchProgressCB(0);
     this->_searchMutex.unlock();
     unlockApi();
@@ -55,5 +61,6 @@ void ModuleSearchWorker::OnOK()
 
 void ModuleSearchWorker::terminateSearch()
 {
+    this->_searchTerminated = true;
     this->_moduleSearch.terminate();
 }

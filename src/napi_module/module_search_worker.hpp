@@ -46,7 +46,8 @@ public:
         _searchTerm(searchTerm),
         _searchType(searchType),
         _isCaseSensitive(isCaseSensitive),
-        _useExtendedVerseBoundaries(useExtendedVerseBoundaries) {
+        _useExtendedVerseBoundaries(useExtendedVerseBoundaries),
+        _searchTerminated(false) {
 
         this->_napiSwordHelper = new NapiSwordHelper(moduleHelper, moduleStore);
     }
@@ -67,6 +68,7 @@ private:
     SearchType _searchType;
     bool _isCaseSensitive;
     bool _useExtendedVerseBoundaries;
+    bool _searchTerminated;
 };
 
 #endif // _MODULE_SEARCH_WORKER
