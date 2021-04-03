@@ -687,6 +687,10 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
         }
     }
 
+    if (this->_currentModuleSearchWorker != 0) {
+      delete this->_currentModuleSearchWorker;
+    }
+
     this->_currentModuleSearchWorker = new ModuleSearchWorker(*(this->_moduleHelper),
                                                               *(this->_moduleSearch),
                                                               *(this->_moduleStore),
