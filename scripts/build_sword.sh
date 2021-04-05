@@ -29,9 +29,8 @@ else
     echo "Linking self-compiled SWORD library"
 fi
 
-# CHECKOUT
+# CLONE SWORD
 git clone https://github.com/bibletime/crosswire-sword-mirror sword
-git -C sword checkout 412026
 
 # PATCHES
 case "$(uname -s)" in
@@ -47,8 +46,6 @@ case "$(uname -s)" in
     ;;
 esac
 
-patch --batch --forward -d sword -p 0 < patch/sword_globconf.patch
-
 # BUILD
 mkdir -p sword_build
 cd sword_build
@@ -59,6 +56,7 @@ if [ "$1" = "--android" ] ; then
 
   # Use a newer version of SWORD on ANDROID, which brings built-in Unicode support
   git -C ../sword checkout 60b6e1
+  patch --batch --forward -d sword -p 0 < patch/sword_globconf.patch
 
   echo "-- TARGET ARCH: $2"
   TARGET_ARCH=$2
@@ -80,6 +78,11 @@ if [ "$1" = "--android" ] ; then
   -DANDROID_ABI="$ANDROID_ABI" \
   ../sword
 else
+  # macOS & Linux
+
+  git -C sword checkout 412026
+  patch --batch --forward -d sword -p 0 < patch/sword_globconf.patch
+
   cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 ../sword
 fi
 
