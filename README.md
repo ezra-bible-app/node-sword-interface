@@ -1,5 +1,5 @@
 # node-sword-interface
-node-sword-interface is a [nodejs](https://nodejs.org) module that wraps the [SWORD library](http://www.crosswire.org/sword/) which gives access to bible text modules and related ressources. It has been created for use within the [Ezra Project](https://github.com/ezra-project/ezra-project) bible study software, but it can also be used for any other nodejs-based software that needs to interface with the SWORD library. node-sword-interface supports bible modules and dictionary modules that are keyed with Strong's numbers. node-sword-interface works on Windows, macOS, Linux and Android (via [nodejs-mobile](https://code.janeasystems.com/nodejs-mobile)).
+node-sword-interface is a [nodejs](https://nodejs.org) module that wraps the [SWORD library](http://www.crosswire.org/sword/) which gives access to Bible text modules and related ressources. It has been created for use within the [Ezra Bible App](https://github.com/ezra-bible-app/ezra-bible-app) Bible study software, but it can also be used for any other nodejs-based software that needs to interface with the SWORD library. node-sword-interface supports Bible modules and dictionary modules that are keyed with Strong's numbers. node-sword-interface works on Windows, macOS, Linux and Android (via [nodejs-mobile](https://code.janeasystems.com/nodejs-mobile)).
 
 The currently used SWORD version is SVN Rev. 3823 (1.9.0).
 
@@ -9,14 +9,14 @@ node-sword-interface focusses on discovery, installation/removal and text loadin
 
 - Update SWORD repository configuration
 - List SWORD repositories
-- List remote modules (bible modules or dictionary modules)
-- List local modules (bible modules or dictionary modules)
+- List remote modules (Bible modules or dictionary modules)
+- List local modules (Bible modules or dictionary modules)
 - Install a module
 - Uninstall a module
 - Get information about a module
-- Get the text of a bible book
-- Get the text of the whole bible
-- Search within a bible module
+- Get the text of a Bible book
+- Get the text of the whole Bible
+- Search within a Bible module
 - Retrieve info based on Strong's number
 
 ## Example: Installing the KJV module
