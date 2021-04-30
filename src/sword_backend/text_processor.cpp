@@ -70,7 +70,6 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
     static string titleStartElementFilter = "<title";
     static string titleEndElementFilter = "</title>";
     static string divTitleElementFilter = "<div class=\"title\"";
-    static string divSectionElementFilter = "<div type=\"section\".*?>";
     static string secHeadClassFilter = "class=\"sechead\"";
     static string divMilestoneFilter = "<div type=\"x-milestone\"";
     static string milestoneFilter = "<milestone";
@@ -81,6 +80,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
     static string divineNameEndElement = "</divineName>";
     static string strongsWElement = "<w lemma=";
 
+    static regex divSectionElementFilter = regex("<div type=\"section\".*?>");
     static regex selfClosingElement = regex("(<)([wdiv]{1,3}) ([\\w:=\"\\- ]*?)(/>)");
 
     static string fullStopWithoutSpace = ".<";
@@ -110,7 +110,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
     this->findAndReplaceAll(filteredText, rtxtStartElementFilter2, "<div class=\"sword-markup sword-rtxt\" rend=");
     this->findAndReplaceAll(filteredText, rtxtEndElementFilter, "</div>");
     this->findAndReplaceAll(filteredText, pbElementFilter, "<pb class=\"sword-markup sword-pb\"");
-    this->findAndReplaceAll(filteredText, divSectionElementFilter, "");
+    filteredText = regex_replace(filteredText, divSectionElementFilter, "");
 
     stringstream sectionTitleElement;
     sectionTitleElement << "<div class=\"sword-markup sword-section-title\" ";
@@ -447,7 +447,6 @@ string TextProcessor::replaceSpacesInStrongs(const string& text)
 
     return filteredText;
 }
-
 
 bool TextProcessor::moduleHasStrongsZeroPrefixes(sword::SWModule* module)
 {
