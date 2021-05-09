@@ -63,3 +63,17 @@ vector<string> StringHelper::split(string str, string token) {
 
     return result;
 }
+
+int StringHelper::numberOfSubstrings(const std::string& str, const std::string& token) {
+    if (token.length() == 0) {
+        return 0;
+    }
+
+    int count = 0;
+
+    for (size_t offset = str.find(token); offset != std::string::npos; offset = str.find(token, offset + token.length())) {
+        count++;
+    }
+
+    return count;
+}

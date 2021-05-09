@@ -33,6 +33,9 @@ public:
     ModuleHelper(ModuleStore& moduleStore) : _moduleStore(moduleStore) {
         // For modules in this list we will enforce the stripped version of the text and not use the markup
         this->_brokenMarkupModules = { "ASV" };
+
+        // For modules in this list we will remove the duplicate closing end divs from the markup
+        this->_duplicateClosingEndDivModules = { "NETtext" };
     }
 
     virtual ~ModuleHelper(){}
@@ -46,11 +49,13 @@ public:
     int getChapterVerseCount(std::string moduleName, std::string bookCode, int chapter);
     std::map<std::string, int> getAbsoluteVerseNumberMap(sword::SWModule* module, std::vector<std::string> bookList={});
     bool isBrokenMarkupModule(std::string moduleName);
+    bool isDuplicateClosingEndDivModule(std::string moduleName);
 
 private:
     bool moduleHasKeyValuePair(sword::SWModule* module, std::string key, std::string value);
     ModuleStore& _moduleStore;
     std::vector<std::string> _brokenMarkupModules;
+    std::vector<std::string> _duplicateClosingEndDivModules;
 };
 
 #endif // _MODULE_HELPER

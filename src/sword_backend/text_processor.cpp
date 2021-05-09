@@ -43,7 +43,7 @@ TextProcessor::TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelpe
     this->_rawMarkupEnabled = false;
 }
 
-string TextProcessor::getFilteredText(const string& text, int chapter, bool hasStrongs)
+string TextProcessor::getFilteredText(const string& text, int chapter, bool hasStrongs, bool hasDuplicateClosingEndDivs)
 {
     //static regex schlachterMarkupFilter = regex("<H.*> ");
     static string chapterFilter = "<chapter";
@@ -144,6 +144,18 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
     this->findAndReplaceAll(filteredText, semiColonWithoutSpace, "; <");
     this->findAndReplaceAll(filteredText, colonWithoutSpace, ": <");
 
+    if (hasDuplicateClosingEndDivs) {
+        int numberOfOpeningDivs = StringHelper::numberOfSubstrings(filteredText, "<div");
+        int numberOfClosingDivs = StringHelper::numberOfSubstrings(filteredText, "</div>");
+
+        // Remove the last closing div if the number of closing divs is higher than the number of opening divs
+        if (numberOfClosingDivs > numberOfOpeningDivs) {
+            const string closingDiv = "</div>";
+            size_t lastClosingDivOffset = filteredText.rfind(closingDiv);
+            filteredText.replace(lastClosingDivOffset, closingDiv.length(), "");
+        }
+    }
+
     if (hasStrongs) {
         filteredText = this->replaceSpacesInStrongs(filteredText);
     }
@@ -187,7 +199,7 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module)
     return chapterHeading;
 }
 
-string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool forceNoMarkup)
+string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool hasDuplicateClosingEndDivs, bool forceNoMarkup)
 {
     string verseText;
     string filteredText;
@@ -200,7 +212,7 @@ string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStron
         filteredText = verseText;
 
         if (!this->_rawMarkupEnabled) {
-            filteredText = this->getFilteredText(verseText, currentChapter, hasStrongs);
+            filteredText = this->getFilteredText(verseText, currentChapter, hasStrongs, hasDuplicateClosingEndDivs);
         }
     } else {
         verseText = string(module->stripText());
@@ -262,6 +274,7 @@ vector<Verse> TextProcessor::getVersesFromReferences(string moduleName, vector<s
     vector<string> bookList = this->getBookListFromReferences(references);
     map<string, int> absoluteVerseNumbers = this->_moduleHelper.getAbsoluteVerseNumberMap(module, bookList);
     bool moduleMarkupIsBroken = this->_moduleHelper.isBrokenMarkupModule(moduleName);
+    bool hasDuplicateClosingEndDivs = this->_moduleHelper.isDuplicateClosingEndDivModule(moduleName);
 
     for (unsigned int i = 0; i < references.size(); i++) {
         string currentReference = references[i];
@@ -271,7 +284,7 @@ vector<Verse> TextProcessor::getVersesFromReferences(string moduleName, vector<s
         bool entryExisting = module->hasEntry(module->getKey());
 
         if (entryExisting) {
-          currentVerseText = this->getCurrentVerseText(module, false, moduleMarkupIsBroken);
+          currentVerseText = this->getCurrentVerseText(module, false, hasDuplicateClosingEndDivs, moduleMarkupIsBroken);
         }
 
         Verse currentVerse;
@@ -309,6 +322,7 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
     int lastChapter = -1;
     bool currentBookExisting = true;
     bool moduleMarkupIsBroken = this->_moduleHelper.isBrokenMarkupModule(moduleName);
+    bool hasDuplicateClosingEndDivs = this->_moduleHelper.isDuplicateClosingEndDivModule(moduleName);
 
     // This holds the text that we will return
     vector<Verse> text;
@@ -361,6 +375,7 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
             // Current verse text
             verseText += this->getCurrentVerseText(module,
                                                    hasStrongs,
+                                                   hasDuplicateClosingEndDivs,
                                                    // Note that if markup is broken this will enforce
                                                    // the usage of the "stripped" / non-markup variant of the text
                                                    moduleMarkupIsBroken);

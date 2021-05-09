@@ -185,3 +185,10 @@ bool ModuleHelper::isBrokenMarkupModule(std::string moduleName)
                      this->_brokenMarkupModules.end(),
                      moduleName) != this->_brokenMarkupModules.end();
 }
+
+bool ModuleHelper::isDuplicateClosingEndDivModule(std::string moduleName)
+{
+    return std::find(this->_duplicateClosingEndDivModules.begin(),
+                     this->_duplicateClosingEndDivModules.end(),
+                     moduleName) != this->_duplicateClosingEndDivModules.end();
+}
