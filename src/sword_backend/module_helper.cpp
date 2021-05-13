@@ -90,8 +90,6 @@ vector<string> ModuleHelper::getBookList(string moduleName)
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
-        vector<string> bookList;
-        string currentBookName = "";
         VerseKey *vk = (VerseKey *)module->getKey();
 
         for ((*vk) = TOP; !vk->popError(); vk->setBook(vk->getBook()+1)) {
