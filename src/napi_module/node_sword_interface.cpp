@@ -98,6 +98,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getBookChapterCount", &NodeSwordInterface::getBookChapterCount),
         InstanceMethod("getChapterVerseCount", &NodeSwordInterface::getChapterVerseCount),
         InstanceMethod("getBookIntroduction", &NodeSwordInterface::getBookIntroduction),
+        InstanceMethod("moduleHasBook", &NodeSwordInterface::moduleHasBook),
         InstanceMethod("getModuleSearchResults", &NodeSwordInterface::getModuleSearchResults),
         InstanceMethod("terminateModuleSearch", &NodeSwordInterface::terminateModuleSearch),
         InstanceMethod("getStrongsEntry", &NodeSwordInterface::getStrongsEntry),
@@ -648,6 +649,22 @@ Napi::Value NodeSwordInterface::getBookIntroduction(const Napi::CallbackInfo& in
     Napi::String introText = Napi::String::New(env, this->_textProcessor->getBookIntroduction(moduleName, bookCode));
     unlockApi();
     return introText;
+}
+
+Napi::Value NodeSwordInterface::moduleHasBook(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    Napi::Env env = info.Env();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
+    Napi::String moduleName = info[0].As<Napi::String>();
+    Napi::String bookCode = info[1].As<Napi::String>();
+    ASSERT_SW_MODULE_EXISTS(moduleName);
+
+    SWModule* swordModule = this->_moduleStore->getLocalModule(moduleName);
+    Napi::Boolean hasBook = Napi::Boolean::New(env, this->_moduleHelper->moduleHasBook(swordModule, bookCode));
+
+    unlockApi();
+    return hasBook;
 }
 
 Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo& info)

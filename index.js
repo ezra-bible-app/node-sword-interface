@@ -432,6 +432,17 @@ class NodeSwordInterface {
   }
 
   /**
+   * Checks whether a module has a certain book
+   * 
+   * @param {String} moduleCode 
+   * @param {String} bookCode 
+   * @returns {Boolean}
+   */
+  moduleHasBook(moduleCode, bookCode) {
+    return this.nativeInterface.moduleHasBook(moduleCode, bookCode);
+  }
+
+  /**
    * Returns the results of a module search.
    *
    * @param {Function} progressCB - Optional callback function that is called on progress events.
@@ -533,7 +544,7 @@ class NodeSwordInterface {
     return this.nativeInterface.isModuleInUserDir(moduleCode);
   }
 
- /**
+  /**
    * Checks whether the module is available in any repository.
    *
    * @param {String} moduleCode - The module code of the SWORD module.

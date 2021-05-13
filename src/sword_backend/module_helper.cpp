@@ -68,6 +68,19 @@ bool ModuleHelper::moduleHasKeyValuePair(sword::SWModule* module, std::string ke
     return hasKeyValuePair;
 }
 
+bool ModuleHelper::moduleHasBook(sword::SWModule* module, std::string bookCode)
+{
+    bool hasBook;
+    stringstream key;
+    key << bookCode;
+    key << " 1:1";
+
+    module->setKey(key.str().c_str());
+    hasBook = module->hasEntry(module->getKey());
+    
+    return hasBook;
+}
+
 vector<string> ModuleHelper::getBookList(string moduleName)
 {
     string currentBookName = "";
@@ -77,6 +90,8 @@ vector<string> ModuleHelper::getBookList(string moduleName)
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
+        vector<string> bookList;
+        string currentBookName = "";
         VerseKey *vk = (VerseKey *)module->getKey();
 
         for ((*vk) = TOP; !vk->popError(); vk->setBook(vk->getBook()+1)) {
