@@ -28,7 +28,7 @@
     "url": "https://github.com/ezra-project/node-sword-interface.git"
   },
   "devDependencies": {
-    "jsdoc-to-markdown": "^5.0.3",
+    "jsdoc-to-markdown": "^7.0.1",
     "node-gyp": "^8.0.0"
   }
 }
