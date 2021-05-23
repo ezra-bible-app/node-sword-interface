@@ -390,6 +390,18 @@ class NodeSwordInterface {
   }
 
   /**
+   * Returns the list of headers available in the given book. The headers are returned as an array of VerseObjects.
+   * 
+   * @param {String} moduleCode 
+   * @param {String} bookCode 
+   * 
+   * @return {VerseObject[]}
+   */
+  getBookHeaderList(moduleCode, bookCode) {
+    return this.nativeInterface.getBookHeaderList(moduleCode, bookCode);
+  }
+
+  /**
    * Returns the chapter count of the given book.
    * 
    * @param {String} moduleCode - The module code of the SWORD module.

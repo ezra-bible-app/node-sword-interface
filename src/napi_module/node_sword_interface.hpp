@@ -77,6 +77,7 @@ private:
     Napi::Value getReferencesFromReferenceRange(const Napi::CallbackInfo& info);
     Napi::Value getBookList(const Napi::CallbackInfo& info);
     Napi::Value getBookChapterCount(const Napi::CallbackInfo& info);
+    Napi::Value getBookHeaderList(const Napi::CallbackInfo& info);
     Napi::Value getChapterVerseCount(const Napi::CallbackInfo& info);
     Napi::Value getBookIntroduction(const Napi::CallbackInfo& info);
     Napi::Value moduleHasBook(const Napi::CallbackInfo& info);

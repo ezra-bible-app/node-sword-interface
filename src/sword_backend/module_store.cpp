@@ -58,6 +58,8 @@ ModuleStore::ModuleStore(string customHomeDir)
             this->_mgr = new SWMgr();
         #endif
     }
+
+    this->_mgr->setGlobalOption("Headings", "On");
 }
 
 ModuleStore::~ModuleStore()

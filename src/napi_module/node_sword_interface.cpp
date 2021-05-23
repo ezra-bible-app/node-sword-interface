@@ -96,6 +96,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getReferencesFromReferenceRange", &NodeSwordInterface::getReferencesFromReferenceRange),
         InstanceMethod("getBookList", &NodeSwordInterface::getBookList),
         InstanceMethod("getBookChapterCount", &NodeSwordInterface::getBookChapterCount),
+        InstanceMethod("getBookHeaderList", &NodeSwordInterface::getBookHeaderList),
         InstanceMethod("getChapterVerseCount", &NodeSwordInterface::getChapterVerseCount),
         InstanceMethod("getBookIntroduction", &NodeSwordInterface::getBookIntroduction),
         InstanceMethod("moduleHasBook", &NodeSwordInterface::moduleHasBook),
@@ -624,6 +625,25 @@ Napi::Value NodeSwordInterface::getBookChapterCount(const Napi::CallbackInfo& in
     return bookChapterCount;
 }
 
+Napi::Value NodeSwordInterface::getBookHeaderList(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    Napi::Env env = info.Env();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
+    Napi::String moduleName = info[0].As<Napi::String>();
+    Napi::String bookCode = info[1].As<Napi::String>();
+
+    #ifdef _WIN32
+        Napi::Array headerList = Napi::Array::New(env, 0);
+    #else
+        vector<Verse> rawHeaderList = this->_textProcessor->getBookHeaderList(moduleName, bookCode);
+        Napi::Array headerList = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(env, string(moduleName), rawHeaderList);
+    #endif
+
+    unlockApi();
+    return headerList;
+}
+
 Napi::Value NodeSwordInterface::getChapterVerseCount(const Napi::CallbackInfo& info)
 {
     lockApi();
@@ -896,9 +916,9 @@ Napi::Value NodeSwordInterface::getSwordVersion(const Napi::CallbackInfo& info)
     Napi::HandleScope scope(env);
 
 #if defined(__ANDROID__)
-    string version = "1.9.0-60b6e1 (SVN Rev. 3844)";
+    string version = "1.9.0-8a5029 (SVN Rev. 3860)";
 #elif defined(__linux__) || defined(__APPLE__)
-    string version = "1.9.0-412026 (SVN Rev. 3823)";
+    string version = "1.9.0-8a5029 (SVN Rev. 3860)";
 #elif _WIN32
     string version = "1.9.0-412026 (SVN Rev. 3823)";
 #endif

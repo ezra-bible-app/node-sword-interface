@@ -45,6 +45,7 @@ public:
     std::vector<std::string> getReferencesFromReferenceRange(std::string referenceRange);
     std::string getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool hasDuplicateClosingEndDivs=false, bool forceNoMarkup=false);
     std::string getBookIntroduction(std::string moduleName, std::string bookCode);
+    std::vector<Verse> getBookHeaderList(std::string moduleName, std::string bookCode);
 
     StrongsEntry* getStrongsEntry(std::string key);
 
