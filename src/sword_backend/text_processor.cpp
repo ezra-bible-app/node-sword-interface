@@ -444,7 +444,7 @@ string TextProcessor::getBookIntroduction(string moduleName, string bookCode)
     return filteredText;
 }
 
-vector<Verse> TextProcessor::getBookHeaderList(string moduleName, string bookCode)
+vector<Verse> TextProcessor::getBookHeaderList(string moduleName, string bookCode, bool withAbsoluteVerseNumbers)
 {
     vector<Verse> headerList;
     SWModule* module = this->_moduleStore.getLocalModule(moduleName);
@@ -452,11 +452,16 @@ vector<Verse> TextProcessor::getBookHeaderList(string moduleName, string bookCod
     if (module == 0) {
         cerr << "getBookHeaderList: getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
+        map<string, int> absoluteVerseNumbers;
+        
+        if (withAbsoluteVerseNumbers) {
+            absoluteVerseNumbers = this->_moduleHelper.getAbsoluteVerseNumberMap(module, { bookCode });
+        }
+
         ListKey scopeList = VerseKey().parseVerseList(bookCode.c_str(), "", true);
         SWKey* scope = &scopeList;
 
         ListKey resultKey = module->search("/Heading", SWModule::SEARCHTYPE_ENTRYATTR, 0, scope);
-        int count = 1;
 
         static string titleStartElementFilter = "<title";
         static string titleEndElementFilter = "</title>";
@@ -465,8 +470,6 @@ vector<Verse> TextProcessor::getBookHeaderList(string moduleName, string bookCod
 
         for (resultKey = TOP; !resultKey.popError(); resultKey++) {
             module->setKey(resultKey);
-            module->renderText();
-
             VerseKey currentKey(resultKey.getShortText());
 
             // get both Preverse and Interverse Headings and just merge them into the same map
@@ -479,6 +482,9 @@ vector<Verse> TextProcessor::getBookHeaderList(string moduleName, string bookCod
             Verse currentHeader;
             currentHeader.reference = module->getKey()->getShortText();
             currentHeader.absoluteVerseNumber = -1;
+            if (withAbsoluteVerseNumbers) {
+                currentHeader.absoluteVerseNumber = absoluteVerseNumbers[currentHeader.reference];
+            }
 
             for (AttributeValue::const_iterator it = headings.begin(); it != headings.end(); ++it) {
                 currentHeaderTextStream << it->second << endl;
@@ -499,7 +505,6 @@ vector<Verse> TextProcessor::getBookHeaderList(string moduleName, string bookCod
 
             currentHeader.content = currentHeaderText;
             headerList.push_back(currentHeader);
-            count++;
         }
     }
 

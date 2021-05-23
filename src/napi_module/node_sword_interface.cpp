@@ -629,14 +629,15 @@ Napi::Value NodeSwordInterface::getBookHeaderList(const Napi::CallbackInfo& info
 {
     lockApi();
     Napi::Env env = info.Env();
-    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::boolean);
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String bookCode = info[1].As<Napi::String>();
+    Napi::Boolean withAbsoluteVerseNumbers = info[2].As<Napi::Boolean>();
 
     #ifdef _WIN32
         Napi::Array headerList = Napi::Array::New(env, 0);
     #else
-        vector<Verse> rawHeaderList = this->_textProcessor->getBookHeaderList(moduleName, bookCode);
+        vector<Verse> rawHeaderList = this->_textProcessor->getBookHeaderList(moduleName, bookCode, withAbsoluteVerseNumbers);
         Napi::Array headerList = this->_napiSwordHelper->getNapiVerseObjectsFromRawList(env, string(moduleName), rawHeaderList);
     #endif
 

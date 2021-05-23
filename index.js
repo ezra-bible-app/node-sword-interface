@@ -394,11 +394,12 @@ class NodeSwordInterface {
    * 
    * @param {String} moduleCode 
    * @param {String} bookCode 
+   * @param {Boolean} withAbsoluteVerseNumbers
    * 
    * @return {VerseObject[]}
    */
-  getBookHeaderList(moduleCode, bookCode) {
-    return this.nativeInterface.getBookHeaderList(moduleCode, bookCode);
+  getBookHeaderList(moduleCode, bookCode, withAbsoluteVerseNumbers=false) {
+    return this.nativeInterface.getBookHeaderList(moduleCode, bookCode, withAbsoluteVerseNumbers);
   }
 
   /**
