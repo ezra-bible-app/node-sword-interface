@@ -55,6 +55,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getVersesFromReferences(moduleCode, references)](#NodeSwordInterface+getVersesFromReferences) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getReferencesFromReferenceRange(referenceRange)](#NodeSwordInterface+getReferencesFromReferenceRange) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getBookList(moduleCode)](#NodeSwordInterface+getBookList) ⇒ <code>Array.&lt;String&gt;</code>
+    * [.getBookHeaderList(moduleCode, bookCode, withAbsoluteVerseNumbers)](#NodeSwordInterface+getBookHeaderList) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookChapterCount(moduleCode, bookCode)](#NodeSwordInterface+getBookChapterCount)
     * [.getChapterVerseCount(moduleCode, bookCode, chapter)](#NodeSwordInterface+getChapterVerseCount)
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
@@ -368,6 +369,19 @@ Returns the list of books available in the given module. By default the book cod
 | Param | Type | Description |
 | --- | --- | --- |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
+
+<a name="NodeSwordInterface+getBookHeaderList"></a>
+
+### nodeSwordInterface.getBookHeaderList(moduleCode, bookCode, withAbsoluteVerseNumbers) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
+Returns the list of headers available in the given book. The headers are returned as an array of VerseObjects.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| moduleCode | <code>String</code> |  | 
+| bookCode | <code>String</code> |  | 
+| withAbsoluteVerseNumbers | <code>Boolean</code> | <code>false</code> | 
 
 <a name="NodeSwordInterface+getBookChapterCount"></a>
 
