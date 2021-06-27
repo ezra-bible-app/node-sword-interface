@@ -100,7 +100,7 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
 
             // from swmodule.h api docs:
             // for use with entryAttrib search type to match whole entry to value, e.g., G1234 and not G12345
-            flags |= SEARCHFLAG_STRICTBOUNDARIES;
+            flags |= SEARCHFLAG_MATCHWHOLEENTRY;
 
             searchTerm = "Word//Lemma./" + searchTerm;
         }
