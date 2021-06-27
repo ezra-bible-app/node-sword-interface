@@ -36,6 +36,8 @@
 using namespace std;
 using namespace sword;
 
+#define SEARCHTYPE_ENTRYATTR -3L
+
 TextProcessor::TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelper)
     : _moduleStore(moduleStore), _moduleHelper(moduleHelper)
 {
@@ -473,7 +475,7 @@ vector<Verse> TextProcessor::getBookHeaderList(string moduleName, string bookCod
         ListKey scopeList = VerseKey().parseVerseList(bookCode.c_str(), "", true);
         SWKey* scope = &scopeList;
 
-        ListKey resultKey = module->search("/Heading", SWModule::SEARCHTYPE_ENTRYATTR, 0, scope);
+        ListKey resultKey = module->search("/Heading", SEARCHTYPE_ENTRYATTR, 0, scope);
 
         static string titleStartElementFilter = "<title";
         static string titleEndElementFilter = "</title>";
