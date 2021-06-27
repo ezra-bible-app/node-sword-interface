@@ -73,11 +73,7 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
 
     if (!useExtendedVerseBoundaries) {
         // Use strict search boundaries (only search within individual verses). TODO: Make this configurable.
-        #ifdef _WIN32
-            flags |= SEARCHFLAG_STRICTBOUNDARIES;
-        #else
-            flags |= SWModule::SEARCHFLAG_STRICTBOUNDARIES;
-        #endif
+        flags |= SEARCHFLAG_STRICTBOUNDARIES;
     }
 
     if (module == 0) {
@@ -104,11 +100,7 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
 
             // from swmodule.h api docs:
             // for use with entryAttrib search type to match whole entry to value, e.g., G1234 and not G12345
-            #ifdef _WIN32
-                flags |= SEARCHFLAG_MATCHWHOLEENTRY;
-            #else
-                flags |= SWModule::SEARCHFLAG_MATCHWHOLEENTRY;
-            #endif
+            flags |= SEARCHFLAG_STRICTBOUNDARIES;
 
             searchTerm = "Word//Lemma./" + searchTerm;
         }

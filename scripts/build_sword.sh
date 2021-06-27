@@ -49,13 +49,13 @@ esac
 # BUILD
 mkdir -p sword_build
 
-# SVN Rev. 3860
-git -C sword checkout 8a5029
-patch --batch --forward -d sword -p 0 < patch/sword_globconf.patch
-
 if [ "$1" = "--android" ] ; then
   git clone https://github.com/karlkleinpaste/biblesync.git
   git -C biblesync checkout 2.1.0
+
+  # Use a newer version of SWORD on ANDROID, which brings built-in Unicode support
+  git -C sword checkout 60b6e1
+  patch --batch --forward -d sword -p 0 < patch/sword_globconf.patch
 
   echo "-- TARGET ARCH: $2"
   TARGET_ARCH=$2
@@ -81,6 +81,9 @@ if [ "$1" = "--android" ] ; then
   ../sword
 else
   # macOS & Linux
+
+  git -C sword checkout 412026
+  patch --batch --forward -d sword -p 0 < patch/sword_globconf.patch
 
   cd sword_build
   cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 ../sword
