@@ -28,6 +28,7 @@ public:
     static void rtrim(std::string& s, const std::string& delimiters = " \f\n\r\t\v");
     static void ltrim(std::string& s,  const std::string& delimiters = " \f\n\r\t\v");
     static void trim(std::string& s, const std::string& delimiters = " \f\n\r\t\v");
+    static bool hasBeginning(std::string const &fullString, std::string const &beginning);
     static bool hasEnding(std::string const &fullString, std::string const &ending);
     static std::vector<std::string> split(std::string str, std::string token);
     static int numberOfSubstrings(const std::string& str, const std::string& sub);

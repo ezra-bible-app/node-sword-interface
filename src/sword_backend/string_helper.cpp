@@ -44,6 +44,14 @@ bool StringHelper::hasEnding(std::string const &fullString, std::string const &e
     }
 }
 
+bool StringHelper::hasBeginning(std::string const &fullString, std::string const &beginning) {
+    if (fullString.length() >= beginning.length()) {
+        return (0 == fullString.compare (0, beginning.length(), beginning));
+    } else {
+        return false;
+    }
+}
+
 // from https://stackoverflow.com/a/46943631
 vector<string> StringHelper::split(string str, string token) {
     vector<string>result;

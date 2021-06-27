@@ -91,6 +91,19 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
     static string colonWithoutSpace = ":<";
 
     string filteredText = text;
+
+    // Fixes for NA28
+
+    if (StringHelper::hasBeginning(filteredText, "<note") && !StringHelper::hasEnding(filteredText, "/note>")) {
+        // text starts with <note but misses the end tag. In this case we simply append the end tag.
+        filteredText = filteredText + "</note>";
+    }
+
+    if (!StringHelper::hasBeginning(filteredText, "<note") && StringHelper::hasEnding(filteredText, "/note>")) {
+        // text ends with /note>, but does not start with <note. In this case we append the start tag.
+        filteredText = "<note>" + filteredText;
+    }
+
     //filteredText = regex_replace(filteredText, schlachterMarkupFilter, "");
     this->findAndReplaceAll(filteredText, chapterFilter, "<chapter class=\"sword-markup sword-chapter\"");
     this->findAndReplaceAll(filteredText, lbBeginParagraph, "");
