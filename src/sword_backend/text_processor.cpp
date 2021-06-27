@@ -92,16 +92,10 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
 
     string filteredText = text;
 
-    // Fixes for NA28
-
-    if (StringHelper::hasBeginning(filteredText, "<note") && !StringHelper::hasEnding(filteredText, "/note>")) {
-        // text starts with <note but misses the end tag. In this case we simply append the end tag.
-        filteredText = filteredText + "</note>";
-    }
-
-    if (!StringHelper::hasBeginning(filteredText, "<note") && StringHelper::hasEnding(filteredText, "/note>")) {
-        // text ends with /note>, but does not start with <note. In this case we append the start tag.
-        filteredText = "<note>" + filteredText;
+    // Remove <note type="variant"> if it occurs in the beginning of the verse (applicable for NA28)
+    static string noteTypeVariant = "<note type=\"variant\">";
+    if (StringHelper::hasBeginning(filteredText, noteTypeVariant)) {
+        filteredText.replace(0, noteTypeVariant.length(), "");
     }
 
     //filteredText = regex_replace(filteredText, schlachterMarkupFilter, "");
