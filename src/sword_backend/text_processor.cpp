@@ -47,6 +47,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
 {
     //static regex schlachterMarkupFilter = regex("<H.*> ");
     static string chapterFilter = "<chapter";
+    static regex pbElement = regex("<pb .*?/> ");
 
     static string lbBeginParagraph = "<lb type=\"x-begin-paragraph\"/>";
     static string lbEndParagraph = "<lb type=\"x-end-paragraph\"/>";
@@ -92,7 +93,11 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
 
     string filteredText = text;
 
-    // Remove <note type="variant"> if it occurs in the beginning of the verse (applicable for NA28)
+    // Remove the first pbElement, because it prevents correctly replacing the first note in the next step
+    filteredText = regex_replace(filteredText, pbElement, "");
+
+    // Remove <note type="variant"> if it occurs in the beginning of the verse (applicable for NA28), because it has
+    // been observed that the note is not properly closed.
     static string noteTypeVariant = "<note type=\"variant\">";
     if (StringHelper::hasBeginning(filteredText, noteTypeVariant)) {
         filteredText.replace(0, noteTypeVariant.length(), "");
