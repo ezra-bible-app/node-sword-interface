@@ -146,7 +146,6 @@ int RepositoryInterface::refreshIndividualRemoteSource(string remoteSourceName, 
 std::future<int> RepositoryInterface::getRemoteSourceRefreshFuture(string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback)
 {
     return std::async(&RepositoryInterface::refreshIndividualRemoteSource, this, remoteSourceName, progressCallback);
-    //return thread(&RepositoryInterface::refreshIndividualRemoteSource, this, remoteSourceName, progressCallback);
 }
 
 InstallSource* RepositoryInterface::getRemoteSource(string remoteSourceName)
