@@ -21,7 +21,7 @@
 
 #include <vector>
 #include <string>
-#include <thread>
+#include <future>
 
 #include "common_defs.hpp"
 #include "file_system_helper.hpp"
@@ -90,7 +90,7 @@ public:
 
 private:
     int refreshIndividualRemoteSource(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
-    std::thread getRemoteSourceRefreshThread(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
+    std::future<int> getRemoteSourceRefreshFuture(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
 
     int getRepoCount();
     std::vector<std::string> getRepoModuleIds(std::string repoName);

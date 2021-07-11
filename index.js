@@ -117,9 +117,9 @@ class NodeSwordInterface {
 
       this.nativeInterface.updateRepositoryConfig(true, progressCB, function(updateSuccessful) {
         if (updateSuccessful) {
-          resolve();
+          resolve(0);
         } else {
-          reject();
+          reject(-1);
         }
       });
     });

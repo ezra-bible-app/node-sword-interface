@@ -86,8 +86,9 @@ int RepositoryInterface::refreshRepositoryConfig()
 
 int RepositoryInterface::refreshRemoteSources(bool force, std::function<void(unsigned int progress)>* progressCallback)
 {
-    vector<thread> refreshThreads;
+    vector<future<int>> refreshFutures;
     this->_remoteSourceUpdateCount = 0;
+    bool refreshSuccessful = true;
 
     if (this->getRepoNames().size() == 0 || force) {
         int ret = this->refreshRepositoryConfig();
@@ -100,16 +101,24 @@ int RepositoryInterface::refreshRemoteSources(bool force, std::function<void(uns
 
         // Create worker threads
         for (unsigned int i = 0; i < sourceNames.size(); i++) {
-            refreshThreads.push_back(this->getRemoteSourceRefreshThread(sourceNames[i], progressCallback));
+            refreshFutures.push_back(this->getRemoteSourceRefreshFuture(sourceNames[i], progressCallback));
         }
 
         // Wait for threads to finish
-        for (unsigned int i = 0; i < refreshThreads.size(); i++) {
-            refreshThreads[i].join();
+        for (unsigned int i = 0; i < refreshFutures.size(); i++) {
+            ret = refreshFutures[i].get();
+
+            if (ret != 0) {
+              refreshSuccessful = false;
+            }
         }
     }
 
-    return 0;
+    if (refreshSuccessful) {
+      return 0;
+    } else {
+      return -1;
+    }
 }
 
 int RepositoryInterface::refreshIndividualRemoteSource(string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback)
@@ -134,9 +143,10 @@ int RepositoryInterface::refreshIndividualRemoteSource(string remoteSourceName, 
     return result;
 }
 
-thread RepositoryInterface::getRemoteSourceRefreshThread(string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback)
+std::future<int> RepositoryInterface::getRemoteSourceRefreshFuture(string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback)
 {
-    return thread(&RepositoryInterface::refreshIndividualRemoteSource, this, remoteSourceName, progressCallback);
+    return std::async(&RepositoryInterface::refreshIndividualRemoteSource, this, remoteSourceName, progressCallback);
+    //return thread(&RepositoryInterface::refreshIndividualRemoteSource, this, remoteSourceName, progressCallback);
 }
 
 InstallSource* RepositoryInterface::getRemoteSource(string remoteSourceName)
