@@ -54,6 +54,12 @@ ModuleStore::ModuleStore(string customHomeDir)
             // This has been disabled because it lead to a crash.
             // We're keeping it here for now in case this becomes relevant again.
             // this->_mgr->augmentModules(this->_fileSystemHelper.getSystemSwordDir().c_str());
+        #elif defined(__APPLE__)
+            this->_mgr = new SWMgr();
+
+            stringstream appSupport;
+            appSupport << string(getenv("HOME")) << "/Library/Application Support/Sword";            
+            this->_mgr->augmentModules(appSupport.str().c_str());
         #else
             this->_mgr = new SWMgr();
         #endif
