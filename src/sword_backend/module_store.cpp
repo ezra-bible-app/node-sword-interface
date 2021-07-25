@@ -19,6 +19,7 @@
 // Std includes
 #include <regex>
 #include <string>
+#include <sstream>
 
 // Sword includes
 #include <swmgr.h>
