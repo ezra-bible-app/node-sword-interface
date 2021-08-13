@@ -16,7 +16,8 @@
     "clean": "node-gyp clean",
     "doc": "jsdoc2md index.js > API.md",
     "pub": "rm -rf build node_modules sword sword_build test && npm publish ./",
-    "deploy": "scripts/deploy_local.sh"
+    "deploy": "scripts/deploy_local.sh",
+    "convert-sword-locales": "node scripts/sword_locales_to_json.mjs"
   },
   "author": "Tobias Klein",
   "license": "GPL-2.0+",
@@ -28,6 +29,7 @@
     "url": "https://github.com/ezra-project/node-sword-interface.git"
   },
   "devDependencies": {
+    "iso-639-3": "^3.0.0",
     "jsdoc-to-markdown": "^7.0.1",
     "node-gyp": "^8.0.0"
   }
