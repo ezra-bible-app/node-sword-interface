@@ -496,8 +496,8 @@ class NodeSwordInterface {
    */
   hebrewStrongsAvailable() {
     try {
-      this.nativeInterface.getLocalModule("StrongsHebrew");
-      return true;
+      const strongsDict = this.nativeInterface.getLocalModule("StrongsHebrew");
+      return !!strongsDict;
     } catch (e) {
       return false;
     }
@@ -510,8 +510,8 @@ class NodeSwordInterface {
    */
   greekStrongsAvailable() {
     try {
-      this.nativeInterface.getLocalModule("StrongsGreek");
-      return true;
+      const strongsDict = this.nativeInterface.getLocalModule("StrongsGreek");
+      return !!strongsDict;
     } catch (e) {
       return false;
     }
