@@ -490,31 +490,23 @@ class NodeSwordInterface {
   }
 
   /**
-   * Checks whether Hebrew Strong's definitions are available
+   * Checks whether Hebrew Strong's definitions are available.
    * 
    * @return {Boolean}
    */
   hebrewStrongsAvailable() {
-    try {
-      const strongsDict = this.nativeInterface.getLocalModule("StrongsHebrew");
-      return !!strongsDict;
-    } catch (e) {
-      return false;
-    }
+    const strongsDict = this.nativeInterface.getLocalModule("StrongsHebrew");
+    return !!strongsDict;
   }
 
   /**
-   * Checks whether Greek Strong's definitions are available
+   * Checks whether Greek Strong's definitions are available.
    * 
    * @return {Boolean}
    */
   greekStrongsAvailable() {
-    try {
-      const strongsDict = this.nativeInterface.getLocalModule("StrongsGreek");
-      return !!strongsDict;
-    } catch (e) {
-      return false;
-    }
+    const strongsDict = this.nativeInterface.getLocalModule("StrongsGreek");
+    return !!strongsDict;
   }
 
   /**
