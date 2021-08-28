@@ -469,13 +469,13 @@ Terminates the currently ongoing module search.
 <a name="NodeSwordInterface+hebrewStrongsAvailable"></a>
 
 ### nodeSwordInterface.hebrewStrongsAvailable() ⇒ <code>Boolean</code>
-Checks whether Hebrew Strong's definitions are available
+Checks whether Hebrew Strong's definitions are available.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 <a name="NodeSwordInterface+greekStrongsAvailable"></a>
 
 ### nodeSwordInterface.greekStrongsAvailable() ⇒ <code>Boolean</code>
-Checks whether Greek Strong's definitions are available
+Checks whether Greek Strong's definitions are available.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 <a name="NodeSwordInterface+strongsAvailable"></a>
