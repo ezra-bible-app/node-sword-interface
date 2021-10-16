@@ -48,6 +48,12 @@ ModuleStore::ModuleStore(string customHomeDir)
                                0, // filterMgr
                                false, // multiMod
                                false); // augmentHome
+
+        if (isAndroid) {
+          // Also consider the originally used path for Android, which does not work anymore from Android 11, but is still relevant
+          // for existing translations on Android versions < 11.
+          this->_mgr->augmentModules("/sdcard/sword"); 
+        }
     } else {
         #ifdef _WIN32
             this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());

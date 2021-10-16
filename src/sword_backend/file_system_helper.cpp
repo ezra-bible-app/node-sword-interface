@@ -283,7 +283,7 @@ string FileSystemHelper::getUserDir()
     if (this->_customHomeDir == "") {
 
         #if defined(__ANDROID__)
-            userDir = "/sdcard";
+            userDir = "/sdcard/Documents";
         #elif defined(__linux__) || defined(__APPLE__)
             userDir = string(getenv("HOME"));
         #elif _WIN32
