@@ -112,10 +112,11 @@ To install the dependencies issue the following command on a Debian/Ubuntu based
 
 #### Install dependencies on Windows
 
-1. Install [git](https://git-scm.com/download/win) and [nodejs](https://nodejs.org).
-2. Install [windows-build-tools][windows-build-tools] (VS 2015 Compiler) by running the following command in an administrator powershell:<br/> `npm install --vs2015 --global windows-build-tools`.
+1. Install [git](https://git-scm.com/download/win).
+2. Install [nodejs](https://nodejs.org). Important note: Ensure to install the *x86 version* (32-bit) of nodejs 14.x.
+   Furthermore, when the setup assistant asks about *Tools for native modules*, make sure to tick the checkbox *Automatically install the necessary tools*. This will then install the windows build tools required to build node-sword-interface.
 
-[windows-build-tools]: https://www.npmjs.com/package/windows-build-tools
+![Tools for native addons](https://raw.githubusercontent.com/ezra-bible-app/ezrabibleapp.net/master/assets/screenshots/nodejs_tools_for_native_addons.png)
 
 ### Install from npmjs
 
