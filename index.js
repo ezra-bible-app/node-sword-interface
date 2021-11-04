@@ -105,20 +105,7 @@ class NodeSwordInterface {
    * if this function is not called.
    *
    * This function works asynchronously and returns a Promise object. The Promise delivers a detailed status object which contains one
-   * entry for each of the repositories of the master repo list as well as one result entry. This status object looks like this:
-   *  {
-   *   result: true,
-   *   'Bible.org': true,
-   *   'CrossWire': true,
-   *   'CrossWire Attic': true,
-   *   'CrossWire Beta': true,
-   *   'CrossWire Wycliffe': true,
-   *   'Deutsche Bibelgesellschaft': true,
-   *   'IBT': true,
-   *   'Lockman Foundation': true,
-   *   'Xiphos': true,
-   *   'eBible.org': true
-   *  }
+   * entry for each of the repositories of the master repo list as well as one result entry.
    *
    * @param {Function} progressCB - Optional callback function that is called on progress events.
    * @return {Promise}
