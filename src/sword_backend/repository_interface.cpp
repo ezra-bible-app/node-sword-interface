@@ -84,7 +84,7 @@ int RepositoryInterface::refreshRepositoryConfig()
     return 0;
 }
 
-int RepositoryInterface::refreshRemoteSources(bool force, std::function<void(unsigned int progress)>* progressCallback)
+int RepositoryInterface::refreshRemoteSources(bool force, map<string, bool>* repoUpdateStatus, std::function<void(unsigned int progress)>* progressCallback)
 {
     vector<future<int>> refreshFutures;
     this->_remoteSourceUpdateCount = 0;
@@ -110,6 +110,10 @@ int RepositoryInterface::refreshRemoteSources(bool force, std::function<void(uns
 
             if (ret != 0) {
               refreshSuccessful = false;
+            }
+
+            if (repoUpdateStatus != 0) {
+              (*repoUpdateStatus)[sourceNames[i]] = (ret == 0);
             }
         }
     }

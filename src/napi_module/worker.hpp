@@ -21,6 +21,7 @@
 
 #include <napi.h>
 #include <iostream>
+#include <map>
 
 #include "api_lock.hpp"
 #include "napi_sword_helper.hpp"
@@ -115,20 +116,29 @@ public:
                                                                         this,
                                                                         std::placeholders::_1);
 
-        int ret = this->_repoInterface.refreshRemoteSources(this->_forced, &_progressCallback);
+        int ret = this->_repoInterface.refreshRemoteSources(this->_forced, &this->_repoUpdateStatus, &_progressCallback);
         this->_isSuccessful = (ret == 0);
         unlockApi();
     }
 
     void OnOK() {
         Napi::HandleScope scope(this->Env());
-        Napi::Boolean isSuccessful = Napi::Boolean::New(this->Env(), this->_isSuccessful);
-        Callback().Call({ isSuccessful });
+
+        Napi::Object repoUpdateStatusObject = Napi::Object::New(this->Env());
+        repoUpdateStatusObject["result"] = this->_isSuccessful;
+
+        map<string, bool>::iterator it;
+        for (it = this->_repoUpdateStatus.begin(); it != this->_repoUpdateStatus.end(); it++) {
+          repoUpdateStatusObject[it->first] = it->second;
+        }
+        
+        Callback().Call({ repoUpdateStatusObject });
     }
 
 private:
     bool _isSuccessful;
     bool _forced;
+    map<string, bool> _repoUpdateStatus;
 };
 
 class UninstallModuleWorker : public BaseWorker {

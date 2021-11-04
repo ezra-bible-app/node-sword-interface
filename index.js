@@ -104,7 +104,21 @@ class NodeSwordInterface {
    * initialized, the use of this function is optional. However, the cached repository configuration may not contain the latest information
    * if this function is not called.
    *
-   * This function works asynchronously and returns a Promise object.
+   * This function works asynchronously and returns a Promise object. The Promise delivers a detailed status object which contains one
+   * entry for each of the repositories of the master repo list as well as one result entry. This status object looks like this:
+   *  {
+   *   result: true,
+   *   'Bible.org': true,
+   *   'CrossWire': true,
+   *   'CrossWire Attic': true,
+   *   'CrossWire Beta': true,
+   *   'CrossWire Wycliffe': true,
+   *   'Deutsche Bibelgesellschaft': true,
+   *   'IBT': true,
+   *   'Lockman Foundation': true,
+   *   'Xiphos': true,
+   *   'eBible.org': true
+   *  }
    *
    * @param {Function} progressCB - Optional callback function that is called on progress events.
    * @return {Promise}
@@ -115,12 +129,8 @@ class NodeSwordInterface {
         progressCB = function(progress) {};
       }
 
-      this.nativeInterface.updateRepositoryConfig(true, progressCB, function(updateSuccessful) {
-        if (updateSuccessful) {
-          resolve(0);
-        } else {
-          reject(-1);
-        }
+      this.nativeInterface.updateRepositoryConfig(true, progressCB, function(repoUpdateStatus) {
+        resolve(repoUpdateStatus);
       });
     });
   }

@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 #include <future>
 
 #include "common_defs.hpp"
@@ -45,7 +46,7 @@ public:
     void resetMgr();
 
     int refreshRepositoryConfig();
-    int refreshRemoteSources(bool force=false, std::function<void(unsigned int progress)>* progressCallback=0);
+    int refreshRemoteSources(bool force=false, std::map<std::string, bool>* repoUpdateStatus=0, std::function<void(unsigned int progress)>* progressCallback=0);
 
     std::vector<std::string> getRepoNames();
     sword::SWModule* getRepoModule(std::string moduleName, std::string repoName="all");
