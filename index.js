@@ -459,20 +459,33 @@ class NodeSwordInterface {
    * @param {String} searchTerm - The term to search for.
    * @param {Function} progressCB - Optional callback function that is called on progress events.
    * @param {String} searchType - Options: phrase, multiWord, strongsNumber
+   * @param {String} searchScope - Options: BIBLE, OT, NT
    * @param {Boolean} isCaseSensitive - Whether the search is case sensitive
    * @param {Boolean} useExtendedVerseBoundaries - Whether the search should use extended verse boundaries (Two verses instead of one) in case of a multi word search.
    * @return {Promise}
    */
-  getModuleSearchResults(moduleCode, searchTerm, progressCB=undefined, searchType="phrase", isCaseSensitive=false, useExtendedVerseBoundaries=false) {
+  getModuleSearchResults(moduleCode,
+                         searchTerm,
+                         progressCB=undefined,
+                         searchType="phrase",
+                         searchScope="BIBLE",
+                         isCaseSensitive=false,
+                         useExtendedVerseBoundaries=false) {
+
     if (progressCB === undefined) {
       progressCB = function(progress) {};
     }
 
     return new Promise((resolve, reject) => {
       try {
-        this.nativeInterface.getModuleSearchResults(moduleCode, searchTerm, searchType, isCaseSensitive, useExtendedVerseBoundaries, progressCB, function(searchResults) {
-          resolve(searchResults);
-        });
+        this.nativeInterface.getModuleSearchResults(moduleCode,
+                                                    searchTerm,
+                                                    searchType,
+                                                    searchScope,
+                                                    isCaseSensitive,
+                                                    useExtendedVerseBoundaries,
+                                                    progressCB,
+                                                    function(searchResults) { resolve(searchResults); });
       } catch (error) {
         reject(error);
       }

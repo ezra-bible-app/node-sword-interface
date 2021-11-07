@@ -50,17 +50,52 @@
 using namespace std;
 using namespace sword;
 
+ListKey ModuleSearch::getScopeKey(SearchScope scope)
+{
+    ListKey key;
+
+    switch (scope) {
+        case SearchScope::OT:
+        {
+            const char* otBooks = "Genesis;Exodus;Leviticus;Numbers;Joshua;Judges;"
+                                  "Ruth;I Samuel;II Samuel;I Kings;II Kings;I Chronicles;II Chronicles;"
+                                  "Ezra;Nehemiah;Esther;Job;Psalms;Proverbs;Ecclesiastes;Song of Solomon;"
+                                  "Isaiah;Jeremiah;Lamentations;Ezekiel;Daniel;Hosea;Joel;Amos;Obadiah;"
+                                  "Jonah;Micah;Nahum;Habakkuk;Zephaniah;Haggai;Zechariah;Malachi;";
+
+            key = VerseKey().parseVerseList(otBooks, "", true);
+            break;
+        }
+        
+        case SearchScope::NT:
+        {
+            const char* ntBooks = "Matthew;Mark;Luke;John;Acts;Romans;I Corinthians;II Corinthians;"
+                                  "Galatians;Ephesians;Philippians;Colossians;I Thessalonians;II Thessalonians;"
+                                  "I Timothy;II Timothy;Titus;Philemon;Hebrews;James;I Peter;II Peter;"
+                                  "I John;II John;III John;Jude;Revelation of John;";
+
+            key = VerseKey().parseVerseList(ntBooks, "", true);
+            break;
+        }
+        
+        default:
+            break;
+    }
+
+    return key;
+}
 
 vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
                                                    string searchTerm,
                                                    SearchType searchType,
+                                                   SearchScope searchScope,
                                                    bool isCaseSensitive,
                                                    bool useExtendedVerseBoundaries)
 {
     this->_currentModuleName = moduleName;
     SWModule* module = this->_moduleStore.getLocalModule(moduleName);
     ListKey listKey;
-    ListKey* scope = 0;
+    SWKey* scope = 0;
     int flags = 0;
     // This holds the text that we will return
     vector<Verse> searchResults;
@@ -81,6 +116,13 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
     } else if (searchTerm == "") {
         cerr << "ModuleSearch::getModuleSearchResults: cannot work with empty search term!" << endl;
     } else {
+        ListKey scopeKey;
+
+        if (searchScope != SearchScope::BIBLE) {
+            scopeKey = this->getScopeKey(searchScope);
+            scope = &scopeKey;
+        }
+
         bool hasStrongs = this->_moduleHelper.moduleHasGlobalOption(module, "Strongs");
 
         if (searchType == SearchType::strongsNumber) {

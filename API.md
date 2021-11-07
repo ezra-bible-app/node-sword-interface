@@ -61,7 +61,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookIntroduction(moduleCode, bookCode)](#NodeSwordInterface+getBookIntroduction) ⇒ <code>String</code>
     * [.moduleHasBook(moduleCode, bookCode)](#NodeSwordInterface+moduleHasBook) ⇒ <code>Boolean</code>
-    * [.getModuleSearchResults(moduleCode, searchTerm, progressCB, searchType, isCaseSensitive, useExtendedVerseBoundaries)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
+    * [.getModuleSearchResults(moduleCode, searchTerm, progressCB, searchType, searchScope, isCaseSensitive, useExtendedVerseBoundaries)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
     * [.terminateModuleSearch()](#NodeSwordInterface+terminateModuleSearch)
     * [.hebrewStrongsAvailable()](#NodeSwordInterface+hebrewStrongsAvailable) ⇒ <code>Boolean</code>
     * [.greekStrongsAvailable()](#NodeSwordInterface+greekStrongsAvailable) ⇒ <code>Boolean</code>
@@ -447,7 +447,7 @@ Checks whether a module has a certain book
 
 <a name="NodeSwordInterface+getModuleSearchResults"></a>
 
-### nodeSwordInterface.getModuleSearchResults(moduleCode, searchTerm, progressCB, searchType, isCaseSensitive, useExtendedVerseBoundaries) ⇒ <code>Promise</code>
+### nodeSwordInterface.getModuleSearchResults(moduleCode, searchTerm, progressCB, searchType, searchScope, isCaseSensitive, useExtendedVerseBoundaries) ⇒ <code>Promise</code>
 Returns the results of a module search.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
@@ -458,6 +458,7 @@ Returns the results of a module search.
 | searchTerm | <code>String</code> |  | The term to search for. |
 | progressCB | <code>function</code> |  | Optional callback function that is called on progress events. |
 | searchType | <code>String</code> | <code>phrase</code> | Options: phrase, multiWord, strongsNumber |
+| searchScope | <code>String</code> | <code>BIBLE</code> | Options: BIBLE, OT, NT |
 | isCaseSensitive | <code>Boolean</code> | <code>false</code> | Whether the search is case sensitive |
 | useExtendedVerseBoundaries | <code>Boolean</code> | <code>false</code> | Whether the search should use extended verse boundaries (Two verses instead of one) in case of a multi word search. |
 

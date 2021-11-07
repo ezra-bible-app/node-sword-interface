@@ -197,7 +197,7 @@ int main(int argc, char** argv)
 
     //get_strongs_entry(textProcessor);
 
-    get_module_text(textProcessor);
+    //get_module_text(textProcessor);
 
     //get_book_intro(textProcessor);
 
@@ -206,11 +206,11 @@ int main(int argc, char** argv)
     //string translation = sword_facade.getSwordTranslation(string("/usr/share/sword/locales.d"), string("de"), string("locales"));
     //cout << translation << endl;
 
-    /*vector<Verse> searchResults = moduleSearch.getModuleSearchResults("NASB", "Jesus faith", SearchType::multiWord, false, true);
+    vector<Verse> searchResults = moduleSearch.getModuleSearchResults("NASB", "faith", SearchType::multiWord, SearchScope::NT, true);
     cout << "Got " << searchResults.size() << " results!" << endl;
     for (unsigned int i=0; i < searchResults.size(); i++) {
         cout << searchResults[i].reference << endl;
-    }*/
+    }
 
     return 0;
 }

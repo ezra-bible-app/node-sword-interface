@@ -36,6 +36,7 @@ public:
                        std::string moduleName,
                        std::string searchTerm,
                        SearchType searchType,
+                       SearchScope searchScope,
                        bool isCaseSensitive=false,
                        bool useExtendedVerseBoundaries=false)
 
@@ -45,6 +46,7 @@ public:
         _moduleName(moduleName),
         _searchTerm(searchTerm),
         _searchType(searchType),
+        _searchScope(searchScope),
         _isCaseSensitive(isCaseSensitive),
         _useExtendedVerseBoundaries(useExtendedVerseBoundaries),
         _searchTerminated(false) {
@@ -66,6 +68,7 @@ private:
     std::string _moduleName;
     std::string _searchTerm;
     SearchType _searchType;
+    SearchScope _searchScope;
     bool _isCaseSensitive;
     bool _useExtendedVerseBoundaries;
     bool _searchTerminated;

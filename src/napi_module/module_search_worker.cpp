@@ -35,6 +35,7 @@ void ModuleSearchWorker::Execute(const ExecutionProgress& progress)
     this->_stdSearchResults = this->_moduleSearch.getModuleSearchResults(this->_moduleName,
                                                                          this->_searchTerm,
                                                                          this->_searchType,
+                                                                         this->_searchScope,
                                                                          this->_isCaseSensitive,
                                                                          this->_useExtendedVerseBoundaries);
     

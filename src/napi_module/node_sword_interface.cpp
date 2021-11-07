@@ -695,6 +695,7 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
     INIT_SCOPE_AND_VALIDATE(ParamType::string, // moduleName
                             ParamType::string, // searchTerm
                             ParamType::string, // searchType
+                            ParamType::string, // searchScope
                             ParamType::boolean, // isCaseSensitive
                             ParamType::boolean, // useExtendedVerseBoundaries
                             ParamType::function, // progressCallback
@@ -703,10 +704,11 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String searchTerm = info[1].As<Napi::String>();
     string searchTypeString = string(info[2].As<Napi::String>());
-    Napi::Boolean isCaseSensitive = info[3].As<Napi::Boolean>();
-    Napi::Boolean useExtendedVerseBoundaries = info[4].As<Napi::Boolean>();
-    Napi::Function jsProgressCallback = info[5].As<Napi::Function>();
-    Napi::Function callback = info[6].As<Napi::Function>();
+    string searchScopeString = string(info[3].As<Napi::String>());
+    Napi::Boolean isCaseSensitive = info[4].As<Napi::Boolean>();
+    Napi::Boolean useExtendedVerseBoundaries = info[5].As<Napi::Boolean>();
+    Napi::Function jsProgressCallback = info[6].As<Napi::Function>();
+    Napi::Function callback = info[7].As<Napi::Function>();
     SearchType searchType = SearchType::multiWord;
     
     if (searchTypeString == "phrase") {
@@ -725,6 +727,18 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
         }
     }
 
+    SearchScope searchScope = SearchScope::BIBLE;
+
+    if (searchScopeString == "BIBLE") {
+        searchScope = SearchScope::BIBLE;
+    } else if (searchScopeString == "OT") {
+        searchScope = SearchScope::OT;
+    } else if (searchScopeString == "NT") {
+        searchScope = SearchScope::NT;
+    } else {
+        THROW_JS_EXCEPTION("Unknown search scope!");
+    }
+
     this->_currentModuleSearchWorker = new ModuleSearchWorker(*(this->_moduleHelper),
                                                               *(this->_moduleSearch),
                                                               *(this->_moduleStore),
@@ -735,6 +749,7 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
                                                               moduleName,
                                                               searchTerm,
                                                               searchType,
+                                                              searchScope,
                                                               isCaseSensitive,
                                                               useExtendedVerseBoundaries);
     this->_currentModuleSearchWorker->Queue();

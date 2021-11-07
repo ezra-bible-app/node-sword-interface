@@ -29,12 +29,19 @@ void internalModuleSearchProgressCB(char percent, void* userData);
 
 namespace sword {
     class SWModule;
+    class ListKey;
 };
 
 enum class SearchType {
     phrase = -1,
     multiWord = -2,
     strongsNumber = -3
+};
+
+enum class SearchScope {
+    BIBLE = 0,
+    OT = 1,
+    NT = 2
 };
 
 class ModuleStore;
@@ -51,12 +58,15 @@ public:
     std::vector<Verse> getModuleSearchResults(std::string moduleName,
                                               std::string searchTerm,
                                               SearchType searchType=SearchType::multiWord,
+                                              SearchScope searchScope=SearchScope::BIBLE,
                                               bool isCaseSensitive=false,
                                               bool useExtendedVerseBoundaries=false);
     
     void terminate();
 
 private:
+    sword::ListKey getScopeKey(SearchScope scope);
+
     ModuleStore& _moduleStore;
     ModuleHelper& _moduleHelper;
     TextProcessor& _textProcessor;
