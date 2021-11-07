@@ -67,6 +67,9 @@ void RepositoryInterface::resetMgr()
 
     this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), &this->_statusReporter);
     this->_installMgr->setUserDisclaimerConfirmed(true);
+
+    long timeoutMillis = 20000;
+    this->_installMgr->setTimeoutMillis(timeoutMillis);
 }
 
 int RepositoryInterface::refreshRepositoryConfig()
