@@ -82,6 +82,13 @@ void FileSystemHelper::createBasicDirectories()
     #endif
 #endif
 
+    if (!this->fileExists(this->getUserDir())) {
+      ret = this->makeDirectory(this->getUserDir());
+      if (ret != 0) {
+        cerr << "Failed to create user dir at " << this->getUserDir() << endl;
+      }
+    }
+
     if (!this->fileExists(this->getUserSwordDir())) {
         ret = this->makeDirectory(this->getUserSwordDir());
         if (ret != 0) {
