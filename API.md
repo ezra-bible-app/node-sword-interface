@@ -73,6 +73,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getSwordTranslation(originalString, localeCode)](#NodeSwordInterface+getSwordTranslation)
     * [.getBookAbbreviation(moduleName, bookCode, localeCode)](#NodeSwordInterface+getBookAbbreviation)
     * [.getSwordVersion()](#NodeSwordInterface+getSwordVersion) ⇒ <code>String</code>
+    * [.getSwordPath()](#NodeSwordInterface+getSwordPath) ⇒ <code>String</code>
 
 <a name="NodeSwordInterface+repositoryConfigExisting"></a>
 
@@ -564,6 +565,13 @@ Returns the version of the SWORD library
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 **Returns**: <code>String</code> - SWORD library version.  
+<a name="NodeSwordInterface+getSwordPath"></a>
+
+### nodeSwordInterface.getSwordPath() ⇒ <code>String</code>
+Returns the platform-specific path where SWORD accesses and stores its modules.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: <code>String</code> - Platform-specific SWORD path.  
 <a name="VerseObject"></a>
 
 ## VerseObject : <code>Object</code>

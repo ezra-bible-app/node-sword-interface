@@ -111,7 +111,8 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("isModuleReadable", &NodeSwordInterface::isModuleReadable),
         InstanceMethod("getSwordTranslation", &NodeSwordInterface::getSwordTranslation),
         InstanceMethod("getBookAbbreviation", &NodeSwordInterface::getBookAbbreviation),
-        InstanceMethod("getSwordVersion", &NodeSwordInterface::getSwordVersion)
+        InstanceMethod("getSwordVersion", &NodeSwordInterface::getSwordVersion),
+        InstanceMethod("getSwordPath", &NodeSwordInterface::getSwordPath)
     });
 
     constructor = Napi::Persistent(func);
@@ -942,4 +943,16 @@ Napi::Value NodeSwordInterface::getSwordVersion(const Napi::CallbackInfo& info)
     Napi::String swVersion = Napi::String::New(env, version);
     unlockApi();
     return swVersion;
+}
+
+Napi::Value NodeSwordInterface::getSwordPath(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    FileSystemHelper fsHelper;
+    Napi::String swordPath = Napi::String::New(env, fsHelper.getUserSwordDir());
+    unlockApi();
+    return swordPath;
 }

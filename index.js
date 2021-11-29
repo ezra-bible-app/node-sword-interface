@@ -597,6 +597,14 @@ class NodeSwordInterface {
   getSwordVersion() {
     return this.nativeInterface.getSwordVersion();
   }
+
+  /**
+   * Returns the platform-specific path where SWORD accesses and stores its modules.
+   * @returns {String} Platform-specific SWORD path.
+   */
+  getSwordPath() {
+    return this.nativeInterface.getSwordPath();
+  }
 }
 
 module.exports = NodeSwordInterface;
