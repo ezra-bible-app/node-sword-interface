@@ -77,13 +77,12 @@ if [ "$1" = "--android" ] ; then
   -DCMAKE_BUILD_TYPE=Release \
   -DANDROID_ABI="$ANDROID_ABI" \
   -DNODYNCAST=1 \
-  -DSWORD_NO_ZLIB=Yes \
   ../sword
 else
   # macOS & Linux
 
   cd sword_build
-  cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 -DSWORD_NO_ZLIB=Yes ../sword
+  cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 ../sword
 fi
 
 make -j4 sword_static
