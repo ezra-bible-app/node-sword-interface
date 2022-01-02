@@ -1,7 +1,7 @@
 # node-sword-interface
 node-sword-interface is a [nodejs](https://nodejs.org) module that wraps the [SWORD library](http://www.crosswire.org/sword/) which gives access to Bible text modules and related ressources. It has been created for use within the [Ezra Bible App](https://github.com/ezra-bible-app/ezra-bible-app) Bible study software, but it can also be used for any other nodejs-based software that needs to interface with the SWORD library. node-sword-interface supports Bible modules and dictionary modules that are keyed with Strong's numbers. node-sword-interface works on Windows, macOS, Linux and Android (via [nodejs-mobile](https://code.janeasystems.com/nodejs-mobile)).
 
-The currently used SWORD version is SVN Rev. 3823 (1.9.0).
+The currently used SWORD version is SVN Rev. 3873 (1.9.x).
 
 ## Features
 
