@@ -114,6 +114,14 @@ void get_book_list(ModuleHelper& module_helper)
     }
 }
 
+void get_book_headers(TextProcessor& text_processor)
+{
+    vector<Verse> headerList = text_processor.getBookHeaderList("NASB", "John");
+    for (int i = 0; i < headerList.size(); i++) {
+        cout << headerList[i].content << endl;
+    }
+}
+
 void test_unlock_key(ModuleInstaller& module_installer, ModuleStore& module_store, TextProcessor& text_processor)
 {
     module_installer.uninstallModule("NA28");
@@ -206,11 +214,13 @@ int main(int argc, char** argv)
     //string translation = sword_facade.getSwordTranslation(string("/usr/share/sword/locales.d"), string("de"), string("locales"));
     //cout << translation << endl;
 
-    vector<Verse> searchResults = moduleSearch.getModuleSearchResults("NASB", "faith", SearchType::multiWord, SearchScope::NT, true);
+    /*vector<Verse> searchResults = moduleSearch.getModuleSearchResults("NASB", "faith", SearchType::multiWord, SearchScope::NT, true);
     cout << "Got " << searchResults.size() << " results!" << endl;
     for (unsigned int i=0; i < searchResults.size(); i++) {
         cout << searchResults[i].reference << endl;
-    }
+    }*/
+
+    get_book_headers(textProcessor);
 
     return 0;
 }
