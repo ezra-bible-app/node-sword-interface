@@ -60,7 +60,7 @@ private:
                                int verseCount=-1);
 
     std::string getCurrentChapterHeading(sword::SWModule* module);
-    std::string getFilteredText(const std::string& text, int chapter, bool hasStrongs=false, bool hasDuplicateClosingEndDivs=false);
+    std::string getFilteredText(const std::string& text, int chapter, int verseNr, bool hasStrongs=false, bool hasDuplicateClosingEndDivs=false);
     std::string replaceSpacesInStrongs(const std::string& text);
     unsigned int findAndReplaceAll(std::string & data, std::string toSearch, std::string replaceStr);
 

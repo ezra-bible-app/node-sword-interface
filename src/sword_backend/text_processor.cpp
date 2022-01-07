@@ -43,7 +43,7 @@ TextProcessor::TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelpe
     this->_rawMarkupEnabled = false;
 }
 
-string TextProcessor::getFilteredText(const string& text, int chapter, bool hasStrongs, bool hasDuplicateClosingEndDivs)
+string TextProcessor::getFilteredText(const string& text, int chapter, int verseNr, bool hasStrongs, bool hasDuplicateClosingEndDivs)
 {
     //static regex schlachterMarkupFilter = regex("<H.*> ");
     static string chapterFilter = "<chapter";
@@ -126,7 +126,8 @@ string TextProcessor::getFilteredText(const string& text, int chapter, bool hasS
 
     stringstream sectionTitleElement;
     sectionTitleElement << "<div class=\"sword-markup sword-section-title\" ";
-    sectionTitleElement << "chapter=\"" << chapter << "\"";
+    sectionTitleElement << "chapter=\"" << chapter << "\" ";
+    sectionTitleElement << "verse=\"" << verseNr << "\"";
     this->findAndReplaceAll(filteredText, titleStartElementFilter, sectionTitleElement.str());
     this->findAndReplaceAll(filteredText, divTitleElementFilter, sectionTitleElement.str());
 
@@ -181,7 +182,7 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module)
     string chapterHeading = "";
     VerseKey currentVerseKey = module->getKey();
     int currentChapter = currentVerseKey.getChapter();
-    int currentVerse = currentVerseKey.getVerse();
+    int currentVerseNr = currentVerseKey.getVerse();
 
     if (currentVerseKey.getVerse() == 1) { // X:1, set key to X:0
         // Include chapter/book/testament/module intros
@@ -201,10 +202,10 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module)
     if (this->_markupEnabled && !this->_rawMarkupEnabled) {
         // The chapter headings in the ISV are screwed up somehow for 1:1
         // Therefore we do not render chapter headings for the first verse of the book in this case.
-        if (currentChapter == 1 && currentVerse == 1 && currentModuleName == "ISV") {
+        if (currentChapter == 1 && currentVerseNr == 1 && currentModuleName == "ISV") {
             chapterHeading = "";
         } else {
-            chapterHeading = this->getFilteredText(chapterHeading, currentChapter);
+            chapterHeading = this->getFilteredText(chapterHeading, currentChapter, currentVerseNr);
         }
     }
 
@@ -219,12 +220,13 @@ string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStron
     if (this->_markupEnabled && !forceNoMarkup) {
         VerseKey currentVerseKey = module->getKey();
         int currentChapter = currentVerseKey.getChapter();
+        int currentVerseNr = currentVerseKey.getVerse();
         verseText = string(module->getRawEntry());
         StringHelper::trim(verseText);
         filteredText = verseText;
 
         if (!this->_rawMarkupEnabled) {
-            filteredText = this->getFilteredText(verseText, currentChapter, hasStrongs, hasDuplicateClosingEndDivs);
+            filteredText = this->getFilteredText(verseText, currentChapter, currentVerseNr, hasStrongs, hasDuplicateClosingEndDivs);
         }
     } else {
         verseText = string(module->stripText());
