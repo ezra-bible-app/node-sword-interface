@@ -70,6 +70,8 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     static string quoteElementFilter = "<q ";
     static string titleStartElementFilter = "<title";
     static string titleEndElementFilter = "</title>";
+    static string segStartElementFilter = "<seg>";
+    static string segEndElementFilter = "</seg>";
     static string divTitleElementFilter = "<div class=\"title\"";
     static string secHeadClassFilter = "class=\"sechead\"";
     static string divMilestoneFilter = "<div type=\"x-milestone\"";
@@ -137,6 +139,8 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     this->findAndReplaceAll(filteredText, secHeadClassFilter, secHead.str());
 
     this->findAndReplaceAll(filteredText, titleEndElementFilter, "</div>");
+    this->findAndReplaceAll(filteredText, segStartElementFilter, "");
+    this->findAndReplaceAll(filteredText, segEndElementFilter, "");
     this->findAndReplaceAll(filteredText, divMilestoneFilter, "<div class=\"sword-markup sword-x-milestone\"");
     this->findAndReplaceAll(filteredText, milestoneFilter, "<div class=\"sword-markup sword-milestone\"");
     this->findAndReplaceAll(filteredText, xBrFilter, "x-br\"/> ");
