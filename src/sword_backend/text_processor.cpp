@@ -430,12 +430,13 @@ string TextProcessor::getBookIntroduction(string moduleName, string bookCode)
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
-        VerseKey verseKey(bookCode.c_str());
+        module->setKeyText(bookCode.c_str());
+        VerseKey *verseKey = (VerseKey *)module->getKey();
 
         // Include chapter/book/testament/module intros
-        verseKey.setIntros(true);
-        verseKey.setChapter(0);
-        verseKey.setVerse(0);
+        verseKey->setIntros(true);
+        verseKey->setChapter(0);
+        verseKey->setVerse(0);
         module->setKey(verseKey);
 
         bookIntroText = string(module->getRawEntry());
