@@ -70,14 +70,25 @@ bool ModuleHelper::moduleHasKeyValuePair(sword::SWModule* module, std::string ke
 
 bool ModuleHelper::moduleHasBook(sword::SWModule* module, std::string bookCode)
 {
-    bool hasBook;
+    bool hasBook = true;
     stringstream key;
     key << bookCode;
     key << " 1:1";
 
     module->setKey(key.str().c_str());
-    hasBook = module->hasEntry(module->getKey());
-    
+    string moduleKeyText = string(module->getKey()->getShortText());
+
+    /* In case of apocryphal books the hasEntry method below is not enough.
+       Once we have set the key we need to compare the actual module key with the key we wanted to set.
+       For apocryphal books we may get "Rev 1:1" as actual module key and this will mismatch with the set key
+       and then indicate that the book is not existing. */
+
+    if (moduleKeyText != key.str()) {
+        hasBook = false;
+    } else {
+        hasBook = module->hasEntry(module->getKey());
+    }
+
     return hasBook;
 }
 
