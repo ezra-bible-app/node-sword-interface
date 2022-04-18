@@ -50,9 +50,16 @@
 using namespace std;
 using namespace sword;
 
-ListKey ModuleSearch::getScopeKey(SearchScope scope)
+ListKey ModuleSearch::getScopeKey(SWModule* module, SearchScope scope)
 {
     ListKey key;
+
+    if (module == 0) {
+      cerr << "ModuleSearch::getScopeKey / received 0 pointer for module!!!";
+      return key;
+    }
+
+    VerseKey verseKey = module->getKey();
 
     switch (scope) {
         case SearchScope::OT:
@@ -63,7 +70,7 @@ ListKey ModuleSearch::getScopeKey(SearchScope scope)
                                   "Isaiah;Jeremiah;Lamentations;Ezekiel;Daniel;Hosea;Joel;Amos;Obadiah;"
                                   "Jonah;Micah;Nahum;Habakkuk;Zephaniah;Haggai;Zechariah;Malachi;";
 
-            key = VerseKey().parseVerseList(otBooks, "", true);
+            key = verseKey.parseVerseList(otBooks, "", true);
             break;
         }
         
@@ -74,7 +81,7 @@ ListKey ModuleSearch::getScopeKey(SearchScope scope)
                                   "I Timothy;II Timothy;Titus;Philemon;Hebrews;James;I Peter;II Peter;"
                                   "I John;II John;III John;Jude;Revelation of John;";
 
-            key = VerseKey().parseVerseList(ntBooks, "", true);
+            key = verseKey.parseVerseList(ntBooks, "", true);
             break;
         }
         
@@ -119,7 +126,7 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
         ListKey scopeKey;
 
         if (searchScope != SearchScope::BIBLE) {
-            scopeKey = this->getScopeKey(searchScope);
+            scopeKey = this->getScopeKey(module, searchScope);
             scope = &scopeKey;
         }
 

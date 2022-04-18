@@ -65,7 +65,7 @@ public:
     void terminate();
 
 private:
-    sword::ListKey getScopeKey(SearchScope scope);
+    sword::ListKey getScopeKey(sword::SWModule* module, SearchScope scope);
 
     ModuleStore& _moduleStore;
     ModuleHelper& _moduleHelper;
