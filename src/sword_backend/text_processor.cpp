@@ -138,6 +138,14 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     secHead << "chapter=\"" << chapter << "\"";
     this->findAndReplaceAll(filteredText, secHeadClassFilter, secHead.str());
 
+    if (filteredText.find("subType=\"x-Chapter") != string::npos ||
+        filteredText.find("type=\"chapter") != string::npos) {
+
+      static string swordSectionTitle = "sword-section-title";
+      static string swordSectionTitleChapter = "sword-section-title sword-chapter-title";
+      this->findAndReplaceAll(filteredText, swordSectionTitle, swordSectionTitleChapter);
+    }
+
     this->findAndReplaceAll(filteredText, titleEndElementFilter, "</div>");
     this->findAndReplaceAll(filteredText, segStartElementFilter, "");
     this->findAndReplaceAll(filteredText, segEndElementFilter, "");
