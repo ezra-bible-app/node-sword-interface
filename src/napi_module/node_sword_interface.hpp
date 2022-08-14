@@ -112,6 +112,8 @@ private:
     SwordTranslationHelper* _swordTranslationHelper;
     SwordStatusReporter _swordStatusReporter;
     ModuleSearchWorker* _currentModuleSearchWorker;
+
+    std::string customHomeDir;
 };
 
 #endif // _NODE_SWORD_INTERFACE

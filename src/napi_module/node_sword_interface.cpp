@@ -142,9 +142,9 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    std::string customHomeDir = "";
     std::string localeDir = "";
-    FileSystemHelper fsHelper;
+    this->customHomeDir = "";
+
     bool homeDirError = false;
     bool localeDirError = false;
 
@@ -153,9 +153,9 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     this->_currentModuleSearchWorker = 0;
 
     if (info[0].IsString()) {
-        customHomeDir = string(info[0].As<Napi::String>());
+        this->customHomeDir = string(info[0].As<Napi::String>());
 
-        if (!this->dirExists(info, customHomeDir)) {
+        if (!this->dirExists(info, this->customHomeDir)) {
             homeDirError = true;
         }
     }
@@ -171,10 +171,10 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     }
 
     if (!homeDirError && !localeDirError) { // We only proceed if there has not been any issue with the homeDir or localeDir
-        this->_moduleStore = new ModuleStore(customHomeDir);
+        this->_moduleStore = new ModuleStore(this->customHomeDir);
         this->_moduleHelper = new ModuleHelper(*(this->_moduleStore));
-        this->_repoInterface = new RepositoryInterface(this->_swordStatusReporter, *(this->_moduleHelper), customHomeDir);
-        this->_moduleInstaller = new ModuleInstaller(*(this->_repoInterface), *(this->_moduleStore), customHomeDir);
+        this->_repoInterface = new RepositoryInterface(this->_swordStatusReporter, *(this->_moduleHelper), this->customHomeDir);
+        this->_moduleInstaller = new ModuleInstaller(*(this->_repoInterface), *(this->_moduleStore), this->customHomeDir);
         this->_napiSwordHelper = new NapiSwordHelper(*(this->_moduleHelper), *(this->_moduleStore));
         this->_textProcessor = new TextProcessor(*(this->_moduleStore), *(this->_moduleHelper));
         this->_moduleSearch = new ModuleSearch(*(this->_moduleStore), *(this->_moduleHelper), *(this->_textProcessor));
@@ -952,6 +952,10 @@ Napi::Value NodeSwordInterface::getSwordPath(const Napi::CallbackInfo& info)
     Napi::HandleScope scope(env);
 
     FileSystemHelper fsHelper;
+    if (this->customHomeDir != "") {
+      fsHelper.setCustomHomeDir(customHomeDir);
+    }
+
     Napi::String swordPath = Napi::String::New(env, fsHelper.getUserSwordDir());
     unlockApi();
     return swordPath;
