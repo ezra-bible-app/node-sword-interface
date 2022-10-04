@@ -101,7 +101,7 @@ These installation instructions are working on Debian/Ubuntu based Linux distrib
 
 To install the dependencies issue the following command on a Debian/Ubuntu based distribution:
     
-    sudo apt-get install build-essential nodejs npm libcurl4-gnutls-dev libicu-dev pkg-config cmake
+    sudo apt-get install build-essential nodejs npm libcurl4-gnutls-dev libicu-dev zlib1g-dev pkg-config cmake subversion
 
 #### Install dependencies on macOS
 
