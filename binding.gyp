@@ -70,7 +70,7 @@
             "src/napi_module/module_search_worker.cpp",
             "src/napi_module/napi_sword_helper.cpp",
             "src/napi_module/node_sword_interface.cpp",
-            "src/napi_module/api_lock.cpp",            
+            "src/napi_module/api_lock.cpp",
             "src/napi_module/binding.cpp"
         ],
         "conditions":[
@@ -113,10 +113,7 @@
                 "libraries": [
                     '<(module_root_dir)/sword_build/libsword.a',
                     '<!@(pkg-config --libs libcurl)',
-                    '/usr/local/opt/icu4c/lib/libicudata.a',
-                    '/usr/local/opt/icu4c/lib/libicuuc.a',
-                    '/usr/local/opt/icu4c/lib/libicui18n.a',
-                    '/usr/local/opt/icu4c/lib/libicuio.a'
+                    '<!@(PKG_CONFIG_PATH="/opt/homebrew/opt/icu4c/lib/pkgconfig" pkg-config --libs icu-uc icu-io icu-i18n)'
                 ],
                 "dependencies": [
                     "<!(node -p \"require('node-addon-api').gyp\")",
@@ -147,7 +144,7 @@
                 ],
                 'defines': [ 'SWUSINGDLL' ]
             }]
-        ], 
+        ],
         'dependencies': [
             "<!(node -p \"require('node-addon-api').gyp\")"
         ],
