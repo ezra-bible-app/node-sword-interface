@@ -86,6 +86,18 @@ void get_repo_module(RepositoryInterface& repoInterface)
     }
 }
 
+void get_updated_repo_modules(RepositoryInterface& repoInterface)
+{
+    ModuleStore moduleStore;
+    ModuleHelper moduleHelper(moduleStore);
+
+    vector<SWModule*> updatedModules = repoInterface.getUpdatedRepoModules();
+
+    for (int i = 0; i < updatedModules.size(); i++) {
+        cout << updatedModules[i]->getName() << " : " << updatedModules[i]->getConfigEntry("Version") << endl;
+    }
+}
+
 void get_module_text(TextProcessor& text_processor)
 {
     cout << "Text:" << endl;
@@ -162,7 +174,7 @@ int main(int argc, char** argv)
     ModuleStore moduleStore;
     ModuleHelper moduleHelper(moduleStore);
     SwordStatusReporter statusReporter;
-    RepositoryInterface repoInterface(statusReporter, moduleHelper);
+    RepositoryInterface repoInterface(statusReporter, moduleHelper, moduleStore);
     ModuleInstaller moduleInstaller(repoInterface, moduleStore);
     TextProcessor textProcessor(moduleStore, moduleHelper);
     ModuleSearch moduleSearch(moduleStore, moduleHelper, textProcessor);
@@ -214,13 +226,15 @@ int main(int argc, char** argv)
     //string translation = sword_facade.getSwordTranslation(string("/usr/share/sword/locales.d"), string("de"), string("locales"));
     //cout << translation << endl;
 
-    /*vector<Verse> searchResults = moduleSearch.getModuleSearchResults("NASB", "faith", SearchType::multiWord, SearchScope::NT, true);
+    /*vector<Verse> searchResults = moduleSearch.getModuleSearchResults("GerNeUe", "Glaube", SearchType::multiWord, SearchScope::NT, true);
     cout << "Got " << searchResults.size() << " results!" << endl;
     for (unsigned int i=0; i < searchResults.size(); i++) {
         cout << searchResults[i].reference << endl;
     }*/
 
-    get_book_headers(textProcessor);
+    get_updated_repo_modules(repoInterface);
+
+    /*get_book_headers(textProcessor);*/
 
     return 0;
 }

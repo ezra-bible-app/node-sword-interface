@@ -78,6 +78,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getRepoNames", &NodeSwordInterface::getRepoNames),
         InstanceMethod("getAllRepoModules", &NodeSwordInterface::getAllRepoModules),
         InstanceMethod("getRepoModulesByLang", &NodeSwordInterface::getRepoModulesByLang),
+        InstanceMethod("getUpdatedRepoModules", &NodeSwordInterface::getUpdatedRepoModules),
         InstanceMethod("getAllLocalModules", &NodeSwordInterface::getAllLocalModules),
         InstanceMethod("isModuleInUserDir", &NodeSwordInterface::isModuleInUserDir),
         InstanceMethod("isModuleAvailableInRepo", &NodeSwordInterface::isModuleAvailableInRepo),
@@ -173,7 +174,7 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     if (!homeDirError && !localeDirError) { // We only proceed if there has not been any issue with the homeDir or localeDir
         this->_moduleStore = new ModuleStore(this->customHomeDir);
         this->_moduleHelper = new ModuleHelper(*(this->_moduleStore));
-        this->_repoInterface = new RepositoryInterface(this->_swordStatusReporter, *(this->_moduleHelper), this->customHomeDir);
+        this->_repoInterface = new RepositoryInterface(this->_swordStatusReporter, *(this->_moduleHelper), *(this->_moduleStore), this->customHomeDir);
         this->_moduleInstaller = new ModuleInstaller(*(this->_repoInterface), *(this->_moduleStore), this->customHomeDir);
         this->_napiSwordHelper = new NapiSwordHelper(*(this->_moduleHelper), *(this->_moduleStore));
         this->_textProcessor = new TextProcessor(*(this->_moduleStore), *(this->_moduleHelper));
@@ -377,6 +378,27 @@ Napi::Value NodeSwordInterface::getRepoModulesByLang(const Napi::CallbackInfo& i
         Napi::Object napiObject = Napi::Object::New(env);
         this->_napiSwordHelper->swordModuleToNapiObject(env, modules[i], napiObject);
         napiObject["repository"] = repoName;
+        moduleArray.Set(i, napiObject); 
+    }
+
+    unlockApi();
+    return moduleArray;
+}
+
+Napi::Value NodeSwordInterface::getUpdatedRepoModules(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    Napi::Env env = info.Env();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::boolean);
+    Napi::String repoName = info[0].As<Napi::String>();
+    Napi::Boolean includeBeta = info[1].As<Napi::Boolean>();
+
+    vector<SWModule*> modules = this->_repoInterface->getUpdatedRepoModules(repoName, includeBeta);
+    Napi::Array moduleArray = Napi::Array::New(env, modules.size());
+
+    for (unsigned int i = 0; i < modules.size(); i++) {
+        Napi::Object napiObject = Napi::Object::New(env);
+        this->_napiSwordHelper->swordModuleToNapiObject(env, modules[i], napiObject);
         moduleArray.Set(i, napiObject); 
     }
 

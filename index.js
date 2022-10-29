@@ -20,11 +20,11 @@ const path = require('path');
 const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.node');
 
 /**
-* An object representation of a bible verse.
+* An object representation of a Bible verse.
 * @typedef VerseObject
 * @type {Object}
 * @property {String} moduleCode - The name/code of the SWORD module
-* @property {String} bibleBookShortTitle - The short title of the verses's bible book
+* @property {String} bibleBookShortTitle - The short title of the verses's Bible book
 * @property {String} chapter - The chapter number
 * @property {String} verseNr - The verse number
 * @property {Number} absoluteVerseNr - The absolute number of the verse within the book (independent of chapters, starting from 1)
@@ -132,30 +132,30 @@ class NodeSwordInterface {
   }
 
   /**
-   * Returns the available languages for the modules from a given repository (default: bible modules).
+   * Returns the available languages for the modules from a given repository (default: Bible modules).
    * Note that the languages are returned as language codes.
    *
    * @param {String} repositoryName - The name of the given repository.
    * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
-   * @return {String[]} An array of strings with the languages codes for the bible modules from the given repository.
+   * @return {String[]} An array of strings with the languages codes for the Bible modules from the given repository.
    */
   getRepoLanguages(repositoryName, moduleType="BIBLE") {
     return this.nativeInterface.getRepoLanguages(repositoryName, moduleType);
   }
 
   /**
-   * Returns all modules for the given repository (default: bible modules).
+   * Returns all modules for the given repository (default: Bible modules).
    *
    * @param {String} repositoryName - The name of the given repository.
    * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
-   * @return {String[]} An array of strings with the module codes for the bible modules of the given repository.
+   * @return {String[]} An array of strings with the module codes for the Bible modules of the given repository.
    */
   getAllRepoModules(repositoryName, moduleType="BIBLE") {
     return this.nativeInterface.getAllRepoModules(repositoryName, moduleType);
   }
 
   /**
-   * Returns all bible modules for the given repository and language
+   * Returns all Bible modules for the given repository and language
    *
    * @param {String} repositoryName - The name of the given repository.
    * @param {String} language - The language code that shall be used as a filter.
@@ -171,6 +171,17 @@ class NodeSwordInterface {
   }
 
   /**
+   * Returns all updated modules from all repositories or one specific repository.
+   *  
+   * @param {String} repositoryName - The name of the repository from which updates shall retrieved. Default: 'all'
+   * @param {Boolean} includeBeta - Whether modules from the CrossWire Beta repository should also be included.
+   * @returns {ModuleObject[]} An array of module objects.
+   */
+  getUpdatedRepoModules(repositoryName="all", includeBeta=false) {
+    return this.nativeInterface.getUpdatedRepoModules(repositoryName, includeBeta);
+  }
+
+  /**
    * Returns an object representation of a SWORD module from a repository.
    *
    * @param {String} moduleCode - The module code of the SWORD module.
@@ -181,32 +192,32 @@ class NodeSwordInterface {
   }
 
   /**
-   * Returns all modules installed locally (default: bible modules).
+   * Returns all modules installed locally (default: Bible modules).
    * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
-   * @return {ModuleObject[]} An array of ModuleObjects which represents the locally installed bible modules.
+   * @return {ModuleObject[]} An array of ModuleObjects which represents the locally installed Bible modules.
    */
   getAllLocalModules(moduleType="BIBLE") {
     return this.nativeInterface.getAllLocalModules(moduleType);
   }
 
   /**
-   * Returns the number of modules for a given repository (default: bible modules).
+   * Returns the number of modules for a given repository (default: Bible modules).
    *
    * @param {String} repositoryName - The name of the given repository.
    * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
-   * @return {Number} The number of bible modules for the given repository and module type.
+   * @return {Number} The number of Bible modules for the given repository and module type.
    */
   getRepoModuleCount(repositoryName, moduleType="BIBLE") {
     return this.nativeInterface.getRepoModuleCount(repositoryName, moduleType);
   }
 
   /**
-   * Returns the number of modules for a given repository and language (default: bible modules).
+   * Returns the number of modules for a given repository and language (default: Bible modules).
    *
    * @param {String} repositoryName - The name of the given repository.
    * @param {String} language - The language code that shall be used as a filter.
    * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
-   * @return {Number} The number of bible modules for the given repository, language and module type.
+   * @return {Number} The number of Bible modules for the given repository, language and module type.
    */
   getRepoLanguageModuleCount(repositoryName, language, moduleType="BIBLE") {
     return this.nativeInterface.getRepoLanguageModuleCount(repositoryName, language, moduleType);
@@ -421,7 +432,7 @@ class NodeSwordInterface {
   }
 
   /**
-   * Returns the bible text of a module.
+   * Returns the Bible text of a module.
    *
    * @param {String} moduleCode - The module code of the SWORD module.
    * @return {VerseObject[]} An array of verse objects.

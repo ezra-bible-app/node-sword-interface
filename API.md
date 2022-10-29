@@ -10,7 +10,7 @@
 
 <dl>
 <dt><a href="#VerseObject">VerseObject</a> : <code>Object</code></dt>
-<dd><p>An object representation of a bible verse.</p>
+<dd><p>An object representation of a Bible verse.</p>
 </dd>
 <dt><a href="#ModuleObject">ModuleObject</a> : <code>Object</code></dt>
 <dd><p>An object representation of a SWORD module.</p>
@@ -37,6 +37,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getRepoLanguages(repositoryName, moduleType)](#NodeSwordInterface+getRepoLanguages) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getAllRepoModules(repositoryName, moduleType)](#NodeSwordInterface+getAllRepoModules) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoModulesByLang(repositoryName, language, moduleType, headersFilter, strongsFilter, hebrewStrongsKeys, greekStrongsKeys)](#NodeSwordInterface+getRepoModulesByLang) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
+    * [.getUpdatedRepoModules(repositoryName, includeBeta)](#NodeSwordInterface+getUpdatedRepoModules) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
     * [.getRepoModule(moduleCode)](#NodeSwordInterface+getRepoModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
     * [.getAllLocalModules(moduleType)](#NodeSwordInterface+getAllLocalModules) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
     * [.getRepoModuleCount(repositoryName, moduleType)](#NodeSwordInterface+getRepoModuleCount) ⇒ <code>Number</code>
@@ -111,11 +112,11 @@ Returns the names of all available SWORD repositories.
 <a name="NodeSwordInterface+getRepoLanguages"></a>
 
 ### nodeSwordInterface.getRepoLanguages(repositoryName, moduleType) ⇒ <code>Array.&lt;String&gt;</code>
-Returns the available languages for the modules from a given repository (default: bible modules).
+Returns the available languages for the modules from a given repository (default: Bible modules).
 Note that the languages are returned as language codes.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
-**Returns**: <code>Array.&lt;String&gt;</code> - An array of strings with the languages codes for the bible modules from the given repository.  
+**Returns**: <code>Array.&lt;String&gt;</code> - An array of strings with the languages codes for the Bible modules from the given repository.  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -125,10 +126,10 @@ Note that the languages are returned as language codes.
 <a name="NodeSwordInterface+getAllRepoModules"></a>
 
 ### nodeSwordInterface.getAllRepoModules(repositoryName, moduleType) ⇒ <code>Array.&lt;String&gt;</code>
-Returns all modules for the given repository (default: bible modules).
+Returns all modules for the given repository (default: Bible modules).
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
-**Returns**: <code>Array.&lt;String&gt;</code> - An array of strings with the module codes for the bible modules of the given repository.  
+**Returns**: <code>Array.&lt;String&gt;</code> - An array of strings with the module codes for the Bible modules of the given repository.  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -138,7 +139,7 @@ Returns all modules for the given repository (default: bible modules).
 <a name="NodeSwordInterface+getRepoModulesByLang"></a>
 
 ### nodeSwordInterface.getRepoModulesByLang(repositoryName, language, moduleType, headersFilter, strongsFilter, hebrewStrongsKeys, greekStrongsKeys) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
-Returns all bible modules for the given repository and language
+Returns all Bible modules for the given repository and language
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 **Returns**: [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject) - An array of module objects.  
@@ -152,6 +153,19 @@ Returns all bible modules for the given repository and language
 | strongsFilter | <code>Boolean</code> | <code>false</code> | Whether only modules with Strong's shall be returned. |
 | hebrewStrongsKeys | <code>Boolean</code> | <code>false</code> | Whether only modules with Hebrew Strong's keys shall be returned (only applies to dictionaries). |
 | greekStrongsKeys | <code>Boolean</code> | <code>false</code> | Whether only modules with Greek Strong's keys shall be returned (only applies to dictionaries). |
+
+<a name="NodeSwordInterface+getUpdatedRepoModules"></a>
+
+### nodeSwordInterface.getUpdatedRepoModules(repositoryName, includeBeta) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
+Returns all updated modules from all repositories or one specific repository.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject) - An array of module objects.  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| repositoryName | <code>String</code> | <code>all</code> | The name of the repository from which updates shall retrieved. Default: 'all' |
+| includeBeta | <code>Boolean</code> | <code>false</code> | Whether modules from the CrossWire Beta repository should also be included. |
 
 <a name="NodeSwordInterface+getRepoModule"></a>
 
@@ -167,10 +181,10 @@ Returns an object representation of a SWORD module from a repository.
 <a name="NodeSwordInterface+getAllLocalModules"></a>
 
 ### nodeSwordInterface.getAllLocalModules(moduleType) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
-Returns all modules installed locally (default: bible modules).
+Returns all modules installed locally (default: Bible modules).
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
-**Returns**: [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject) - An array of ModuleObjects which represents the locally installed bible modules.  
+**Returns**: [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject) - An array of ModuleObjects which represents the locally installed Bible modules.  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -179,10 +193,10 @@ Returns all modules installed locally (default: bible modules).
 <a name="NodeSwordInterface+getRepoModuleCount"></a>
 
 ### nodeSwordInterface.getRepoModuleCount(repositoryName, moduleType) ⇒ <code>Number</code>
-Returns the number of modules for a given repository (default: bible modules).
+Returns the number of modules for a given repository (default: Bible modules).
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
-**Returns**: <code>Number</code> - The number of bible modules for the given repository and module type.  
+**Returns**: <code>Number</code> - The number of Bible modules for the given repository and module type.  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -192,10 +206,10 @@ Returns the number of modules for a given repository (default: bible modules).
 <a name="NodeSwordInterface+getRepoLanguageModuleCount"></a>
 
 ### nodeSwordInterface.getRepoLanguageModuleCount(repositoryName, language, moduleType) ⇒ <code>Number</code>
-Returns the number of modules for a given repository and language (default: bible modules).
+Returns the number of modules for a given repository and language (default: Bible modules).
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
-**Returns**: <code>Number</code> - The number of bible modules for the given repository, language and module type.  
+**Returns**: <code>Number</code> - The number of Bible modules for the given repository, language and module type.  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -413,7 +427,7 @@ Returns the number of verses in the given chapter.
 <a name="NodeSwordInterface+getBibleText"></a>
 
 ### nodeSwordInterface.getBibleText(moduleCode) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
-Returns the bible text of a module.
+Returns the Bible text of a module.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 **Returns**: [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject) - An array of verse objects.  
@@ -575,7 +589,7 @@ Returns the platform-specific path where SWORD accesses and stores its modules.
 <a name="VerseObject"></a>
 
 ## VerseObject : <code>Object</code>
-An object representation of a bible verse.
+An object representation of a Bible verse.
 
 **Kind**: global typedef  
 **Properties**
@@ -583,7 +597,7 @@ An object representation of a bible verse.
 | Name | Type | Description |
 | --- | --- | --- |
 | moduleCode | <code>String</code> | The name/code of the SWORD module |
-| bibleBookShortTitle | <code>String</code> | The short title of the verses's bible book |
+| bibleBookShortTitle | <code>String</code> | The short title of the verses's Bible book |
 | chapter | <code>String</code> | The chapter number |
 | verseNr | <code>String</code> | The verse number |
 | absoluteVerseNr | <code>Number</code> | The absolute number of the verse within the book (independent of chapters, starting from 1) |

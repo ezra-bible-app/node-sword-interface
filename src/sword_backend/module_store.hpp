@@ -44,6 +44,8 @@ public:
 
     void refreshMgr();
     void deleteModule(std::string moduleName);
+
+    sword::SWMgr* getSwMgr();
     
 private:
     std::vector<std::string> getModuleLanguages(ModuleType moduleType=ModuleType::bible);

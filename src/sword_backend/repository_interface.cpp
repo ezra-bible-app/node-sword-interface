@@ -19,6 +19,7 @@
 // STD C++ includes
 #include <iostream>
 #include <sstream>
+#include <map>
 
 #ifdef __ANDROID__
 #include <sys/cdefs.h>
@@ -49,8 +50,11 @@ using namespace sword;
 
 static Mutex remoteSourceUpdateMutex;
 
-RepositoryInterface::RepositoryInterface(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper, string customHomeDir) 
-    : _statusReporter(statusReporter), _moduleHelper(moduleHelper)
+RepositoryInterface::RepositoryInterface(SwordStatusReporter& statusReporter,
+                                         ModuleHelper& moduleHelper,
+                                         ModuleStore& moduleStore,
+                                         string customHomeDir) 
+    : _statusReporter(statusReporter), _moduleHelper(moduleHelper), _moduleStore(moduleStore)
 {
     this->_fileSystemHelper.setCustomHomeDir(customHomeDir);
     this->resetMgr();
@@ -291,6 +295,44 @@ vector<SWModule*> RepositoryInterface::getRepoModulesByLang(string repoName,
     }
 
     return selectedLanguageModules;
+}
+
+vector<SWModule*> RepositoryInterface::getUpdatedRepoModules(string repoName, bool includeBeta)
+{
+    vector<string> repoNames = this->getRepoNames();
+    vector<SWModule*> updatedModules;
+    SWMgr* localMgr = this->_moduleStore.getSwMgr();
+
+    for (size_t i = 0; i < repoNames.size(); i++) {
+        string currentRepo = repoNames[i];
+        InstallSource* currentRemoteSource = this->getRemoteSource(currentRepo);
+
+        if (currentRepo == "CrossWire Beta" && !includeBeta) {
+            // Exclude modules from the beta repository unless explicitly requested.
+            continue;
+        }
+
+        if (repoName != "all") {
+            if (currentRepo != repoName) {
+                continue;
+            }
+        }
+
+        if (currentRemoteSource != 0) {
+            SWMgr* remoteMgr = currentRemoteSource->getMgr();
+            map<SWModule*, int> moduleStatusMap = this->_installMgr->getModuleStatus(*localMgr, *remoteMgr, false);
+
+            for (auto const& moduleStatus : moduleStatusMap) {
+                const unsigned int updateStatus = moduleStatus.second;
+
+                if (updateStatus == InstallMgr::MODSTAT_UPDATED) {
+                    updatedModules.push_back(moduleStatus.first);
+                }
+            }
+        }
+    }
+
+    return updatedModules;
 }
 
 unsigned int RepositoryInterface::getRepoModuleCount(string repoName, ModuleType moduleType)

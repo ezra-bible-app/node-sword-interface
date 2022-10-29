@@ -40,7 +40,11 @@ class ModuleHelper;
 
 class RepositoryInterface {
 public:
-    RepositoryInterface(SwordStatusReporter& statusReporter, ModuleHelper& moduleHelper, std::string customHomeDir="");
+    RepositoryInterface(SwordStatusReporter& statusReporter,
+                        ModuleHelper& moduleHelper,
+                        ModuleStore& moduleStore,
+                        std::string customHomeDir="");
+
     virtual ~RepositoryInterface(){}
 
     void resetMgr();
@@ -58,6 +62,7 @@ public:
                                                        bool strongsFilter=false,
                                                        bool hebrewStrongsKeys=false,
                                                        bool greekStrongsKeys=false);
+    std::vector<sword::SWModule*> getUpdatedRepoModules(std::string repoName="all", bool includeBeta=false);
     unsigned int getRepoModuleCount(std::string repoName, ModuleType moduleType=ModuleType::bible);
     std::vector<std::string> getRepoLanguages(std::string repoName, ModuleType moduleType=ModuleType::bible);
     unsigned int getRepoLanguageModuleCount(std::string repoName, std::string languageCode, ModuleType moduleType=ModuleType::bible);
@@ -106,6 +111,7 @@ private:
     SwordStatusReporter& _statusReporter;
     FileSystemHelper _fileSystemHelper;
     ModuleHelper& _moduleHelper;
+    ModuleStore& _moduleStore;
 };
 
 #endif // _REPOSITORY_INTERFACE

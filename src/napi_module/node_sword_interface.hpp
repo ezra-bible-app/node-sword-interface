@@ -55,6 +55,7 @@ private:
     Napi::Value getRepoNames(const Napi::CallbackInfo& info);
     Napi::Value getAllRepoModules(const Napi::CallbackInfo& info);
     Napi::Value getRepoModulesByLang(const Napi::CallbackInfo& info);
+    Napi::Value getUpdatedRepoModules(const Napi::CallbackInfo& info);
     Napi::Value getRepoLanguages(const Napi::CallbackInfo& info);
     Napi::Value getRepoModuleCount(const Napi::CallbackInfo& info);
     Napi::Value getRepoModule(const Napi::CallbackInfo& info);

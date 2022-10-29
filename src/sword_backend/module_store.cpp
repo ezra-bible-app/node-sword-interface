@@ -188,3 +188,8 @@ string ModuleStore::getModuleDataPath(sword::SWModule* module)
 
     return dataPath;
 }
+
+sword::SWMgr* ModuleStore::getSwMgr()
+{
+    return this->_mgr;
+}
