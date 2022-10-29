@@ -11,6 +11,7 @@ node-sword-interface focusses on discovery, installation/removal and text loadin
 - List SWORD repositories
 - List remote modules (Bible modules or dictionary modules)
 - List local modules (Bible modules or dictionary modules)
+- Get a list of updated modules
 - Install a module
 - Uninstall a module
 - Get information about a module
