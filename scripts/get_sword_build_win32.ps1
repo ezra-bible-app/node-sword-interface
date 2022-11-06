@@ -30,7 +30,7 @@ $AllProtocols = [System.Net.SecurityProtocolType]'Tls11,Tls12'
 [System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
 
 # --- Set the uri for the release
-$URI = "https://api.github.com/repos/ezra-project/sword-build-win32/releases/tags/v1.8.900-2022-01-02"
+$URI = "https://api.github.com/repos/ezra-bible-app/sword-build-win32/releases/tags/v1.8.900-2022-11-06"
 
 # --- Query the API to get the url of the zip
 $Response = Invoke-RestMethod -Method Get -Uri $URI
