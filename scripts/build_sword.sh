@@ -82,7 +82,7 @@ else
   # macOS & Linux
 
   cd sword_build
-  cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 ../sword
+  cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 -DCMAKE_BUILD_TYPE=Release ../sword
 fi
 
 make -j4 sword_static
