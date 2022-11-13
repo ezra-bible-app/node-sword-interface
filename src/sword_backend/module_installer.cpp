@@ -88,10 +88,9 @@ int ModuleInstaller::installModule(string repoName, string moduleName)
         this->resetAllMgrs();
 
         if (result != 0) {
-            //cerr << "Error installing module: " << moduleName << " (write permissions?)" << endl;
+            // cerr << "Error installing module: " << moduleName << " (write permissions?)" << endl;
             return result;
         } else {
-            //cout << "Installed module: " << moduleName << endl;
             return 0;
         }
     }
@@ -109,10 +108,9 @@ int ModuleInstaller::uninstallModule(string moduleName)
     this->_moduleStore.deleteModule(moduleName);
 
     if (error) {
-        cerr << "Error uninstalling module: " << moduleName << " (write permissions?)" << endl;
+        // cerr << "Error uninstalling module: " << moduleName << " (write permissions?)" << endl;
         return -1;
     } else {
-        cout << "Uninstalled module: " << moduleName << endl;
         return 0;
     }
 }
