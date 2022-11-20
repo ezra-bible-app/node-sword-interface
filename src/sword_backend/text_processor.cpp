@@ -68,6 +68,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     static string pbElementFilter = "<pb";
     static string quoteJesusElementFilter = "<q marker=\"\" who=\"Jesus\">";
     static string quoteElementFilter = "<q ";
+    static string quoteEndElementFilter = "</q>";
     static string titleStartElementFilter = "<title";
     static string titleEndElementFilter = "</title>";
     static string segStartElementFilter = "<seg>";
@@ -154,8 +155,9 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     this->findAndReplaceAll(filteredText, xBrFilter, "x-br\"/> ");
     this->findAndReplaceAll(filteredText, divSIDFilter, "<div class=\"sword-markup sword-sid\" sID=");
     this->findAndReplaceAll(filteredText, divEIDFilter, "<div class=\"sword-markup sword-eid\" eID=");
-    this->findAndReplaceAll(filteredText, quoteJesusElementFilter, "<div class=\"sword-markup sword-quote-jesus\"/>");
-    this->findAndReplaceAll(filteredText, quoteElementFilter, "&quot;<div class=\"sword-markup sword-quote\" ");
+    this->findAndReplaceAll(filteredText, quoteJesusElementFilter, "<div class=\"sword-markup sword-quote-jesus\">");
+    this->findAndReplaceAll(filteredText, quoteElementFilter, "<div class=\"sword-markup sword-quote\" ");
+    this->findAndReplaceAll(filteredText, quoteEndElementFilter, "</div>");
     this->findAndReplaceAll(filteredText, divineNameStartElement, "");
     this->findAndReplaceAll(filteredText, divineNameEndElement, "");
     this->findAndReplaceAll(filteredText, strongsWElement, "<w class=");
