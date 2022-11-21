@@ -187,7 +187,7 @@ int NodeSwordInterface::validateParams(const Napi::CallbackInfo& info, vector<Pa
     Napi::Env env = info.Env();
 
     if (info.Length() != paramSpec.size()) {
-        string paramCountError = "Expected " + to_string(paramSpec.size()) + " parameters, but got " += to_string(info.Length()) + "!";
+        string paramCountError = "Expected " + to_string(paramSpec.size()) + " parameters, but got " + to_string(info.Length()) + "!";
         Napi::TypeError::New(env, paramCountError).ThrowAsJavaScriptException();
         return -1;
     } else {
