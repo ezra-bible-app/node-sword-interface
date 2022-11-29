@@ -43,9 +43,8 @@ TextProcessor::TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelpe
     this->_rawMarkupEnabled = false;
 }
 
-string TextProcessor::getFilteredText(const string& text, int chapter, int verseNr, bool hasStrongs, bool hasDuplicateClosingEndDivs)
+string TextProcessor::getFilteredText(const string& text, int chapter, int verseNr, bool hasStrongs, bool hasInconsistentClosingEndDivs)
 {
-    //static regex schlachterMarkupFilter = regex("<H.*> ");
     static string chapterFilter = "<chapter";
     static regex pbElement = regex("<pb .*?/> ");
 
@@ -71,12 +70,10 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     static string quoteEndElementFilter = "</q>";
     static string titleStartElementFilter = "<title";
     static string titleEndElementFilter = "</title>";
-    static string segStartElementFilter = "<seg>";
     static string segEndElementFilter = "</seg>";
     static string divTitleElementFilter = "<div class=\"title\"";
     static string secHeadClassFilter = "class=\"sechead\"";
     static string divMilestoneFilter = "<div type=\"x-milestone\"";
-    static string milestoneFilter = "<milestone";
     static string xBrFilter = "x-br\"/>";
     static string divSIDFilter = "<div sID=";
     static string divEIDFilter = "<div eID=";
@@ -84,6 +81,8 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     static string divineNameEndElement = "</divineName>";
     static string strongsWElement = "<w lemma=";
 
+    static regex milestoneFilter = regex("<milestone.*?/>");
+    static regex segStartElementFilter = regex("<seg.*?>");
     static regex divSectionElementFilter = regex("<div type=\"section\".*?>");
     static regex selfClosingElement = regex("(<)([wdiv]{1,3}) ([\\w:=\"\\- ]*?)(/>)");
 
@@ -106,7 +105,6 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
         filteredText.replace(0, noteTypeVariant.length(), "");
     }
 
-    //filteredText = regex_replace(filteredText, schlachterMarkupFilter, "");
     this->findAndReplaceAll(filteredText, chapterFilter, "<chapter class=\"sword-markup sword-chapter\"");
     this->findAndReplaceAll(filteredText, lbBeginParagraph, "");
     this->findAndReplaceAll(filteredText, lbEndParagraph, "&nbsp;<div class=\"sword-markup sword-paragraph-end\"><br></div>");
@@ -125,6 +123,8 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     this->findAndReplaceAll(filteredText, rtxtStartElementFilter2, "<div class=\"sword-markup sword-rtxt\" rend=");
     this->findAndReplaceAll(filteredText, rtxtEndElementFilter, "</div>");
     this->findAndReplaceAll(filteredText, pbElementFilter, "<pb class=\"sword-markup sword-pb\"");
+    filteredText = regex_replace(filteredText, milestoneFilter, "");
+    filteredText = regex_replace(filteredText, segStartElementFilter, "");
     filteredText = regex_replace(filteredText, divSectionElementFilter, "");
 
     stringstream sectionTitleElement;
@@ -148,10 +148,8 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     }
 
     this->findAndReplaceAll(filteredText, titleEndElementFilter, "</div>");
-    this->findAndReplaceAll(filteredText, segStartElementFilter, "");
     this->findAndReplaceAll(filteredText, segEndElementFilter, "");
     this->findAndReplaceAll(filteredText, divMilestoneFilter, "<div class=\"sword-markup sword-x-milestone\"");
-    this->findAndReplaceAll(filteredText, milestoneFilter, "<div class=\"sword-markup sword-milestone\"");
     this->findAndReplaceAll(filteredText, xBrFilter, "x-br\"/> ");
     this->findAndReplaceAll(filteredText, divSIDFilter, "<div class=\"sword-markup sword-sid\" sID=");
     this->findAndReplaceAll(filteredText, divEIDFilter, "<div class=\"sword-markup sword-eid\" eID=");
@@ -171,15 +169,30 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     this->findAndReplaceAll(filteredText, semiColonWithoutSpace, "; <");
     this->findAndReplaceAll(filteredText, colonWithoutSpace, ": <");
 
-    if (hasDuplicateClosingEndDivs) {
+    if (hasInconsistentClosingEndDivs) {
         int numberOfOpeningDivs = StringHelper::numberOfSubstrings(filteredText, "<div");
         int numberOfClosingDivs = StringHelper::numberOfSubstrings(filteredText, "</div>");
 
-        // Remove the last closing div if the number of closing divs is higher than the number of opening divs
+        // Remove the last closing div(s) if the number of closing divs is higher than the number of opening divs
         if (numberOfClosingDivs > numberOfOpeningDivs) {
             const string closingDiv = "</div>";
-            size_t lastClosingDivOffset = filteredText.rfind(closingDiv);
-            filteredText.replace(lastClosingDivOffset, closingDiv.length(), "");
+            unsigned int diff = numberOfClosingDivs - numberOfOpeningDivs;
+
+            for (unsigned int i = 0; i < diff; i++) {
+                size_t lastClosingDivOffset = filteredText.rfind(closingDiv);
+                filteredText.erase(lastClosingDivOffset, closingDiv.length());
+            }
+        }
+
+        // Add closing div(s) if the number of closing divs is smaller than the number of opening divs
+        if (numberOfClosingDivs < numberOfOpeningDivs) {
+            const string closingDiv = "</div>";
+            unsigned int diff = numberOfOpeningDivs - numberOfClosingDivs;
+
+            for (unsigned int i = 0; i < diff; i++) {
+                size_t lastClosingDivOffset = filteredText.rfind(closingDiv);
+                filteredText.insert(lastClosingDivOffset + closingDiv.length(), closingDiv);
+            }
         }
     }
 
@@ -226,7 +239,7 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module)
     return chapterHeading;
 }
 
-string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool hasDuplicateClosingEndDivs, bool forceNoMarkup)
+string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool hasInconsistentClosingEndDivs, bool forceNoMarkup)
 {
     string verseText;
     string filteredText;
@@ -240,7 +253,7 @@ string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStron
         filteredText = verseText;
 
         if (!this->_rawMarkupEnabled) {
-            filteredText = this->getFilteredText(verseText, currentChapter, currentVerseNr, hasStrongs, hasDuplicateClosingEndDivs);
+            filteredText = this->getFilteredText(verseText, currentChapter, currentVerseNr, hasStrongs, hasInconsistentClosingEndDivs);
         }
     } else {
         verseText = string(module->stripText());
@@ -302,7 +315,7 @@ vector<Verse> TextProcessor::getVersesFromReferences(string moduleName, vector<s
     vector<string> bookList = this->getBookListFromReferences(references);
     map<string, int> absoluteVerseNumbers = this->_moduleHelper.getAbsoluteVerseNumberMap(module, bookList);
     bool moduleMarkupIsBroken = this->_moduleHelper.isBrokenMarkupModule(moduleName);
-    bool hasDuplicateClosingEndDivs = this->_moduleHelper.isDuplicateClosingEndDivModule(moduleName);
+    bool hasInconsistentClosingEndDivs = this->_moduleHelper.isInconsistentClosingEndDivModule(moduleName);
 
     for (unsigned int i = 0; i < references.size(); i++) {
         string currentReference = references[i];
@@ -312,7 +325,7 @@ vector<Verse> TextProcessor::getVersesFromReferences(string moduleName, vector<s
         bool entryExisting = module->hasEntry(module->getKey());
 
         if (entryExisting) {
-          currentVerseText = this->getCurrentVerseText(module, false, hasDuplicateClosingEndDivs, moduleMarkupIsBroken);
+          currentVerseText = this->getCurrentVerseText(module, false, hasInconsistentClosingEndDivs, moduleMarkupIsBroken);
         }
 
         Verse currentVerse;
@@ -350,7 +363,7 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
     int lastChapter = -1;
     bool currentBookExisting = true;
     bool moduleMarkupIsBroken = this->_moduleHelper.isBrokenMarkupModule(moduleName);
-    bool hasDuplicateClosingEndDivs = this->_moduleHelper.isDuplicateClosingEndDivModule(moduleName);
+    bool hasInconsistentClosingEndDivs = this->_moduleHelper.isInconsistentClosingEndDivModule(moduleName);
 
     // This holds the text that we will return
     vector<Verse> text;
@@ -403,7 +416,7 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
             // Current verse text
             verseText += this->getCurrentVerseText(module,
                                                    hasStrongs,
-                                                   hasDuplicateClosingEndDivs,
+                                                   hasInconsistentClosingEndDivs,
                                                    // Note that if markup is broken this will enforce
                                                    // the usage of the "stripped" / non-markup variant of the text
                                                    moduleMarkupIsBroken);

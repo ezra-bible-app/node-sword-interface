@@ -34,8 +34,8 @@ public:
         // For modules in this list we will enforce the stripped version of the text and not use the markup
         this->_brokenMarkupModules = { "ASV" };
 
-        // For modules in this list we will remove the duplicate closing end divs from the markup
-        this->_duplicateClosingEndDivModules = { "NETtext" };
+        // For modules in this list we will balance the closing end divs in the markup
+        this->_inconsistentClosingEndDivModules = { "NETtext", "NASB" };
     }
 
     virtual ~ModuleHelper(){}
@@ -50,13 +50,13 @@ public:
     int getChapterVerseCount(std::string moduleName, std::string bookCode, int chapter);
     std::map<std::string, int> getAbsoluteVerseNumberMap(sword::SWModule* module, std::vector<std::string> bookList={});
     bool isBrokenMarkupModule(std::string moduleName);
-    bool isDuplicateClosingEndDivModule(std::string moduleName);
+    bool isInconsistentClosingEndDivModule(std::string moduleName);
 
 private:
     bool moduleHasKeyValuePair(sword::SWModule* module, std::string key, std::string value);
     ModuleStore& _moduleStore;
     std::vector<std::string> _brokenMarkupModules;
-    std::vector<std::string> _duplicateClosingEndDivModules;
+    std::vector<std::string> _inconsistentClosingEndDivModules;
 };
 
 #endif // _MODULE_HELPER

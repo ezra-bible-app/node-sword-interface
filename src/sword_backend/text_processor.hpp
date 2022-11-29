@@ -43,7 +43,7 @@ public:
     std::vector<Verse> getChapterText(std::string moduleName, std::string bookCode, int chapter);
     std::vector<Verse> getVersesFromReferences(std::string moduleName, std::vector<std::string>& references);
     std::vector<std::string> getReferencesFromReferenceRange(std::string referenceRange);
-    std::string getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool hasDuplicateClosingEndDivs=false, bool forceNoMarkup=false);
+    std::string getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool hasInconsistentClosingEndDivs=false, bool forceNoMarkup=false);
     std::string getBookIntroduction(std::string moduleName, std::string bookCode);
     std::vector<Verse> getBookHeaderList(std::string moduleName, std::string bookCode, bool withAbsoluteVerseNumbers=false);
 
@@ -60,7 +60,7 @@ private:
                                int verseCount=-1);
 
     std::string getCurrentChapterHeading(sword::SWModule* module);
-    std::string getFilteredText(const std::string& text, int chapter, int verseNr, bool hasStrongs=false, bool hasDuplicateClosingEndDivs=false);
+    std::string getFilteredText(const std::string& text, int chapter, int verseNr, bool hasStrongs=false, bool hasInconsistentClosingEndDivs=false);
     std::string replaceSpacesInStrongs(const std::string& text);
     unsigned int findAndReplaceAll(std::string & data, std::string toSearch, std::string replaceStr);
 
