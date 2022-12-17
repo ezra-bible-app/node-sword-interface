@@ -34,18 +34,11 @@ git clone https://github.com/bibletime/crosswire-sword-mirror sword
 git -C sword checkout 1460f9
 patch --batch --forward -d sword -p 0 < patch/sword_globconf.patch
 
-
 # PATCHES
 case "$(uname -s)" in
-#    Linux)
-#    # We only apply the Sword ICU patch on Linux
-#        patch --batch --forward -d sword -p 0 < patch/sword_icu.patch
-#    ;;
     Darwin)
     # We only apply the following patch on macOS
         export MACOSX_DEPLOYMENT_TARGET=10.10
-        export CMAKE_PREFIX_PATH=/usr/local/opt/icu4c
-#        patch --batch --forward -d sword -p 0 < patch/sword_mac.patch
     ;;
 esac
 
