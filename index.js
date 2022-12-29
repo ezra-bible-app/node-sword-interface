@@ -148,7 +148,7 @@ class NodeSwordInterface {
    *
    * @param {String} repositoryName - The name of the given repository.
    * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
-   * @return {String[]} An array of strings with the module codes for the Bible modules of the given repository.
+   * @return {ModuleObject[]} An array of strings with the module codes for the Bible modules of the given repository.
    */
   getAllRepoModules(repositoryName, moduleType="BIBLE") {
     return this.nativeInterface.getAllRepoModules(repositoryName, moduleType);

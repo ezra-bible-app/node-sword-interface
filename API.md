@@ -35,7 +35,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.updateRepositoryConfig(progressCB)](#NodeSwordInterface+updateRepositoryConfig) ⇒ <code>Promise</code>
     * [.getRepoNames()](#NodeSwordInterface+getRepoNames) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoLanguages(repositoryName, moduleType)](#NodeSwordInterface+getRepoLanguages) ⇒ <code>Array.&lt;String&gt;</code>
-    * [.getAllRepoModules(repositoryName, moduleType)](#NodeSwordInterface+getAllRepoModules) ⇒ <code>Array.&lt;String&gt;</code>
+    * [.getAllRepoModules(repositoryName, moduleType)](#NodeSwordInterface+getAllRepoModules) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
     * [.getRepoModulesByLang(repositoryName, language, moduleType, headersFilter, strongsFilter, hebrewStrongsKeys, greekStrongsKeys)](#NodeSwordInterface+getRepoModulesByLang) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
     * [.getUpdatedRepoModules(repositoryName, includeBeta)](#NodeSwordInterface+getUpdatedRepoModules) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
     * [.getRepoModule(moduleCode)](#NodeSwordInterface+getRepoModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
@@ -125,11 +125,11 @@ Note that the languages are returned as language codes.
 
 <a name="NodeSwordInterface+getAllRepoModules"></a>
 
-### nodeSwordInterface.getAllRepoModules(repositoryName, moduleType) ⇒ <code>Array.&lt;String&gt;</code>
+### nodeSwordInterface.getAllRepoModules(repositoryName, moduleType) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
 Returns all modules for the given repository (default: Bible modules).
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
-**Returns**: <code>Array.&lt;String&gt;</code> - An array of strings with the module codes for the Bible modules of the given repository.  
+**Returns**: [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject) - An array of strings with the module codes for the Bible modules of the given repository.  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
