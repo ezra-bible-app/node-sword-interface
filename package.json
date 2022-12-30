@@ -17,7 +17,7 @@
     "doc": "jsdoc2md index.js > API.md",
     "pub": "rm -rf build node_modules sword sword_build test && npm publish ./",
     "deploy": "scripts/deploy_local.sh",
-    "postinstall": "scripts/postinstall.js"
+    "postinstall": "node scripts/postinstall.js"
   },
   "author": "Tobias Klein",
   "license": "GPL-2.0+",
