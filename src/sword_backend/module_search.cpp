@@ -131,6 +131,8 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
         }
 
         bool hasStrongs = this->_moduleHelper.moduleHasGlobalOption(module, "Strongs");
+        bool moduleMarkupIsBroken = this->_moduleHelper.isBrokenMarkupModule(moduleName);
+        bool hasInconsistentClosingEndDivs = this->_moduleHelper.isInconsistentClosingEndDivModule(moduleName);
 
         if (searchType == SearchType::strongsNumber) {
             if (!hasStrongs) {
@@ -163,7 +165,11 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
         while (!listKey.popError()) {
             module->setKey(listKey.getElement());
 
-            string verseText = this->_textProcessor.getCurrentVerseText(module, hasStrongs);
+            string verseText = this->_textProcessor.getCurrentVerseText(module,
+                                                                        hasStrongs,
+                                                                        hasInconsistentClosingEndDivs,
+                                                                        moduleMarkupIsBroken);
+
             string currentReference = module->getKey()->getShortText();
 
             if (std::find(searchResultReferences.begin(),
