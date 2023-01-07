@@ -29,11 +29,11 @@ function unzip {
 $AllProtocols = [System.Net.SecurityProtocolType]'Tls11,Tls12'
 [System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
 
-$headers = ""
+$headers = @{}
 
 if (Test-Path env:CI) {
 		$headers = @{
-				Authorization="Bearer ${{ secrets.GITHUB_TOKEN }}"
+				Authorization="Bearer ${$secrets.GITHUB_TOKEN}"
 		}
 }
 
