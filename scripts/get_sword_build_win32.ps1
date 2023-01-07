@@ -31,17 +31,23 @@ $AllProtocols = [System.Net.SecurityProtocolType]'Tls11,Tls12'
 
 $headers = @{}
 
-if (Test-Path env:CI) {
-		$headers = @{
-				Authorization="Bearer ${$secrets.GITHUB_TOKEN}"
-		}
-}
+$github_token = $env:GITHUB_TOKEN
 
 # --- Set the uri for the release
 $URI = "https://api.github.com/repos/ezra-bible-app/sword-build-win32/releases/tags/v1.8.900-2022-11-06"
 
+if ($Env:CI -eq "true") {
+		Write-Host "GitHub actions build ... using GITHUB_TOKEN for authentication!"
+
+		$headers = @{
+			Authorization="Bearer $github_token"
+			ContentType='application/json'
+		}
+}
+
 # --- Query the API to get the url of the zip
 $Response = Invoke-RestMethod -Method Get -Uri $URI -Headers $headers
+
 $ZipName = $Response.assets[0].name
 $ZipUrl = $Response.assets[0].browser_download_url
 
@@ -52,7 +58,7 @@ if (Test-Path sword-build-win32) {
 
 # --- Download the file to the current location
 $OutputPath = "$((Get-Location).Path)\$ZipName"
-Invoke-RestMethod -Method Get -Uri $ZipUrl -OutFile $OutputPath
+Invoke-RestMethod -Method Get -Uri $ZipUrl -OutFile $OutputPath -Headers $headers
 
 # --- Unzip the zip file and remove it afterwards
 unzip $OutputPath $((Get-Location).Path)
@@ -61,3 +67,5 @@ Remove-Item $OutputPath
 # --- Rename the extracted folder to a standard name
 $LibDirName = $ZipName.Replace(".zip", "")
 Rename-Item -Path $LibDirName -NewName sword-build-win32
+
+Write-Host "Download of Windows library artifacts completed!"
