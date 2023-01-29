@@ -23,6 +23,7 @@
 #include <algorithm>
 
 // sword includes
+#include <swmgr.h>
 #include <swmodule.h>
 #include <versekey.h>
 
@@ -100,7 +101,7 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
                                                    bool useExtendedVerseBoundaries)
 {
     this->_currentModuleName = moduleName;
-    SWModule* module = this->_moduleStore.getLocalModule(moduleName);
+    SWModule* module = this->_moduleStore.getSearchSwMgr()->getModule(moduleName.c_str());
     ListKey listKey;
     SWKey* scope = 0;
     int flags = 0;
@@ -196,7 +197,7 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
 void ModuleSearch::terminate()
 {
     if (this->_currentModuleName != "") {
-        SWModule* module = this->_moduleStore.getLocalModule(this->_currentModuleName);
+        SWModule* module = this->_moduleStore.getSearchSwMgr()->getModule(this->_currentModuleName.c_str());
         module->terminateSearch = true;
         this->_currentModuleName = "";
     }

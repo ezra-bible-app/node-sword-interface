@@ -36,43 +36,14 @@ ModuleStore::ModuleStore(string customHomeDir)
 {
     this->_fileSystemHelper.setCustomHomeDir(customHomeDir);
     this->_fileSystemHelper.createBasicDirectories();
+    this->customHomeDir = customHomeDir;
 
-    bool isAndroid = false;
-    #if defined(__ANDROID__)
-        isAndroid = true;
-    #endif
-
-    if (customHomeDir != "" || isAndroid) {
-        this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str(),
-                               true, // autoload
-                               0, // filterMgr
-                               false, // multiMod
-                               false); // augmentHome
-
-        if (isAndroid) {
-          // Also consider the originally used path for Android, which does not work anymore from Android 11, but is still relevant
-          // for existing translations on Android versions < 11.
-          this->_mgr->augmentModules("/sdcard/sword"); 
-        }
-    } else {
-        #ifdef _WIN32
-            this->_mgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
-
-            // This has been disabled because it lead to a crash.
-            // We're keeping it here for now in case this becomes relevant again.
-            // this->_mgr->augmentModules(this->_fileSystemHelper.getSystemSwordDir().c_str());
-        #elif defined(__APPLE__)
-            this->_mgr = new SWMgr();
-
-            stringstream appSupport;
-            appSupport << string(getenv("HOME")) << "/Library/Application Support/Sword";            
-            this->_mgr->augmentModules(appSupport.str().c_str());
-        #else
-            this->_mgr = new SWMgr();
-        #endif
-    }
-
+    this->_mgr = this->createSWMgr();
     this->_mgr->setGlobalOption("Headings", "On");
+
+    // After creating the searchMgr we turn off features that we are not interested in when searching
+    this->_searchMgr = this->createSWMgr();
+    this->_searchMgr->setGlobalOption("Headings", "Off");
 }
 
 ModuleStore::~ModuleStore()
@@ -80,16 +51,63 @@ ModuleStore::~ModuleStore()
     if (this->_mgr != 0) {
         delete this->_mgr;
     }
+
+    if (this->_searchMgr != 0) {
+        delete this->_searchMgr;
+    }
+}
+
+SWMgr* ModuleStore::createSWMgr()
+{
+    SWMgr* swMgr = 0;
+    bool isAndroid = false;
+    #if defined(__ANDROID__)
+        isAndroid = true;
+    #endif
+
+    if (customHomeDir != "" || isAndroid) {
+        swMgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str(),
+                          true, // autoload
+                          0, // filterMgr
+                          false, // multiMod
+                          false); // augmentHome
+
+        if (isAndroid) {
+          // Also consider the originally used path for Android, which does not work anymore from Android 11, but is still relevant
+          // for existing translations on Android versions < 11.
+          swMgr->augmentModules("/sdcard/sword"); 
+        }
+    } else {
+        #ifdef _WIN32
+            swMgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
+
+            // This has been disabled because it lead to a crash.
+            // We're keeping it here for now in case this becomes relevant again.
+            // this->_mgr->augmentModules(this->_fileSystemHelper.getSystemSwordDir().c_str());
+        #elif defined(__APPLE__)
+            swMgr = new SWMgr();
+
+            stringstream appSupport;
+            appSupport << string(getenv("HOME")) << "/Library/Application Support/Sword";            
+            swMgr->augmentModules(appSupport.str().c_str());
+        #else
+            swMgr = new SWMgr();
+        #endif
+    }
+
+    return swMgr;
 }
 
 void ModuleStore::refreshMgr()
 {
     this->_mgr->augmentModules(this->_fileSystemHelper.getUserSwordDir().c_str());
+    this->_searchMgr->augmentModules(this->_fileSystemHelper.getUserSwordDir().c_str());
 }
 
 void ModuleStore::deleteModule(string moduleName)
 {
     this->_mgr->deleteModule(moduleName.c_str());
+    this->_searchMgr->deleteModule(moduleName.c_str());
 }
 
 SWModule* ModuleStore::getLocalModule(string moduleName)
@@ -189,7 +207,12 @@ string ModuleStore::getModuleDataPath(sword::SWModule* module)
     return dataPath;
 }
 
-sword::SWMgr* ModuleStore::getSwMgr()
+SWMgr* ModuleStore::getSwMgr()
 {
     return this->_mgr;
+}
+
+SWMgr* ModuleStore::getSearchSwMgr()
+{
+    return this->_searchMgr;
 }

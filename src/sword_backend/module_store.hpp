@@ -35,6 +35,7 @@ public:
     ModuleStore(std::string customHomeDir="");
     virtual ~ModuleStore();
 
+    sword::SWMgr* createSWMgr();
     sword::SWModule* getLocalModule(std::string moduleName);
     std::vector<sword::SWModule*> getAllLocalModules(ModuleType moduleType=ModuleType::bible);
     
@@ -46,10 +47,13 @@ public:
     void deleteModule(std::string moduleName);
 
     sword::SWMgr* getSwMgr();
+    sword::SWMgr* getSearchSwMgr();
     
 private:
+    std::string customHomeDir;
     std::vector<std::string> getModuleLanguages(ModuleType moduleType=ModuleType::bible);
     sword::SWMgr* _mgr = 0;
+    sword::SWMgr* _searchMgr = 0;
     FileSystemHelper _fileSystemHelper;
 };
 
