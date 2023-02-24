@@ -75,7 +75,9 @@ else
   # macOS & Linux
 
   cd sword_build
-  cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 -DCMAKE_BUILD_TYPE=Release ../sword
+  cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_DISABLE_FIND_PACKAGE_ICU=TRUE \
+  ../sword
 fi
 
 make -j4 sword_static

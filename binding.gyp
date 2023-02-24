@@ -82,8 +82,7 @@
                 ],
                 "libraries": [
                     '<!@(./scripts/get_sword_library.sh \"../sword_build/libsword.a\")',
-                    '<!@(pkg-config --libs libcurl)',
-                    '<!@(pkg-config --libs icu-uc icu-io)'
+                    '<!@(pkg-config --libs libcurl)'
                 ],
                 "dependencies": [
                     "<!(node -p \"require('node-addon-api').gyp\")",

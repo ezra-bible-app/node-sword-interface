@@ -14,17 +14,12 @@ include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/node_modules/no
 
 link_directories(${CMAKE_SOURCE_DIR}/sword_build)
 
-# ICU Components Reference:
-# https://cmake.org/cmake/help/latest/module/FindICU.html
-# ICU components = data, i18n, io, le, lx, test, tu and uc.
-
-find_package(ICU COMPONENTS uc i18n data REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(CURL REQUIRED)
 find_package(BZip2 REQUIRED)
 
 set(SWORD_LIBRARY_NAME "libsword.a")
-set(DEPENDENT_LIBS ICU::uc ICU::data ICU::i18n ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${BZIP2_LIBRARIES})
+set(DEPENDENT_LIBS ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${BZIP2_LIBRARIES})
 
 if (UNIX)
     set(DEPENDENT_LIBS ${DEPENDENT_LIBS} pthread)
