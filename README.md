@@ -90,7 +90,6 @@ Before installing node-sword-interface you need to make sure that the following 
 - nodejs (A version that supports N-API version >= 4, like 8.16.0, 10.16.0 or 12.0.0 (see [N-API Version Matrix](https://nodejs.org/api/n-api.html#n_api_n_api_version_matrix)))
 - Git
 - Mac/Linux dependencies:
-    - ICU library with development headers
     - CURL library with development headers
     - CMake (for building the SWORD library)
 
@@ -102,14 +101,14 @@ These installation instructions are working on Debian/Ubuntu based Linux distrib
 
 To install the dependencies issue the following command on a Debian/Ubuntu based distribution:
     
-    sudo apt-get install build-essential nodejs npm libcurl4-gnutls-dev libicu-dev zlib1g-dev pkg-config cmake subversion
+    sudo apt-get install build-essential nodejs npm libcurl4-gnutls-dev zlib1g-dev pkg-config cmake subversion
 
 #### Install dependencies on macOS
 
 1. Install XCode from the App Store
 2. Install Command Line Developer Tools (contains Compiler toolchain, git, etc.) by running this command:<br/> `xcode-select --install`   
 3. Install the homebrew package manager by running this command:<br/> `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
-4. Install some packages with homebrew by running this command:<br/> `brew install pkg-config cmake npm icu4c`
+4. Install some packages with homebrew by running this command:<br/> `brew install pkg-config cmake npm`
 
 #### Install dependencies on Windows
 
