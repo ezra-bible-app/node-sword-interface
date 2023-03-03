@@ -22,7 +22,7 @@
   "author": "Tobias Klein",
   "license": "GPL-2.0+",
   "dependencies": {
-    "glob": "^8.0.3",
+    "glob": "^9.2.1",
     "node-addon-api": "^4.2.0"
   },
   "repository": {
