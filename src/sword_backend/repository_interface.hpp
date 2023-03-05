@@ -87,6 +87,9 @@ public:
             case ModuleType::dict:
                 moduleTypeFilter = "Lexicons / Dictionaries";
                 break;
+            case ModuleType::commentary:
+                moduleTypeFilter = "Commentaries";
+                break;
             default:
                 moduleTypeFilter = "ANY";
         }

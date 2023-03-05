@@ -121,7 +121,7 @@ Note that the languages are returned as language codes.
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | repositoryName | <code>String</code> |  | The name of the given repository. |
-| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT) |
+| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT, COMMENTARY) |
 
 <a name="NodeSwordInterface+getAllRepoModules"></a>
 
@@ -134,7 +134,7 @@ Returns all modules for the given repository (default: Bible modules).
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | repositoryName | <code>String</code> |  | The name of the given repository. |
-| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT) |
+| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT, COMMENTARY) |
 
 <a name="NodeSwordInterface+getRepoModulesByLang"></a>
 
@@ -148,7 +148,7 @@ Returns all Bible modules for the given repository and language
 | --- | --- | --- | --- |
 | repositoryName | <code>String</code> |  | The name of the given repository. |
 | language | <code>String</code> |  | The language code that shall be used as a filter. |
-| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT) |
+| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT, COMMENTARY) |
 | headersFilter | <code>Boolean</code> | <code>false</code> | Whether only modules with Headers shall be returned. |
 | strongsFilter | <code>Boolean</code> | <code>false</code> | Whether only modules with Strong's shall be returned. |
 | hebrewStrongsKeys | <code>Boolean</code> | <code>false</code> | Whether only modules with Hebrew Strong's keys shall be returned (only applies to dictionaries). |
@@ -188,7 +188,7 @@ Returns all modules installed locally (default: Bible modules).
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT) |
+| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT, COMMENTARY) |
 
 <a name="NodeSwordInterface+getRepoModuleCount"></a>
 
@@ -201,7 +201,7 @@ Returns the number of modules for a given repository (default: Bible modules).
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | repositoryName | <code>String</code> |  | The name of the given repository. |
-| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT) |
+| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT, COMMENTARY) |
 
 <a name="NodeSwordInterface+getRepoLanguageModuleCount"></a>
 
@@ -215,7 +215,7 @@ Returns the number of modules for a given repository and language (default: Bibl
 | --- | --- | --- | --- |
 | repositoryName | <code>String</code> |  | The name of the given repository. |
 | language | <code>String</code> |  | The language code that shall be used as a filter. |
-| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT) |
+| moduleType | <code>String</code> | <code>BIBLE</code> | A filter parameter that defines the moduleType (Options: BIBLE, DICT, COMMENTARY) |
 
 <a name="NodeSwordInterface+installModule"></a>
 
@@ -614,7 +614,7 @@ An object representation of a SWORD module.
 | Name | Type | Description |
 | --- | --- | --- |
 | name | <code>String</code> | The name/code of the SWORD module |
-| type | <code>String</code> | The type of the SWORD module (Currently the following types are supported: Biblical Texts, Lexicons / Dictionaries) |
+| type | <code>String</code> | The type of the SWORD module (Currently the following types are supported: Biblical Texts, Lexicons / Dictionaries, Commentaries) |
 | description | <code>String</code> | The description of the SWORD module |
 | language | <code>String</code> | The language code of the SWORD module |
 | distributionLicense | <code>String</code> | The distribution license of the SWORD module |

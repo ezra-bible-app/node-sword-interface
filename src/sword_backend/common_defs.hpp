@@ -30,6 +30,7 @@ enum class QueryLimit {
 enum class ModuleType {
     bible,
     dict,
+    commentary,
     any
 };
 

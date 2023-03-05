@@ -36,7 +36,7 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
  * @typedef ModuleObject
  * @type {Object}
  * @property {String} name - The name/code of the SWORD module
- * @property {String} type - The type of the SWORD module (Currently the following types are supported: Biblical Texts, Lexicons / Dictionaries)
+ * @property {String} type - The type of the SWORD module (Currently the following types are supported: Biblical Texts, Lexicons / Dictionaries, Commentaries)
  * @property {String} description - The description of the SWORD module
  * @property {String} language - The language code of the SWORD module
  * @property {String} distributionLicense - The distribution license of the SWORD module
@@ -136,7 +136,7 @@ class NodeSwordInterface {
    * Note that the languages are returned as language codes.
    *
    * @param {String} repositoryName - The name of the given repository.
-   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
+   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT, COMMENTARY)
    * @return {String[]} An array of strings with the languages codes for the Bible modules from the given repository.
    */
   getRepoLanguages(repositoryName, moduleType="BIBLE") {
@@ -147,7 +147,7 @@ class NodeSwordInterface {
    * Returns all modules for the given repository (default: Bible modules).
    *
    * @param {String} repositoryName - The name of the given repository.
-   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
+   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT, COMMENTARY)
    * @return {ModuleObject[]} An array of strings with the module codes for the Bible modules of the given repository.
    */
   getAllRepoModules(repositoryName, moduleType="BIBLE") {
@@ -159,7 +159,7 @@ class NodeSwordInterface {
    *
    * @param {String} repositoryName - The name of the given repository.
    * @param {String} language - The language code that shall be used as a filter.
-   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
+   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT, COMMENTARY)
    * @param {Boolean} headersFilter - Whether only modules with Headers shall be returned.
    * @param {Boolean} strongsFilter - Whether only modules with Strong's shall be returned.
    * @param {Boolean} hebrewStrongsKeys - Whether only modules with Hebrew Strong's keys shall be returned (only applies to dictionaries).
@@ -193,7 +193,7 @@ class NodeSwordInterface {
 
   /**
    * Returns all modules installed locally (default: Bible modules).
-   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
+   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT, COMMENTARY)
    * @return {ModuleObject[]} An array of ModuleObjects which represents the locally installed Bible modules.
    */
   getAllLocalModules(moduleType="BIBLE") {
@@ -204,7 +204,7 @@ class NodeSwordInterface {
    * Returns the number of modules for a given repository (default: Bible modules).
    *
    * @param {String} repositoryName - The name of the given repository.
-   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
+   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT, COMMENTARY)
    * @return {Number} The number of Bible modules for the given repository and module type.
    */
   getRepoModuleCount(repositoryName, moduleType="BIBLE") {
@@ -216,7 +216,7 @@ class NodeSwordInterface {
    *
    * @param {String} repositoryName - The name of the given repository.
    * @param {String} language - The language code that shall be used as a filter.
-   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT)
+   * @param {String} moduleType - A filter parameter that defines the moduleType (Options: BIBLE, DICT, COMMENTARY)
    * @return {Number} The number of Bible modules for the given repository, language and module type.
    */
   getRepoLanguageModuleCount(repositoryName, language, moduleType="BIBLE") {

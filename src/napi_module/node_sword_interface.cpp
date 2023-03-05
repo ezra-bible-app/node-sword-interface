@@ -345,6 +345,8 @@ ModuleType NodeSwordInterface::getModuleTypeFromString(std::string moduleTypeStr
         return ModuleType::bible;
     } else if (moduleTypeString == "DICT") {
         return ModuleType::dict;
+    } else if (moduleTypeString == "COMMENTARY") {
+        return ModuleType::commentary;
     } else {
         return ModuleType::any;
     }
