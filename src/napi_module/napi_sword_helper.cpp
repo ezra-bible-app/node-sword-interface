@@ -79,7 +79,13 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     }
 
     if (swModule->getConfigEntry("InstallSize")) {
-        int moduleSize = std::stoi(string(swModule->getConfigEntry("InstallSize")));
+        std::string configInstallSize = string(swModule->getConfigEntry("InstallSize"));
+
+        int moduleSize = -1;
+        if (configInstallSize.length() > 0) {
+            moduleSize = std::stoi(configInstallSize);
+        }
+
         object["size"] = Napi::Number::New(env, moduleSize);
     } else {
         object["size"] = Napi::Number::New(env, -1);
