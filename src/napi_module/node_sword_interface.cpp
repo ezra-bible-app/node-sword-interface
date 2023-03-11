@@ -90,6 +90,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getLocalModule", &NodeSwordInterface::getLocalModule),
         InstanceMethod("enableMarkup", &NodeSwordInterface::enableMarkup),
         InstanceMethod("getRawModuleEntry", &NodeSwordInterface::getRawModuleEntry),
+        InstanceMethod("getReferenceText", &NodeSwordInterface::getReferenceText),
         InstanceMethod("getChapterText", &NodeSwordInterface::getChapterText),
         InstanceMethod("getBookText", &NodeSwordInterface::getBookText),
         InstanceMethod("getBibleText", &NodeSwordInterface::getBibleText),
@@ -544,6 +545,23 @@ Napi::Value NodeSwordInterface::getRawModuleEntry(const Napi::CallbackInfo& info
       unlockApi();
       return env.Undefined();
     }
+}
+
+Napi::Value NodeSwordInterface::getReferenceText(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
+    Napi::Env env = info.Env();
+    Napi::String moduleName = info[0].As<Napi::String>();
+    Napi::String key = info[1].As<Napi::String>();
+    ASSERT_SW_MODULE_EXISTS(moduleName);
+
+    Verse rawVerse = this->_textProcessor->getReferenceText(moduleName, key);
+    Napi::Object verseObject = Napi::Object::New(env);
+    this->_napiSwordHelper->verseTextToNapiObject(moduleName, rawVerse, verseObject);
+
+    unlockApi();
+    return verseObject;
 }
 
 Napi::Value NodeSwordInterface::getChapterText(const Napi::CallbackInfo& info)

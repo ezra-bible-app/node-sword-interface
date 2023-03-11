@@ -80,6 +80,11 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     static string divineNameStartElement = "<divineName>";
     static string divineNameEndElement = "</divineName>";
     static string strongsWElement = "<w lemma=";
+    static string listStartElement = "<list";
+    static string listEndElement = "</list>";
+    static string itemStartElement = "<item";
+    static string itemEndElement = "</item>";
+    static string hiBold = "<hi type=\"bold";
 
     static regex milestoneFilter = regex("<milestone.*?/>");
     static regex segStartElementFilter = regex("<seg.*?>");
@@ -159,6 +164,11 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     this->findAndReplaceAll(filteredText, divineNameStartElement, "");
     this->findAndReplaceAll(filteredText, divineNameEndElement, "");
     this->findAndReplaceAll(filteredText, strongsWElement, "<w class=");
+    this->findAndReplaceAll(filteredText, listStartElement, "<ul");
+    this->findAndReplaceAll(filteredText, listEndElement, "</ul>");
+    this->findAndReplaceAll(filteredText, itemStartElement, "<li");
+    this->findAndReplaceAll(filteredText, itemEndElement, "</li>");
+    this->findAndReplaceAll(filteredText, hiBold, "<hi class=\"bold");
 
     filteredText = regex_replace(filteredText, selfClosingElement, "<$2 $3></$2>");
 
@@ -267,6 +277,25 @@ string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStron
 vector<Verse> TextProcessor::getBibleText(string moduleName)
 {
     return this->getText(moduleName, "Gen 1:1");
+}
+
+Verse TextProcessor::getReferenceText(std::string moduleName, std::string reference)
+{
+    SWModule* module = this->_moduleStore.getLocalModule(moduleName);
+    module->setKey(reference.c_str());
+    bool entryExisting = module->hasEntry(module->getKey());
+
+    if (entryExisting) {
+        vector<Verse> verses = this->getText(moduleName, reference, QueryLimit::book, -1, 1);
+        verses[0].absoluteVerseNumber = -1;
+        return verses[0];
+    } else {
+        Verse verse;
+        verse.reference = reference;
+        verse.absoluteVerseNumber = -1;
+        verse.content = "";
+        return verse;
+    }
 }
 
 vector<Verse> TextProcessor::getBookText(string moduleName, string bookCode, int startVerseNumber, int verseCount)

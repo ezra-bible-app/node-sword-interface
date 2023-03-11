@@ -71,6 +71,7 @@ private:
     Napi::Value enableMarkup(const Napi::CallbackInfo& info);
     
     Napi::Value getRawModuleEntry(const Napi::CallbackInfo& info);
+    Napi::Value getReferenceText(const Napi::CallbackInfo& info);
     Napi::Value getChapterText(const Napi::CallbackInfo& info);
     Napi::Value getBookText(const Napi::CallbackInfo& info);
     Napi::Value getBibleText(const Napi::CallbackInfo& info);

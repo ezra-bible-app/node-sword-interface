@@ -45,9 +45,9 @@ public:
     Napi::Array getNapiVerseObjectsFromRawList(const Napi::Env& env, std::string moduleCode, std::vector<Verse>& verses);
     void swordModuleToNapiObject(const Napi::Env& env, sword::SWModule* swModule, Napi::Object& object);
     void strongsEntryToNapiObject(const Napi::Env& env, StrongsEntry* strongsEntry, Napi::Object& object);
+    void verseTextToNapiObject(std::string moduleCode, Verse rawVerse, Napi::Object& object);
 
 private:
-    void verseTextToNapiObject(std::string moduleCode, Verse rawVerse, Napi::Object& object);
     Napi::String getConfigEntry(sword::SWModule* swModule, std::string key, const Napi::Env& env);
 
     ModuleHelper& _moduleHelper;

@@ -39,6 +39,7 @@ public:
     void disableMarkup() { this->_markupEnabled = false; }
 
     std::vector<Verse> getBibleText(std::string moduleName);
+    Verse getReferenceText(std::string moduleName, std::string reference);
     std::vector<Verse> getBookText(std::string moduleName, std::string bookCode, int startVerseNumber=-1, int verseCount=-1);
     std::vector<Verse> getChapterText(std::string moduleName, std::string bookCode, int chapter);
     std::vector<Verse> getVersesFromReferences(std::string moduleName, std::vector<std::string>& references);

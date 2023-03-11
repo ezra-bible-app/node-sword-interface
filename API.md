@@ -51,6 +51,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getModuleDescription(moduleCode)](#NodeSwordInterface+getModuleDescription) ⇒ <code>String</code>
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
     * [.getRawModuleEntry(moduleCode, key)](#NodeSwordInterface+getRawModuleEntry) ⇒ <code>String</code>
+    * [.getReferenceText(moduleCode, key)](#NodeSwordInterface+getReferenceText) ⇒ [<code>VerseObject</code>](#VerseObject)
     * [.getChapterText(moduleCode, bookCode, chapter)](#NodeSwordInterface+getChapterText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookText(moduleCode, bookCode, startVerseNr, verseCount)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getVersesFromReferences(moduleCode, references)](#NodeSwordInterface+getVersesFromReferences) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
@@ -310,8 +311,21 @@ This influences the output for getChapterText, getBookText and getBibleText.
 <a name="NodeSwordInterface+getRawModuleEntry"></a>
 
 ### nodeSwordInterface.getRawModuleEntry(moduleCode, key) ⇒ <code>String</code>
-Returns the text of an entry for the given module and key.
+Returns the raw text of an entry for the given module and key.
 If no entry exists for the given key the return value is undefined.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleCode | <code>String</code> | The module code of the SWORD module. |
+| key | <code>String</code> | The key of the entry. |
+
+<a name="NodeSwordInterface+getReferenceText"></a>
+
+### nodeSwordInterface.getReferenceText(moduleCode, key) ⇒ [<code>VerseObject</code>](#VerseObject)
+Returns the text of an entry for the given module and key.
+If no entry exists for the given key the return value is a verse with empty content.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 
