@@ -71,6 +71,12 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     object["shortCopyright"] = this->getConfigEntry(swModule, "ShortCopyright", env);
     object["version"] = this->getConfigEntry(swModule, "Version", env);
 
+    if (swModule->getConfigEntry("SwordVersionDate")) {
+        object["lastUpdate"] = this->getConfigEntry(swModule, "SwordVersionDate", env);
+    } else {
+        object["lastUpdate"] = "";
+    }
+
     if (swModule->getConfigEntry("Direction")) {
         string direction = string(swModule->getConfigEntry("Direction"));
         object["isRightToLeft"] = Napi::Boolean::New(env, (direction == "RtoL"));
