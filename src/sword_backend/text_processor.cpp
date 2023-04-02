@@ -85,6 +85,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     static string itemStartElement = "<item";
     static string itemEndElement = "</item>";
     static string hiBold = "<hi type=\"bold";
+    static string hiItalic = "<hi type=\"italic";
 
     static regex milestoneFilter = regex("<milestone.*?/>");
     static regex segStartElementFilter = regex("<seg.*?>");
@@ -169,6 +170,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     this->findAndReplaceAll(filteredText, itemStartElement, "<li");
     this->findAndReplaceAll(filteredText, itemEndElement, "</li>");
     this->findAndReplaceAll(filteredText, hiBold, "<hi class=\"bold");
+    this->findAndReplaceAll(filteredText, hiItalic, "<hi class=\"italic");
 
     filteredText = regex_replace(filteredText, selfClosingElement, "<$2 $3></$2>");
 
