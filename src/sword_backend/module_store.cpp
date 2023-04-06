@@ -23,6 +23,7 @@
 
 // Sword includes
 #include <swmgr.h>
+#include <markupfiltmgr.h>
 #include <swmodule.h>
 
 // Own includes
@@ -68,7 +69,7 @@ SWMgr* ModuleStore::createSWMgr()
     if (customHomeDir != "" || isAndroid) {
         swMgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str(),
                           true, // autoload
-                          0, // filterMgr
+                          new MarkupFilterMgr(sword::FMT_UNKNOWN, sword::ENC_UTF8),
                           false, // multiMod
                           false); // augmentHome
 
@@ -79,19 +80,23 @@ SWMgr* ModuleStore::createSWMgr()
         }
     } else {
         #ifdef _WIN32
-            swMgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str());
+            swMgr = new SWMgr(this->_fileSystemHelper.getUserSwordDir().c_str(),
+                              true, // autoload
+                              new MarkupFilterMgr(sword::FMT_UNKNOWN, sword::ENC_UTF8),
+                              false, // multimod
+                              true); // augmentHome
 
             // This has been disabled because it lead to a crash.
             // We're keeping it here for now in case this becomes relevant again.
             // this->_mgr->augmentModules(this->_fileSystemHelper.getSystemSwordDir().c_str());
         #elif defined(__APPLE__)
-            swMgr = new SWMgr();
+            swMgr = new SWMgr(new MarkupFilterMgr(sword::FMT_UNKNOWN, sword::ENC_UTF8));
 
             stringstream appSupport;
             appSupport << string(getenv("HOME")) << "/Library/Application Support/Sword";            
             swMgr->augmentModules(appSupport.str().c_str());
         #else
-            swMgr = new SWMgr();
+            swMgr = new SWMgr(new MarkupFilterMgr(sword::FMT_UNKNOWN, sword::ENC_UTF8));
         #endif
     }
 
