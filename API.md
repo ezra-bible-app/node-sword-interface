@@ -636,10 +636,9 @@ An object representation of a SWORD module.
 | version | <code>String</code> | The version of the SWORD module |
 | lastUpdate | <code>String</code> | The date of the last version update of the SWORD module |
 | category | <code>String</code> | The category of the SWORD module |
-| repository | <code>String</code> | The repository of the SWORD module (only returned by methods interacting with module repositories) |
+| repository | <code>String</code> | The repository of the SWORD module |
 | about | <code>String</code> | Extended description of the SWORD module |
 | abbreviation | <code>String</code> | The abbreviation of the SWORD module |
-| sourceRepo | <code>String</code> | The repository from which this SWORD modules has been installed |
 | size | <code>Number</code> | The file size of the SWORD module (in KB) |
 | location | <code>String</code> | The filesystem location where the module is stored |
 | unlockInfo | <code>String</code> | Information about how to retrieve an unlock key (in case the module is locked) |

@@ -92,9 +92,9 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
     }
 
     if (swModule->getConfigEntry("InstallSourceCaption")) {
-        object["sourceRepo"] = string(swModule->getConfigEntry("InstallSourceCaption"));
+        object["repository"] = string(swModule->getConfigEntry("InstallSourceCaption"));
     } else {
-        object["sourceRepo"] = "";
+        object["repository"] = "";
     }
 
     if (swModule->getConfigEntry("InstallSize")) {
