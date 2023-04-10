@@ -61,6 +61,13 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
 
     object["name"] = swModule->getName();
     object["type"] = swModule->getType();
+
+    if (swModule->getConfigEntry("Category")) {
+        object["category"] = string(swModule->getConfigEntry("Category"));
+    } else {
+        object["category"] = "";
+    }
+
     object["description"] = swModule->getDescription();
     object["language"] = swModule->getLanguage();
     object["location"] = this->_moduleStore.getModuleDataPath(swModule);
@@ -75,12 +82,6 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
         object["lastUpdate"] = this->getConfigEntry(swModule, "SwordVersionDate", env);
     } else {
         object["lastUpdate"] = "";
-    }
-
-    if (swModule->getConfigEntry("Category")) {
-        object["category"] = string(swModule->getConfigEntry("Category"));
-    } else {
-        object["category"] = "";
     }
 
     if (swModule->getConfigEntry("Direction")) {
