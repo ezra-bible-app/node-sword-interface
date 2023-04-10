@@ -77,11 +77,23 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
         object["lastUpdate"] = "";
     }
 
+    if (swModule->getConfigEntry("Category")) {
+        object["category"] = string(swModule->getConfigEntry("Category"));
+    } else {
+        object["category"] = "";
+    }
+
     if (swModule->getConfigEntry("Direction")) {
         string direction = string(swModule->getConfigEntry("Direction"));
         object["isRightToLeft"] = Napi::Boolean::New(env, (direction == "RtoL"));
     } else {
         object["isRightToLeft"] = Napi::Boolean::New(env, false);
+    }
+
+    if (swModule->getConfigEntry("InstallSourceCaption")) {
+        object["sourceRepo"] = string(swModule->getConfigEntry("InstallSourceCaption"));
+    } else {
+        object["sourceRepo"] = "";
     }
 
     if (swModule->getConfigEntry("InstallSize")) {
