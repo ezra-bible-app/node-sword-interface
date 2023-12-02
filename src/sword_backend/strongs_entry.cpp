@@ -251,31 +251,28 @@ void StrongsEntry::parseFromVersion2RawEntry(string rawEntry)
 
     // Parse the phonetic transcription
     string phoneticTranscriptionTag = "<pron rend=\"italic\">{";
-    string phoneticTranscriptionEndTag = "}</pron>";
+    string phoneticTranscriptionEndTag = "}";
     this->phoneticTranscription = this->parseFromVersion2Element(phoneticTranscription, phoneticTranscriptionTag, phoneticTranscriptionEndTag);
 
     // Parse the definition
-    string definition = allLines[1];
+    string definition = rawEntry;
+    definition = this->parseFromVersion2Element(rawEntry, "<def>", "</def>");
+    string references = definition;
+
     std::size_t lineBreakPosition = definition.find("<lb");
     string defEndTag = "</def>";
     std::size_t defEndTagPosition = definition.find(defEndTag);
 
-    if (lineBreakPosition != string::npos) {
-        // Line break existing
-        definition.erase(lineBreakPosition, string::npos);
-    } else {
-        // No line break existing
-
-        if (defEndTagPosition != string::npos) {
-            definition.erase(defEndTagPosition, string::npos);
-        }
-    }
-
     StringHelper::trim(definition);
 
-    // Parse the references
-    string references = allLines[1];
     string lineBreak = "<lb/>";
+    lineBreakPosition = definition.find(lineBreak);
+
+    if (lineBreakPosition != string::npos) {
+        definition.erase(lineBreakPosition, string::npos);
+    }
+
+    // Parse the references
     lineBreakPosition = references.find(lineBreak);
 
     if (lineBreakPosition != string::npos) {
