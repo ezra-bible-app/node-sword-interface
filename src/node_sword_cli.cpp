@@ -145,7 +145,9 @@ void test_unlock_key(ModuleInstaller& module_installer, ModuleStore& module_stor
 
 void get_strongs_entry(TextProcessor& text_processor)
 {
-    StrongsEntry* entry = text_processor.getStrongsEntry("G2766");
+    //StrongsEntry* entry = text_processor.getStrongsEntry("G2443");
+    //StrongsEntry* entry = text_processor.getStrongsEntry("G3762");
+    StrongsEntry* entry = text_processor.getStrongsEntry("G4572");
     if (entry != 0) {
         cout << entry->key << endl;
         cout << entry->transcription << endl;
@@ -215,7 +217,7 @@ int main(int argc, char** argv)
     /*sword_facade.installModule("StrongsHebrew");
     sword_facade.installModule("StrongsGreek");*/
 
-    //get_strongs_entry(textProcessor);
+    get_strongs_entry(textProcessor);
 
     //get_module_text(textProcessor);
 
@@ -232,7 +234,7 @@ int main(int argc, char** argv)
         cout << searchResults[i].reference << endl;
     }*/
 
-    get_updated_repo_modules(repoInterface);
+    //get_updated_repo_modules(repoInterface);
 
     /*get_book_headers(textProcessor);*/
 
