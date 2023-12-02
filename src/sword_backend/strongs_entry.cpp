@@ -234,8 +234,6 @@ void StrongsEntry::parseFromVersion2RawEntry(string rawEntry)
 {
     this->rawEntry = rawEntry;
 
-    cout << rawEntry << endl;
-
     vector<string> allLines = StringHelper::split(this->rawEntry, "\n");
     if (allLines.size() == 0) {
         return;
