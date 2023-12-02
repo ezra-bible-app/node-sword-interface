@@ -71,10 +71,17 @@ bool StrongsReference::hasValidKey()
     return StrongsEntry::isValidStrongsKey(this->key);
 }
 
-StrongsEntry::StrongsEntry(string key, string rawEntry)
+StrongsEntry::StrongsEntry(string key, string rawEntry, string moduleVersion)
 {
     this->key = key;
-    this->parseFromRawEntry(rawEntry);
+
+    char moduleMinorVersion = moduleVersion[0];
+
+    if (moduleMinorVersion == '1') {
+        this->parseFromVersion1RawEntry(rawEntry);
+    } else {
+        this->parseFromVersion2RawEntry(rawEntry);
+    }
 }
 
 bool StrongsEntry::isValidStrongsKey(std::string key)
@@ -113,10 +120,13 @@ StrongsEntry* StrongsEntry::getStrongsEntry(SWModule* module, string key)
         return 0;
     }
 
+    string moduleVersion = module->getConfigEntry("Version");
+
     // Cut off the first character (H or G), since the Sword engine uses the actual number strings as the key for Strong's
     string strongsNumberString = key.substr(1);
     module->setKey(strongsNumberString.c_str());
-    StrongsEntry* strongsEntry = new StrongsEntry(key, module->getRawEntry());
+
+    StrongsEntry* strongsEntry = new StrongsEntry(key, module->getRawEntry(), moduleVersion);
 
     return strongsEntry;
 }
@@ -165,7 +175,7 @@ void StrongsEntry::parseDefinitionAndReferences(vector<string>& lines)
 
     for (unsigned int i = 0; i < lines.size(); i++) {
         string currentLine = lines[i];
-        if (currentLine.substr(0,5) == " see ") {
+        if (currentLine.substr(0,5) == " see " || currentLine.substr(0,4) == "see ") {
             StringHelper::trim(currentLine);
             StrongsReference reference(currentLine);
             // Only put the current line into the list of references if it's not already in there
@@ -193,7 +203,7 @@ void StrongsEntry::parseDefinitionAndReferences(vector<string>& lines)
     this->references = references;
 }
 
-void StrongsEntry::parseFromRawEntry(string rawEntry)
+void StrongsEntry::parseFromVersion1RawEntry(string rawEntry)
 {
     this->rawEntry = rawEntry;
 
@@ -218,4 +228,92 @@ void StrongsEntry::parseFromRawEntry(string rawEntry)
     // Erase all empty lines, this leaves us with the definition and references
     this->eraseEmptyLines(allLines);
     this->parseDefinitionAndReferences(allLines);
+}
+
+void StrongsEntry::parseFromVersion2RawEntry(string rawEntry)
+{
+    this->rawEntry = rawEntry;
+
+    cout << rawEntry << endl;
+
+    vector<string> allLines = StringHelper::split(this->rawEntry, "\n");
+    if (allLines.size() == 0) {
+        return;
+    }
+
+    string details = allLines[0];
+    string phoneticTranscription = details;
+
+    // Parse the transcription
+    string transcriptionTag = "<orth rend=\"bold\" type=\"trans\">";
+    string transcriptionEndTag = "</orth>";
+    this->transcription = this->parseFromVersion2Element(details, transcriptionTag, transcriptionEndTag);
+
+    // Parse the phonetic transcription
+    string phoneticTranscriptionTag = "<pron rend=\"italic\">{";
+    string phoneticTranscriptionEndTag = "}</pron>";
+    this->phoneticTranscription = this->parseFromVersion2Element(phoneticTranscription, phoneticTranscriptionTag, phoneticTranscriptionEndTag);
+
+    // Parse the definition
+    string definition = allLines[1];
+    std::size_t lineBreakPosition = definition.find("<lb");
+    string defEndTag = "</def>";
+    std::size_t defEndTagPosition = definition.find(defEndTag);
+
+    if (lineBreakPosition != string::npos) {
+        // Line break existing
+        definition.erase(lineBreakPosition, string::npos);
+    } else {
+        // No line break existing
+
+        if (defEndTagPosition != string::npos) {
+            definition.erase(defEndTagPosition, string::npos);
+        }
+    }
+
+    StringHelper::trim(definition);
+
+    // Parse the references
+    string references = allLines[1];
+    string lineBreak = "<lb/>";
+    lineBreakPosition = references.find(lineBreak);
+
+    if (lineBreakPosition != string::npos) {
+        references.erase(0, lineBreakPosition);
+        
+        defEndTagPosition = references.find(defEndTag);
+
+        if (defEndTagPosition != string::npos) {
+            references.erase(defEndTagPosition, string::npos);
+        }
+
+        references.erase(0, lineBreak.size());
+    }
+
+    StringHelper::trim(references);
+    vector<string> referenceLines = StringHelper::split(references, "<lb/> ");
+    this->parseDefinitionAndReferences(referenceLines);
+
+    // Store definition from variable above.
+    this->definition = definition;
+}
+
+string StrongsEntry::parseFromVersion2Element(string rawEntry, string startTag, string endTag)
+{
+    std::size_t startTagPosition = rawEntry.find(startTag);
+    if (startTagPosition != string::npos) {
+        rawEntry.erase(0, startTagPosition);
+    }
+
+    std::size_t endTagPosition = rawEntry.find(endTag);
+    
+    if (endTagPosition != string::npos) {
+        rawEntry.erase(endTagPosition, string::npos);
+    }
+
+    if (startTag.size() <= rawEntry.size()) {
+        rawEntry.erase(0, startTag.size());
+    }
+
+    return rawEntry;
 }

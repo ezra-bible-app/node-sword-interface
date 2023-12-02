@@ -44,7 +44,7 @@ private:
 class StrongsEntry
 {
 public:
-    StrongsEntry(std::string key, std::string rawEntry);
+    StrongsEntry(std::string key, std::string rawEntry, std::string moduleVersion);
     virtual ~StrongsEntry(){}
 
     static bool isValidStrongsKey(std::string key);
@@ -58,7 +58,9 @@ public:
     std::vector<StrongsReference> references;
 
 private:
-    void parseFromRawEntry(std::string rawEntry);
+    void parseFromVersion1RawEntry(std::string rawEntry);
+    void parseFromVersion2RawEntry(std::string rawEntry);
+    std::string parseFromVersion2Element(std::string rawEntry, std::string startTag, std::string endTag);
     void parseFirstLine(std::string firstLine);
     void eraseEmptyLines(std::vector<std::string>& lines);
     void parseDefinitionAndReferences(std::vector<std::string>& lines);
