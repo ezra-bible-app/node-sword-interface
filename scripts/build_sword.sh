@@ -31,7 +31,7 @@ fi
 
 # CLONE SWORD
 git clone https://github.com/bibletime/crosswire-sword-mirror sword
-git -C sword checkout 1460f9
+git -C sword checkout 574325
 patch --batch --forward -d sword -p 0 < patch/sword_globconf.patch
 
 # PATCHES
