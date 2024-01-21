@@ -78,7 +78,10 @@ SWMgr* ModuleStore::createSWMgr()
         if (isAndroid) {
           // Also consider the originally used path for Android, which does not work anymore from Android 11, but is still relevant
           // for existing translations on Android versions < 11.
-          swMgr->augmentModules("/sdcard/sword"); 
+          swMgr->augmentModules("/sdcard/sword");
+
+          // Also consider /sdcard/Documents/sword, which is the path used by other programs
+          swMgr->augmentModules("/sdcard/Documents/sword");
         }
     } else {
         #ifdef _WIN32
