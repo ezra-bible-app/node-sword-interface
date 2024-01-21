@@ -126,9 +126,6 @@
                 ],
                 "libraries": [
                     '-l<(module_root_dir)/build/sword-build-win32/lib/sword.lib',
-                    '-l<(module_root_dir)/build/sword-build-win32/lib/icuuc.lib',
-                    '-l<(module_root_dir)/build/sword-build-win32/lib/icuin.lib',
-                    '-l<(module_root_dir)/build/sword-build-win32/lib/icudt.lib',
                     '-l<(module_root_dir)/build/sword-build-win32/lib/libbz2.lib',
                     '-l<(module_root_dir)/build/sword-build-win32/lib/liblzma.lib',
                     '-l<(module_root_dir)/build/sword-build-win32/lib/libcurl_imp.lib',
