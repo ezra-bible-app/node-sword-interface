@@ -1,6 +1,6 @@
 {
   "name": "node-sword-interface",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "Javascript (N-API) interface to SWORD library",
   "keywords": [
     "C++",
@@ -31,6 +31,6 @@
   },
   "devDependencies": {
     "jsdoc-to-markdown": "^8.0.0",
-    "node-gyp": "^8.4.0"
+    "node-gyp": "^9.1.0"
   }
 }
