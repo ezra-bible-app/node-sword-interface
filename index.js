@@ -446,6 +446,25 @@ class NodeSwordInterface {
   }
 
   /**
+   * Returns the number verses in the given book.
+   * 
+   * @param {String} moduleCode - The module code of the SWORD module. 
+   * @param {String} bookCode - The book code of the SWORD module.
+   * @returns {Number} The verse count of the book.
+   */
+  getBookVerseCount(moduleCode, bookCode) {
+    const bookChapterCount = this.nativeInterface.getBookChapterCount(moduleCode, bookCode);
+    let verseCount = 0;
+
+    for (let i = 1; i <= bookChapterCount; i++) {
+      const chapterVerseCount = this.nativeInterface.getChapterVerseCount(moduleCode, bookCode, i);
+      verseCount += chapterVerseCount;
+    }
+
+    return verseCount;
+  }
+
+  /**
    * Returns the Bible text of a module.
    *
    * @param {String} moduleCode - The module code of the SWORD module.
