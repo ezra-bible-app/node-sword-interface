@@ -60,6 +60,8 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getBookHeaderList(moduleCode, bookCode, withAbsoluteVerseNumbers)](#NodeSwordInterface+getBookHeaderList) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookChapterCount(moduleCode, bookCode)](#NodeSwordInterface+getBookChapterCount)
     * [.getChapterVerseCount(moduleCode, bookCode, chapter)](#NodeSwordInterface+getChapterVerseCount)
+    * [.getAllChapterVerseCounts(moduleCode, bookCode)](#NodeSwordInterface+getAllChapterVerseCounts) ⇒ <code>Number</code>
+    * [.getBookVerseCount(moduleCode, bookCode)](#NodeSwordInterface+getBookVerseCount) ⇒ <code>Number</code>
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookIntroduction(moduleCode, bookCode)](#NodeSwordInterface+getBookIntroduction) ⇒ <code>String</code>
     * [.moduleHasBook(moduleCode, bookCode)](#NodeSwordInterface+moduleHasBook) ⇒ <code>Boolean</code>
@@ -437,6 +439,32 @@ Returns the number of verses in the given chapter.
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
 | bookCode | <code>String</code> | The book code of the SWORD module. |
 | chapter | <code>Number</code> | The chapter of the book. |
+
+<a name="NodeSwordInterface+getAllChapterVerseCounts"></a>
+
+### nodeSwordInterface.getAllChapterVerseCounts(moduleCode, bookCode) ⇒ <code>Number</code>
+Returns an array with the chapter verse counts of all chapters of a given book.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: <code>Number</code> - chapterVerseCounts  
+
+| Param | Type |
+| --- | --- |
+| moduleCode | <code>String</code> | 
+| bookCode | <code>String</code> | 
+
+<a name="NodeSwordInterface+getBookVerseCount"></a>
+
+### nodeSwordInterface.getBookVerseCount(moduleCode, bookCode) ⇒ <code>Number</code>
+Returns the number verses in the given book.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: <code>Number</code> - The verse count of the book.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleCode | <code>String</code> | The module code of the SWORD module. |
+| bookCode | <code>String</code> | The book code of the SWORD module. |
 
 <a name="NodeSwordInterface+getBibleText"></a>
 
