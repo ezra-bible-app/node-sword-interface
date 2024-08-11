@@ -446,6 +446,25 @@ class NodeSwordInterface {
   }
 
   /**
+   * Returns an array with the chapter verse counts of all chapters of a given book.
+   * 
+   * @param {String} moduleCode 
+   * @param {String} bookCode 
+   * @returns {Number} chapterVerseCounts
+   */
+  getAllChapterVerseCounts(moduleCode, bookCode) {
+    let chapterVerseCounts = [];
+
+    let bookChapterCount = this.nativeInterface.getBookChapterCount(moduleCode, bookCode);
+    for (let i = 0; i < bookChapterCount; i++) {
+      let currentChapterVerseCount = this.nativeInterface.getChapterVerseCount(moduleCode, bookCode, i);
+      chapterVerseCounts.push(currentChapterVerseCount);
+    }
+
+    return chapterVerseCounts;
+  }
+
+  /**
    * Returns the number verses in the given book.
    * 
    * @param {String} moduleCode - The module code of the SWORD module. 
