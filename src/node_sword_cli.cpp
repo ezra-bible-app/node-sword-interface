@@ -126,14 +126,6 @@ void get_book_list(ModuleHelper& module_helper)
     }
 }
 
-void get_book_headers(TextProcessor& text_processor)
-{
-    vector<Verse> headerList = text_processor.getBookHeaderList("NASB", "John");
-    for (int i = 0; i < headerList.size(); i++) {
-        cout << headerList[i].content << endl;
-    }
-}
-
 void test_unlock_key(ModuleInstaller& module_installer, ModuleStore& module_store, TextProcessor& text_processor)
 {
     module_installer.uninstallModule("NA28");
@@ -235,8 +227,6 @@ int main(int argc, char** argv)
     }*/
 
     //get_updated_repo_modules(repoInterface);
-
-    /*get_book_headers(textProcessor);*/
 
     return 0;
 }
