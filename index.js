@@ -416,12 +416,54 @@ class NodeSwordInterface {
    * 
    * @param {String} moduleCode 
    * @param {String} bookCode 
-   * @param {Boolean} withAbsoluteVerseNumbers
+   * @param {Number} startVerseNumber
+   * @param {Number} verseCount
    * 
    * @return {VerseObject[]}
    */
-  getBookHeaderList(moduleCode, bookCode, withAbsoluteVerseNumbers=false) {
-    return this.nativeInterface.getBookHeaderList(moduleCode, bookCode, withAbsoluteVerseNumbers);
+  getBookHeaderList(moduleCode, bookCode, startVerseNumber=-1, verseCount=-1) {
+    const bookTextJson = this.nativeInterface.getBookText(moduleCode, bookCode, startVerseNumber, verseCount);
+
+    let bookTextHtml = "<div>";
+    bookTextJson.forEach((verse) => { bookTextHtml += verse.content; });
+    bookTextHtml += "</div>";
+
+    const HTMLParser = require('node-html-parser');
+    const root = HTMLParser.parse(bookTextHtml);
+    const rawSectionHeaders = root.querySelectorAll('.sword-section-title');
+    let sectionHeaders = [];
+
+    rawSectionHeaders.forEach((header) => {
+      let newSectionHeader = {};
+
+      newSectionHeader['moduleCode'] = moduleCode;
+      newSectionHeader['bibleBookShortTitle'] = bookCode;
+      newSectionHeader['type'] = header._attrs.type;
+      newSectionHeader['subType'] = header._attrs.subtype;
+      newSectionHeader['chapter'] = header._attrs.chapter;
+      newSectionHeader['verseNr'] = header._attrs.verse;
+
+      let content = "";
+
+      // You may expect that a header only has one child node (the text). But there are modules like the NET Bible
+      // where the header actually contains several child nodes and some of them are Strongs elements.
+      // Therefore, we have to go through individually and also differentiate between text nodes and other types of nodes.
+      for (let i = 0; i < header.childNodes.length; i++) {
+        let currentNode = header.childNodes[i];
+
+        if (currentNode.nodeType == HTMLParser.NodeType.TEXT_NODE) {
+          content += currentNode._rawText;
+        } else {
+          content += currentNode.firstChild._rawText;
+        }
+      }
+
+      newSectionHeader['content'] = content;
+
+      sectionHeaders.push(newSectionHeader);
+    });
+
+    return sectionHeaders;
   }
 
   /**
