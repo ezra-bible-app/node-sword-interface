@@ -200,7 +200,18 @@ vector<string> RepositoryInterface::getRepoNames()
          ++it) {
 
         string source = string(it->second->caption);
+
+        #if defined(__ANDROID__)
+        // Since August/September 2024 there have been issues observed with the access to the STEP Bible repository.
+        // We filter it out here, since it is currently dysfunctional.
+        if (source != "STEP Bible") {
+        #endif
+
         sourceNames.push_back(source);
+
+        #if defined(__ANDROID__)
+        }
+        #endif
     }
 
     return sourceNames;
