@@ -83,9 +83,12 @@ bool ModuleHelper::moduleHasBook(sword::SWModule* module, std::string bookCode)
        For apocryphal books we may get "Rev 1:1" as actual module key and this will mismatch with the set key
        and then indicate that the book is not existing. */
 
-    if (moduleKeyText != key.str()) {
+    // We compare the first three letters of the two keys to see whether the key retrieved matches the key we are looking for
+    if (moduleKeyText.size() >= 3 && key.str().size() >= 3 && moduleKeyText.substr(0,3) != key.str().substr(0,3)) {
         hasBook = false;
     } else {
+        // The first three letters of the key seem ok.
+        // Now let's check next whether the module has the corresponding entry.
         hasBook = module->hasEntry(module->getKey());
     }
 
