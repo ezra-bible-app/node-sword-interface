@@ -3,6 +3,7 @@
 #include "module_store.hpp"
 #include "text_processor.hpp"
 #include "module_helper.hpp"
+#include "dict_helper.hpp"
 #include "module_installer.hpp"
 #include "strongs_entry.hpp"
 #include "module_search.hpp"
@@ -126,6 +127,17 @@ void get_book_list(ModuleHelper& module_helper)
     }
 }
 
+void get_dict_key_list(DictHelper& dict_helper)
+{
+    vector<string> keyList = dict_helper.getKeyList("Vines");
+
+    cout << "Got " << keyList.size() << " entries!" << endl;
+
+    for (int i = 0; i < keyList.size(); i++) {
+        cout << keyList[i] << endl;
+    }
+}
+
 void test_unlock_key(ModuleInstaller& module_installer, ModuleStore& module_store, TextProcessor& text_processor)
 {
     module_installer.uninstallModule("NA28");
@@ -167,6 +179,7 @@ int main(int argc, char** argv)
 {
     ModuleStore moduleStore;
     ModuleHelper moduleHelper(moduleStore);
+    DictHelper dictHelper(moduleStore);
     SwordStatusReporter statusReporter;
     RepositoryInterface repoInterface(statusReporter, moduleHelper, moduleStore);
     ModuleInstaller moduleInstaller(repoInterface, moduleStore);
@@ -209,13 +222,15 @@ int main(int argc, char** argv)
     /*sword_facade.installModule("StrongsHebrew");
     sword_facade.installModule("StrongsGreek");*/
 
-    get_strongs_entry(textProcessor);
+    //get_strongs_entry(textProcessor);
 
     //get_module_text(textProcessor);
 
     //get_book_intro(textProcessor);
 
     //get_book_list(moduleHelper);
+
+    get_dict_key_list(dictHelper);
 
     //string translation = sword_facade.getSwordTranslation(string("/usr/share/sword/locales.d"), string("de"), string("locales"));
     //cout << translation << endl;

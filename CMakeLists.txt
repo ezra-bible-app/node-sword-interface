@@ -38,6 +38,7 @@ ${CMAKE_SOURCE_DIR}/src/sword_backend/module_store.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/repository_interface.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/sword_status_reporter.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/module_helper.cpp
+${CMAKE_SOURCE_DIR}/src/sword_backend/dict_helper.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/string_helper.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/file_system_helper.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/module_installer.cpp
