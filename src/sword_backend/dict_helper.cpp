@@ -33,6 +33,7 @@ std::vector<std::string> DictHelper::getKeyList(std::string moduleName)
 
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
+
     } else {
         const char* moduleType = module->getType();
 
@@ -43,12 +44,18 @@ std::vector<std::string> DictHelper::getKeyList(std::string moduleName)
         } else {
             sword::SWLD* swldModule = dynamic_cast<sword::SWLD*>(module);
 
-            long entryCount = swldModule->getEntryCount();
+            if (swldModule == NULL) {
 
-            for (long i; i < entryCount; i++) {
-                const char* key = swldModule->getKeyForEntry(i);
-                string stringKey = string(key);
-                keyList.push_back(stringKey);
+                cerr << "Could not initialize module " << moduleName << " as SWLD module." << endl;
+
+            } else {
+                long entryCount = swldModule->getEntryCount();
+
+                for (long i; i < entryCount; i++) {
+                    const char* key = swldModule->getKeyForEntry(i);
+                    string stringKey = string(key);
+                    keyList.push_back(stringKey);
+                }
             }
         }
     }
