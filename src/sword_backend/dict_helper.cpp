@@ -29,6 +29,11 @@ std::vector<std::string> DictHelper::getKeyList(std::string moduleName)
 {
     vector<string> keyList;
 
+    if (moduleName.size() == 0) {
+        cerr << "getKeyList: Cannot work with empty moduleName!" << endl;
+        return keyList;
+    }
+
     SWModule* module = this->_moduleStore.getLocalModule(moduleName);
 
     if (module == 0) {
