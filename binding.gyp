@@ -58,6 +58,7 @@
             "src/sword_backend/mutex.cpp",
             "src/sword_backend/file_system_helper.cpp",
             "src/sword_backend/module_helper.cpp",
+            "src/sword_backend/dict_helper.cpp",
             "src/sword_backend/module_store.cpp",
             "src/sword_backend/string_helper.cpp",
             "src/sword_backend/strongs_entry.cpp",
