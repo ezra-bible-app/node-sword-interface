@@ -56,7 +56,7 @@ std::vector<std::string> DictHelper::getKeyList(std::string moduleName)
             } else {
                 long entryCount = swldModule->getEntryCount();
 
-                for (long i; i < entryCount; i++) {
+                for (long i = 0; i < entryCount; i++) {
                     const char* key = swldModule->getKeyForEntry(i);
                     string stringKey = string(key);
                     keyList.push_back(stringKey);
