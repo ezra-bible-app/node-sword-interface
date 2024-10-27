@@ -288,10 +288,10 @@ vector<SWModule*> RepositoryInterface::getRepoModulesByLang(string repoName,
             continue;
         }
 
-        if (moduleType == ModuleType::dict && !hasHebrewStrongsKeys && !hasGreekStrongsKeys) {
+        /*if (moduleType == ModuleType::dict && !hasHebrewStrongsKeys && !hasGreekStrongsKeys) {
             // In case of a dictionary module we ignore it if there are not Strong's keys
             continue;
-        }
+        }*/
 
         if (hebrewStrongsKeys && !hasHebrewStrongsKeys) {
             continue;
