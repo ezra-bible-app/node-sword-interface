@@ -47,7 +47,7 @@ std::vector<std::string> DictHelper::getKeyList(std::string moduleName)
             cerr << "Given module is not a lexicon/dictionary!" << endl;
 
         } else {
-            sword::SWLD* swldModule = dynamic_cast<sword::SWLD*>(module);
+            sword::SWLD* swldModule = static_cast<sword::SWLD*>(module);
 
             if (swldModule == NULL) {
 
