@@ -547,14 +547,24 @@ class NodeSwordInterface {
   }
 
   /**
-   * Checks whether a module has a certain book
+   * Checks whether a module has a certain book.
    * 
    * @param {String} moduleCode 
    * @param {String} bookCode 
-   * @returns {Boolean}
+   * @return {Boolean}
    */
   moduleHasBook(moduleCode, bookCode) {
     return this.nativeInterface.moduleHasBook(moduleCode, bookCode);
+  }
+
+  /**
+   * Returns the keys of a dictionary module.
+   * 
+   * @param {String} moduleCode 
+   * @return {String[]}
+   */
+  getDictModuleKeys(moduleCode) {
+    return this.nativeInterface.getDictModuleKeys(moduleCode);
   }
 
   /**

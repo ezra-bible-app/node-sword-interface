@@ -34,6 +34,7 @@
 #include "module_store.hpp"
 #include "module_installer.hpp"
 #include "module_helper.hpp"
+#include "dict_helper.hpp"
 #include "text_processor.hpp"
 #include "module_search.hpp"
 #include "mutex.hpp"
@@ -101,6 +102,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getChapterVerseCount", &NodeSwordInterface::getChapterVerseCount),
         InstanceMethod("getBookIntroduction", &NodeSwordInterface::getBookIntroduction),
         InstanceMethod("moduleHasBook", &NodeSwordInterface::moduleHasBook),
+        InstanceMethod("getDictModuleKeys", &NodeSwordInterface::getDictModuleKeys),
         InstanceMethod("getModuleSearchResults", &NodeSwordInterface::getModuleSearchResults),
         InstanceMethod("terminateModuleSearch", &NodeSwordInterface::terminateModuleSearch),
         InstanceMethod("getStrongsEntry", &NodeSwordInterface::getStrongsEntry),
@@ -174,6 +176,7 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
     if (!homeDirError && !localeDirError) { // We only proceed if there has not been any issue with the homeDir or localeDir
         this->_moduleStore = new ModuleStore(this->customHomeDir);
         this->_moduleHelper = new ModuleHelper(*(this->_moduleStore));
+        this->_dictHelper = new DictHelper(*(this->_moduleStore));
         this->_repoInterface = new RepositoryInterface(this->_swordStatusReporter, *(this->_moduleHelper), *(this->_moduleStore), this->customHomeDir);
         this->_moduleInstaller = new ModuleInstaller(*(this->_repoInterface), *(this->_moduleStore), this->customHomeDir);
         this->_napiSwordHelper = new NapiSwordHelper(*(this->_moduleHelper), *(this->_moduleStore));
@@ -708,6 +711,21 @@ Napi::Value NodeSwordInterface::moduleHasBook(const Napi::CallbackInfo& info)
 
     unlockApi();
     return hasBook;
+}
+
+Napi::Value NodeSwordInterface::getDictModuleKeys(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    Napi::Env env = info.Env();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string);
+    Napi::String moduleName = info[0].As<Napi::String>();
+    ASSERT_SW_MODULE_EXISTS(moduleName);
+
+    vector<string> dictModuleKeys = this->_dictHelper->getKeyList(moduleName);
+    Napi::Array dictModuleKeyArray = this->_napiSwordHelper->getNapiArrayFromStringVector(env, dictModuleKeys);
+
+    unlockApi();
+    return dictModuleKeyArray;
 }
 
 Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo& info)

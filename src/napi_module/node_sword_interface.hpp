@@ -29,6 +29,7 @@ class ModuleInstaller;
 class TextProcessor;
 class NapiSwordHelper;
 class ModuleHelper;
+class DictHelper;
 class ModuleSearch;
 class ModuleSearchWorker;
 enum class ModuleType;
@@ -82,6 +83,7 @@ private:
     Napi::Value getChapterVerseCount(const Napi::CallbackInfo& info);
     Napi::Value getBookIntroduction(const Napi::CallbackInfo& info);
     Napi::Value moduleHasBook(const Napi::CallbackInfo& info);
+    Napi::Value getDictModuleKeys(const Napi::CallbackInfo& info);
 
     Napi::Value getModuleSearchResults(const Napi::CallbackInfo& info);
     Napi::Value terminateModuleSearch(const Napi::CallbackInfo& info);
@@ -104,6 +106,7 @@ private:
     bool dirExists(const Napi::CallbackInfo& info, std::string dirName);
 
     ModuleHelper* _moduleHelper;
+    DictHelper* _dictHelper;
     NapiSwordHelper* _napiSwordHelper;
     RepositoryInterface* _repoInterface;
     ModuleStore* _moduleStore;

@@ -65,6 +65,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getBibleText(moduleCode)](#NodeSwordInterface+getBibleText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookIntroduction(moduleCode, bookCode)](#NodeSwordInterface+getBookIntroduction) ⇒ <code>String</code>
     * [.moduleHasBook(moduleCode, bookCode)](#NodeSwordInterface+moduleHasBook) ⇒ <code>Boolean</code>
+    * [.getDictModuleKeys(moduleCode)](#NodeSwordInterface+getDictModuleKeys) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getModuleSearchResults(moduleCode, searchTerm, progressCB, searchType, searchScope, isCaseSensitive, useExtendedVerseBoundaries)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
     * [.terminateModuleSearch()](#NodeSwordInterface+terminateModuleSearch)
     * [.hebrewStrongsAvailable()](#NodeSwordInterface+hebrewStrongsAvailable) ⇒ <code>Boolean</code>
@@ -494,7 +495,7 @@ Returns the introduction of the given book.
 <a name="NodeSwordInterface+moduleHasBook"></a>
 
 ### nodeSwordInterface.moduleHasBook(moduleCode, bookCode) ⇒ <code>Boolean</code>
-Checks whether a module has a certain book
+Checks whether a module has a certain book.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 
@@ -502,6 +503,17 @@ Checks whether a module has a certain book
 | --- | --- |
 | moduleCode | <code>String</code> | 
 | bookCode | <code>String</code> | 
+
+<a name="NodeSwordInterface+getDictModuleKeys"></a>
+
+### nodeSwordInterface.getDictModuleKeys(moduleCode) ⇒ <code>Array.&lt;String&gt;</code>
+Returns the keys of a dictionary module.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+
+| Param | Type |
+| --- | --- |
+| moduleCode | <code>String</code> | 
 
 <a name="NodeSwordInterface+getModuleSearchResults"></a>
 
