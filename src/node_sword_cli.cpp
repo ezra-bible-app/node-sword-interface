@@ -29,14 +29,16 @@ void show_repos(RepositoryInterface& repoInterface)
 
 void show_modules(RepositoryInterface& repoInterface)
 {
-    cout << "German MODULES of CrossWire:" << endl;
-    vector<SWModule*> modules = repoInterface.getRepoModulesByLang("CrossWire", "de");
+    string repo = "CrossWire";
+    cout << "DICT MODULES of " << repo << ":" << endl;
+    vector<SWModule*> modules = repoInterface.getRepoModulesByLang(repo, "en", ModuleType::dict);
+
     for (unsigned int i = 0; i < modules.size(); i++) {
         SWModule* currentModule = modules[i];
 
         cout << currentModule->getName();
 
-        if (currentModule->getConfigEntry("Abbreviation")) {
+        /*if (currentModule->getConfigEntry("Abbreviation")) {
             string moduleShortcut = currentModule->getConfigEntry("Abbreviation");
             cout << " " << moduleShortcut;
         }
@@ -47,10 +49,10 @@ void show_modules(RepositoryInterface& repoInterface)
         }
 
         string moduleVersion = currentModule->getConfigEntry("Version");
-        cout << " " << moduleVersion << " ";
+        cout << " " << moduleVersion << " ";*/
 
-        string moduleLocked = currentModule->getConfigEntry("CipherKey") ? "LOCKED" : "";
-        cout << moduleLocked << " ";
+        //string moduleLocked = currentModule->getConfigEntry("CipherKey") ? "LOCKED" : "";
+        //cout << moduleLocked << " ";
 
         /*ConfigEntMap::const_iterator begin = currentModule->getConfig().lower_bound("GlobalOptionFilter");
         ConfigEntMap::const_iterator end = currentModule->getConfig().upper_bound("GlobalOptionFilter");
@@ -199,9 +201,9 @@ int main(int argc, char** argv)
 
     //test_unlock_key(moduleInstaller, moduleStore, textProcessor);
 
-    /*show_repos(repoInterface);
+    /*show_repos(repoInterface);*/
 
-    show_modules(repoInterface);*/
+    show_modules(repoInterface);
 
     /*int error = moduleInstaller.installModule("UKJV");
 
@@ -230,7 +232,7 @@ int main(int argc, char** argv)
 
     //get_book_list(moduleHelper);
 
-    get_dict_key_list(dictHelper);
+    //get_dict_key_list(dictHelper);
 
     //string translation = sword_facade.getSwordTranslation(string("/usr/share/sword/locales.d"), string("de"), string("locales"));
     //cout << translation << endl;
