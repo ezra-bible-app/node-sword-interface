@@ -43,14 +43,6 @@ bool ModuleHelper::moduleHasFeature(sword::SWModule* module, std::string feature
     return this->moduleHasKeyValuePair(module, "Feature", feature);
 }
 
-bool ModuleHelper::moduleHasStrongsKeys(sword::SWModule* module)
-{
-    bool hasHebrewStrongsKeys = this->moduleHasFeature(module, "HebrewDef");
-    bool hasGreekStrongsKeys = this->moduleHasFeature(module, "GreekDef");
-
-    return hasHebrewStrongsKeys || hasGreekStrongsKeys;
-}
-
 bool ModuleHelper::moduleHasKeyValuePair(sword::SWModule* module, std::string key, std::string value)
 {
     bool hasKeyValuePair = false;

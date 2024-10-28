@@ -230,10 +230,6 @@ vector<SWModule*> RepositoryInterface::getAllRepoModules(string repoName, Module
             SWModule* currentModule = it->second;
             string currentModuleType = currentModule->getType();
 
-            /*if (moduleType == ModuleType::dict && !this->_moduleHelper.moduleHasStrongsKeys(currentModule)) {
-                continue;
-            }*/
-
             if (moduleTypeString == "ANY" || currentModuleType == moduleTypeString) {
                 modules.push_back(currentModule);
             }
@@ -287,11 +283,6 @@ vector<SWModule*> RepositoryInterface::getRepoModulesByLang(string repoName,
         if (strongsFilter && !hasStrongs) {
             continue;
         }
-
-        /*if (moduleType == ModuleType::dict && !hasHebrewStrongsKeys && !hasGreekStrongsKeys) {
-            // In case of a dictionary module we ignore it if there are not Strong's keys
-            continue;
-        }*/
 
         if (hebrewStrongsKeys && !hasHebrewStrongsKeys) {
             continue;

@@ -42,7 +42,6 @@ public:
 
     bool moduleHasGlobalOption(sword::SWModule* module, std::string globalOption);
     bool moduleHasFeature(sword::SWModule* module, std::string feature);
-    bool moduleHasStrongsKeys(sword::SWModule* module);
     bool moduleHasBook(sword::SWModule* module, std::string bookCode);
 
     std::vector<std::string> getBookList(std::string moduleName);
