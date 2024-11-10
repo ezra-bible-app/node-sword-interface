@@ -23,7 +23,7 @@
   "license": "GPL-2.0+",
   "dependencies": {
     "glob": "^8.0.3",
-    "node-addon-api": "^7.1.0",
+    "node-addon-api": "^8.2.2",
     "node-html-parser": "^6.1.13"
   },
   "repository": {
@@ -32,6 +32,6 @@
   },
   "devDependencies": {
     "jsdoc-to-markdown": "^8.0.3",
-    "node-gyp": "^9.1.0"
+    "node-gyp": "^10.2.0"
   }
 }
