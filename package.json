@@ -31,7 +31,7 @@
     "url": "git+https://github.com/ezra-bible-app/node-sword-interface.git"
   },
   "devDependencies": {
-    "jsdoc-to-markdown": "^8.0.3",
+    "jsdoc-to-markdown": "^9.0.5",
     "node-gyp": "^9.1.0"
   }
 }
