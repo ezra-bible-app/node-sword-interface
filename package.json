@@ -24,7 +24,7 @@
   "dependencies": {
     "glob": "^8.0.3",
     "node-addon-api": "^8.2.2",
-    "node-html-parser": "^6.1.13"
+    "node-html-parser": "^7.0.1"
   },
   "repository": {
     "type": "git",
