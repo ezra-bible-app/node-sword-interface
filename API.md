@@ -50,6 +50,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.isModuleReadable(moduleCode)](#NodeSwordInterface+isModuleReadable) ⇒ <code>Boolean</code>
     * [.getModuleDescription(moduleCode)](#NodeSwordInterface+getModuleDescription) ⇒ <code>String</code>
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
+    * [.enableStrongsWithNbsp()](#NodeSwordInterface+enableStrongsWithNbsp)
     * [.getRawModuleEntry(moduleCode, key)](#NodeSwordInterface+getRawModuleEntry) ⇒ <code>String</code>
     * [.getReferenceText(moduleCode, key)](#NodeSwordInterface+getReferenceText) ⇒ [<code>VerseObject</code>](#VerseObject)
     * [.getChapterText(moduleCode, bookCode, chapter)](#NodeSwordInterface+getChapterText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
@@ -309,6 +310,12 @@ Returns the description of a module.
 ### nodeSwordInterface.enableMarkup()
 Enables available markup (like Strongs, foot notes, etc.)
 This influences the output for getChapterText, getBookText and getBibleText.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+<a name="NodeSwordInterface+enableStrongsWithNbsp"></a>
+
+### nodeSwordInterface.enableStrongsWithNbsp()
+Enables rendering of Strongs elements with non-breaking spaces.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 <a name="NodeSwordInterface+getRawModuleEntry"></a>

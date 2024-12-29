@@ -332,6 +332,13 @@ class NodeSwordInterface {
   }
 
   /**
+   * Enables rendering of Strongs elements with non-breaking spaces.
+   */
+  enableStrongsWithNbsp() {
+    return this.nativeInterface.enableStrongsWithNbsp();
+  }
+
+  /**
    * Returns the raw text of an entry for the given module and key.
    * If no entry exists for the given key the return value is undefined.
    *

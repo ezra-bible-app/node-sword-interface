@@ -38,6 +38,8 @@ public:
     void enableMarkup() { this->_markupEnabled = true; }
     void disableMarkup() { this->_markupEnabled = false; }
 
+    void enableStrongsWithNbsp() { this->_strongsWithNbspEnabled = true; }
+
     std::vector<Verse> getBibleText(std::string moduleName);
     Verse getReferenceText(std::string moduleName, std::string reference);
     std::vector<Verse> getBookText(std::string moduleName, std::string bookCode, int startVerseNumber=-1, int verseCount=-1);
@@ -71,6 +73,7 @@ private:
     ModuleHelper& _moduleHelper;
     bool _markupEnabled;
     bool _rawMarkupEnabled;
+    bool _strongsWithNbspEnabled;
 };
 
 #endif // _TEXT_PROCESSOR

@@ -40,6 +40,7 @@ TextProcessor::TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelpe
     : _moduleStore(moduleStore), _moduleHelper(moduleHelper)
 {
     this->_markupEnabled = false;
+    this->_strongsWithNbspEnabled = false;
     this->_rawMarkupEnabled = false;
 }
 
@@ -210,7 +211,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
         }
     }
 
-    if (hasStrongs) {
+    if (hasStrongs && this->_strongsWithNbspEnabled) {
         filteredText = this->replaceSpacesInStrongs(filteredText);
     }
 

@@ -70,6 +70,7 @@ private:
     Napi::Value getLocalModule(const Napi::CallbackInfo& info);
 
     Napi::Value enableMarkup(const Napi::CallbackInfo& info);
+    Napi::Value enableStrongsWithNbsp(const Napi::CallbackInfo& info);
     
     Napi::Value getRawModuleEntry(const Napi::CallbackInfo& info);
     Napi::Value getReferenceText(const Napi::CallbackInfo& info);
