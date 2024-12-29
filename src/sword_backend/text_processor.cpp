@@ -533,6 +533,7 @@ string TextProcessor::replaceSpacesInStrongs(const string& text)
         filteredText += std::regex_replace(m[0].str(), space, "&nbsp;");
         input = m.suffix();
     }
+
     filteredText += input;
 
     return filteredText;
