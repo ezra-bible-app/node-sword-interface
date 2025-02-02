@@ -141,13 +141,28 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
                 return searchResults;
             }
 
-            // If the Strong's key is OT we need to insert a zero in front of the key
-            // This is necessary because the Sword modules with Strong's have a zero in front of the Hebrew Strong's numbers
-            if (searchTerm[0] == 'H' && this->_textProcessor.moduleHasStrongsZeroPrefixes(module)) {
-                // Cut out the number from the Strong's key (starting at index 1 until end of string)
-                string strongsKey = searchTerm.substr(1, searchTerm.size());
-                // Overwrite the searchTerm with an inserted 0
-                searchTerm = "H0" + strongsKey;
+            // Cut out the number from the Strong's key (starting at index 1 until end of string)
+            string strongsNumber = searchTerm.substr(1, searchTerm.size());
+
+            if (searchTerm[0] == 'H') {
+
+                if (this->_textProcessor.moduleHasStrongsPaddedZeroPrefixes(module)) {
+                    string paddedStrongsNumber = this->_textProcessor.padStrongsNumber(strongsNumber);
+                    searchTerm = "H" + paddedStrongsNumber;
+
+                } else if (this->_textProcessor.moduleHasStrongsZeroPrefixes(module)) {
+                    // If the Strong's key is OT we need to insert a zero in front of the key
+                    // This is necessary because the Sword modules with Strong's have a zero in front of the Hebrew Strong's numbers
+                    // Overwrite the searchTerm with an inserted 0
+                    searchTerm = "H0" + strongsNumber;
+                }
+
+            } else if (searchTerm[0] == 'G') {
+
+                if (this->_textProcessor.moduleHasStrongsPaddedZeroPrefixes(module)) {
+                    string paddedStrongsNumber = this->_textProcessor.padStrongsNumber(strongsNumber);
+                    searchTerm = "G" + paddedStrongsNumber;
+                }
             }
 
             // from swmodule.h api docs:

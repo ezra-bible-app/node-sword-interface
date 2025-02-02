@@ -52,6 +52,8 @@ public:
     StrongsEntry* getStrongsEntry(std::string key);
 
     bool moduleHasStrongsZeroPrefixes(sword::SWModule* module);
+    bool moduleHasStrongsPaddedZeroPrefixes(sword::SWModule* module);
+    std::string padStrongsNumber(const std::string strongsNumber);
     bool isModuleReadable(sword::SWModule* module, std::string key="John 1:1");
 
 private:

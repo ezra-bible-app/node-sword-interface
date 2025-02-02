@@ -20,6 +20,7 @@
 #include <sstream>
 #include <string>
 #include <regex>
+#include <iomanip>
 
 // Sword includes
 #include <versekey.h>
@@ -552,6 +553,36 @@ bool TextProcessor::moduleHasStrongsZeroPrefixes(sword::SWModule* module)
     
     // Check if the verse text contains the Strong's number H07225 ("beginning") with a zero prefix
     return verseText.find("strong:H07225") != string::npos;
+}
+
+bool TextProcessor::moduleHasStrongsPaddedZeroPrefixes(sword::SWModule* module)
+{
+    // Check if the module has Strongs's numbers that are padded with zeros
+    string key = "Gen 2:24";
+    module->setKey(key.c_str());
+
+    bool previousMarkupSetting = this->_markupEnabled;
+    this->enableMarkup();
+    string verseText = this->getCurrentVerseText(module, true);
+    this->_markupEnabled = previousMarkupSetting;
+
+    // Check if the verse text contains the Strong's number H0001 ("father") with padded zeros
+    return verseText.find("strong:H0001") != string::npos;
+}
+
+string TextProcessor::padStrongsNumber(const string strongsNumber) {
+    if (strongsNumber.size() == 0) {
+        return strongsNumber;
+    }
+
+    // Convert to int
+    int numericValue = stoi(strongsNumber);
+
+    // Use stringstream and i/o manipulators to pad with zeros
+    std::ostringstream padded;
+    padded << std::setw(4) << std::setfill('0') << numericValue;
+
+    return padded.str();
 }
 
 bool TextProcessor::isModuleReadable(sword::SWModule* module, std::string key)
