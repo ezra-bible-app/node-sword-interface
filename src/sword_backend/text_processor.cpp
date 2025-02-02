@@ -550,7 +550,8 @@ bool TextProcessor::moduleHasStrongsZeroPrefixes(sword::SWModule* module)
     string verseText = this->getCurrentVerseText(module, true);
     this->_markupEnabled = previousMarkupSetting;
     
-    return verseText.find("strong:H0") != string::npos;
+    // Check if the verse text contains the Strong's number H07225 ("beginning") with a zero prefix
+    return verseText.find("strong:H07225") != string::npos;
 }
 
 bool TextProcessor::isModuleReadable(sword::SWModule* module, std::string key)
