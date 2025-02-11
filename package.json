@@ -32,6 +32,6 @@
   },
   "devDependencies": {
     "jsdoc-to-markdown": "^8.0.3",
-    "node-gyp": "^9.1.0"
+    "node-gyp": "^11.1.0"
   }
 }
