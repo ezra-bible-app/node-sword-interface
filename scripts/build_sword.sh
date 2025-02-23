@@ -30,8 +30,8 @@ else
 fi
 
 # CLONE SWORD
-git clone https://github.com/bibletime/crosswire-sword-mirror sword
-git -C sword checkout 1460f9
+git clone https://github.com/ezra-bible-app/crosswire-sword-mirror sword
+git -C sword checkout 1.9.0-2025-02-23
 patch --batch --forward -d sword -p 0 < patch/sword_globconf.patch
 
 # PATCHES
@@ -75,7 +75,7 @@ else
   # macOS & Linux
 
   cd sword_build
-  cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 -DCMAKE_BUILD_TYPE=Release \
+  cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 -DCMAKE_BUILD_TYPE=Debug \
   -DCMAKE_DISABLE_FIND_PACKAGE_ICU=TRUE \
   ../sword
 fi
