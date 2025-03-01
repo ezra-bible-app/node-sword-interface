@@ -45,6 +45,8 @@ esac
 # BUILD
 mkdir -p sword_build
 
+SWORD_BUILD_TYPE="Release"
+
 if [ "$1" = "--android" ] ; then
   git clone https://github.com/karlkleinpaste/biblesync.git
   git -C biblesync checkout 2.1.0
@@ -67,7 +69,7 @@ if [ "$1" = "--android" ] ; then
   cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 \
   -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
   -DANDROID_NDK=$ANDROID_NDK_HOME \
-  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_BUILD_TYPE=$SWORD_BUILD_TYPE \
   -DANDROID_ABI="$ANDROID_ABI" \
   -DNODYNCAST=1 \
   ../sword
@@ -75,7 +77,8 @@ else
   # macOS & Linux
 
   cd sword_build
-  cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 -DCMAKE_BUILD_TYPE=Debug \
+  cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 \
+  -DCMAKE_BUILD_TYPE=$SWORD_BUILD_TYPE \
   -DCMAKE_DISABLE_FIND_PACKAGE_ICU=TRUE \
   ../sword
 fi
