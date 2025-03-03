@@ -983,11 +983,11 @@ Napi::Value NodeSwordInterface::getSwordVersion(const Napi::CallbackInfo& info)
     Napi::HandleScope scope(env);
 
 #if defined(__ANDROID__)
-    string version = "1.9.0-1460f91 (SVN Rev. 3873)";
+    string version = "1.9.0-2025-03-03";
 #elif defined(__linux__) || defined(__APPLE__)
-    string version = "1.9.0-1460f91 (SVN Rev. 3873)";
+    string version = "1.9.0-2025-03-03";
 #elif _WIN32
-    string version = "1.9.0-1460f91 (SVN Rev. 3873)";
+    string version = "1.9.0-2025-03-03";
 #endif
 
     Napi::String swVersion = Napi::String::New(env, version);
