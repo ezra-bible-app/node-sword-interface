@@ -90,6 +90,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getModuleDescription", &NodeSwordInterface::getModuleDescription),
         InstanceMethod("getLocalModule", &NodeSwordInterface::getLocalModule),
         InstanceMethod("enableMarkup", &NodeSwordInterface::enableMarkup),
+        InstanceMethod("disableMarkup", &NodeSwordInterface::disableMarkup),
         InstanceMethod("enableStrongsWithNbsp", &NodeSwordInterface::enableStrongsWithNbsp),
         InstanceMethod("getRawModuleEntry", &NodeSwordInterface::getRawModuleEntry),
         InstanceMethod("getReferenceText", &NodeSwordInterface::getReferenceText),
@@ -523,6 +524,16 @@ Napi::Value NodeSwordInterface::enableMarkup(const Napi::CallbackInfo& info)
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
     this->_textProcessor->enableMarkup();
+    unlockApi();
+    return info.Env().Undefined();
+}
+
+Napi::Value NodeSwordInterface::disableMarkup(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+    this->_textProcessor->disableMarkup();
     unlockApi();
     return info.Env().Undefined();
 }
