@@ -332,6 +332,14 @@ class NodeSwordInterface {
   }
 
   /**
+   * Disable available markup (like Strongs, foot notes, etc.)
+   * This influences the output for getChapterText, getBookText and getBibleText.
+   */
+  disableMarkup() {
+    return this.nativeInterface.disableMarkup();
+  }
+
+  /**
    * Enables rendering of Strongs elements with non-breaking spaces.
    */
   enableStrongsWithNbsp() {
