@@ -37,7 +37,8 @@ void ModuleSearchWorker::Execute(const ExecutionProgress& progress)
                                                                          this->_searchType,
                                                                          this->_searchScope,
                                                                          this->_isCaseSensitive,
-                                                                         this->_useExtendedVerseBoundaries);
+                                                                         this->_useExtendedVerseBoundaries,
+                                                                         this->_filterOnWordBoundaries); // Pass the parameter
     
     if (this->_searchTerminated) {
       this->_stdSearchResults.clear();

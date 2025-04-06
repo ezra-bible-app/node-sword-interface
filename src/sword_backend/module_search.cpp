@@ -21,6 +21,8 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <regex>
+#include <sstream>
 
 // sword includes
 #include <swmgr.h>
@@ -98,7 +100,8 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
                                                    SearchType searchType,
                                                    SearchScope searchScope,
                                                    bool isCaseSensitive,
-                                                   bool useExtendedVerseBoundaries)
+                                                   bool useExtendedVerseBoundaries,
+                                                   bool filterOnWordBoundaries)
 {
     this->_currentModuleName = moduleName;
     SWModule* module = this->_moduleStore.getSearchSwMgr()->getModule(moduleName.c_str());
@@ -196,6 +199,25 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
                 currentVerse.reference = module->getKey()->getShortText();
                 currentVerse.absoluteVerseNumber = absoluteVerseNumbers[currentVerse.reference];
                 currentVerse.content = verseText;
+
+                // Apply word boundary filtering if enabled
+                if (filterOnWordBoundaries) {
+                    std::istringstream verseStream(verseText);
+                    std::string word;
+                    std::vector<std::string> words;
+
+                    // Split verse text into words
+                    while (verseStream >> word) {
+                        words.push_back(word);
+                    }
+
+                    // Check if the search term matches any word in the list
+                    if (std::find(words.begin(), words.end(), searchTerm) == words.end()) {
+                        listKey++;
+                        continue; // Skip this verse if no match is found
+                    }
+                }
+
                 searchResults.push_back(currentVerse);
                 searchResultReferences.push_back(currentReference);
             }

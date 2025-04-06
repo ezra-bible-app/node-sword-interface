@@ -38,7 +38,8 @@ public:
                        SearchType searchType,
                        SearchScope searchScope,
                        bool isCaseSensitive=false,
-                       bool useExtendedVerseBoundaries=false)
+                       bool useExtendedVerseBoundaries=false,
+                       bool filterOnWordBoundaries=false)
 
         : ProgressWorker(repoInterface, jsProgressCallback, callback),
         _searchMutex(searchMutex),
@@ -49,6 +50,7 @@ public:
         _searchScope(searchScope),
         _isCaseSensitive(isCaseSensitive),
         _useExtendedVerseBoundaries(useExtendedVerseBoundaries),
+        _filterOnWordBoundaries(filterOnWordBoundaries),
         _searchTerminated(false) {
 
         this->_napiSwordHelper = new NapiSwordHelper(moduleHelper, moduleStore);
@@ -71,6 +73,7 @@ private:
     SearchScope _searchScope;
     bool _isCaseSensitive;
     bool _useExtendedVerseBoundaries;
+    bool _filterOnWordBoundaries; // New member variable
     bool _searchTerminated;
 };
 

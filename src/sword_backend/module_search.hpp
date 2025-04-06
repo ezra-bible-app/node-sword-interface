@@ -60,7 +60,8 @@ public:
                                               SearchType searchType=SearchType::multiWord,
                                               SearchScope searchScope=SearchScope::BIBLE,
                                               bool isCaseSensitive=false,
-                                              bool useExtendedVerseBoundaries=false);
+                                              bool useExtendedVerseBoundaries=false,
+                                              bool filterOnWordBoundaries=false);
     
     void terminate();
 
