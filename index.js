@@ -592,15 +592,17 @@ class NodeSwordInterface {
    * @param {String} searchScope - Options: BIBLE, OT, NT
    * @param {Boolean} isCaseSensitive - Whether the search is case sensitive
    * @param {Boolean} useExtendedVerseBoundaries - Whether the search should use extended verse boundaries (Two verses instead of one) in case of a multi word search.
+   * @param {Boolean} filterOnWordBoundaries - Whether to filter results based on word boundaries.
    * @return {Promise}
    */
   getModuleSearchResults(moduleCode,
                          searchTerm,
-                         progressCB=undefined,
-                         searchType="phrase",
-                         searchScope="BIBLE",
-                         isCaseSensitive=false,
-                         useExtendedVerseBoundaries=false) {
+                         progressCB = undefined,
+                         searchType = "phrase",
+                         searchScope = "BIBLE",
+                         isCaseSensitive = false,
+                         useExtendedVerseBoundaries = false,
+                         filterOnWordBoundaries = false) {
 
     if (progressCB === undefined) {
       progressCB = function(progress) {};
@@ -614,6 +616,7 @@ class NodeSwordInterface {
                                                     searchScope,
                                                     isCaseSensitive,
                                                     useExtendedVerseBoundaries,
+                                                    filterOnWordBoundaries,
                                                     progressCB,
                                                     function(searchResults) { resolve(searchResults); });
       } catch (error) {
