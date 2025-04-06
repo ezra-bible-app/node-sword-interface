@@ -34,6 +34,7 @@
 #include "module_store.hpp"
 #include "module_helper.hpp"
 #include "text_processor.hpp"
+#include "string_helper.hpp"
 
 /* REGEX definitions from regex.h */
 /* POSIX `cflags' bits (i.e., information for `regcomp').  */
@@ -95,6 +96,11 @@ ListKey ModuleSearch::getScopeKey(SWModule* module, SearchScope scope)
     return key;
 }
 
+inline bool isAllowedCharacter(char c) {
+    static const string disallowedPunctuation = ",;.:'´‘’\"“”?!()-=<>/";
+    return disallowedPunctuation.find(c) == string::npos;
+}
+
 vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
                                                    string searchTerm,
                                                    SearchType searchType,
@@ -108,17 +114,14 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
     ListKey listKey;
     SWKey* scope = 0;
     int flags = 0;
-    // This holds the text that we will return
     vector<Verse> searchResults;
     vector<string> searchResultReferences;
 
     if (!isCaseSensitive) {
-        // for case insensitivity
         flags |= REG_ICASE;
     }
 
     if (!useExtendedVerseBoundaries) {
-        // Use strict search boundaries (only search within individual verses). TODO: Make this configurable.
         flags |= SWModule::SEARCHFLAG_STRICTBOUNDARIES;
     }
 
@@ -140,38 +143,26 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
 
         if (searchType == SearchType::strongsNumber) {
             if (!hasStrongs) {
-                // Return immediately if search type is Strong's, but the module does not have Strong's support
                 return searchResults;
             }
 
-            // Cut out the number from the Strong's key (starting at index 1 until end of string)
             string strongsNumber = searchTerm.substr(1, searchTerm.size());
 
             if (searchTerm[0] == 'H') {
-
                 if (this->_textProcessor.moduleHasStrongsPaddedZeroPrefixes(module)) {
                     string paddedStrongsNumber = this->_textProcessor.padStrongsNumber(strongsNumber);
                     searchTerm = "H" + paddedStrongsNumber;
-
                 } else if (this->_textProcessor.moduleHasStrongsZeroPrefixes(module)) {
-                    // If the Strong's key is OT we need to insert a zero in front of the key
-                    // This is necessary because the Sword modules with Strong's have a zero in front of the Hebrew Strong's numbers
-                    // Overwrite the searchTerm with an inserted 0
                     searchTerm = "H0" + strongsNumber;
                 }
-
             } else if (searchTerm[0] == 'G') {
-
                 if (this->_textProcessor.moduleHasStrongsPaddedZeroPrefixes(module)) {
                     string paddedStrongsNumber = this->_textProcessor.padStrongsNumber(strongsNumber);
                     searchTerm = "G" + paddedStrongsNumber;
                 }
             }
 
-            // from swmodule.h api docs:
-            // for use with entryAttrib search type to match whole entry to value, e.g., G1234 and not G12345
             flags |= SWModule::SEARCHFLAG_MATCHWHOLEENTRY;
-
             searchTerm = "Word//Lemma./" + searchTerm;
         }
 
@@ -180,49 +171,54 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
         // Perform search
         listKey = module->search(searchTerm.c_str(), int(searchType), flags, scope, 0, internalModuleSearchProgressCB);
 
-        // Populate searchResults vector
+        // Disable markup before filtering on word boundaries
+        this->_textProcessor.disableMarkup();
+
+        vector<string> filteredReferences;
+
+        // Filter verses based on word boundaries
         while (!listKey.popError()) {
             module->setKey(listKey.getElement());
-
             string verseText = this->_textProcessor.getCurrentVerseText(module,
                                                                         hasStrongs,
                                                                         hasInconsistentClosingEndDivs,
                                                                         moduleMarkupIsBroken);
 
-            string currentReference = module->getKey()->getShortText();
-
-            if (std::find(searchResultReferences.begin(),
-                          searchResultReferences.end(),                         // Only accept the result if we do not
-                          currentReference) == searchResultReferences.end()) {  // have it yet!
-            
-                Verse currentVerse;
-                currentVerse.reference = module->getKey()->getShortText();
-                currentVerse.absoluteVerseNumber = absoluteVerseNumbers[currentVerse.reference];
-                currentVerse.content = verseText;
-
-                // Apply word boundary filtering if enabled
-                if (filterOnWordBoundaries) {
-                    std::istringstream verseStream(verseText);
-                    std::string word;
-                    std::vector<std::string> words;
-
-                    // Split verse text into words
-                    while (verseStream >> word) {
-                        words.push_back(word);
-                    }
-
-                    // Check if the search term matches any word in the list
-                    if (std::find(words.begin(), words.end(), searchTerm) == words.end()) {
-                        listKey++;
-                        continue; // Skip this verse if no match is found
-                    }
+            if (filterOnWordBoundaries) {
+                vector<string> words = StringHelper::split(verseText, " ");
+                for (auto& word : words) {
+                    word.erase(std::remove_if(word.begin(), word.end(),
+                                              [](char c) { return !isAllowedCharacter(c); }),
+                               word.end());
                 }
 
-                searchResults.push_back(currentVerse);
-                searchResultReferences.push_back(currentReference);
+                if (std::find(words.begin(), words.end(), searchTerm) != words.end()) {
+                    filteredReferences.push_back(module->getKey()->getShortText());
+                }
+            } else {
+                filteredReferences.push_back(module->getKey()->getShortText());
             }
 
             listKey++;
+        }
+
+        // Enable markup again after word boundary filtering
+        this->_textProcessor.enableMarkup();
+
+        // Populate searchResults vector
+        for (const auto& reference : filteredReferences) {
+            module->setKey(reference.c_str());
+            string verseText = this->_textProcessor.getCurrentVerseText(module,
+                                                                        hasStrongs,
+                                                                        hasInconsistentClosingEndDivs,
+                                                                        moduleMarkupIsBroken);
+
+            Verse currentVerse;
+            currentVerse.reference = reference;
+            currentVerse.absoluteVerseNumber = absoluteVerseNumbers[reference];
+            currentVerse.content = verseText;
+
+            searchResults.push_back(currentVerse);
         }
     }
 
