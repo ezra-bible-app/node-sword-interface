@@ -50,6 +50,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.isModuleReadable(moduleCode)](#NodeSwordInterface+isModuleReadable) ⇒ <code>Boolean</code>
     * [.getModuleDescription(moduleCode)](#NodeSwordInterface+getModuleDescription) ⇒ <code>String</code>
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
+    * [.disableMarkup()](#NodeSwordInterface+disableMarkup)
     * [.enableStrongsWithNbsp()](#NodeSwordInterface+enableStrongsWithNbsp)
     * [.getRawModuleEntry(moduleCode, key)](#NodeSwordInterface+getRawModuleEntry) ⇒ <code>String</code>
     * [.getReferenceText(moduleCode, key)](#NodeSwordInterface+getReferenceText) ⇒ [<code>VerseObject</code>](#VerseObject)
@@ -67,7 +68,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getBookIntroduction(moduleCode, bookCode)](#NodeSwordInterface+getBookIntroduction) ⇒ <code>String</code>
     * [.moduleHasBook(moduleCode, bookCode)](#NodeSwordInterface+moduleHasBook) ⇒ <code>Boolean</code>
     * [.getDictModuleKeys(moduleCode)](#NodeSwordInterface+getDictModuleKeys) ⇒ <code>Array.&lt;String&gt;</code>
-    * [.getModuleSearchResults(moduleCode, searchTerm, progressCB, searchType, searchScope, isCaseSensitive, useExtendedVerseBoundaries)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
+    * [.getModuleSearchResults(moduleCode, searchTerm, progressCB, searchType, searchScope, isCaseSensitive, useExtendedVerseBoundaries, filterOnWordBoundaries)](#NodeSwordInterface+getModuleSearchResults) ⇒ <code>Promise</code>
     * [.terminateModuleSearch()](#NodeSwordInterface+terminateModuleSearch)
     * [.hebrewStrongsAvailable()](#NodeSwordInterface+hebrewStrongsAvailable) ⇒ <code>Boolean</code>
     * [.greekStrongsAvailable()](#NodeSwordInterface+greekStrongsAvailable) ⇒ <code>Boolean</code>
@@ -312,6 +313,13 @@ Enables available markup (like Strongs, foot notes, etc.)
 This influences the output for getChapterText, getBookText and getBibleText.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+<a name="NodeSwordInterface+disableMarkup"></a>
+
+### nodeSwordInterface.disableMarkup()
+Disable available markup (like Strongs, foot notes, etc.)
+This influences the output for getChapterText, getBookText and getBibleText.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 <a name="NodeSwordInterface+enableStrongsWithNbsp"></a>
 
 ### nodeSwordInterface.enableStrongsWithNbsp()
@@ -524,7 +532,7 @@ Returns the keys of a dictionary module.
 
 <a name="NodeSwordInterface+getModuleSearchResults"></a>
 
-### nodeSwordInterface.getModuleSearchResults(moduleCode, searchTerm, progressCB, searchType, searchScope, isCaseSensitive, useExtendedVerseBoundaries) ⇒ <code>Promise</code>
+### nodeSwordInterface.getModuleSearchResults(moduleCode, searchTerm, progressCB, searchType, searchScope, isCaseSensitive, useExtendedVerseBoundaries, filterOnWordBoundaries) ⇒ <code>Promise</code>
 Returns the results of a module search.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
@@ -538,6 +546,7 @@ Returns the results of a module search.
 | searchScope | <code>String</code> | <code>BIBLE</code> | Options: BIBLE, OT, NT |
 | isCaseSensitive | <code>Boolean</code> | <code>false</code> | Whether the search is case sensitive |
 | useExtendedVerseBoundaries | <code>Boolean</code> | <code>false</code> | Whether the search should use extended verse boundaries (Two verses instead of one) in case of a multi word search. |
+| filterOnWordBoundaries | <code>Boolean</code> | <code>false</code> | Whether to filter results based on word boundaries. |
 
 <a name="NodeSwordInterface+terminateModuleSearch"></a>
 
