@@ -96,9 +96,9 @@ ListKey ModuleSearch::getScopeKey(SWModule* module, SearchScope scope)
     return key;
 }
 
-inline bool isAllowedCharacter(char c) {
+inline bool isDisallowedCharacter(char c) {
     static const string disallowedPunctuation = ",;.:'´‘’\"“”?!()-=<>/";
-    return disallowedPunctuation.find(c) == string::npos;
+    return disallowedPunctuation.find(c) != string::npos;
 }
 
 vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
@@ -166,8 +166,6 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
             searchTerm = "Word//Lemma./" + searchTerm;
         }
 
-        map<string, int> absoluteVerseNumbers = this->_moduleHelper.getAbsoluteVerseNumberMap(module);
-
         // Perform search
         listKey = module->search(searchTerm.c_str(), int(searchType), flags, scope, 0, internalModuleSearchProgressCB);
 
@@ -175,6 +173,15 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
         this->_textProcessor.disableMarkup();
 
         vector<string> filteredReferences;
+
+        // Make the search term lower case if case sensitivity is not required
+        string lowerCaseSearchTerm = searchTerm;
+        if (!isCaseSensitive) {
+            std::transform(lowerCaseSearchTerm.begin(), lowerCaseSearchTerm.end(), lowerCaseSearchTerm.begin(), ::tolower);
+        }
+
+        // Split the search term into individual words
+        vector<string> searchWords = StringHelper::split(lowerCaseSearchTerm, " ");
 
         // Filter verses based on word boundaries
         while (!listKey.popError()) {
@@ -184,15 +191,29 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
                                                                         hasInconsistentClosingEndDivs,
                                                                         moduleMarkupIsBroken);
 
+            // Make the verse text lower case if case sensitivity is not required
+            string lowerCaseVerseText = verseText;
+            if (!isCaseSensitive) {
+                std::transform(lowerCaseVerseText.begin(), lowerCaseVerseText.end(), lowerCaseVerseText.begin(), ::tolower);
+            }
+
             if (filterOnWordBoundaries) {
-                vector<string> words = StringHelper::split(verseText, " ");
-                for (auto& word : words) {
-                    word.erase(std::remove_if(word.begin(), word.end(),
-                                              [](char c) { return !isAllowedCharacter(c); }),
-                               word.end());
+                // Replace disallowed characters with spaces
+                std::replace_if(lowerCaseVerseText.begin(), lowerCaseVerseText.end(),
+                                [](char c) { return isDisallowedCharacter(c); }, ' ');
+
+                vector<string> words = StringHelper::split(lowerCaseVerseText, " ");
+
+                // Check if all parts of the search term match any word in the verse
+                bool allPartsMatch = true;
+                for (const auto& searchWord : searchWords) {
+                    if (std::find(words.begin(), words.end(), searchWord) == words.end()) {
+                        allPartsMatch = false;
+                        break;
+                    }
                 }
 
-                if (std::find(words.begin(), words.end(), searchTerm) != words.end()) {
+                if (allPartsMatch) {
                     filteredReferences.push_back(module->getKey()->getShortText());
                 }
             } else {
@@ -204,6 +225,8 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
 
         // Enable markup again after word boundary filtering
         this->_textProcessor.enableMarkup();
+
+        map<string, int> absoluteVerseNumbers = this->_moduleHelper.getAbsoluteVerseNumberMap(module);
 
         // Populate searchResults vector
         for (const auto& reference : filteredReferences) {
