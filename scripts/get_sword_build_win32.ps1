@@ -34,7 +34,7 @@ $headers = @{}
 $github_token = $env:GITHUB_TOKEN
 
 # --- Set the uri for the release
-$URI = "https://api.github.com/repos/ezra-bible-app/sword-build-win32/releases/tags/v1.9.0-2025-03-03"
+$URI = "https://api.github.com/repos/ezra-bible-app/sword-build-win32/releases/tags/v1.8.900-2022-11-06"
 
 if ($Env:CI -eq "true") {
 		Write-Host "GitHub actions build ... using GITHUB_TOKEN for authentication!"
