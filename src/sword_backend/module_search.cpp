@@ -213,7 +213,38 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
                     }
                 }
 
-                if (allPartsMatch) {
+                bool correctOrder = true;
+
+                if (searchType == SearchType::phrase) {
+                  if (allPartsMatch && searchWords.size() > 1) {
+                      // Find if the words appear in sequence anywhere in the verse
+                      correctOrder = false;
+                      
+                      // Iterate through potential starting positions
+                      for (size_t startPos = 0; startPos < words.size(); startPos++) {
+                          // Check if this is a match for the first word
+                          if (words[startPos] == searchWords[0]) {
+                              // See if subsequent words match in sequence
+                              bool sequenceMatch = true;
+                              for (size_t i = 1; i < searchWords.size(); i++) {
+                                  size_t nextPos = startPos + i;
+                                  // Make sure we don't go beyond the verse
+                                  if (nextPos >= words.size() || words[nextPos] != searchWords[i]) {
+                                      sequenceMatch = false;
+                                      break;
+                                  }
+                              }
+                              
+                              if (sequenceMatch) {
+                                  correctOrder = true;
+                                  break;
+                              }
+                          }
+                      }
+                  }
+                }
+
+                if (allPartsMatch && correctOrder) {
                     filteredReferences.push_back(module->getKey()->getShortText());
                 }
             } else {
