@@ -203,7 +203,6 @@ vector<string> ModuleSearch::getSearchResultReferences(SWModule* module, ListKey
     // Split the search term into individual words
     vector<string> searchWords = StringHelper::split(lowerCaseSearchTerm, " ");
 
-    // Filter verses based on word boundaries
     while (!listKey.popError()) {
         module->setKey(listKey.getElement());
         string verseText = this->_textProcessor.getCurrentVerseText(module,
@@ -217,6 +216,7 @@ vector<string> ModuleSearch::getSearchResultReferences(SWModule* module, ListKey
             std::transform(lowerCaseVerseText.begin(), lowerCaseVerseText.end(), lowerCaseVerseText.begin(), ::tolower);
         }
 
+        // Filter verses based on word boundaries
         if (filterOnWordBoundaries) {
             // Replace disallowed characters with spaces
             std::replace_if(lowerCaseVerseText.begin(), lowerCaseVerseText.end(),
