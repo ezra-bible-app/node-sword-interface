@@ -101,6 +101,186 @@ inline bool isDisallowedCharacter(char c) {
     return disallowedPunctuation.find(c) != string::npos;
 }
 
+bool ModuleSearch::validateSearchParameters(SWModule* module, const string& searchTerm)
+{
+    if (module == 0) {
+        cerr << "ModuleSearch::getModuleSearchResults: getLocalModule returned zero pointer for " << _currentModuleName << endl;
+        return false;
+    } 
+    
+    if (searchTerm == "") {
+        cerr << "ModuleSearch::getModuleSearchResults: cannot work with empty search term!" << endl;
+        return false;
+    }
+
+    return true;
+}
+
+int ModuleSearch::getSearchFlags(bool isCaseSensitive, bool useExtendedVerseBoundaries)
+{
+    int flags = 0;
+
+    if (!isCaseSensitive) {
+        flags |= REG_ICASE;
+    }
+
+    if (!useExtendedVerseBoundaries) {
+        flags |= SWModule::SEARCHFLAG_STRICTBOUNDARIES;
+    }
+
+    return flags;
+}
+
+string ModuleSearch::prepareStrongsSearchTerm(string searchTerm, SearchType searchType, SWModule* module)
+{
+    string strongsNumber = searchTerm.substr(1, searchTerm.size());
+
+    if (searchTerm[0] == 'H') {
+        if (this->_textProcessor.moduleHasStrongsPaddedZeroPrefixes(module)) {
+            string paddedStrongsNumber = this->_textProcessor.padStrongsNumber(strongsNumber);
+            searchTerm = "H" + paddedStrongsNumber;
+        } else if (this->_textProcessor.moduleHasStrongsZeroPrefixes(module)) {
+            searchTerm = "H0" + strongsNumber;
+        }
+    } else if (searchTerm[0] == 'G') {
+        if (this->_textProcessor.moduleHasStrongsPaddedZeroPrefixes(module)) {
+            string paddedStrongsNumber = this->_textProcessor.padStrongsNumber(strongsNumber);
+            searchTerm = "G" + paddedStrongsNumber;
+        }
+    }
+
+    return "Word//Lemma./" + searchTerm;
+}
+
+bool ModuleSearch::phraseSequenceCheck(const vector<string>& words, const vector<string>& searchWords)
+{
+    // For single word searches, sequence doesn't matter
+    if (searchWords.size() <= 1) {
+        return true;
+    }
+    
+    // Iterate through potential starting positions in the verse
+    for (size_t startPos = 0; startPos < words.size(); startPos++) {
+        // Check if this is a match for the first word
+        if (words[startPos] == searchWords[0]) {
+            // See if subsequent words match in sequence
+            bool sequenceMatch = true;
+            for (size_t i = 1; i < searchWords.size(); i++) {
+                size_t nextPos = startPos + i;
+                // Make sure we don't go beyond the verse text
+                if (nextPos >= words.size() || words[nextPos] != searchWords[i]) {
+                    sequenceMatch = false;
+                    break;
+                }
+            }
+            
+            if (sequenceMatch) {
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
+
+vector<string> ModuleSearch::getSearchResultReferences(SWModule* module, ListKey& listKey, 
+                                                       const string& searchTerm, SearchType searchType,
+                                                       bool isCaseSensitive, bool filterOnWordBoundaries,
+                                                       bool hasStrongs, bool hasInconsistentClosingEndDivs,
+                                                       bool moduleMarkupIsBroken)
+{
+    vector<string> filteredReferences;
+    
+    // Disable markup before filtering on word boundaries
+    this->_textProcessor.disableMarkup();
+
+    // Make the search term lower case if case sensitivity is not required
+    string lowerCaseSearchTerm = searchTerm;
+    if (!isCaseSensitive) {
+        std::transform(lowerCaseSearchTerm.begin(), lowerCaseSearchTerm.end(), lowerCaseSearchTerm.begin(), ::tolower);
+    }
+
+    // Split the search term into individual words
+    vector<string> searchWords = StringHelper::split(lowerCaseSearchTerm, " ");
+
+    // Filter verses based on word boundaries
+    while (!listKey.popError()) {
+        module->setKey(listKey.getElement());
+        string verseText = this->_textProcessor.getCurrentVerseText(module,
+                                                                    hasStrongs,
+                                                                    hasInconsistentClosingEndDivs,
+                                                                    moduleMarkupIsBroken);
+
+        // Make the verse text lower case if case sensitivity is not required
+        string lowerCaseVerseText = verseText;
+        if (!isCaseSensitive) {
+            std::transform(lowerCaseVerseText.begin(), lowerCaseVerseText.end(), lowerCaseVerseText.begin(), ::tolower);
+        }
+
+        if (filterOnWordBoundaries) {
+            // Replace disallowed characters with spaces
+            std::replace_if(lowerCaseVerseText.begin(), lowerCaseVerseText.end(),
+                            [](char c) { return isDisallowedCharacter(c); }, ' ');
+
+            vector<string> words = StringHelper::split(lowerCaseVerseText, " ");
+
+            // Check if all parts of the search term match any word in the verse
+            bool allPartsMatch = true;
+            for (const auto& searchWord : searchWords) {
+                if (std::find(words.begin(), words.end(), searchWord) == words.end()) {
+                    allPartsMatch = false;
+                    break;
+                }
+            }
+
+            bool correctOrder = true;
+
+            if (searchType == SearchType::phrase && allPartsMatch) {
+                correctOrder = phraseSequenceCheck(words, searchWords);
+            }
+
+            if (allPartsMatch && correctOrder) {
+                filteredReferences.push_back(module->getKey()->getShortText());
+            }
+        } else {
+            // If not filtering on word boundaries, we simply push the reference
+            filteredReferences.push_back(module->getKey()->getShortText());
+        }
+
+        listKey++;
+    }
+
+    // Enable markup again after word boundary filtering
+    this->_textProcessor.enableMarkup();
+    
+    return filteredReferences;
+}
+
+vector<Verse> ModuleSearch::createVersesFromReferences(SWModule* module, const vector<string>& references,
+                                                       bool hasStrongs, bool hasInconsistentClosingEndDivs,
+                                                       bool moduleMarkupIsBroken)
+{
+    vector<Verse> verses;
+    map<string, int> absoluteVerseNumbers = this->_moduleHelper.getAbsoluteVerseNumberMap(module);
+
+    for (const auto& reference : references) {
+        module->setKey(reference.c_str());
+        string verseText = this->_textProcessor.getCurrentVerseText(module,
+                                                                    hasStrongs,
+                                                                    hasInconsistentClosingEndDivs,
+                                                                    moduleMarkupIsBroken);
+
+        Verse currentVerse;
+        currentVerse.reference = reference;
+        currentVerse.absoluteVerseNumber = absoluteVerseNumbers[reference];
+        currentVerse.content = verseText;
+
+        verses.push_back(currentVerse);
+    }
+    
+    return verses;
+}
+
 vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
                                                    string searchTerm,
                                                    SearchType searchType,
@@ -113,168 +293,41 @@ vector<Verse> ModuleSearch::getModuleSearchResults(string moduleName,
     SWModule* module = this->_moduleStore.getSearchSwMgr()->getModule(moduleName.c_str());
     ListKey listKey;
     SWKey* scope = 0;
-    int flags = 0;
     vector<Verse> searchResults;
-    vector<string> searchResultReferences;
 
-    if (!isCaseSensitive) {
-        flags |= REG_ICASE;
+    if (!validateSearchParameters(module, searchTerm)) {
+        return searchResults;
     }
 
-    if (!useExtendedVerseBoundaries) {
-        flags |= SWModule::SEARCHFLAG_STRICTBOUNDARIES;
+    int flags = getSearchFlags(isCaseSensitive, useExtendedVerseBoundaries);
+
+    ListKey scopeKey;
+
+    if (searchScope != SearchScope::BIBLE) {
+        scopeKey = this->getScopeKey(module, searchScope);
+        scope = &scopeKey;
     }
 
-    if (module == 0) {
-        cerr << "ModuleSearch::getModuleSearchResults: getLocalModule returned zero pointer for " << moduleName << endl;
-    } else if (searchTerm == "") {
-        cerr << "ModuleSearch::getModuleSearchResults: cannot work with empty search term!" << endl;
-    } else {
-        ListKey scopeKey;
+    bool hasStrongs = this->_moduleHelper.moduleHasGlobalOption(module, "Strongs");
+    bool moduleMarkupIsBroken = this->_moduleHelper.isBrokenMarkupModule(moduleName);
+    bool hasInconsistentClosingEndDivs = this->_moduleHelper.isInconsistentClosingEndDivModule(moduleName);
 
-        if (searchScope != SearchScope::BIBLE) {
-            scopeKey = this->getScopeKey(module, searchScope);
-            scope = &scopeKey;
-        }
-
-        bool hasStrongs = this->_moduleHelper.moduleHasGlobalOption(module, "Strongs");
-        bool moduleMarkupIsBroken = this->_moduleHelper.isBrokenMarkupModule(moduleName);
-        bool hasInconsistentClosingEndDivs = this->_moduleHelper.isInconsistentClosingEndDivModule(moduleName);
-
-        if (searchType == SearchType::strongsNumber) {
-            if (!hasStrongs) {
-                return searchResults;
-            }
-
-            string strongsNumber = searchTerm.substr(1, searchTerm.size());
-
-            if (searchTerm[0] == 'H') {
-                if (this->_textProcessor.moduleHasStrongsPaddedZeroPrefixes(module)) {
-                    string paddedStrongsNumber = this->_textProcessor.padStrongsNumber(strongsNumber);
-                    searchTerm = "H" + paddedStrongsNumber;
-                } else if (this->_textProcessor.moduleHasStrongsZeroPrefixes(module)) {
-                    searchTerm = "H0" + strongsNumber;
-                }
-            } else if (searchTerm[0] == 'G') {
-                if (this->_textProcessor.moduleHasStrongsPaddedZeroPrefixes(module)) {
-                    string paddedStrongsNumber = this->_textProcessor.padStrongsNumber(strongsNumber);
-                    searchTerm = "G" + paddedStrongsNumber;
-                }
-            }
-
-            flags |= SWModule::SEARCHFLAG_MATCHWHOLEENTRY;
-            searchTerm = "Word//Lemma./" + searchTerm;
-        }
-
-        // Perform search
-        listKey = module->search(searchTerm.c_str(), int(searchType), flags, scope, 0, internalModuleSearchProgressCB);
-
-        // Disable markup before filtering on word boundaries
-        this->_textProcessor.disableMarkup();
-
-        vector<string> filteredReferences;
-
-        // Make the search term lower case if case sensitivity is not required
-        string lowerCaseSearchTerm = searchTerm;
-        if (!isCaseSensitive) {
-            std::transform(lowerCaseSearchTerm.begin(), lowerCaseSearchTerm.end(), lowerCaseSearchTerm.begin(), ::tolower);
-        }
-
-        // Split the search term into individual words
-        vector<string> searchWords = StringHelper::split(lowerCaseSearchTerm, " ");
-
-        // Filter verses based on word boundaries
-        while (!listKey.popError()) {
-            module->setKey(listKey.getElement());
-            string verseText = this->_textProcessor.getCurrentVerseText(module,
-                                                                        hasStrongs,
-                                                                        hasInconsistentClosingEndDivs,
-                                                                        moduleMarkupIsBroken);
-
-            // Make the verse text lower case if case sensitivity is not required
-            string lowerCaseVerseText = verseText;
-            if (!isCaseSensitive) {
-                std::transform(lowerCaseVerseText.begin(), lowerCaseVerseText.end(), lowerCaseVerseText.begin(), ::tolower);
-            }
-
-            if (filterOnWordBoundaries) {
-                // Replace disallowed characters with spaces
-                std::replace_if(lowerCaseVerseText.begin(), lowerCaseVerseText.end(),
-                                [](char c) { return isDisallowedCharacter(c); }, ' ');
-
-                vector<string> words = StringHelper::split(lowerCaseVerseText, " ");
-
-                // Check if all parts of the search term match any word in the verse
-                bool allPartsMatch = true;
-                for (const auto& searchWord : searchWords) {
-                    if (std::find(words.begin(), words.end(), searchWord) == words.end()) {
-                        allPartsMatch = false;
-                        break;
-                    }
-                }
-
-                bool correctOrder = true;
-
-                if (searchType == SearchType::phrase) {
-                  if (allPartsMatch && searchWords.size() > 1) {
-                      // Find if the words appear in sequence anywhere in the verse
-                      correctOrder = false;
-                      
-                      // Iterate through potential starting positions
-                      for (size_t startPos = 0; startPos < words.size(); startPos++) {
-                          // Check if this is a match for the first word
-                          if (words[startPos] == searchWords[0]) {
-                              // See if subsequent words match in sequence
-                              bool sequenceMatch = true;
-                              for (size_t i = 1; i < searchWords.size(); i++) {
-                                  size_t nextPos = startPos + i;
-                                  // Make sure we don't go beyond the verse
-                                  if (nextPos >= words.size() || words[nextPos] != searchWords[i]) {
-                                      sequenceMatch = false;
-                                      break;
-                                  }
-                              }
-                              
-                              if (sequenceMatch) {
-                                  correctOrder = true;
-                                  break;
-                              }
-                          }
-                      }
-                  }
-                }
-
-                if (allPartsMatch && correctOrder) {
-                    filteredReferences.push_back(module->getKey()->getShortText());
-                }
-            } else {
-                filteredReferences.push_back(module->getKey()->getShortText());
-            }
-
-            listKey++;
-        }
-
-        // Enable markup again after word boundary filtering
-        this->_textProcessor.enableMarkup();
-
-        map<string, int> absoluteVerseNumbers = this->_moduleHelper.getAbsoluteVerseNumberMap(module);
-
-        // Populate searchResults vector
-        for (const auto& reference : filteredReferences) {
-            module->setKey(reference.c_str());
-            string verseText = this->_textProcessor.getCurrentVerseText(module,
-                                                                        hasStrongs,
-                                                                        hasInconsistentClosingEndDivs,
-                                                                        moduleMarkupIsBroken);
-
-            Verse currentVerse;
-            currentVerse.reference = reference;
-            currentVerse.absoluteVerseNumber = absoluteVerseNumbers[reference];
-            currentVerse.content = verseText;
-
-            searchResults.push_back(currentVerse);
-        }
+    if (searchType == SearchType::strongsNumber && hasStrongs) {
+        searchTerm = prepareStrongsSearchTerm(searchTerm, searchType, module);
+        flags |= SWModule::SEARCHFLAG_MATCHWHOLEENTRY;
     }
+
+    // Perform search
+    listKey = module->search(searchTerm.c_str(), int(searchType), flags, scope, 0, internalModuleSearchProgressCB);
+
+    // Get search result references while considering the word boundary filter option
+    vector<string> filteredReferences = getSearchResultReferences(module, listKey, searchTerm, searchType, 
+                                                                  isCaseSensitive, filterOnWordBoundaries, 
+                                                                  hasStrongs, hasInconsistentClosingEndDivs, 
+                                                                  moduleMarkupIsBroken);
+
+    searchResults = createVersesFromReferences(module, filteredReferences, hasStrongs, 
+                                               hasInconsistentClosingEndDivs, moduleMarkupIsBroken);
 
     this->_currentModuleName = "";
 

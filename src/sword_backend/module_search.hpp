@@ -67,6 +67,19 @@ public:
 
 private:
     sword::ListKey getScopeKey(sword::SWModule* module, SearchScope scope);
+    
+    bool validateSearchParameters(sword::SWModule* module, const std::string& searchTerm);
+    int getSearchFlags(bool isCaseSensitive, bool useExtendedVerseBoundaries);
+    std::string prepareStrongsSearchTerm(std::string searchTerm, SearchType searchType, sword::SWModule* module);
+    std::vector<std::string> getSearchResultReferences(sword::SWModule* module, sword::ListKey& listKey, 
+                                                       const std::string& searchTerm, SearchType searchType,
+                                                       bool isCaseSensitive, bool filterOnWordBoundaries, 
+                                                       bool hasStrongs, bool hasInconsistentClosingEndDivs, 
+                                                       bool moduleMarkupIsBroken);
+    std::vector<Verse> createVersesFromReferences(sword::SWModule* module, const std::vector<std::string>& references,
+                                                  bool hasStrongs, bool hasInconsistentClosingEndDivs, 
+                                                  bool moduleMarkupIsBroken);
+    bool phraseSequenceCheck(const std::vector<std::string>& words, const std::vector<std::string>& searchWords);
 
     ModuleStore& _moduleStore;
     ModuleHelper& _moduleHelper;
