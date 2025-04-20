@@ -50,6 +50,7 @@ public:
     std::map<std::string, int> getAbsoluteVerseNumberMap(sword::SWModule* module, std::vector<std::string> bookList={});
     bool isBrokenMarkupModule(std::string moduleName);
     bool isInconsistentClosingEndDivModule(std::string moduleName);
+    std::vector<std::string> getModuleConfigEntries(sword::SWModule* module);
 
 private:
     bool moduleHasKeyValuePair(sword::SWModule* module, std::string key, std::string value);

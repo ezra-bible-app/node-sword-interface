@@ -198,6 +198,19 @@ map<string, int> ModuleHelper::getAbsoluteVerseNumberMap(SWModule* module, vecto
     return absoluteVerseNumbers;
 }
 
+vector<string> ModuleHelper::getModuleConfigEntries(sword::SWModule* module)
+{
+    vector<string> configEntries;
+    
+    const ConfigEntMap& config = module->getConfig();
+    
+    for (ConfigEntMap::const_iterator it = config.begin(); it != config.end(); ++it) {
+        configEntries.push_back(it->first.c_str());
+    }
+    
+    return configEntries;
+}
+
 bool ModuleHelper::isBrokenMarkupModule(std::string moduleName)
 {
     return std::find(this->_brokenMarkupModules.begin(),
