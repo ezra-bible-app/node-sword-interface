@@ -43,6 +43,7 @@ const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.n
  * @property {String} shortCopyright - The short copyright information of the SWORD module
  * @property {String} version - The version of the SWORD module
  * @property {String} lastUpdate - The date of the last version update of the SWORD module
+ * @property {String[]} history - The history of the SWORD module. A list of strings where each looks like this: <version>=<version-info>
  * @property {String} category - The category of the SWORD module
  * @property {String} repository - The repository of the SWORD module
  * @property {String} about - Extended description of the SWORD module

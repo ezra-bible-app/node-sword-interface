@@ -692,6 +692,7 @@ An object representation of a SWORD module.
 | shortCopyright | <code>String</code> | The short copyright information of the SWORD module |
 | version | <code>String</code> | The version of the SWORD module |
 | lastUpdate | <code>String</code> | The date of the last version update of the SWORD module |
+| history | <code>Array.&lt;String&gt;</code> | The history of the SWORD module. A list of strings where each looks like this: <version>=<version-info> |
 | category | <code>String</code> | The category of the SWORD module |
 | repository | <code>String</code> | The repository of the SWORD module |
 | about | <code>String</code> | Extended description of the SWORD module |
