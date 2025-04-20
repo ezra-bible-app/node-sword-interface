@@ -211,6 +211,32 @@ vector<string> ModuleHelper::getModuleConfigEntries(sword::SWModule* module)
     return configEntries;
 }
 
+std::vector<std::string> ModuleHelper::getModuleHistoryEntries(sword::SWModule* module)
+{
+    std::vector<std::string> historyEntries;
+    
+    if (module == 0) {
+        cerr << "module is 0! Cannot get history entries!" << endl;
+        return historyEntries;
+    }
+    
+    // Get all config entries
+    const ConfigEntMap& config = module->getConfig();
+    
+    // Find all entries that start with "History_"
+    for (ConfigEntMap::const_iterator it = config.begin(); it != config.end(); ++it) {
+        std::string key = it->first.c_str();
+        if (key.find("History_") == 0) {
+            std::string value = it->second.c_str();
+            std::string version = key.substr(8); // Remove "History_" prefix
+            std::string entry = version + "=" + value;
+            historyEntries.push_back(entry);
+        }
+    }
+    
+    return historyEntries;
+}
+
 bool ModuleHelper::isBrokenMarkupModule(std::string moduleName)
 {
     return std::find(this->_brokenMarkupModules.begin(),

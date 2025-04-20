@@ -128,6 +128,10 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
 
     object["hasGreekStrongsKeys"] = Napi::Boolean::New(env, this->_moduleHelper.moduleHasFeature(swModule, "GreekDef"));
     object["hasHebrewStrongsKeys"] = Napi::Boolean::New(env, this->_moduleHelper.moduleHasFeature(swModule, "HebrewDef"));
+    
+    // Add module history entries
+    std::vector<std::string> historyEntries = this->_moduleHelper.getModuleHistoryEntries(swModule);
+    object["history"] = this->getNapiArrayFromStringVector(env, historyEntries);
 }
 
 Napi::String NapiSwordHelper::getConfigEntry(sword::SWModule* swModule, std::string key, const Napi::Env& env)
