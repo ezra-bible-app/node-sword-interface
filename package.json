@@ -17,11 +17,13 @@
     "doc": "jsdoc2md index.js > API.md",
     "pub": "rm -rf build node_modules sword sword_build test && npm publish ./",
     "deploy": "scripts/deploy_local.sh",
-    "postinstall": "node scripts/postinstall.js"
+    "postinstall": "node scripts/postinstall.js",
+    "test": "jest"
   },
   "author": "Tobias Klein",
   "license": "GPL-2.0+",
   "dependencies": {
+    "async-mutex": "^0.5.0",
     "glob": "^8.0.3",
     "node-addon-api": "^8.2.2",
     "node-html-parser": "^6.1.13"
@@ -31,6 +33,7 @@
     "url": "git+https://github.com/ezra-bible-app/node-sword-interface.git"
   },
   "devDependencies": {
+    "jest": "^30.0.5",
     "jsdoc-to-markdown": "^9.1.1",
     "node-gyp": "^9.1.0"
   }

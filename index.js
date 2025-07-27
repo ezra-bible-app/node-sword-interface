@@ -18,6 +18,10 @@
 
 const path = require('path');
 const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.node');
+const { Mutex } = require('async-mutex');
+
+// Create a mutex instance
+const searchMutex = new Mutex();
 
 /**
 * An object representation of a Bible verse.
@@ -609,7 +613,15 @@ class NodeSwordInterface {
       progressCB = function(progress) {};
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+      // Check if a search is already in progress
+      if (searchMutex.isLocked()) {
+        reject(new Error("Module search in progress. Wait until it is finished."));
+        return;
+      }
+
+      const release = await searchMutex.acquire();
+
       try {
         this.nativeInterface.getModuleSearchResults(moduleCode,
                                                     searchTerm,
@@ -619,8 +631,12 @@ class NodeSwordInterface {
                                                     useExtendedVerseBoundaries,
                                                     filterOnWordBoundaries,
                                                     progressCB,
-                                                    function(searchResults) { resolve(searchResults); });
+                                                    function(searchResults) {
+          release();
+          resolve(searchResults);
+        });
       } catch (error) {
+        release();
         reject(error);
       }
     });
