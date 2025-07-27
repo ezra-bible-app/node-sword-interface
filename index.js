@@ -117,7 +117,7 @@ class NodeSwordInterface {
    * @param {Function} progressCB - Optional callback function that is called on progress events.
    * @return {Promise}
    */
-  updateRepositoryConfig(progressCB=undefined) {
+  async updateRepositoryConfig(progressCB=undefined) {
     return new Promise((resolve, reject) => {
       if (progressCB === undefined) {
         progressCB = function(progress) {};
@@ -246,7 +246,7 @@ class NodeSwordInterface {
    * @param {Function} progressCB - Callback function that is called on progress events.
    * @return {Promise}
    */
-  installModule(moduleCode, progressCB=undefined) {
+  async installModule(moduleCode, progressCB=undefined) {
     if (progressCB === undefined) {
       progressCB = function(progress) {};
     }
@@ -277,7 +277,7 @@ class NodeSwordInterface {
    * @param {String} moduleCode - The module code of the SWORD module that shall be uninstalled.
    * @return {Promise}
    */
-  uninstallModule(moduleCode) {
+  async uninstallModule(moduleCode) {
     return new Promise((resolve, reject) => {
       this.nativeInterface.uninstallModule(moduleCode, function(uninstallSuccessful) {
         if (uninstallSuccessful) {
@@ -600,46 +600,48 @@ class NodeSwordInterface {
    * @param {Boolean} filterOnWordBoundaries - Whether to filter results based on word boundaries.
    * @return {Promise}
    */
-  getModuleSearchResults(moduleCode,
-                         searchTerm,
-                         progressCB = undefined,
-                         searchType = "phrase",
-                         searchScope = "BIBLE",
-                         isCaseSensitive = false,
-                         useExtendedVerseBoundaries = false,
-                         filterOnWordBoundaries = false) {
+  async getModuleSearchResults(moduleCode,
+                               searchTerm,
+                               progressCB = undefined,
+                               searchType = "phrase",
+                               searchScope = "BIBLE",
+                               isCaseSensitive = false,
+                               useExtendedVerseBoundaries = false,
+                               filterOnWordBoundaries = false) {
 
     if (progressCB === undefined) {
       progressCB = function(progress) {};
     }
 
-    return new Promise(async (resolve, reject) => {
-      // Check if a search is already in progress
+    const performSearch = async () => {
       if (searchMutex.isLocked()) {
-        reject(new Error("Module search in progress. Wait until it is finished."));
-        return;
+        throw new Error("Module search in progress. Wait until it is finished.");
       }
 
       const release = await searchMutex.acquire();
 
       try {
-        this.nativeInterface.getModuleSearchResults(moduleCode,
-                                                    searchTerm,
-                                                    searchType,
-                                                    searchScope,
-                                                    isCaseSensitive,
-                                                    useExtendedVerseBoundaries,
-                                                    filterOnWordBoundaries,
-                                                    progressCB,
-                                                    function(searchResults) {
-          release();
-          resolve(searchResults);
+        return new Promise((resolve, reject) => {
+          this.nativeInterface.getModuleSearchResults(moduleCode,
+                                                      searchTerm,
+                                                      searchType,
+                                                      searchScope,
+                                                      isCaseSensitive,
+                                                      useExtendedVerseBoundaries,
+                                                      filterOnWordBoundaries,
+                                                      progressCB,
+                                                      function(searchResults) {
+            release();
+            resolve(searchResults);
+          });
         });
       } catch (error) {
         release();
-        reject(error);
+        throw error;
       }
-    });
+    };
+
+    return performSearch();
   }
 
   /**
