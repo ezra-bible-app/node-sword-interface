@@ -613,35 +613,31 @@ class NodeSwordInterface {
       progressCB = function(progress) {};
     }
 
-    const performSearch = async () => {
-      if (searchMutex.isLocked()) {
-        throw new Error("Module search in progress. Wait until it is finished.");
-      }
+    if (searchMutex.isLocked()) {
+      throw new Error("Module search in progress. Wait until it is finished.");
+    }
 
-      const release = await searchMutex.acquire();
+    const release = await searchMutex.acquire();
 
-      try {
-        return new Promise((resolve, reject) => {
-          this.nativeInterface.getModuleSearchResults(moduleCode,
-                                                      searchTerm,
-                                                      searchType,
-                                                      searchScope,
-                                                      isCaseSensitive,
-                                                      useExtendedVerseBoundaries,
-                                                      filterOnWordBoundaries,
-                                                      progressCB,
-                                                      function(searchResults) {
-            release();
-            resolve(searchResults);
-          });
+    try {
+      return new Promise((resolve, reject) => {
+        this.nativeInterface.getModuleSearchResults(moduleCode,
+                                                    searchTerm,
+                                                    searchType,
+                                                    searchScope,
+                                                    isCaseSensitive,
+                                                    useExtendedVerseBoundaries,
+                                                    filterOnWordBoundaries,
+                                                    progressCB,
+                                                    function(searchResults) {
+          release();
+          resolve(searchResults);
         });
-      } catch (error) {
-        release();
-        throw error;
-      }
-    };
-
-    return performSearch();
+      });
+    } catch (error) {
+      release();
+      throw error;
+    }
   }
 
   /**
