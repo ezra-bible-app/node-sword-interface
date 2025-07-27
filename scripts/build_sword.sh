@@ -47,6 +47,10 @@ mkdir -p sword_build
 
 SWORD_BUILD_TYPE="Release"
 
+# Newer CMake versions have removed compatibility with CMake < 3.5.
+# SWORD is configured with CMake minimum 2.6.0, which leads to a build error with newer CMake versions (e.g. 4.0.3).
+export CMAKE_POLICY_VERSION_MINIMUM=3.5
+
 if [ "$1" = "--android" ] ; then
   git clone https://github.com/karlkleinpaste/biblesync.git
   git -C biblesync checkout 2.1.0
