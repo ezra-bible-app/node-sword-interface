@@ -57,8 +57,11 @@ if (Test-Path sword-build-win32) {
 }
 
 # --- Download the file to the current location
-$OutputPath = "$((Get-Location).Path)\$ZipName"
+$OutputPath = Join-Path -Path (Get-Location).Path -ChildPath $ZipName
 Invoke-RestMethod -Method Get -Uri $ZipUrl -OutFile $OutputPath -Headers $headers
+
+Write-Host "OutputPath: $OutputPath"
+Write-Host "ZipUrl: $ZipUrl"
 
 # --- Unzip the zip file and remove it afterwards
 unzip $OutputPath $((Get-Location).Path)
