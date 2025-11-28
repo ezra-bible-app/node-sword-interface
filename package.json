@@ -35,6 +35,6 @@
   "devDependencies": {
     "jest": "^30.0.5",
     "jsdoc-to-markdown": "^9.1.1",
-    "node-gyp": "^9.1.0"
+    "node-gyp": "^12.1.0"
   }
 }
