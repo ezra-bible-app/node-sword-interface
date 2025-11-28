@@ -44,7 +44,7 @@
                         'message': 'Downloading sword-build-win32 artifacts from GitHub ...',
                         'inputs': [],
                         'outputs': ['sword-build-win32'],
-                        'action': ['PowerShell.exe', '-ExecutionPolicy', 'Bypass', '-File', '<(module_root_dir)/scripts/get_sword_build_win32.ps1'],
+                        'action': ['node', '<(module_root_dir)/scripts/get_sword_build_win32.js'],
                     }
                 ]
             }]
