@@ -89,8 +89,8 @@ const searchMutex = new Mutex();
 
 /** This is the main class of node-sword-interface and it provides a set of static functions that wrap SWORD library functionality. */
 class NodeSwordInterface {
-  constructor(customHomeDir=undefined) {
-    var localesDir = path.join(__dirname, './locales.d');
+  constructor(customHomeDir=undefined, localesBasePath=__dirname) {
+    var localesDir = path.join(localesBasePath, './locales.d');
     this.nativeInterface = new nodeSwordInterfaceModule.NodeSwordInterface(customHomeDir, localesDir);
   }
 
