@@ -243,9 +243,13 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module)
     }
 
     if (this->_markupEnabled && !this->_rawMarkupEnabled) {
-        // The chapter headings in the ISV are screwed up somehow for 1:1
-        // Therefore we do not render chapter headings for the first verse of the book in this case.
-        if (currentChapter == 1 && currentVerseNr == 1 && currentModuleName == "ISV") {
+        if (currentModuleName == "ISV" && currentChapter == 1 && currentVerseNr == 1) {
+            // The chapter headings in the ISV (International Standard Version) are screwed up somehow for 1:1
+            // Therefore we do not render chapter headings for the first verse of the book in this case.
+            chapterHeading = "";
+        } else if (currentModuleName == "AB" && currentVerseNr == 1) {
+            // The AB module (Apostle's Bible) has broken chapter headings for X:1
+            // Therefore we do not render chapter headings for the first verse of the chapter in this case.
             chapterHeading = "";
         } else {
             chapterHeading = this->getFilteredText(chapterHeading, currentChapter, currentVerseNr);
