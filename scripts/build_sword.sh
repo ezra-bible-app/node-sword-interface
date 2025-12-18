@@ -75,6 +75,8 @@ if [ "$1" = "--android" ] ; then
   -DANDROID_NDK=$ANDROID_NDK_HOME \
   -DCMAKE_BUILD_TYPE=$SWORD_BUILD_TYPE \
   -DANDROID_ABI="$ANDROID_ABI" \
+  -DCMAKE_EXE_LINKER_FLAGS="-Wl,-z,max-page-size=16384" \
+  -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-z,max-page-size=16384" \
   -DNODYNCAST=1 \
   ../sword
 else

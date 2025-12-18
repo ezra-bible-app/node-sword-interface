@@ -102,6 +102,9 @@
                 "dependencies": [
                     "<!(node -p \"require('node-addon-api').gyp\")",
                     'sword'
+                ],
+                'ldflags': [
+                    '-Wl,-z,max-page-size=16384'
                 ]
             }],
             ["OS=='mac'", {
