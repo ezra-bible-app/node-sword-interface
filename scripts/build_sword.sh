@@ -31,7 +31,7 @@ fi
 
 # CLONE SWORD
 git clone https://github.com/ezra-bible-app/crosswire-sword-mirror sword
-git -C sword checkout 1.9.0-2025-03-03
+git -C sword checkout 11e8b06
 patch --batch --forward -d sword -p 0 < patch/sword_globconf.patch
 
 # PATCHES
@@ -78,6 +78,22 @@ if [ "$1" = "--android" ] ; then
   -DCMAKE_EXE_LINKER_FLAGS="-Wl,-z,max-page-size=16384" \
   -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-z,max-page-size=16384" \
   -DNODYNCAST=1 \
+  ../sword
+elif [ "$1" = "--ios" ] ; then
+  git clone https://github.com/karlkleinpaste/biblesync.git
+  git -C biblesync checkout 2.1.0
+
+  cd sword_build
+
+  cmake -DCMAKE_SYSTEM_NAME=iOS \
+  -DLIBSWORD_LIBRARY_TYPE=Static \
+  -DCMAKE_CXX_STANDARD=11 \
+  -DCMAKE_OSX_ARCHITECTURES="arm64" \
+  -DCMAKE_OSX_SYSROOT=iphoneos \
+  -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0 \
+  -DCMAKE_BUILD_TYPE=$SWORD_BUILD_TYPE \
+  -DNODYNCAST=1 \
+  -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
   ../sword
 else
   # macOS & Linux

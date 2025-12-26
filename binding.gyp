@@ -1,14 +1,33 @@
 {
+    "variables": {
+    	# Detect if we are building for iOS by checking an env var
+    	"is_ios%": "<!(python -c \"import os; print(1 if os.environ.get('PLATFORM') == 'ios' or os.environ.get('SDKROOT') and 'iPhone' in os.environ.get('SDKROOT') else 0)\")"
+    },
     "targets": [
     {
         'target_name': 'sword',
         'type': 'none',
         'conditions': [
+            ["is_ios==1", {
+                "xcode_settings": {
+                    "SDKROOT": "iphoneos",
+                    "IPHONEOS_DEPLOYMENT_TARGET": "12.0"
+                },
+                'actions': [
+                    {
+                          'action_name': 'build_sword',
+                          'message': 'Building sword library for iOS...',
+                          'inputs': [],
+                          'outputs': ['sword_build/libsword.a'],
+                          'action': ['./scripts/build_sword.sh', '--ios'],
+                    }
+                ]
+            }],
             [ "OS == 'mac'", {
                 'actions': [
                     {
                         'action_name': 'build_sword',
-                        'message': 'Building sword library...',
+                        'message': 'Building sword library for macOS ...',
                         'inputs': [],
                         'outputs': ['sword_build/libsword.a'],
                         'action': ['./scripts/build_sword.sh'],
@@ -19,7 +38,7 @@
                 'actions': [
                     {
                         'action_name': 'build_sword',
-                        'message': 'Building sword library...',
+                        'message': 'Building sword library for Linux...',
                         'inputs': [],
                         'outputs': ['sword_build/libsword.a'],
                         'action': ['./scripts/build_sword.sh'],
@@ -30,7 +49,7 @@
                 'actions': [
                     {
                         'action_name': 'build_sword',
-                        'message': 'Building sword library...',
+                        'message': 'Building sword library for Android...',
                         'inputs': [],
                         'outputs': ['sword_build/libsword.a'],
                         'action': ['./scripts/build_sword.sh', '--android', '<(target_arch)'],
@@ -75,6 +94,20 @@
             "src/napi_module/binding.cpp"
         ],
         "conditions":[
+            ["is_ios==1", {
+                'include_dirs': [
+                    "<(module_root_dir)/src/sword_backend",
+                    "<!@(node -p \"require('node-addon-api').include\")",
+                    "<!@(./scripts/get_sword_include_path.sh)"
+                ],
+                "libraries": [
+                    '<!@(./scripts/get_sword_library.sh "../sword_build/libsword.a")'
+                ],
+                "dependencies": [
+                    "<!(node -p \"require('node-addon-api').gyp\")",
+                    'sword'
+                ]
+            }],
             ["OS=='linux'", {
                 'include_dirs': [
                     "<(module_root_dir)/src/sword_backend",
