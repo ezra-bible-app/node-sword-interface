@@ -209,7 +209,7 @@ vector<string> RepositoryInterface::getRepoNames()
 
         sourceNames.push_back(source);
 
-        #if defined(__ANDROID__)
+        #if defined(__ANDROID__) || defined(__APPLE__)
         }
         #endif
     }
