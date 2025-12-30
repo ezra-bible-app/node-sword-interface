@@ -11,7 +11,7 @@
             ["is_ios==1", {
                 "xcode_settings": {
                     "SDKROOT": "iphoneos",
-                    "IPHONEOS_DEPLOYMENT_TARGET": "12.0"
+                    "IPHONEOS_DEPLOYMENT_TARGET": "13.0"
                 },
                 'actions': [
                     {
@@ -108,6 +108,16 @@
                     "<!(node -p \"require('node-addon-api').gyp\")",
                     'sword'
                 ]
+                "xcode_settings": {
+                  "SDKROOT": "iphoneos",
+                  "IPHONEOS_DEPLOYMENT_TARGET": "13.0",
+                  "OTHER_LDFLAGS": [
+                    "-dynamiclib",
+                    "-install_name @rpath/node_sword_interface.framework/node_sword_interface"
+                  ],
+                  "MACH_O_TYPE": "mh_dylib",
+                  "PRODUCT_TYPE": "com.apple.product-type.framework"
+                }
             }],
             ["OS=='linux'", {
                 'include_dirs': [
