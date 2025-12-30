@@ -107,7 +107,7 @@
                 "dependencies": [
                     "<!(node -p \"require('node-addon-api').gyp\")",
                     'sword'
-                ]
+                ],
                 "xcode_settings": {
                   "SDKROOT": "iphoneos",
                   "IPHONEOS_DEPLOYMENT_TARGET": "13.0",
