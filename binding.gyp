@@ -1,7 +1,7 @@
 {
     "variables": {
     	# Detect if we are building for iOS by checking an env var
-    	"is_ios%": "<!(python -c \"import os; print(1 if os.environ.get('PLATFORM') == 'ios' or os.environ.get('SDKROOT') and 'iPhone' in os.environ.get('SDKROOT') else 0)\")"
+    	"is_ios%": "<!(python3 -c \"import os; print(1 if os.environ.get('PLATFORM') == 'ios' or os.environ.get('SDKROOT') and 'iPhone' in os.environ.get('SDKROOT') else 0)\")"
     },
     "targets": [
     {
