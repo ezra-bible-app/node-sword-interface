@@ -71,7 +71,6 @@
     },
     {
         "target_name": "node_sword_interface",
-        "type": "shared_library",
         "cflags!": [ "-fno-exceptions" ],
         "cflags_cc!": [ "-fno-exceptions -std=c++11 -pthread" ],
         "sources": [
@@ -96,6 +95,7 @@
         ],
         "conditions":[
             ["is_ios==1", {
+                "type": "shared_library",
                 'include_dirs': [
                     "<(module_root_dir)/src/sword_backend",
                     "<!@(node -p \"require('node-addon-api').include\")",
@@ -224,9 +224,10 @@
         "dependencies": [ "node_sword_interface" ],
         "actions": [
             {
-                "action_name": "clean_sword_dirs",
+                "action_name": "clean_build_artifacts",
                 "inputs": [],
-                "action": [ "sh", "-c", "rm -rf sword sword_build" ]
+                "outputs": ["<(PRODUCT_DIR)/cleanup.stamp"],
+                "action": [ "sh", "scripts/cleanup_build_artifacts.sh", "<(PRODUCT_DIR)/cleanup.stamp" ]
             }
         ]
     }]
