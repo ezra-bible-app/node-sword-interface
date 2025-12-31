@@ -195,5 +195,27 @@
             "<!(node -p \"require('node-addon-api').gyp\")"
         ],
         'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ]
+    },
+    {
+        "target_name": "node_sword_interface.framework",
+        "type": "none",
+        "dependencies": [ "node_sword_interface" ],
+        "conditions": [
+            ["is_ios==1", {
+                "actions": [
+                    {
+                        "action_name": "create_framework",
+                        "inputs": [],
+                        "outputs": ["<(PRODUCT_DIR)/node_sword_interface.framework"],
+                        "action": [
+                            "sh",
+                            "scripts/ios_framework_postbuild.sh",
+                            "<(PRODUCT_DIR)",
+                            "node_sword_interface"
+                        ]
+                    }
+                ]
+            }]
+        ]
     }]
 }
