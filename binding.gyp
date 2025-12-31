@@ -217,5 +217,17 @@
                 ]
             }]
         ]
+    },
+    {
+        "target_name": "cleanup",
+        "type": "none",
+        "dependencies": [ "node_sword_interface" ],
+        "actions": [
+            {
+                "action_name": "clean_sword_dirs",
+                "inputs": [],
+                "action": [ "sh", "-c", "rm -rf sword sword_build" ]
+            }
+        ]
     }]
 }
