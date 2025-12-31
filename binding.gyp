@@ -71,7 +71,7 @@
     },
     {
         "target_name": "node_sword_interface",
-        "type": "loadable_module",
+        "type": "shared_library",
         "cflags!": [ "-fno-exceptions" ],
         "cflags_cc!": [ "-fno-exceptions -std=c++11 -pthread" ],
         "sources": [
