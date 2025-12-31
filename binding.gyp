@@ -102,7 +102,9 @@
                     "<!@(./scripts/get_sword_include_path.sh)"
                 ],
                 "libraries": [
-                    '<!@(./scripts/get_sword_library.sh "../sword_build/libsword.a")'
+                    '<!@(./scripts/get_sword_library.sh "../sword_build/libsword.a")',
+                    '-lbz2',
+                    '-lz'
                 ],
                 "dependencies": [
                     "<!(node -p \"require('node-addon-api').gyp\")",
@@ -113,7 +115,8 @@
                   "IPHONEOS_DEPLOYMENT_TARGET": "13.0",
                   "OTHER_LDFLAGS": [
                     "-dynamiclib",
-                    "-install_name @rpath/node_sword_interface.framework/node_sword_interface"
+                    "-install_name @rpath/node_sword_interface.framework/node_sword_interface",
+                    "-undefined dynamic_lookup"
                   ],
                   "MACH_O_TYPE": "mh_dylib",
                   "PRODUCT_TYPE": "com.apple.product-type.framework"
