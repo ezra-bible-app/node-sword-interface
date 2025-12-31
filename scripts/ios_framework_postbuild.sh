@@ -58,4 +58,7 @@ PLIST_EOF
 # Sign the framework (ad-hoc)
 /usr/bin/codesign --force --sign - --timestamp=none "${FRAMEWORK_DIR}"
 
+# Remove the source binary
+rm "${BINARY_SOURCE}"
+
 echo "Framework created successfully."
