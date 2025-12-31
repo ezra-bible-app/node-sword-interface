@@ -34,7 +34,7 @@ cat > "${FRAMEWORK_DIR}/Info.plist" <<PLIST_EOF
     <key>CFBundleExecutable</key>
     <string>${FRAMEWORK_NAME}</string>
     <key>CFBundleIdentifier</key>
-    <string>net.ezrabibleapp.${FRAMEWORK_NAME}</string>
+    <string>net.ezrabibleapp.node-sword-interface</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
