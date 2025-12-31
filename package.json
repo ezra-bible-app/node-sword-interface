@@ -18,7 +18,8 @@
     "pub": "rm -rf build node_modules sword sword_build test && npm publish ./",
     "deploy": "scripts/deploy_local.sh",
     "postinstall": "node scripts/postinstall.js",
-    "test": "jest"
+    "test": "jest",
+    "release": "./scripts/release.sh"
   },
   "author": "Tobias Klein",
   "license": "GPL-2.0+",
