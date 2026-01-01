@@ -6,10 +6,7 @@
       # 2. Get the deployment target (e.g., '15.0') from env, default to '13.0'
       "ios_ver%": "<!(python3 -c \"import os; print(os.environ.get('IPHONEOS_DEPLOYMENT_TARGET', '13.0'))\")",
       
-      # 3. Detect if it's a simulator build
-      "is_ios_sim%": "<!(python3 -c \"import os; print(1 if 'iPhoneSimulator' in os.environ.get('SDKROOT', '') else 0)\")",
-      
-      # 4. Construct the full target triple dynamically
+      # 3. Construct the full target triple dynamically
       "ios_target": "<!(python3 -c \"import os; ver = os.environ.get('IPHONEOS_DEPLOYMENT_TARGET', '13.0'); suffix = '-simulator' if 'iPhoneSimulator' in os.environ.get('SDKROOT', '') else ''; print(f'arm64-apple-ios{ver}{suffix}')\")"
     },
     "targets": [
@@ -28,7 +25,7 @@
                           'message': 'Building sword library for iOS...',
                           'inputs': [],
                           'outputs': ['sword_build/libsword.a'],
-                          'action': ['./scripts/build_sword.sh', '--ios'],
+                          'action': ['./scripts/build_sword.sh', '--ios', '<(ios_target)', '<(ios_ver)'],
                     }
                 ]
             }],

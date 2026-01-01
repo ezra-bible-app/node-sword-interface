@@ -83,14 +83,26 @@ elif [ "$1" = "--ios" ] ; then
   git clone https://github.com/karlkleinpaste/biblesync.git
   git -C biblesync checkout 2.1.0
 
+  IOS_TARGET="$2"
+  IOS_VER="$3"
+
+  if [ -z "$IOS_VER" ]; then
+      IOS_VER="13.0"
+  fi
+
+  SYSROOT="iphoneos"
+  if echo "$IOS_TARGET" | grep -q "simulator"; then
+      SYSROOT="iphonesimulator"
+  fi
+
   cd sword_build
 
   cmake -DCMAKE_SYSTEM_NAME=iOS \
   -DLIBSWORD_LIBRARY_TYPE=Static \
   -DCMAKE_CXX_STANDARD=11 \
   -DCMAKE_OSX_ARCHITECTURES="arm64" \
-  -DCMAKE_OSX_SYSROOT=iphoneos \
-  -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0 \
+  -DCMAKE_OSX_SYSROOT=$SYSROOT \
+  -DCMAKE_OSX_DEPLOYMENT_TARGET=$IOS_VER \
   -DCMAKE_BUILD_TYPE=$SWORD_BUILD_TYPE \
   -DNODYNCAST=1 \
   -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
