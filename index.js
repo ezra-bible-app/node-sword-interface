@@ -17,7 +17,6 @@
    If not, see <http://www.gnu.org/licenses/>. */
 
 const path = require('path');
-const os = require('os');
 
 let nodeSwordInterfaceModule;
 if (process.platform === 'ios') {
@@ -28,8 +27,9 @@ if (process.platform === 'ios') {
   const frameworkPath = '../../../../Frameworks/node_sword_interface.framework/node_sword_interface';
   const modulePath = path.join(__dirname, frameworkPath);
 
-  const nodeSwordInterfaceModule = { exports: {} };
-  process.dlopen(nodeSwordInterfaceModule, modulePath);
+  const tempModule = { exports: {} };
+  process.dlopen(tempModule, modulePath);
+  nodeSwordInterfaceModule = tempModule.exports;
 } else {
   nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.node');
 }
