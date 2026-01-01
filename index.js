@@ -26,9 +26,10 @@ if (process.platform === 'ios') {
   // To get to the Frameworks folder we need to go up four levels.
 
   const frameworkPath = '../../../../Frameworks/node_sword_interface.framework/node_sword_interface';
-  
-  // Navigate from www/nodejs-project/node_modules/node-sword-interface/index.js to Frameworks/
-  nodeSwordInterfaceModule = require(path.join(__dirname, frameworkPath));
+  const modulePath = path.join(__dirname, frameworkPath);
+
+  const nodeSwordInterfaceModule = { exports: {} };
+  process.dlopen(nodeSwordInterfaceModule, modulePath);
 } else {
   nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.node');
 }
