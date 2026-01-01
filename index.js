@@ -21,8 +21,14 @@ const os = require('os');
 
 let nodeSwordInterfaceModule;
 if (process.platform === 'ios') {
-  // Navigate from www/nodejs-project/index.js to Frameworks/
-  nodeSwordInterfaceModule = require(path.join(__dirname, '../../Frameworks/node_sword_interface.framework/node_sword_interface'));
+  // We are in EzraBibleApp.app/www/nodejs-project/node_modules/node-sword-interface.
+  // ----------      4         / 3 /      2       /     1      /         0
+  // To get to the Frameworks folder we need to go up four levels.
+
+  const frameworkPath = '../../../../Frameworks/node_sword_interface.framework/node_sword_interface';
+  
+  // Navigate from www/nodejs-project/node_modules/node-sword-interface/index.js to Frameworks/
+  nodeSwordInterfaceModule = require(path.join(__dirname, frameworkPath));
 } else {
   nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.node');
 }
