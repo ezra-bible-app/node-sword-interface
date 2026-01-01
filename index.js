@@ -17,7 +17,15 @@
    If not, see <http://www.gnu.org/licenses/>. */
 
 const path = require('path');
-const nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.node');
+const os = require('os');
+
+let nodeSwordInterfaceModule;
+if (process.platform === 'ios') {
+  nodeSwordInterfaceModule = require(path.join(os.homedir(), '/frameworks/node_sword_interface.framework/node_sword_interface'));
+} else {
+  nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.node');
+}
+
 const { Mutex } = require('async-mutex');
 
 // Create a mutex instance
