@@ -9,6 +9,16 @@
       # 3. Detect the SDK to use (iphoneos or iphonesimulator)
       "ios_sdk": "<!(python3 -c \"import os; print('iphonesimulator' if 'iPhoneSimulator' in os.environ.get('SDKROOT', '') else 'iphoneos')\")"
     },
+    "target_defaults": {
+      "conditions": [
+        ["is_ios==1", {
+          "xcode_settings": {
+            "SDKROOT": "<(ios_sdk)",
+            "IPHONEOS_DEPLOYMENT_TARGET": "<(ios_ver)"
+          }
+        }]
+      ]
+    },
     "targets": [
     {
         'target_name': 'sword',
