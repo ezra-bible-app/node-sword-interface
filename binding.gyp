@@ -7,7 +7,10 @@
       "ios_ver%": "<!(python3 -c \"import os; print(os.environ.get('IPHONEOS_DEPLOYMENT_TARGET', '13.0'))\")",
       
       # 3. Construct the full target triple dynamically
-      "ios_target": "<!(python3 -c \"import os; ver = os.environ.get('IPHONEOS_DEPLOYMENT_TARGET', '13.0'); suffix = '-simulator' if 'iPhoneSimulator' in os.environ.get('SDKROOT', '') else ''; print(f'arm64-apple-ios{ver}{suffix}')\")"
+      "ios_target": "<!(python3 -c \"import os; ver = os.environ.get('IPHONEOS_DEPLOYMENT_TARGET', '13.0'); suffix = '-simulator' if 'iPhoneSimulator' in os.environ.get('SDKROOT', '') else ''; print(f'arm64-apple-ios{ver}{suffix}')\")",
+
+      # 4. Detect the SDK to use (iphoneos or iphonesimulator)
+      "ios_sdk": "<!(python3 -c \"import os; print('iphonesimulator' if 'iPhoneSimulator' in os.environ.get('SDKROOT', '') else 'iphoneos')\")"
     },
     "targets": [
     {
@@ -16,7 +19,7 @@
         'conditions': [
             ["is_ios==1", {
                 "xcode_settings": {
-                    "SDKROOT": "iphoneos",
+                    "SDKROOT": "<(ios_sdk)",
                     "IPHONEOS_DEPLOYMENT_TARGET": "<(ios_ver)"
                 },
                 'actions': [
@@ -117,7 +120,7 @@
                     'sword'
                 ],
                 "xcode_settings": {
-                  "SDKROOT": "iphoneos",
+                  "SDKROOT": "<(ios_sdk)",
                   "IPHONEOS_DEPLOYMENT_TARGET": "<(ios_ver)",
                   "ONLY_ACTIVE_ARCH": "YES",
                   "OTHER_CFLAGS": [
