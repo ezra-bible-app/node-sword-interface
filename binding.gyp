@@ -120,7 +120,7 @@
                     "-install_name @rpath/node_sword_interface.framework/node_sword_interface",
                     "-undefined dynamic_lookup",
                     "-Wl,-bind_at_load",
-                    "-all_load",
+                    "-all_load"
                   ],
                   "MACH_O_TYPE": "mh_dylib",
                   "PRODUCT_TYPE": "com.apple.product-type.framework"
