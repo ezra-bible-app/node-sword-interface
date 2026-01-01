@@ -21,7 +21,8 @@ const os = require('os');
 
 let nodeSwordInterfaceModule;
 if (process.platform === 'ios') {
-  nodeSwordInterfaceModule = require(path.join(os.homedir(), '/Frameworks/node_sword_interface.framework/node_sword_interface'));
+  // Navigate from www/nodejs-project/index.js to Frameworks/
+  nodeSwordInterfaceModule = require(path.join(__dirname, '../../Frameworks/node_sword_interface.framework/node_sword_interface'));
 } else {
   nodeSwordInterfaceModule = require('./build/Release/node_sword_interface.node');
 }
