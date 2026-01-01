@@ -12,10 +12,6 @@
         'type': 'none',
         'conditions': [
             ["is_ios==1", {
-                "xcode_settings": {
-                    "SDKROOT": "iphoneos",
-                    "IPHONEOS_DEPLOYMENT_TARGET": "<(ios_ver)"
-                },
                 'actions': [
                     {
                           'action_name': 'build_sword',
@@ -114,8 +110,6 @@
                     'sword'
                 ],
                 "xcode_settings": {
-                  "SDKROOT": "iphoneos",
-                  "IPHONEOS_DEPLOYMENT_TARGET": "<(ios_ver)",
                   "ONLY_ACTIVE_ARCH": "YES",
                   "OTHER_LDFLAGS": [
                     "-dynamiclib",
