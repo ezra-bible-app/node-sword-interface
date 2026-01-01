@@ -9,16 +9,6 @@
       # 3. Detect the SDK to use (iphoneos or iphonesimulator)
       "ios_sdk": "<!(python3 -c \"import os; print('iphonesimulator' if 'iPhoneSimulator' in os.environ.get('SDKROOT', '') else 'iphoneos')\")"
     },
-    "target_defaults": {
-      "conditions": [
-        ["is_ios==1", {
-          "xcode_settings": {
-            "SDKROOT": "<(ios_sdk)",
-            "IPHONEOS_DEPLOYMENT_TARGET": "<(ios_ver)"
-          }
-        }]
-      ]
-    },
     "targets": [
     {
         'target_name': 'sword',
@@ -130,8 +120,8 @@
                     "-dynamiclib",
                     "-install_name @rpath/node_sword_interface.framework/node_sword_interface",
                     "-undefined dynamic_lookup",
-                    "-Wl,-bind_at_load",
-                    "-all_load"
+                    "-Wl,-bind_at_load,-weak_library,$(BUILT_PRODUCTS_DIR)/nothing.a",
+                    "-all_load",
                   ],
                   "MACH_O_TYPE": "mh_dylib",
                   "PRODUCT_TYPE": "com.apple.product-type.framework"
