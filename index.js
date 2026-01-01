@@ -27,7 +27,7 @@ if (process.platform === 'ios') {
   const frameworkPath = '../../../../Frameworks/node_sword_interface.framework/node_sword_interface';
   const modulePath = path.join(__dirname, frameworkPath);
 
-  const tempModule = { exports: {} };
+  let tempModule = { exports: {} };
   process.dlopen(tempModule, modulePath);
   nodeSwordInterfaceModule = tempModule.exports;
 } else {
