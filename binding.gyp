@@ -113,6 +113,9 @@
                 "xcode_settings": {
                   "SDKROOT": "iphoneos",
                   "IPHONEOS_DEPLOYMENT_TARGET": "13.0",
+                  "SUPPORTED_PLATFORMS": "iphonesimulator iphoneos",
+                  # This ensures the binary is built for the current active destination
+                  "ONLY_ACTIVE_ARCH": "YES",
                   "OTHER_LDFLAGS": [
                     "-dynamiclib",
                     "-install_name @rpath/node_sword_interface.framework/node_sword_interface",
