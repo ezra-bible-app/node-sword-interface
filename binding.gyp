@@ -1,7 +1,16 @@
 {
     "variables": {
-    	# Detect if we are building for iOS by checking an env var
-    	"is_ios%": "<!(python3 -c \"import os; print(1 if os.environ.get('PLATFORM') == 'ios' or os.environ.get('SDKROOT') and 'iPhone' in os.environ.get('SDKROOT') else 0)\")"
+      # 1. Detect if we are on iOS
+      "is_ios%": "<!(python3 -c \"import os; sdk = os.environ.get('SDKROOT', ''); print(1 if 'iPhone' in sdk or os.environ.get('PLATFORM') == 'ios' else 0)\")",
+      
+      # 2. Get the deployment target (e.g., '15.0') from env, default to '13.0'
+      "ios_ver%": "<!(python3 -c \"import os; print(os.environ.get('IPHONEOS_DEPLOYMENT_TARGET', '13.0'))\")",
+      
+      # 3. Detect if it's a simulator build
+      "is_ios_sim%": "<!(python3 -c \"import os; print(1 if 'iPhoneSimulator' in os.environ.get('SDKROOT', '') else 0)\")",
+      
+      # 4. Construct the full target triple dynamically
+      "ios_target": "<!(python3 -c \"import os; ver = os.environ.get('IPHONEOS_DEPLOYMENT_TARGET', '13.0'); suffix = '-simulator' if 'iPhoneSimulator' in os.environ.get('SDKROOT', '') else ''; print(f'arm64-apple-ios{ver}{suffix}')\")"
     },
     "targets": [
     {
@@ -11,7 +20,7 @@
             ["is_ios==1", {
                 "xcode_settings": {
                     "SDKROOT": "iphoneos",
-                    "IPHONEOS_DEPLOYMENT_TARGET": "13.0"
+                    "IPHONEOS_DEPLOYMENT_TARGET": "<(ios_ver)"
                 },
                 'actions': [
                     {
@@ -112,14 +121,18 @@
                 ],
                 "xcode_settings": {
                   "SDKROOT": "iphoneos",
-                  "IPHONEOS_DEPLOYMENT_TARGET": "13.0",
-                  "SUPPORTED_PLATFORMS": "iphonesimulator iphoneos",
-                  # This ensures the binary is built for the current active destination
+                  "IPHONEOS_DEPLOYMENT_TARGET": "<(ios_ver)",
                   "ONLY_ACTIVE_ARCH": "YES",
+                  "OTHER_CFLAGS": [
+                    "-target <(ios_target)"
+                  ],
                   "OTHER_LDFLAGS": [
                     "-dynamiclib",
                     "-install_name @rpath/node_sword_interface.framework/node_sword_interface",
-                    "-undefined dynamic_lookup"
+                    "-undefined dynamic_lookup",
+                    "-Wl,-bind_at_load",
+                    "-all_load",
+                    "-target <(ios_target)"
                   ],
                   "MACH_O_TYPE": "mh_dylib",
                   "PRODUCT_TYPE": "com.apple.product-type.framework"
