@@ -109,7 +109,6 @@
                     '-lz'
                 ],
                 "dependencies": [
-                    "<!(node -p \"require('node-addon-api').gyp\")",
                     'sword'
                 ],
                 "xcode_settings": {
@@ -120,7 +119,7 @@
                     "-dynamiclib",
                     "-install_name @rpath/node_sword_interface.framework/node_sword_interface",
                     "-undefined dynamic_lookup",
-                    "-Wl,-bind_at_load,-weak_library,$(BUILT_PRODUCTS_DIR)/nothing.a",
+                    "-Wl,-bind_at_load",
                     "-all_load",
                   ],
                   "MACH_O_TYPE": "mh_dylib",
