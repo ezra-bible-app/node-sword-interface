@@ -327,7 +327,7 @@ vector<SWModule*> RepositoryInterface::getUpdatedRepoModules(string repoName, bo
             for (auto const& moduleStatus : moduleStatusMap) {
                 const unsigned int updateStatus = moduleStatus.second;
 
-                if (updateStatus == InstallMgr::MODSTAT_UPDATED) {
+                if (updateStatus == static_cast<unsigned int>(InstallMgr::MODSTAT_UPDATED)) {
                     updatedModules.push_back(moduleStatus.first);
                 }
             }
