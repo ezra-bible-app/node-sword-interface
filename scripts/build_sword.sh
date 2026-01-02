@@ -85,10 +85,18 @@ elif [ "$1" = "--ios" ] ; then
 
   IOS_TARGET="$2"
   IOS_VER="$3"
+  IOS_ARCH="$4"
 
   if [ -z "$IOS_VER" ]; then
       IOS_VER="13.0"
   fi
+
+  if [ -z "$IOS_ARCH" ]; then
+      IOS_ARCH="arm64"
+  fi
+
+  # Replace spaces with semicolons for CMake list
+  IOS_ARCH=$(echo "$IOS_ARCH" | tr ' ' ';')
 
   SYSROOT="iphoneos"
   if echo "$IOS_TARGET" | grep -q "simulator"; then
@@ -100,7 +108,7 @@ elif [ "$1" = "--ios" ] ; then
   cmake -DCMAKE_SYSTEM_NAME=iOS \
   -DLIBSWORD_LIBRARY_TYPE=Static \
   -DCMAKE_CXX_STANDARD=11 \
-  -DCMAKE_OSX_ARCHITECTURES="arm64" \
+  -DCMAKE_OSX_ARCHITECTURES="$IOS_ARCH" \
   -DCMAKE_OSX_SYSROOT=$SYSROOT \
   -DCMAKE_OSX_DEPLOYMENT_TARGET=$IOS_VER \
   -DCMAKE_BUILD_TYPE=$SWORD_BUILD_TYPE \

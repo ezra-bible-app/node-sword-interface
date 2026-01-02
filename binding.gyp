@@ -21,7 +21,7 @@
                           'message': 'Building sword library for iOS...',
                           'inputs': [],
                           'outputs': ['sword_build/libsword.a'],
-                          'action': ['./scripts/build_sword.sh', '--ios', '${PLATFORM_NAME}', '<(ios_ver)'],
+                          'action': ['./scripts/build_sword.sh', '--ios', '${PLATFORM_NAME}', '<(ios_ver)', '${ARCHS}'],
                     }
                 ]
             }],
