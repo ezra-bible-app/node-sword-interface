@@ -42,6 +42,11 @@
 #include <sstream>
 #include <vector>
 
+#include <zipcomprs.h>
+#include "unzip/unzip.h"
+#include <filemgr.h>
+#include <fcntl.h>
+
 #include "file_system_helper.hpp"
 
 using namespace std;
@@ -403,3 +408,70 @@ void FileSystemHelper::removeDir(std::string dirName)
 }
 #endif
 #endif
+
+bool FileSystemHelper::unTarGZ(std::string filePath, std::string destPath)
+{
+    sword::FileDesc* fd = sword::FileMgr::getSystemFileMgr()->open(filePath.c_str(), sword::FileMgr::RDONLY);
+    if (!fd) {
+        return false;
+    }
+
+    char ret = sword::ZipCompress::unTarGZ(fd->getFd(), destPath.c_str());
+    sword::FileMgr::getSystemFileMgr()->close(fd);
+
+    return (ret == 0);
+}
+
+bool FileSystemHelper::unZip(std::string filePath, std::string destPath)
+{
+    unzFile uf = unzOpen(filePath.c_str());
+    if (uf == NULL) {
+        return false;
+    }
+
+    int err = unzGoToFirstFile(uf);
+    while (err == UNZ_OK) {
+        char filename[256];
+        unz_file_info file_info;
+        err = unzGetCurrentFileInfo(uf, &file_info, filename, sizeof(filename), NULL, 0, NULL, 0);
+
+        if (err != UNZ_OK) break;
+
+        string fullPath = destPath;
+        if (fullPath.back() != '/' && fullPath.back() != '\\') {
+            fullPath += '/';
+        }
+        fullPath += filename;
+
+        // Check if directory
+        size_t filenameLen = strlen(filename);
+        if (filename[filenameLen - 1] == '/') {
+            // Create directory
+            string dummy = fullPath + "dummy";
+            sword::FileMgr::createParent(dummy.c_str());
+        } else {
+            // It's a file
+            sword::FileMgr::createParent(fullPath.c_str());
+            
+            err = unzOpenCurrentFile(uf);
+            if (err == UNZ_OK) {
+                sword::FileDesc* fd = sword::FileMgr::getSystemFileMgr()->open(fullPath.c_str(), sword::FileMgr::WRONLY | sword::FileMgr::CREAT | sword::FileMgr::TRUNC);
+                if (fd) {
+                    char buf[4096];
+                    int readBytes;
+                    while ((readBytes = unzReadCurrentFile(uf, buf, sizeof(buf))) > 0) {
+                        sword::FileMgr::write(fd->getFd(), buf, readBytes);
+                    }
+                    sword::FileMgr::getSystemFileMgr()->close(fd);
+                }
+                unzCloseCurrentFile(uf);
+            }
+        }
+
+        err = unzGoToNextFile(uf);
+    }
+
+    unzClose(uf);
+
+    return true;
+}

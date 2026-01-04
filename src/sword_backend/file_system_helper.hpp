@@ -48,6 +48,8 @@ public:
     std::string getUserSwordDir();
     std::string getSystemSwordDir();
     std::vector<std::string> getFilesInDir(std::string dirName);
+    bool unTarGZ(std::string filePath, std::string destPath);
+    bool unZip(std::string filePath, std::string destPath);
     std::string getPathSeparator();
     
     bool fileExists(std::string fileName);
