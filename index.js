@@ -755,6 +755,26 @@ class NodeSwordInterface {
   }
 
   /**
+   * Extracts a tar.gz file to a destination path.
+   * @param {String} filePath - The path to the tar.gz file.
+   * @param {String} destPath - The destination path where the file should be extracted.
+   * @return {Boolean} True if successful, false otherwise.
+   */
+  unTarGZ(filePath, destPath) {
+    return this.nativeInterface.unTarGZ(filePath, destPath);
+  }
+
+  /**
+   * Extracts a zip file to a destination path.
+   * @param {String} filePath - The path to the zip file.
+   * @param {String} destPath - The destination path where the file should be extracted.
+   * @return {Boolean} True if successful, false otherwise.
+   */
+  unZip(filePath, destPath) {
+    return this.nativeInterface.unZip(filePath, destPath);
+  }
+
+  /**
    * Returns the version of the SWORD library
    * @return {String} SWORD library version.
    */  

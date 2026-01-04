@@ -39,6 +39,11 @@
 #include "module_search.hpp"
 #include "mutex.hpp"
 
+#include <zipcomprs.h>
+#include "unzip/unzip.h"
+#include <filemgr.h>
+#include <fcntl.h>
+
 using namespace std;
 using namespace sword;
 
@@ -117,7 +122,9 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("getSwordTranslation", &NodeSwordInterface::getSwordTranslation),
         InstanceMethod("getBookAbbreviation", &NodeSwordInterface::getBookAbbreviation),
         InstanceMethod("getSwordVersion", &NodeSwordInterface::getSwordVersion),
-        InstanceMethod("getSwordPath", &NodeSwordInterface::getSwordPath)
+        InstanceMethod("getSwordPath", &NodeSwordInterface::getSwordPath),
+        InstanceMethod("unTarGZ", &NodeSwordInterface::unTarGZ),
+        InstanceMethod("unZip", &NodeSwordInterface::unZip)
     });
 
     constructor = Napi::Persistent(func);
@@ -1023,4 +1030,89 @@ Napi::Value NodeSwordInterface::getSwordPath(const Napi::CallbackInfo& info)
     Napi::String swordPath = Napi::String::New(env, fsHelper.getUserSwordDir());
     unlockApi();
     return swordPath;
+}
+
+Napi::Value NodeSwordInterface::unTarGZ(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
+    lockApi();
+
+    string filePath = info[0].As<Napi::String>().Utf8Value();
+    string destPath = info[1].As<Napi::String>().Utf8Value();
+
+    sword::FileDesc* fd = FileMgr::getSystemFileMgr()->open(filePath.c_str(), FileMgr::RDONLY);
+    if (!fd) {
+        unlockApi();
+        return Napi::Boolean::New(env, false);
+    }
+
+    char ret = ZipCompress::unTarGZ(fd->getFd(), destPath.c_str());
+    FileMgr::getSystemFileMgr()->close(fd);
+
+    unlockApi();
+    return Napi::Boolean::New(env, ret == 0);
+}
+
+Napi::Value NodeSwordInterface::unZip(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
+    lockApi();
+
+    string filePath = info[0].As<Napi::String>().Utf8Value();
+    string destPath = info[1].As<Napi::String>().Utf8Value();
+
+    unzFile uf = unzOpen(filePath.c_str());
+    if (uf == NULL) {
+        unlockApi();
+        return Napi::Boolean::New(env, false);
+    }
+
+    int err = unzGoToFirstFile(uf);
+    while (err == UNZ_OK) {
+        char filename[256];
+        unz_file_info file_info;
+        err = unzGetCurrentFileInfo(uf, &file_info, filename, sizeof(filename), NULL, 0, NULL, 0);
+
+        if (err != UNZ_OK) break;
+
+        string fullPath = destPath;
+        if (fullPath.back() != '/' && fullPath.back() != '\\') {
+            fullPath += '/';
+        }
+        fullPath += filename;
+
+        // Check if directory
+        size_t filenameLen = strlen(filename);
+        if (filename[filenameLen - 1] == '/') {
+            // Create directory
+            string dummy = fullPath + "dummy";
+            FileMgr::createParent(dummy.c_str());
+        } else {
+            // It's a file
+            FileMgr::createParent(fullPath.c_str());
+            
+            err = unzOpenCurrentFile(uf);
+            if (err == UNZ_OK) {
+                sword::FileDesc* fd = FileMgr::getSystemFileMgr()->open(fullPath.c_str(), FileMgr::WRONLY | FileMgr::CREAT | FileMgr::TRUNC);
+                if (fd) {
+                    char buf[4096];
+                    int readBytes;
+                    while ((readBytes = unzReadCurrentFile(uf, buf, sizeof(buf))) > 0) {
+                        FileMgr::write(fd->getFd(), buf, readBytes);
+                    }
+                    FileMgr::getSystemFileMgr()->close(fd);
+                }
+                unzCloseCurrentFile(uf);
+            }
+        }
+
+        err = unzGoToNextFile(uf);
+    }
+
+    unzClose(uf);
+
+    unlockApi();
+    return Napi::Boolean::New(env, true);
 }

@@ -79,6 +79,8 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.isModuleAvailableInRepo(moduleCode)](#NodeSwordInterface+isModuleAvailableInRepo) ⇒ <code>Boolean</code>
     * [.getSwordTranslation(originalString, localeCode)](#NodeSwordInterface+getSwordTranslation)
     * [.getBookAbbreviation(moduleName, bookCode, localeCode)](#NodeSwordInterface+getBookAbbreviation)
+    * [.unTarGZ(filePath, destPath)](#NodeSwordInterface+unTarGZ) ⇒ <code>Boolean</code>
+    * [.unZip(filePath, destPath)](#NodeSwordInterface+unZip) ⇒ <code>Boolean</code>
     * [.getSwordVersion()](#NodeSwordInterface+getSwordVersion) ⇒ <code>String</code>
     * [.getSwordPath()](#NodeSwordInterface+getSwordPath) ⇒ <code>String</code>
 
@@ -642,6 +644,32 @@ Uses the Sword LocaleMgr to translate a book abbreviation.
 | moduleName | <code>String</code> | 
 | bookCode | <code>String</code> | 
 | localeCode | <code>String</code> | 
+
+<a name="NodeSwordInterface+unTarGZ"></a>
+
+### nodeSwordInterface.unTarGZ(filePath, destPath) ⇒ <code>Boolean</code>
+Extracts a tar.gz file to a destination path.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: <code>Boolean</code> - True if successful, false otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| filePath | <code>String</code> | The path to the tar.gz file. |
+| destPath | <code>String</code> | The destination path where the file should be extracted. |
+
+<a name="NodeSwordInterface+unZip"></a>
+
+### nodeSwordInterface.unZip(filePath, destPath) ⇒ <code>Boolean</code>
+Extracts a zip file to a destination path.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: <code>Boolean</code> - True if successful, false otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| filePath | <code>String</code> | The path to the zip file. |
+| destPath | <code>String</code> | The destination path where the file should be extracted. |
 
 <a name="NodeSwordInterface+getSwordVersion"></a>
 

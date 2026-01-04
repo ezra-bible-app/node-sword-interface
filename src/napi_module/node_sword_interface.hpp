@@ -102,6 +102,8 @@ private:
     Napi::Value getBookAbbreviation(const Napi::CallbackInfo& info);
     Napi::Value getSwordVersion(const Napi::CallbackInfo& info);
     Napi::Value getSwordPath(const Napi::CallbackInfo& info);
+    Napi::Value unTarGZ(const Napi::CallbackInfo& info);
+    Napi::Value unZip(const Napi::CallbackInfo& info);
 
     int validateParams(const Napi::CallbackInfo& info, std::vector<ParamType> paramSpec);
     ModuleType getModuleTypeFromString(std::string moduleTypeString);

@@ -93,6 +93,8 @@
             "src/napi_module/napi_sword_helper.cpp",
             "src/napi_module/node_sword_interface.cpp",
             "src/napi_module/api_lock.cpp",
+            "src/sword_backend/unzip/unzip.c",
+            "src/sword_backend/unzip/ioapi.c",
             "src/napi_module/binding.cpp"
         ],
         "conditions":[
