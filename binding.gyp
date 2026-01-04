@@ -88,13 +88,13 @@
             "src/sword_backend/module_installer.cpp",
             "src/sword_backend/sword_status_reporter.cpp",
             "src/sword_backend/text_processor.cpp",
+            "src/sword_backend/unzip/unzip.c",
+            "src/sword_backend/unzip/ioapi.c",
             "src/napi_module/install_module_worker.cpp",
             "src/napi_module/module_search_worker.cpp",
             "src/napi_module/napi_sword_helper.cpp",
             "src/napi_module/node_sword_interface.cpp",
             "src/napi_module/api_lock.cpp",
-            "src/sword_backend/unzip/unzip.c",
-            "src/sword_backend/unzip/ioapi.c",
             "src/napi_module/binding.cpp"
         ],
         "conditions":[
