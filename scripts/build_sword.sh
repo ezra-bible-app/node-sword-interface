@@ -117,10 +117,19 @@ else
   # macOS & Linux
 
   cd sword_build
-  cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 \
-  -DCMAKE_BUILD_TYPE=$SWORD_BUILD_TYPE \
-  -DCMAKE_DISABLE_FIND_PACKAGE_ICU=TRUE \
-  ../sword
+
+  if [ "$(uname -s)" = "Darwin" ]; then
+    cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 \
+    -DCMAKE_BUILD_TYPE=$SWORD_BUILD_TYPE \
+    -DCMAKE_DISABLE_FIND_PACKAGE_ICU=TRUE \
+    -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+    ../sword
+  else
+    cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 \
+    -DCMAKE_BUILD_TYPE=$SWORD_BUILD_TYPE \
+    -DCMAKE_DISABLE_FIND_PACKAGE_ICU=TRUE \
+    ../sword
+  fi
 fi
 
 make -j4 sword_static
