@@ -1,13 +1,13 @@
 {
     "variables": {
       # 1. Detect if we are on iOS
-      "is_ios%": "<!(python3 -c \"import os; sdk = os.environ.get('SDKROOT', ''); print(1 if 'iPhone' in sdk or os.environ.get('PLATFORM') == 'ios' else 0)\")",
+      "is_ios%": "<!(node -e \"console.log(process.env.SDKROOT?.includes('iPhone') || process.env.PLATFORM === 'ios' ? 1 : 0)\")",
       
       # 2. Get the deployment target (e.g., '15.0') from env, default to '13.0'
-      "ios_ver%": "<!(python3 -c \"import os; print(os.environ.get('IPHONEOS_DEPLOYMENT_TARGET', '13.0'))\")",
+      "ios_ver%": "<!(node -e \"console.log(process.env.IPHONEOS_DEPLOYMENT_TARGET || '13.0')\")",
 
       # 3. Detect the SDK to use (iphoneos or iphonesimulator)
-      "ios_sdk": "<!(python3 -c \"import os; print('iphonesimulator' if 'iPhoneSimulator' in os.environ.get('SDKROOT', '') else 'iphoneos')\")"
+      "ios_sdk": "<!(node -e \"console.log(process.env.SDKROOT?.includes('iPhoneSimulator') ? 'iphonesimulator' : 'iphoneos')\")"
     },
     "targets": [
     {
