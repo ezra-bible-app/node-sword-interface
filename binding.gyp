@@ -230,7 +230,7 @@
                 "action_name": "clean_build_artifacts",
                 "inputs": [],
                 "outputs": ["<(PRODUCT_DIR)/cleanup.stamp"],
-                "action": [ "sh", "scripts/cleanup_build_artifacts.sh", "<(PRODUCT_DIR)/cleanup.stamp" ]
+                "action": [ "node", "scripts/cleanup_build_artifacts.js", "<(PRODUCT_DIR)/cleanup.stamp" ]
             }
         ]
     }]
