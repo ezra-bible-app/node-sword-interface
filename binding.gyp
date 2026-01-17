@@ -192,8 +192,7 @@
                     '-lNormaliz.lib'
                 ],
                 "dependencies": [
-                    'sword',
-                    "<!(node -p \"require('node-addon-api').gyp\")"
+                    'sword'
                 ],
                 'defines': [ 'SWUSINGDLL' ]
             }]
