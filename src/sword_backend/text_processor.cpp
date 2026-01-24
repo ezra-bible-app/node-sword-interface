@@ -126,8 +126,8 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     this->findAndReplaceAll(filteredText, headEndElementFilter, "</div>");
     this->findAndReplaceAll(filteredText, appStartElementFilter, "<div class=\"sword-markup sword-app\" ");
     this->findAndReplaceAll(filteredText, appEndElementFilter, "</div>");
-    this->findAndReplaceAll(filteredText, scripRefStartElementFilter, "<div class=\"sword-markup sword-scripref\" ");
-    this->findAndReplaceAll(filteredText, scripRefEndElementFilter, "</div>");
+    this->findAndReplaceAll(filteredText, scripRefStartElementFilter, "<span class=\"sword-markup sword-scripref\" ");
+    this->findAndReplaceAll(filteredText, scripRefEndElementFilter, "</span>");
     this->findAndReplaceAll(filteredText, rtxtStartElementFilter1, "<div class=\"sword-markup sword-rtxt\" type=");
     this->findAndReplaceAll(filteredText, rtxtStartElementFilter2, "<div class=\"sword-markup sword-rtxt\" rend=");
     this->findAndReplaceAll(filteredText, rtxtEndElementFilter, "</div>");
