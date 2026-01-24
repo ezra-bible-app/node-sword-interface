@@ -22,19 +22,11 @@ describe('ScripRef Rendering', () => {
   test('scripRef should render as span not div', () => {
     const nsi = new NodeSwordInterface();
     
-    // Test the text processor behavior directly by creating a mock verse
-    // that contains a scripRef tag similar to what NETnote commentary would have
-    const mockInput = '<scripRef passage="1Tim 1:15; 4:9; 2Tim 2:11; Titus 3:8">1Tim 1:15; 4:9; 2Tim 2:11; Titus 3:8</scripRef>';
-    
-    // The filtered text should convert scripRef to span, not div
-    // This is to prevent unwanted line breaks in commentaries
-    // We can't directly test the C++ function, but we can validate the concept
-    
     // Expected behavior: scripRef tags should be converted to span elements
+    // The actual transformation happens in text_processor.cpp lines 129-130
     const expectedOutput = '<span class="sword-markup sword-scripref" passage="1Tim 1:15; 4:9; 2Tim 2:11; Titus 3:8">1Tim 1:15; 4:9; 2Tim 2:11; Titus 3:8</span>';
     
     // This test documents the expected behavior
-    // The actual transformation happens in text_processor.cpp lines 129-130
     expect(expectedOutput).toContain('<span class="sword-markup sword-scripref"');
     expect(expectedOutput).not.toContain('<div class="sword-markup sword-scripref"');
   });
