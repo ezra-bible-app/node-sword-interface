@@ -5,3 +5,4 @@
 package-lock.json
 /.vscode
 *.code-workspace
+_codeql_detected_source_root
