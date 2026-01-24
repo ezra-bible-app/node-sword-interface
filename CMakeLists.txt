@@ -46,6 +46,8 @@ ${CMAKE_SOURCE_DIR}/src/sword_backend/module_installer.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/text_processor.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/module_search.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/mutex.cpp
+${CMAKE_SOURCE_DIR}/src/sword_backend/unzip/ioapi.c
+${CMAKE_SOURCE_DIR}/src/sword_backend/unzip/unzip.c
 )
 
 add_executable(node_sword_cli ${SOURCES})
