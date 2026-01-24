@@ -183,7 +183,8 @@ int main(int argc, char** argv)
     ModuleHelper moduleHelper(moduleStore);
     DictHelper dictHelper(moduleStore);
     SwordStatusReporter statusReporter;
-    RepositoryInterface repoInterface(statusReporter, moduleHelper, moduleStore);
+    long timeoutMillis = 20000;
+    RepositoryInterface repoInterface(statusReporter, moduleHelper, moduleStore, "", timeoutMillis);
     ModuleInstaller moduleInstaller(repoInterface, moduleStore);
     TextProcessor textProcessor(moduleStore, moduleHelper);
     ModuleSearch moduleSearch(moduleStore, moduleHelper, textProcessor);

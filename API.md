@@ -31,6 +31,7 @@ This is the main class of node-sword-interface and it provides a set of static f
 **Kind**: global class  
 
 * [NodeSwordInterface](#NodeSwordInterface)
+    * [new NodeSwordInterface(customHomeDir, localesBasePath, timeoutMillis)](#new_NodeSwordInterface_new)
     * [.repositoryConfigExisting()](#NodeSwordInterface+repositoryConfigExisting) ⇒ <code>Boolean</code>
     * [.updateRepositoryConfig(progressCB)](#NodeSwordInterface+updateRepositoryConfig) ⇒ <code>Promise</code>
     * [.getRepoNames()](#NodeSwordInterface+getRepoNames) ⇒ <code>Array.&lt;String&gt;</code>
@@ -83,6 +84,17 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.unZip(filePath, destPath)](#NodeSwordInterface+unZip) ⇒ <code>Boolean</code>
     * [.getSwordVersion()](#NodeSwordInterface+getSwordVersion) ⇒ <code>String</code>
     * [.getSwordPath()](#NodeSwordInterface+getSwordPath) ⇒ <code>String</code>
+
+<a name="new_NodeSwordInterface_new"></a>
+
+### new NodeSwordInterface(customHomeDir, localesBasePath, timeoutMillis)
+Creates an instance of NodeSwordInterface.
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| customHomeDir | <code>String</code> | <code>undefined</code> | Optional custom home directory for SWORD data. |
+| localesBasePath | <code>String</code> | <code>__dirname</code> | Optional base path for locales. |
+| timeoutMillis | <code>Number</code> | <code>20000</code> | Optional timeout in milliseconds for repository operations. Invalid values (≤ 0 or non-numeric) trigger a warning and fallback to the default. |
 
 <a name="NodeSwordInterface+repositoryConfigExisting"></a>
 

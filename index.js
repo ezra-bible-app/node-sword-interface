@@ -105,9 +105,15 @@ const searchMutex = new Mutex();
 
 /** This is the main class of node-sword-interface and it provides a set of static functions that wrap SWORD library functionality. */
 class NodeSwordInterface {
-  constructor(customHomeDir=undefined, localesBasePath=__dirname) {
+  /**
+   * Creates an instance of NodeSwordInterface.
+   * @param {String} customHomeDir - Optional custom home directory for SWORD data.
+   * @param {String} localesBasePath - Optional base path for locales (default: __dirname).
+   * @param {Number} timeoutMillis - Optional timeout in milliseconds for repository operations (default: 20000).
+   */
+  constructor(customHomeDir=undefined, localesBasePath=__dirname, timeoutMillis=20000) {
     var localesDir = path.join(localesBasePath, './locales.d');
-    this.nativeInterface = new nodeSwordInterfaceModule.NodeSwordInterface(customHomeDir, localesDir);
+    this.nativeInterface = new nodeSwordInterfaceModule.NodeSwordInterface(customHomeDir, localesDir, timeoutMillis);
   }
 
   /**

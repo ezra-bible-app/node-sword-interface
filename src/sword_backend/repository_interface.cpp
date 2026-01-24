@@ -53,9 +53,16 @@ static Mutex remoteSourceUpdateMutex;
 RepositoryInterface::RepositoryInterface(SwordStatusReporter& statusReporter,
                                          ModuleHelper& moduleHelper,
                                          ModuleStore& moduleStore,
-                                         string customHomeDir) 
+                                         string customHomeDir,
+                                         long timeoutMillis) 
     : _statusReporter(statusReporter), _moduleHelper(moduleHelper), _moduleStore(moduleStore)
 {
+    if (timeoutMillis <= 0) {
+        cerr << "Warning: Invalid timeoutMillis value (" << timeoutMillis << "), using default (20000)" << endl;
+        this->_timeoutMillis = 20000;
+    } else {
+        this->_timeoutMillis = timeoutMillis;
+    }
     this->_fileSystemHelper.setCustomHomeDir(customHomeDir);
     this->resetMgr();
     remoteSourceUpdateMutex.init();
@@ -72,8 +79,7 @@ void RepositoryInterface::resetMgr()
     this->_installMgr = new InstallMgr(this->_fileSystemHelper.getInstallMgrDir().c_str(), &this->_statusReporter);
     this->_installMgr->setUserDisclaimerConfirmed(true);
 
-    long timeoutMillis = 20000;
-    this->_installMgr->setTimeoutMillis(timeoutMillis);
+    this->_installMgr->setTimeoutMillis(this->_timeoutMillis);
 }
 
 int RepositoryInterface::refreshRepositoryConfig()

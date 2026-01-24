@@ -151,6 +151,7 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
 
     std::string localeDir = "";
     this->customHomeDir = "";
+    long timeoutMillis = 20000;
 
     bool homeDirError = false;
     bool localeDirError = false;
@@ -177,11 +178,17 @@ NodeSwordInterface::NodeSwordInterface(const Napi::CallbackInfo& info) : Napi::O
         localeDirError = true;
     }
 
+    if (info[2].IsNumber()) {
+        timeoutMillis = info[2].As<Napi::Number>().Int64Value();
+    } else if (!info[2].IsUndefined() && !info[2].IsNull()) {
+        cerr << "Warning: Invalid timeoutMillis value (not a number), using default (20000)" << endl;
+    }
+
     if (!homeDirError && !localeDirError) { // We only proceed if there has not been any issue with the homeDir or localeDir
         this->_moduleStore = new ModuleStore(this->customHomeDir);
         this->_moduleHelper = new ModuleHelper(*(this->_moduleStore));
         this->_dictHelper = new DictHelper(*(this->_moduleStore));
-        this->_repoInterface = new RepositoryInterface(this->_swordStatusReporter, *(this->_moduleHelper), *(this->_moduleStore), this->customHomeDir);
+        this->_repoInterface = new RepositoryInterface(this->_swordStatusReporter, *(this->_moduleHelper), *(this->_moduleStore), this->customHomeDir, timeoutMillis);
         this->_moduleInstaller = new ModuleInstaller(*(this->_repoInterface), *(this->_moduleStore), this->customHomeDir);
         this->_napiSwordHelper = new NapiSwordHelper(*(this->_moduleHelper), *(this->_moduleStore));
         this->_textProcessor = new TextProcessor(*(this->_moduleStore), *(this->_moduleHelper));

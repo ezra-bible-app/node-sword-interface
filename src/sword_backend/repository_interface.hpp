@@ -43,7 +43,8 @@ public:
     RepositoryInterface(SwordStatusReporter& statusReporter,
                         ModuleHelper& moduleHelper,
                         ModuleStore& moduleStore,
-                        std::string customHomeDir="");
+                        std::string customHomeDir="",
+                        long timeoutMillis=20000);
 
     virtual ~RepositoryInterface(){}
 
@@ -115,6 +116,7 @@ private:
     FileSystemHelper _fileSystemHelper;
     ModuleHelper& _moduleHelper;
     ModuleStore& _moduleStore;
+    long _timeoutMillis = 20000;
 };
 
 #endif // _REPOSITORY_INTERFACE
