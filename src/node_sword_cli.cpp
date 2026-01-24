@@ -112,6 +112,20 @@ void get_module_text(TextProcessor& text_processor)
     }*/
 }
 
+void get_reference_text(ModuleStore& module_store, TextProcessor& text_processor)
+{
+    cout << "RAW Text:" << endl;
+    SWModule* swordModule = module_store.getLocalModule("NETnote");
+    swordModule->setKey("1 Tim 3:2");
+    string rawText = swordModule->getRawEntry();
+    cout << rawText << endl;
+  
+    cout << "Processed Text: " << endl;
+    text_processor.enableMarkup();
+    Verse text = text_processor.getReferenceText("NETnote", "1 Tim 3:2");
+    cout << text.content << endl;
+}
+
 void get_book_intro(TextProcessor& text_processor)
 {
     cout << "Text:" << endl;
@@ -228,6 +242,8 @@ int main(int argc, char** argv)
     //get_strongs_entry(textProcessor);
 
     //get_module_text(textProcessor);
+
+    get_reference_text(moduleStore, textProcessor);
 
     //get_book_intro(textProcessor);
 
