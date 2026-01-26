@@ -327,6 +327,18 @@ Napi::Value NodeSwordInterface::isModuleAvailableInRepo(const Napi::CallbackInfo
     INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
     Napi::String moduleName = info[1].As<Napi::String>();
+
+    if (string(repoName).empty()) {
+        Napi::TypeError::New(info.Env(), "Repository name cannot be empty").ThrowAsJavaScriptException();
+        unlockApi();
+        return info.Env().Null();
+    }
+
+    if (string(moduleName).empty()) {
+        Napi::TypeError::New(info.Env(), "Module name cannot be empty").ThrowAsJavaScriptException();
+        unlockApi();
+        return info.Env().Null();
+    }
     
     bool moduleAvailable = this->_repoInterface->isModuleAvailableInRepo(moduleName, repoName);
     unlockApi();
@@ -475,6 +487,18 @@ Napi::Value NodeSwordInterface::getRepoModule(const Napi::CallbackInfo& info)
     Napi::Object napiObject = Napi::Object::New(env);
     Napi::String repoName = info[0].As<Napi::String>();
     Napi::String moduleName = info[1].As<Napi::String>();
+
+    if (string(repoName).empty()) {
+        Napi::TypeError::New(env, "Repository name cannot be empty").ThrowAsJavaScriptException();
+        unlockApi();
+        return env.Null();
+    }
+
+    if (string(moduleName).empty()) {
+        Napi::TypeError::New(env, "Module name cannot be empty").ThrowAsJavaScriptException();
+        unlockApi();
+        return env.Null();
+    }
     
     SWModule* swordModule = this->_repoInterface->getRepoModule(moduleName, repoName);
 
@@ -497,6 +521,18 @@ Napi::Value NodeSwordInterface::getModuleDescription(const Napi::CallbackInfo& i
     INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
     Napi::String repoName = info[0].As<Napi::String>();
     Napi::String moduleName = info[1].As<Napi::String>();
+
+    if (string(repoName).empty()) {
+        Napi::TypeError::New(env, "Repository name cannot be empty").ThrowAsJavaScriptException();
+        unlockApi();
+        return env.Null();
+    }
+
+    if (string(moduleName).empty()) {
+        Napi::TypeError::New(env, "Module name cannot be empty").ThrowAsJavaScriptException();
+        unlockApi();
+        return env.Null();
+    }
 
     SWModule* swordModule = this->_repoInterface->getRepoModule(moduleName, repoName);
     if (swordModule == 0) {
@@ -876,6 +912,18 @@ Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
     Napi::Function progressCallback = info[2].As<Napi::Function>();
     Napi::Function callback = info[3].As<Napi::Function>();
 
+    if (string(repoName).empty()) {
+        Napi::TypeError::New(info.Env(), "Repository name cannot be empty").ThrowAsJavaScriptException();
+        unlockApi();
+        return info.Env().Null();
+    }
+
+    if (string(moduleName).empty()) {
+        Napi::TypeError::New(info.Env(), "Module name cannot be empty").ThrowAsJavaScriptException();
+        unlockApi();
+        return info.Env().Null();
+    }
+
     InstallModuleWorker* worker = new InstallModuleWorker(*(this->_repoInterface),
                                                           *(this->_moduleInstaller),
                                                           progressCallback,
@@ -901,6 +949,18 @@ Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
     Napi::String repoName = info[0].As<Napi::String>();
     Napi::String moduleName = info[1].As<Napi::String>();
     Napi::Function callback = info[2].As<Napi::Function>();
+
+    if (string(repoName).empty()) {
+        Napi::TypeError::New(info.Env(), "Repository name cannot be empty").ThrowAsJavaScriptException();
+        unlockApi();
+        return info.Env().Null();
+    }
+
+    if (string(moduleName).empty()) {
+        Napi::TypeError::New(info.Env(), "Module name cannot be empty").ThrowAsJavaScriptException();
+        unlockApi();
+        return info.Env().Null();
+    }
     
     UninstallModuleWorker* worker = new UninstallModuleWorker(*(this->_repoInterface), *(this->_moduleInstaller), callback, moduleName, repoName);
     worker->Queue();
