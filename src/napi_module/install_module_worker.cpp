@@ -80,7 +80,12 @@ void InstallModuleWorker::Execute(const ExecutionProgress& progress)
     this->_totalPercent = 0;
     this->_filePercent = 0;
 
-    this->_result = this->_moduleInstaller.installModule(this->_moduleName);
+    // Use repository-specific installation if repoName is provided
+    if (!this->_repoName.empty()) {
+        this->_result = this->_moduleInstaller.installModule(this->_repoName, this->_moduleName);
+    } else {
+        this->_result = this->_moduleInstaller.installModule(this->_moduleName);
+    }
 
     statusReporter.resetCallbacks();
     unlockApi();

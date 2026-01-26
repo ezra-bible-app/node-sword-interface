@@ -214,10 +214,11 @@ class NodeSwordInterface {
    * Returns an object representation of a SWORD module from a repository.
    *
    * @param {String} moduleCode - The module code of the SWORD module.
+   * @param {String} repositoryName - Optional. The name of the repository to search in. If undefined/null, searches all repositories.
    * @return {ModuleObject}
    */
-  getRepoModule(moduleCode) {
-    return this.nativeInterface.getRepoModule(moduleCode);
+  getRepoModule(moduleCode, repositoryName=undefined) {
+    return this.nativeInterface.getRepoModule(moduleCode, repositoryName);
   }
 
   /**
@@ -253,8 +254,8 @@ class NodeSwordInterface {
   }
 
   /**
-   * Installs a module. The repository is automatically determined. The module is downloaded
-   * from the corresponding repository and then installed in the local SWORD directory.
+   * Installs a module. The module is downloaded from the corresponding repository 
+   * and then installed in the local SWORD directory.
    * This operation may take some time depending on the available bandwidth and geographical
    * distance to the SWORD repository server.
    *
@@ -265,16 +266,23 @@ class NodeSwordInterface {
    * -9: Installation cancelled by user or internet connection suddenly interrupted
    *
    * @param {String} moduleCode - The module code of the SWORD module that shall be installed.
+   * @param {String} repositoryName - Optional. The name of the repository from which to install. If undefined/null, the repository is automatically determined.
    * @param {Function} progressCB - Callback function that is called on progress events.
    * @return {Promise}
    */
-  async installModule(moduleCode, progressCB=undefined) {
+  async installModule(moduleCode, repositoryName=undefined, progressCB=undefined) {
+    // Handle backward compatibility - if second param is a function, it's the old API
+    if (typeof repositoryName === 'function') {
+      progressCB = repositoryName;
+      repositoryName = undefined;
+    }
+    
     if (progressCB === undefined) {
       progressCB = function(progress) {};
     }
 
     return new Promise((resolve, reject) => {
-      this.nativeInterface.installModule(moduleCode, progressCB, function(result) {
+      this.nativeInterface.installModule(moduleCode, repositoryName, progressCB, function(result) {
         if (result == 0) {
           resolve();
         } else {
@@ -297,11 +305,12 @@ class NodeSwordInterface {
    * This function works asynchronously and returns a Promise object.
    *
    * @param {String} moduleCode - The module code of the SWORD module that shall be uninstalled.
+   * @param {String} repositoryName - Optional. The name of the repository from which the module was installed. If undefined/null, all modules with this name will be uninstalled.
    * @return {Promise}
    */
-  async uninstallModule(moduleCode) {
+  async uninstallModule(moduleCode, repositoryName=undefined) {
     return new Promise((resolve, reject) => {
-      this.nativeInterface.uninstallModule(moduleCode, function(uninstallSuccessful) {
+      this.nativeInterface.uninstallModule(moduleCode, repositoryName, function(uninstallSuccessful) {
         if (uninstallSuccessful) {
           resolve();
         } else {
@@ -344,10 +353,11 @@ class NodeSwordInterface {
    * Returns the description of a module.
    *
    * @param {String} moduleCode - The module code of the SWORD module.
+   * @param {String} repositoryName - Optional. The name of the repository to search in. If undefined/null, searches all repositories.
    * @return {String} The description of the respective module.
    */
-  getModuleDescription(moduleCode) {
-    return this.nativeInterface.getModuleDescription(moduleCode);
+  getModuleDescription(moduleCode, repositoryName=undefined) {
+    return this.nativeInterface.getModuleDescription(moduleCode, repositoryName);
   }
 
   /**
@@ -733,10 +743,11 @@ class NodeSwordInterface {
    * Checks whether the module is available in any repository.
    *
    * @param {String} moduleCode - The module code of the SWORD module.
+   * @param {String} repositoryName - Optional. The name of the repository to check. If undefined/null, checks all repositories.
    * @return {Boolean}
    */
-  isModuleAvailableInRepo(moduleCode) {
-    return this.nativeInterface.isModuleAvailableInRepo(moduleCode);
+  isModuleAvailableInRepo(moduleCode, repositoryName=undefined) {
+    return this.nativeInterface.isModuleAvailableInRepo(moduleCode, repositoryName);
   }
 
   /**
