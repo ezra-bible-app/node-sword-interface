@@ -28,7 +28,7 @@ describe('NodeSwordInterface', () => {
 
     if (!kjv) {
       console.log('KJV module not found, installing ...');
-      await nsi.installModule(undefined, 'KJV');
+      await nsi.installModule('CrossWire', 'KJV');
       kjv = nsi.getLocalModule('KJV');
     }
 

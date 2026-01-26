@@ -213,7 +213,7 @@ class NodeSwordInterface {
   /**
    * Returns an object representation of a SWORD module from a repository.
    *
-   * @param {String} repositoryName - The name of the repository to search in. If undefined/null, searches all repositories.
+   * @param {String} repositoryName - The name of the repository to search in.
    * @param {String} moduleCode - The module code of the SWORD module.
    * @return {ModuleObject}
    */
@@ -265,7 +265,7 @@ class NodeSwordInterface {
    * -1: General installation issue
    * -9: Installation cancelled by user or internet connection suddenly interrupted
    *
-   * @param {String} repositoryName - The name of the repository from which to install. If undefined/null, the repository is automatically determined.
+   * @param {String} repositoryName - The name of the repository from which to install.
    * @param {String} moduleCode - The module code of the SWORD module that shall be installed.
    * @param {Function} progressCB - Callback function that is called on progress events.
    * @return {Promise}
@@ -298,7 +298,7 @@ class NodeSwordInterface {
    *
    * This function works asynchronously and returns a Promise object.
    *
-   * @param {String} repositoryName - The name of the repository from which the module was installed. If undefined/null, all modules with this name will be uninstalled.
+   * @param {String} repositoryName - The name of the repository from which the module was installed.
    * @param {String} moduleCode - The module code of the SWORD module that shall be uninstalled.
    * @return {Promise}
    */
@@ -346,7 +346,7 @@ class NodeSwordInterface {
   /**
    * Returns the description of a module.
    *
-   * @param {String} repositoryName - The name of the repository to search in. If undefined/null, searches all repositories.
+   * @param {String} repositoryName - The name of the repository to search in.
    * @param {String} moduleCode - The module code of the SWORD module.
    * @return {String} The description of the respective module.
    */
@@ -736,7 +736,7 @@ class NodeSwordInterface {
   /**
    * Checks whether the module is available in any repository.
    *
-   * @param {String} repositoryName - The name of the repository to check. If undefined/null, checks all repositories.
+   * @param {String} repositoryName - The name of the repository to check.
    * @param {String} moduleCode - The module code of the SWORD module.
    * @return {Boolean}
    */

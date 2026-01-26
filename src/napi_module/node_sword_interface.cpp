@@ -324,16 +324,8 @@ Napi::Value NodeSwordInterface::isModuleInUserDir(const Napi::CallbackInfo& info
 Napi::Value NodeSwordInterface::isModuleAvailableInRepo(const Napi::CallbackInfo& info)
 {
     lockApi();
-    Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-    
-    // Extract repository name (can be null/undefined)
-    std::string repoName = "all";
-    if (!info[0].IsNull() && !info[0].IsUndefined()) {
-        repoName = info[0].As<Napi::String>().Utf8Value();
-    }
-    
-    // Validate module code parameter
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
+    Napi::String repoName = info[0].As<Napi::String>();
     Napi::String moduleName = info[1].As<Napi::String>();
     
     bool moduleAvailable = this->_repoInterface->isModuleAvailableInRepo(moduleName, repoName);
@@ -479,19 +471,10 @@ Napi::Value NodeSwordInterface::getRepoModule(const Napi::CallbackInfo& info)
 {
     lockApi();
     Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-    
-    // Extract parameters
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
     Napi::Object napiObject = Napi::Object::New(env);
+    Napi::String repoName = info[0].As<Napi::String>();
     Napi::String moduleName = info[1].As<Napi::String>();
-    std::string repoName;
-
-    // Extract repository name (can be null/undefined)
-    if (!info[0].IsNull() && !info[0].IsUndefined()) {
-        repoName = info[0].As<Napi::String>().Utf8Value();
-    } else {
-        repoName = this->_repoInterface->getModuleRepo(moduleName);
-    }
     
     SWModule* swordModule = this->_repoInterface->getRepoModule(moduleName, repoName);
 
@@ -511,15 +494,8 @@ Napi::Value NodeSwordInterface::getModuleDescription(const Napi::CallbackInfo& i
 {
     lockApi();
     Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-    
-    // Extract repository name (can be null/undefined)
-    std::string repoName = "all";
-    if (!info[0].IsNull() && !info[0].IsUndefined()) {
-        repoName = info[0].As<Napi::String>().Utf8Value();
-    }
-    
-    // Validate module code parameter
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
+    Napi::String repoName = info[0].As<Napi::String>();
     Napi::String moduleName = info[1].As<Napi::String>();
 
     SWModule* swordModule = this->_repoInterface->getRepoModule(moduleName, repoName);
@@ -894,16 +870,8 @@ Napi::Value NodeSwordInterface::getStrongsEntry(const Napi::CallbackInfo& info)
 Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
 {
     lockApi();
-    Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-    
-    // Extract repository name (can be null/undefined)
-    std::string repoName = "";
-    if (!info[0].IsNull() && !info[0].IsUndefined()) {
-        repoName = info[0].As<Napi::String>().Utf8Value();
-    }
-    
-    // Validate remaining parameters
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::function, ParamType::function);
+    Napi::String repoName = info[0].As<Napi::String>();
     Napi::String moduleName = info[1].As<Napi::String>();
     Napi::Function progressCallback = info[2].As<Napi::Function>();
     Napi::Function callback = info[3].As<Napi::Function>();
@@ -929,16 +897,8 @@ Napi::Value NodeSwordInterface::cancelInstallation(const Napi::CallbackInfo& inf
 Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
 {
     lockApi();
-    Napi::Env env = info.Env();
-    Napi::HandleScope scope(env);
-    
-    // Extract repository name (can be null/undefined)
-    std::string repoName = "";
-    if (!info[0].IsNull() && !info[0].IsUndefined()) {
-        repoName = info[0].As<Napi::String>().Utf8Value();
-    }
-    
-    // Validate remaining parameters
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::function);
+    Napi::String repoName = info[0].As<Napi::String>();
     Napi::String moduleName = info[1].As<Napi::String>();
     Napi::Function callback = info[2].As<Napi::Function>();
     

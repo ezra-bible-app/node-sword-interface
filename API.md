@@ -197,7 +197,7 @@ Returns an object representation of a SWORD module from a repository.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| repositoryName | <code>String</code> | The name of the repository to search in. If undefined/null, searches all repositories. |
+| repositoryName | <code>String</code> | The name of the repository to search in. |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
 
 <a name="NodeSwordInterface+getAllLocalModules"></a>
@@ -257,7 +257,7 @@ If the installation fails, the Promise will be rejected with the following statu
 
 | Param | Type | Description |
 | --- | --- | --- |
-| repositoryName | <code>String</code> | The name of the repository from which to install. If undefined/null, the repository is automatically determined. |
+| repositoryName | <code>String</code> | The name of the repository from which to install. |
 | moduleCode | <code>String</code> | The module code of the SWORD module that shall be installed. |
 | progressCB | <code>function</code> | Callback function that is called on progress events. |
 
@@ -278,7 +278,7 @@ This function works asynchronously and returns a Promise object.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| repositoryName | <code>String</code> | The name of the repository from which the module was installed. If undefined/null, all modules with this name will be uninstalled. |
+| repositoryName | <code>String</code> | The name of the repository from which the module was installed. |
 | moduleCode | <code>String</code> | The module code of the SWORD module that shall be uninstalled. |
 
 <a name="NodeSwordInterface+refreshLocalModules"></a>
@@ -322,7 +322,7 @@ Returns the description of a module.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| repositoryName | <code>String</code> | The name of the repository to search in. If undefined/null, searches all repositories. |
+| repositoryName | <code>String</code> | The name of the repository to search in. |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
 
 <a name="NodeSwordInterface+enableMarkup"></a>
@@ -635,7 +635,7 @@ Checks whether the module is available in any repository.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| repositoryName | <code>String</code> | The name of the repository to check. If undefined/null, checks all repositories. |
+| repositoryName | <code>String</code> | The name of the repository to check. |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
 
 <a name="NodeSwordInterface+getSwordTranslation"></a>

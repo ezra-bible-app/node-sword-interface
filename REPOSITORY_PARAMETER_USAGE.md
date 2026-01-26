@@ -10,11 +10,11 @@ Previously, module names/IDs were assumed to be unique across all repositories. 
 
 ## Solution
 
-The API now requires repository names to be provided as the first parameter for module operations. When a repository name is `undefined` or `null`, the system searches across all repositories (auto-discovery).
+The API now **requires** repository names to be provided as the first parameter for module operations. This ensures explicit targeting of specific repositories to avoid ambiguity.
 
 ## API Changes
 
-### Updated Methods (repository name is now the first parameter)
+### Updated Methods (repository name is now **required** as the first parameter)
 
 1. **installModule(repositoryName, moduleCode, progressCB)**
 2. **uninstallModule(repositoryName, moduleCode)**
@@ -22,7 +22,7 @@ The API now requires repository names to be provided as the first parameter for 
 4. **isModuleAvailableInRepo(repositoryName, moduleCode)**
 5. **getRepoModule(repositoryName, moduleCode)**
 
-**Note:** This is a breaking change. The parameter order has been changed to put `repositoryName` first.
+**Note:** This is a breaking change. The repository parameter is **required** and must be a string.
 
 ## Usage Examples
 
@@ -32,25 +32,13 @@ The API now requires repository names to be provided as the first parameter for 
 const NodeSwordInterface = require('node-sword-interface');
 const nsi = new NodeSwordInterface();
 
-// Install module from specific repository
+// Install module from specific repository (required)
 await nsi.installModule('Bible.org', 'NET', (progress) => {
   console.log(`Progress: ${progress}%`);
 });
-```
 
-### Auto-Discovery (Search All Repositories)
-
-```javascript
-const NodeSwordInterface = require('node-sword-interface');
-const nsi = new NodeSwordInterface();
-
-// Install module - repository auto-discovered (pass undefined or null)
-await nsi.installModule(undefined, 'KJV', (progress) => {
-  console.log(`Progress: ${progress}%`);
-});
-
-// Or explicitly use null
-await nsi.installModule(null, 'KJV', (progress) => {
+// Install from CrossWire repository
+await nsi.installModule('CrossWire', 'KJV', (progress) => {
   console.log(`Progress: ${progress}%`);
 });
 ```
@@ -62,19 +50,53 @@ const NodeSwordInterface = require('node-sword-interface');
 const nsi = new NodeSwordInterface();
 
 // Get module description from specific repository
-const description = nsi.getModuleDescription('Bible.org', 'NET');
-
-// Get module description from any repository (auto-discovery)
-const description2 = nsi.getModuleDescription(null, 'NET');
-
-// Check if module available in specific repository
-const available = nsi.isModuleAvailableInRepo('Bible.org', 'NET');
+const description = nsi.getModuleDescription('CrossWire', 'KJV');
 
 // Get module object from specific repository
 const module = nsi.getRepoModule('Bible.org', 'NET');
+
+// Check if module available in specific repository
+const available = nsi.isModuleAvailableInRepo('Bible.org', 'NET');
+```
+
+### Uninstalling Modules
+
+```javascript
+const NodeSwordInterface = require('node-sword-interface');
+const nsi = new NodeSwordInterface();
+
+// Uninstall module from specific repository
+await nsi.uninstallModule('CrossWire', 'KJV');
 ```
 
 ### Handling Module Name Collisions
+
+```javascript
+const NodeSwordInterface = require('node-sword-interface');
+const nsi = new NodeSwordInterface();
+
+// List available repositories
+const repos = nsi.getRepoNames();
+console.log('Available repositories:', repos);
+
+// For each repository, check if module exists
+for (const repo of repos) {
+  const available = nsi.isModuleAvailableInRepo(repo, 'NET');
+  if (available) {
+    const module = nsi.getRepoModule(repo, 'NET');
+    console.log(`Found NET in ${repo}:`, module.description);
+  }
+}
+
+// Install from the specific repository you want
+await nsi.installModule('Bible.org', 'NET', (progress) => {
+  console.log(`Installing official NET from Bible.org: ${progress}%`);
+});
+```
+
+### Finding Module Repository
+
+If you don't know which repository contains a module, you can search:
 
 ```javascript
 const NodeSwordInterface = require('node-sword-interface');
@@ -106,32 +128,20 @@ netModules.forEach(item => {
   console.log(`  - ${item.repository}: ${item.module.description}`);
 });
 
-// Install from specific repository (recommended)
-await nsi.installModule('Bible.org', 'NET', (progress) => {
-  console.log(`Installing from Bible.org: ${progress}%`);
+// Install the one you want
+const selectedRepo = 'Bible.org'; // User's choice
+await nsi.installModule(selectedRepo, 'NET', (progress) => {
+  console.log(`Installing from ${selectedRepo}: ${progress}%`);
 });
-```
-
-### Uninstalling Modules
-
-```javascript
-const NodeSwordInterface = require('node-sword-interface');
-const nsi = new NodeSwordInterface();
-
-// Uninstall module from specific repository
-await nsi.uninstallModule('Bible.org', 'NET');
-
-// Uninstall module from any repository (auto-discovery)
-await nsi.uninstallModule(null, 'NET');
 ```
 
 ## Migration Guide
 
 ### Breaking Changes
 
-**Parameter order has changed!** The repository name is now the first parameter.
+**The repository parameter is now required!** You must provide a repository name for all module operations.
 
-### Before (Old API - No Longer Supported)
+### Before (Old API - No Longer Works)
 
 ```javascript
 // Old API - NO LONGER WORKS
@@ -140,50 +150,45 @@ const desc = nsi.getModuleDescription('KJV');
 await nsi.uninstallModule('KJV');
 ```
 
-### After (New API)
+### After (New API - Required)
 
 ```javascript
-// New API - repository name comes first
-await nsi.installModule(null, 'KJV', progressCallback);  // null = auto-discover
-const desc = nsi.getModuleDescription(null, 'KJV');
-await nsi.uninstallModule(null, 'KJV');
-
-// Or specify repository explicitly (recommended)
+// New API - repository name is required
 await nsi.installModule('CrossWire', 'KJV', progressCallback);
 const desc = nsi.getModuleDescription('CrossWire', 'KJV');
 await nsi.uninstallModule('CrossWire', 'KJV');
 ```
 
+## Implementation Details
+
+### JavaScript API Layer
+
+The JavaScript wrapper in `index.js`:
+- Repository name is now the **required** first parameter in all module-related functions
+- No backward compatibility - old API signatures will not work
+
+### C++ Native Layer
+
+The C++ implementation:
+- Uses `INIT_SCOPE_AND_VALIDATE` macro for parameter validation
+- Accepts 4 parameters for `installModule`: (repoName, moduleCode, progressCB, callback)
+- Accepts 3 parameters for `uninstallModule`: (repoName, moduleCode, callback)
+- Accepts 2 parameters for other functions: (repoName, moduleCode)
+- All parameters are validated and required
+
 ## Best Practices
 
-### 1. Always Specify Repository When Possible
+### 1. Always Specify Repository
 
 ```javascript
 // Good - explicit repository
 await nsi.installModule('Bible.org', 'NET', progressCallback);
 
-// Less ideal - auto-discovery (may be ambiguous)
-await nsi.installModule(null, 'NET', progressCallback);
+// Bad - will not work (no default repository)
+await nsi.installModule('NET', progressCallback); // ERROR!
 ```
 
-### 2. Handle Module Name Collisions Explicitly
-
-```javascript
-// List all repositories
-const repos = nsi.getRepoNames();
-console.log('Available repositories:', repos);
-
-// Check each repository for the module
-for (const repo of repos) {
-  if (nsi.isModuleAvailableInRepo(repo, 'NET')) {
-    console.log(`NET found in ${repo}`);
-    const module = nsi.getRepoModule(repo, 'NET');
-    console.log(`  Description: ${module.description}`);
-  }
-}
-```
-
-### 3. Use Repository Names from API
+### 2. List Available Repositories First
 
 ```javascript
 // Get official repository names
@@ -194,30 +199,21 @@ const repos = nsi.getRepoNames();
 const module = nsi.getRepoModule(repos[0], 'KJV');
 ```
 
-## Implementation Details
+### 3. Handle Module Name Collisions Explicitly
 
-### JavaScript API Layer
-
-The JavaScript wrapper in `index.js`:
-- Repository name is now the first parameter in all module-related functions
-- When repository is `undefined` or `null`, auto-discovery behavior is used
-- No backward compatibility - old API signatures are no longer supported
-
-### C++ Native Layer
-
-The C++ implementation:
-- Accepts 4 parameters for `installModule`: (repoName, moduleCode, progressCB, callback)
-- Accepts 3 parameters for `uninstallModule`: (repoName, moduleCode, callback)
-- Accepts 2 parameters for other functions: (repoName, moduleCode)
-- Validates parameter types and throws appropriate errors for invalid input
-- Uses repository-specific methods when repository is provided
-- Falls back to auto-discovery when repository is null/undefined
+```javascript
+// Check each repository for the module
+const repos = nsi.getRepoNames();
+for (const repo of repos) {
+  if (nsi.isModuleAvailableInRepo(repo, 'NET')) {
+    console.log(`NET found in ${repo}`);
+    const module = nsi.getRepoModule(repo, 'NET');
+    console.log(`  Description: ${module.description}`);
+  }
+}
+```
 
 ## Testing
 
-A comprehensive test suite (`test/test_repository_parameter.js`) verifies:
-- API accepts repository as first parameter
-- Null/undefined repository parameters work correctly (auto-discovery)
-- Invalid parameter types are rejected with appropriate errors
+The build succeeds and the code now properly requires repository parameters for all module operations, preventing any ambiguity about which repository's module is being accessed.
 
-All 13 tests pass, confirming the implementation is correct.
