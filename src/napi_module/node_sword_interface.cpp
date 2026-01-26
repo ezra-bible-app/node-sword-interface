@@ -952,9 +952,10 @@ Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
     
-    // Support both old API (moduleCode, progressCB, callback) and new API (moduleCode, repoName, progressCB, callback)
-    // Old API: 3 parameters - string, function, function
-    // New API: 4 parameters - string, string (or undefined/null), function, function
+    // The JavaScript wrapper calls this with:
+    // Old API: (moduleCode, progressCB, callback) - 3 parameters
+    // New API: (moduleCode, repoName, progressCB, callback) - 4 parameters
+    // Where callback is the Promise resolver/rejecter function
     
     if (info.Length() < 3 || info.Length() > 4) {
         string paramCountError = "Expected 3 or 4 parameters, but got " + to_string(info.Length()) + "!";
@@ -1029,9 +1030,10 @@ Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
     
-    // Support both old API (moduleCode, callback) and new API (moduleCode, repoName, callback)
-    // Old API: 2 parameters - string, function
-    // New API: 3 parameters - string, string (or undefined/null), function
+    // The JavaScript wrapper calls this with:
+    // Old API: (moduleCode, callback) - 2 parameters
+    // New API: (moduleCode, repoName, callback) - 3 parameters
+    // Where callback is the Promise resolver/rejecter function
     
     if (info.Length() < 2 || info.Length() > 3) {
         string paramCountError = "Expected 2 or 3 parameters, but got " + to_string(info.Length()) + "!";
