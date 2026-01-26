@@ -327,33 +327,13 @@ Napi::Value NodeSwordInterface::isModuleAvailableInRepo(const Napi::CallbackInfo
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
     
-    // API: (repoName, moduleCode) - 2 parameters
-    if (info.Length() != 2) {
-        string paramCountError = "Expected 2 parameters, but got " + to_string(info.Length()) + "!";
-        Napi::TypeError::New(env, paramCountError).ThrowAsJavaScriptException();
-        unlockApi();
-        return env.Null();
-    }
-    
-    // Validate moduleCode parameter
-    if (!info[1].IsString()) {
-        Napi::TypeError::New(env, "Second parameter (moduleCode) must be a string").ThrowAsJavaScriptException();
-        unlockApi();
-        return env.Null();
+    // Extract parameters: (repoName, moduleCode)
+    std::string repoName = "all";
+    if (!info[0].IsNull() && !info[0].IsUndefined()) {
+        repoName = info[0].As<Napi::String>().Utf8Value();
     }
     
     Napi::String moduleName = info[1].As<Napi::String>();
-    std::string repoName = "all";  // Default to searching all repos
-    
-    // Check if repoName is provided (not null/undefined)
-    if (!info[0].IsNull() && !info[0].IsUndefined()) {
-        if (!info[0].IsString()) {
-            Napi::TypeError::New(env, "First parameter (repoName) must be a string, null, or undefined").ThrowAsJavaScriptException();
-            unlockApi();
-            return env.Null();
-        }
-        repoName = info[0].As<Napi::String>().Utf8Value();
-    }
     
     bool moduleAvailable = this->_repoInterface->isModuleAvailableInRepo(moduleName, repoName);
     unlockApi();
@@ -500,35 +480,14 @@ Napi::Value NodeSwordInterface::getRepoModule(const Napi::CallbackInfo& info)
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
     
-    // API: (repoName, moduleCode) - 2 parameters
-    if (info.Length() != 2) {
-        string paramCountError = "Expected 2 parameters, but got " + to_string(info.Length()) + "!";
-        Napi::TypeError::New(env, paramCountError).ThrowAsJavaScriptException();
-        unlockApi();
-        return env.Null();
-    }
-    
-    // Validate moduleCode parameter
-    if (!info[1].IsString()) {
-        Napi::TypeError::New(env, "Second parameter (moduleCode) must be a string").ThrowAsJavaScriptException();
-        unlockApi();
-        return env.Null();
-    }
-    
+    // Extract parameters: (repoName, moduleCode)
     Napi::Object napiObject = Napi::Object::New(env);
     Napi::String moduleName = info[1].As<Napi::String>();
     std::string repoName;
 
-    // Check if repoName is provided (not null/undefined)
     if (!info[0].IsNull() && !info[0].IsUndefined()) {
-        if (!info[0].IsString()) {
-            Napi::TypeError::New(env, "First parameter (repoName) must be a string, null, or undefined").ThrowAsJavaScriptException();
-            unlockApi();
-            return env.Null();
-        }
         repoName = info[0].As<Napi::String>().Utf8Value();
     } else {
-        // Use default behavior - search all repos
         repoName = this->_repoInterface->getModuleRepo(moduleName);
     }
     
@@ -552,33 +511,13 @@ Napi::Value NodeSwordInterface::getModuleDescription(const Napi::CallbackInfo& i
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
     
-    // API: (repoName, moduleCode) - 2 parameters
-    if (info.Length() != 2) {
-        string paramCountError = "Expected 2 parameters, but got " + to_string(info.Length()) + "!";
-        Napi::TypeError::New(env, paramCountError).ThrowAsJavaScriptException();
-        unlockApi();
-        return env.Null();
-    }
-    
-    // Validate moduleCode parameter
-    if (!info[1].IsString()) {
-        Napi::TypeError::New(env, "Second parameter (moduleCode) must be a string").ThrowAsJavaScriptException();
-        unlockApi();
-        return env.Null();
+    // Extract parameters: (repoName, moduleCode)
+    std::string repoName = "all";
+    if (!info[0].IsNull() && !info[0].IsUndefined()) {
+        repoName = info[0].As<Napi::String>().Utf8Value();
     }
     
     Napi::String moduleName = info[1].As<Napi::String>();
-    std::string repoName = "all";  // Default to searching all repos
-    
-    // Check if repoName is provided (not null/undefined)
-    if (!info[0].IsNull() && !info[0].IsUndefined()) {
-        if (!info[0].IsString()) {
-            Napi::TypeError::New(env, "First parameter (repoName) must be a string, null, or undefined").ThrowAsJavaScriptException();
-            unlockApi();
-            return env.Null();
-        }
-        repoName = info[0].As<Napi::String>().Utf8Value();
-    }
 
     SWModule* swordModule = this->_repoInterface->getRepoModule(moduleName, repoName);
     if (swordModule == 0) {
@@ -955,40 +894,9 @@ Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
     
-    // The JavaScript wrapper calls this with:
-    // API: (repoName, moduleCode, progressCB, callback) - 4 parameters
-    // Where callback is the Promise resolver/rejecter function
-    
-    if (info.Length() != 4) {
-        string paramCountError = "Expected 4 parameters, but got " + to_string(info.Length()) + "!";
-        Napi::TypeError::New(env, paramCountError).ThrowAsJavaScriptException();
-        unlockApi();
-        return env.Null();
-    }
-    
-    // Validate parameters
-    if (!info[1].IsString()) {
-        Napi::TypeError::New(env, "Second parameter (moduleCode) must be a string").ThrowAsJavaScriptException();
-        unlockApi();
-        return env.Null();
-    }
-    
-    if (!info[2].IsFunction() || !info[3].IsFunction()) {
-        Napi::TypeError::New(env, "Expected (string|null|undefined, string, function, function)").ThrowAsJavaScriptException();
-        unlockApi();
-        return env.Null();
-    }
-    
-    // Extract parameters
+    // Extract parameters: (repoName, moduleCode, progressCB, callback)
     std::string repoName = "";
-    
-    // Check if repoName is provided (not null/undefined)
     if (!info[0].IsNull() && !info[0].IsUndefined()) {
-        if (!info[0].IsString()) {
-            Napi::TypeError::New(env, "First parameter (repositoryName) must be a string, null, or undefined").ThrowAsJavaScriptException();
-            unlockApi();
-            return env.Null();
-        }
         repoName = info[0].As<Napi::String>().Utf8Value();
     }
     
@@ -1020,40 +928,9 @@ Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
     
-    // The JavaScript wrapper calls this with:
-    // API: (repoName, moduleCode, callback) - 3 parameters
-    // Where callback is the Promise resolver/rejecter function
-    
-    if (info.Length() != 3) {
-        string paramCountError = "Expected 3 parameters, but got " + to_string(info.Length()) + "!";
-        Napi::TypeError::New(env, paramCountError).ThrowAsJavaScriptException();
-        unlockApi();
-        return env.Null();
-    }
-    
-    // Validate parameters
-    if (!info[1].IsString()) {
-        Napi::TypeError::New(env, "Second parameter (moduleCode) must be a string").ThrowAsJavaScriptException();
-        unlockApi();
-        return env.Null();
-    }
-    
-    if (!info[2].IsFunction()) {
-        Napi::TypeError::New(env, "Expected (string|null|undefined, string, function)").ThrowAsJavaScriptException();
-        unlockApi();
-        return env.Null();
-    }
-    
-    // Extract parameters
+    // Extract parameters: (repoName, moduleCode, callback)
     std::string repoName = "";
-    
-    // Check if repoName is provided (not null/undefined)
     if (!info[0].IsNull() && !info[0].IsUndefined()) {
-        if (!info[0].IsString()) {
-            Napi::TypeError::New(env, "First parameter (repositoryName) must be a string, null, or undefined").ThrowAsJavaScriptException();
-            unlockApi();
-            return env.Null();
-        }
         repoName = info[0].As<Napi::String>().Utf8Value();
     }
     
