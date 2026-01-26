@@ -992,7 +992,12 @@ Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
         }
         
         // Check if repoName is provided (not null/undefined)
-        if (!info[1].IsNull() && !info[1].IsUndefined() && info[1].IsString()) {
+        if (!info[1].IsNull() && !info[1].IsUndefined()) {
+            if (!info[1].IsString()) {
+                Napi::TypeError::New(env, "Second parameter (repositoryName) must be a string, null, or undefined").ThrowAsJavaScriptException();
+                unlockApi();
+                return env.Null();
+            }
             repoName = info[1].As<Napi::String>().Utf8Value();
         }
         
@@ -1062,7 +1067,12 @@ Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
         }
         
         // Check if repoName is provided (not null/undefined)
-        if (!info[1].IsNull() && !info[1].IsUndefined() && info[1].IsString()) {
+        if (!info[1].IsNull() && !info[1].IsUndefined()) {
+            if (!info[1].IsString()) {
+                Napi::TypeError::New(env, "Second parameter (repositoryName) must be a string, null, or undefined").ThrowAsJavaScriptException();
+                unlockApi();
+                return env.Null();
+            }
             repoName = info[1].As<Napi::String>().Utf8Value();
         }
         

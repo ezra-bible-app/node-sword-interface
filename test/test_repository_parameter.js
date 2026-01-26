@@ -123,4 +123,20 @@ describe('Repository Parameter API Tests', () => {
       nsi.getRepoModule('KJV', 'CrossWire');
     }).toThrow();
   });
+
+  test('installModule should reject invalid repository parameter type', async () => {
+    // This test verifies that invalid parameter types are properly rejected
+    const promise = nsi.installModule('TEST_MODULE', 123, (progress) => {});
+    
+    // Should reject with a type error
+    await expect(promise).rejects.toBeDefined();
+  }, 10000);
+
+  test('uninstallModule should reject invalid repository parameter type', async () => {
+    // This test verifies that invalid parameter types are properly rejected
+    const promise = nsi.uninstallModule('TEST_MODULE', 123);
+    
+    // Should reject with a type error
+    await expect(promise).rejects.toBeDefined();
+  }, 10000);
 });
