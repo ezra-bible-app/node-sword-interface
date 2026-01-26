@@ -39,17 +39,17 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getAllRepoModules(repositoryName, moduleType)](#NodeSwordInterface+getAllRepoModules) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
     * [.getRepoModulesByLang(repositoryName, language, moduleType, headersFilter, strongsFilter, hebrewStrongsKeys, greekStrongsKeys)](#NodeSwordInterface+getRepoModulesByLang) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
     * [.getUpdatedRepoModules(repositoryName, includeBeta)](#NodeSwordInterface+getUpdatedRepoModules) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
-    * [.getRepoModule(moduleCode, repositoryName)](#NodeSwordInterface+getRepoModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
+    * [.getRepoModule(repositoryName, moduleCode)](#NodeSwordInterface+getRepoModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
     * [.getAllLocalModules(moduleType)](#NodeSwordInterface+getAllLocalModules) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
     * [.getRepoModuleCount(repositoryName, moduleType)](#NodeSwordInterface+getRepoModuleCount) ⇒ <code>Number</code>
     * [.getRepoLanguageModuleCount(repositoryName, language, moduleType)](#NodeSwordInterface+getRepoLanguageModuleCount) ⇒ <code>Number</code>
-    * [.installModule(moduleCode, repositoryName, progressCB)](#NodeSwordInterface+installModule) ⇒ <code>Promise</code>
+    * [.installModule(repositoryName, moduleCode, progressCB)](#NodeSwordInterface+installModule) ⇒ <code>Promise</code>
     * [.cancelInstallation()](#NodeSwordInterface+cancelInstallation)
-    * [.uninstallModule(moduleCode, repositoryName)](#NodeSwordInterface+uninstallModule) ⇒ <code>Promise</code>
+    * [.uninstallModule(repositoryName, moduleCode)](#NodeSwordInterface+uninstallModule) ⇒ <code>Promise</code>
     * [.refreshLocalModules()](#NodeSwordInterface+refreshLocalModules)
     * [.saveModuleUnlockKey(moduleCode, key)](#NodeSwordInterface+saveModuleUnlockKey)
     * [.isModuleReadable(moduleCode)](#NodeSwordInterface+isModuleReadable) ⇒ <code>Boolean</code>
-    * [.getModuleDescription(moduleCode, repositoryName)](#NodeSwordInterface+getModuleDescription) ⇒ <code>String</code>
+    * [.getModuleDescription(repositoryName, moduleCode)](#NodeSwordInterface+getModuleDescription) ⇒ <code>String</code>
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
     * [.disableMarkup()](#NodeSwordInterface+disableMarkup)
     * [.enableStrongsWithNbsp()](#NodeSwordInterface+enableStrongsWithNbsp)
@@ -77,7 +77,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getStrongsEntry(strongsKey)](#NodeSwordInterface+getStrongsEntry) ⇒ [<code>StrongsEntry</code>](#StrongsEntry)
     * [.getLocalModule(moduleCode)](#NodeSwordInterface+getLocalModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
     * [.isModuleInUserDir(moduleCode)](#NodeSwordInterface+isModuleInUserDir) ⇒ <code>Boolean</code>
-    * [.isModuleAvailableInRepo(moduleCode, repositoryName)](#NodeSwordInterface+isModuleAvailableInRepo) ⇒ <code>Boolean</code>
+    * [.isModuleAvailableInRepo(repositoryName, moduleCode)](#NodeSwordInterface+isModuleAvailableInRepo) ⇒ <code>Boolean</code>
     * [.getSwordTranslation(originalString, localeCode)](#NodeSwordInterface+getSwordTranslation)
     * [.getBookAbbreviation(moduleName, bookCode, localeCode)](#NodeSwordInterface+getBookAbbreviation)
     * [.unTarGZ(filePath, destPath)](#NodeSwordInterface+unTarGZ) ⇒ <code>Boolean</code>
@@ -190,15 +190,15 @@ Returns all updated modules from all repositories or one specific repository.
 
 <a name="NodeSwordInterface+getRepoModule"></a>
 
-### nodeSwordInterface.getRepoModule(moduleCode, repositoryName) ⇒ [<code>ModuleObject</code>](#ModuleObject)
+### nodeSwordInterface.getRepoModule(repositoryName, moduleCode) ⇒ [<code>ModuleObject</code>](#ModuleObject)
 Returns an object representation of a SWORD module from a repository.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 
 | Param | Type | Description |
 | --- | --- | --- |
+| repositoryName | <code>String</code> | The name of the repository to search in. If undefined/null, searches all repositories. |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
-| repositoryName | <code>String</code> | Optional. The name of the repository to search in. If undefined/null, searches all repositories. |
 
 <a name="NodeSwordInterface+getAllLocalModules"></a>
 
@@ -241,7 +241,7 @@ Returns the number of modules for a given repository and language (default: Bibl
 
 <a name="NodeSwordInterface+installModule"></a>
 
-### nodeSwordInterface.installModule(moduleCode, repositoryName, progressCB) ⇒ <code>Promise</code>
+### nodeSwordInterface.installModule(repositoryName, moduleCode, progressCB) ⇒ <code>Promise</code>
 Installs a module. The module is downloaded from the corresponding repository 
 and then installed in the local SWORD directory.
 This operation may take some time depending on the available bandwidth and geographical
@@ -257,8 +257,8 @@ If the installation fails, the Promise will be rejected with the following statu
 
 | Param | Type | Description |
 | --- | --- | --- |
+| repositoryName | <code>String</code> | The name of the repository from which to install. If undefined/null, the repository is automatically determined. |
 | moduleCode | <code>String</code> | The module code of the SWORD module that shall be installed. |
-| repositoryName | <code>String</code> | Optional. The name of the repository from which to install. If undefined/null, the repository is automatically determined. |
 | progressCB | <code>function</code> | Callback function that is called on progress events. |
 
 <a name="NodeSwordInterface+cancelInstallation"></a>
@@ -269,7 +269,7 @@ Cancels an ongoing module installation.
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 <a name="NodeSwordInterface+uninstallModule"></a>
 
-### nodeSwordInterface.uninstallModule(moduleCode, repositoryName) ⇒ <code>Promise</code>
+### nodeSwordInterface.uninstallModule(repositoryName, moduleCode) ⇒ <code>Promise</code>
 Uninstalls a module.
 
 This function works asynchronously and returns a Promise object.
@@ -278,8 +278,8 @@ This function works asynchronously and returns a Promise object.
 
 | Param | Type | Description |
 | --- | --- | --- |
+| repositoryName | <code>String</code> | The name of the repository from which the module was installed. If undefined/null, all modules with this name will be uninstalled. |
 | moduleCode | <code>String</code> | The module code of the SWORD module that shall be uninstalled. |
-| repositoryName | <code>String</code> | Optional. The name of the repository from which the module was installed. If undefined/null, all modules with this name will be uninstalled. |
 
 <a name="NodeSwordInterface+refreshLocalModules"></a>
 
@@ -314,7 +314,7 @@ Checks whether the module is readable.
 
 <a name="NodeSwordInterface+getModuleDescription"></a>
 
-### nodeSwordInterface.getModuleDescription(moduleCode, repositoryName) ⇒ <code>String</code>
+### nodeSwordInterface.getModuleDescription(repositoryName, moduleCode) ⇒ <code>String</code>
 Returns the description of a module.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
@@ -322,8 +322,8 @@ Returns the description of a module.
 
 | Param | Type | Description |
 | --- | --- | --- |
+| repositoryName | <code>String</code> | The name of the repository to search in. If undefined/null, searches all repositories. |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
-| repositoryName | <code>String</code> | Optional. The name of the repository to search in. If undefined/null, searches all repositories. |
 
 <a name="NodeSwordInterface+enableMarkup"></a>
 
@@ -628,15 +628,15 @@ Checks whether the module resides in the user directory.
 
 <a name="NodeSwordInterface+isModuleAvailableInRepo"></a>
 
-### nodeSwordInterface.isModuleAvailableInRepo(moduleCode, repositoryName) ⇒ <code>Boolean</code>
+### nodeSwordInterface.isModuleAvailableInRepo(repositoryName, moduleCode) ⇒ <code>Boolean</code>
 Checks whether the module is available in any repository.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 
 | Param | Type | Description |
 | --- | --- | --- |
+| repositoryName | <code>String</code> | The name of the repository to check. If undefined/null, checks all repositories. |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
-| repositoryName | <code>String</code> | Optional. The name of the repository to check. If undefined/null, checks all repositories. |
 
 <a name="NodeSwordInterface+getSwordTranslation"></a>
 

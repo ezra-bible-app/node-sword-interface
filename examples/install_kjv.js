@@ -27,7 +27,8 @@ async function installKJV() {
 
   console.log("Installing King James module");
   // Install the King James Version (Uses the internet connection to download and install the module)
-  await interface.installModule('KJV');
+  // Pass undefined as the first parameter to auto-discover the repository
+  await interface.installModule(undefined, 'KJV');
 }
 
 installKJV().then(() => {

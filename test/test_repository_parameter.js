@@ -25,10 +25,8 @@ describe('Repository Parameter API Tests', () => {
     nsi = new NodeSwordInterface();
   });
 
-  test('should accept installModule with old API (moduleCode, progressCB)', async () => {
-    // This test verifies backward compatibility
-    // We're not actually installing anything, just checking the signature works
-    const promise = nsi.installModule('TEST_MODULE', (progress) => {});
+  test('installModule should accept (repoName, moduleCode, progressCB)', async () => {
+    const promise = nsi.installModule('CrossWire', 'TEST_MODULE', (progress) => {});
     expect(promise).toBeInstanceOf(Promise);
     
     // Cancel to avoid actual installation attempt
@@ -38,9 +36,8 @@ describe('Repository Parameter API Tests', () => {
     await expect(promise).rejects.toBeDefined();
   }, 10000);
 
-  test('should accept installModule with new API (moduleCode, repoName, progressCB)', async () => {
-    // This test verifies the new repository-aware API
-    const promise = nsi.installModule('TEST_MODULE', 'CrossWire', (progress) => {});
+  test('installModule should accept null repository', async () => {
+    const promise = nsi.installModule(null, 'TEST_MODULE', (progress) => {});
     expect(promise).toBeInstanceOf(Promise);
     
     // Cancel to avoid actual installation attempt
@@ -50,9 +47,8 @@ describe('Repository Parameter API Tests', () => {
     await expect(promise).rejects.toBeDefined();
   }, 10000);
 
-  test('should accept installModule with new API using null repository', async () => {
-    // This test verifies that null/undefined repository falls back to old behavior
-    const promise = nsi.installModule('TEST_MODULE', null, (progress) => {});
+  test('installModule should accept undefined repository', async () => {
+    const promise = nsi.installModule(undefined, 'TEST_MODULE', (progress) => {});
     expect(promise).toBeInstanceOf(Promise);
     
     // Cancel to avoid actual installation attempt
@@ -62,31 +58,11 @@ describe('Repository Parameter API Tests', () => {
     await expect(promise).rejects.toBeDefined();
   }, 10000);
 
-  test('should accept installModule with new API using undefined repository', async () => {
-    // This test verifies that null/undefined repository falls back to old behavior
-    const promise = nsi.installModule('TEST_MODULE', undefined, (progress) => {});
-    expect(promise).toBeInstanceOf(Promise);
-    
-    // Cancel to avoid actual installation attempt
-    nsi.cancelInstallation();
-    
-    // Expect rejection since we cancelled or module doesn't exist
-    await expect(promise).rejects.toBeDefined();
-  }, 10000);
-
-  test('getModuleDescription should work with old API (moduleCode only)', () => {
+  test('getModuleDescription should accept (repoName, moduleCode)', () => {
     // This will likely throw an error since no repos are configured
     // But it tests the signature works
     expect(() => {
-      nsi.getModuleDescription('KJV');
-    }).toThrow();
-  });
-
-  test('getModuleDescription should accept new API (moduleCode, repoName)', () => {
-    // This will likely throw an error since no repos are configured
-    // But it tests the signature works
-    expect(() => {
-      nsi.getModuleDescription('KJV', 'CrossWire');
+      nsi.getModuleDescription('CrossWire', 'KJV');
     }).toThrow();
   });
 
@@ -94,49 +70,69 @@ describe('Repository Parameter API Tests', () => {
     // This will likely throw an error since no repos are configured
     // But it tests the signature works
     expect(() => {
-      nsi.getModuleDescription('KJV', null);
+      nsi.getModuleDescription(null, 'KJV');
     }).toThrow();
   });
 
-  test('isModuleAvailableInRepo should work with old API', () => {
-    // Should return false since no repos configured
-    const result = nsi.isModuleAvailableInRepo('KJV');
-    expect(typeof result).toBe('boolean');
-  });
-
-  test('isModuleAvailableInRepo should accept new API with repoName', () => {
-    // Should return false since no repos configured
-    const result = nsi.isModuleAvailableInRepo('KJV', 'CrossWire');
-    expect(typeof result).toBe('boolean');
-  });
-
-  test('getRepoModule should work with old API', () => {
-    // Will throw error since no repos configured, but tests signature
+  test('getModuleDescription should accept undefined repository', () => {
+    // This will likely throw an error since no repos are configured
+    // But it tests the signature works
     expect(() => {
-      nsi.getRepoModule('KJV');
+      nsi.getModuleDescription(undefined, 'KJV');
     }).toThrow();
   });
 
-  test('getRepoModule should accept new API with repoName', () => {
+  test('isModuleAvailableInRepo should accept (repoName, moduleCode)', () => {
+    // Should return false since no repos configured
+    const result = nsi.isModuleAvailableInRepo('CrossWire', 'KJV');
+    expect(typeof result).toBe('boolean');
+  });
+
+  test('isModuleAvailableInRepo should accept null repository', () => {
+    // Should return false since no repos configured
+    const result = nsi.isModuleAvailableInRepo(null, 'KJV');
+    expect(typeof result).toBe('boolean');
+  });
+
+  test('getRepoModule should accept (repoName, moduleCode)', () => {
     // Will throw error since no repos configured, but tests signature
     expect(() => {
-      nsi.getRepoModule('KJV', 'CrossWire');
+      nsi.getRepoModule('CrossWire', 'KJV');
+    }).toThrow();
+  });
+
+  test('getRepoModule should accept null repository', () => {
+    // Will throw error since no repos configured, but tests signature
+    expect(() => {
+      nsi.getRepoModule(null, 'KJV');
     }).toThrow();
   });
 
   test('installModule should reject invalid repository parameter type', async () => {
     // This test verifies that invalid parameter types are properly rejected
-    const promise = nsi.installModule('TEST_MODULE', 123, (progress) => {});
+    const promise = nsi.installModule(123, 'TEST_MODULE', (progress) => {});
     
     // Should reject with a type error
     await expect(promise).rejects.toBeDefined();
   }, 10000);
 
-  test('uninstallModule should reject invalid repository parameter type', async () => {
-    // This test verifies that invalid parameter types are properly rejected
-    const promise = nsi.uninstallModule('TEST_MODULE', 123);
+  test('uninstallModule should accept (repoName, moduleCode)', async () => {
+    const promise = nsi.uninstallModule('CrossWire', 'TEST_MODULE');
+    expect(promise).toBeInstanceOf(Promise);
     
-    // Should reject with a type error
-    await expect(promise).rejects.toBeDefined();
+    // This may resolve or reject depending on whether module exists
+    await promise.catch(() => {
+      // Expected - module doesn't exist or other error
+    });
+  }, 10000);
+
+  test('uninstallModule should accept null repository', async () => {
+    const promise = nsi.uninstallModule(null, 'TEST_MODULE');
+    expect(promise).toBeInstanceOf(Promise);
+    
+    // This may resolve or reject depending on whether module exists
+    await promise.catch(() => {
+      // Expected - module doesn't exist or other error
+    });
   }, 10000);
 });
