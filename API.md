@@ -45,7 +45,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getRepoLanguageModuleCount(repositoryName, language, moduleType)](#NodeSwordInterface+getRepoLanguageModuleCount) ⇒ <code>Number</code>
     * [.installModule(repositoryName, moduleCode, progressCB)](#NodeSwordInterface+installModule) ⇒ <code>Promise</code>
     * [.cancelInstallation()](#NodeSwordInterface+cancelInstallation)
-    * [.uninstallModule(repositoryName, moduleCode)](#NodeSwordInterface+uninstallModule) ⇒ <code>Promise</code>
+    * [.uninstallModule(moduleCode)](#NodeSwordInterface+uninstallModule) ⇒ <code>Promise</code>
     * [.refreshLocalModules()](#NodeSwordInterface+refreshLocalModules)
     * [.saveModuleUnlockKey(moduleCode, key)](#NodeSwordInterface+saveModuleUnlockKey)
     * [.isModuleReadable(moduleCode)](#NodeSwordInterface+isModuleReadable) ⇒ <code>Boolean</code>
@@ -269,7 +269,7 @@ Cancels an ongoing module installation.
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 <a name="NodeSwordInterface+uninstallModule"></a>
 
-### nodeSwordInterface.uninstallModule(repositoryName, moduleCode) ⇒ <code>Promise</code>
+### nodeSwordInterface.uninstallModule(moduleCode) ⇒ <code>Promise</code>
 Uninstalls a module.
 
 This function works asynchronously and returns a Promise object.
@@ -278,7 +278,6 @@ This function works asynchronously and returns a Promise object.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| repositoryName | <code>String</code> | The name of the repository from which the module was installed. |
 | moduleCode | <code>String</code> | The module code of the SWORD module that shall be uninstalled. |
 
 <a name="NodeSwordInterface+refreshLocalModules"></a>

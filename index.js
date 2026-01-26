@@ -298,13 +298,12 @@ class NodeSwordInterface {
    *
    * This function works asynchronously and returns a Promise object.
    *
-   * @param {String} repositoryName - The name of the repository from which the module was installed.
    * @param {String} moduleCode - The module code of the SWORD module that shall be uninstalled.
    * @return {Promise}
    */
-  async uninstallModule(repositoryName, moduleCode) {
+  async uninstallModule(moduleCode) {
     return new Promise((resolve, reject) => {
-      this.nativeInterface.uninstallModule(repositoryName, moduleCode, function(uninstallSuccessful) {
+      this.nativeInterface.uninstallModule(moduleCode, function(uninstallSuccessful) {
         if (uninstallSuccessful) {
           resolve();
         } else {

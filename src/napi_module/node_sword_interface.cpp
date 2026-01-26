@@ -945,24 +945,10 @@ Napi::Value NodeSwordInterface::cancelInstallation(const Napi::CallbackInfo& inf
 Napi::Value NodeSwordInterface::uninstallModule(const Napi::CallbackInfo& info)
 {
     lockApi();
-    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::function);
-    Napi::String repoName = info[0].As<Napi::String>();
-    Napi::String moduleName = info[1].As<Napi::String>();
-    Napi::Function callback = info[2].As<Napi::Function>();
-
-    if (string(repoName).empty()) {
-        Napi::TypeError::New(info.Env(), "Repository name cannot be empty").ThrowAsJavaScriptException();
-        unlockApi();
-        return info.Env().Null();
-    }
-
-    if (string(moduleName).empty()) {
-        Napi::TypeError::New(info.Env(), "Module name cannot be empty").ThrowAsJavaScriptException();
-        unlockApi();
-        return info.Env().Null();
-    }
-    
-    UninstallModuleWorker* worker = new UninstallModuleWorker(*(this->_repoInterface), *(this->_moduleInstaller), callback, moduleName, repoName);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::function);
+    Napi::String moduleName = info[0].As<Napi::String>();
+    Napi::Function callback = info[1].As<Napi::Function>();
+    UninstallModuleWorker* worker = new UninstallModuleWorker(*(this->_repoInterface), *(this->_moduleInstaller), callback, moduleName);
     worker->Queue();
     return info.Env().Undefined();
 }
