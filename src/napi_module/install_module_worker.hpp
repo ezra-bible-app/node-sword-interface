@@ -30,7 +30,7 @@ public:
                         const Napi::Function& jsProgressCallback,
                         const Napi::Function& callback,
                         std::string moduleName,
-                        std::string repoName = "")
+                        std::string repoName)
 
         : ProgressWorker(repoInterface,
                          jsProgressCallback,
