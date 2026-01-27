@@ -143,8 +143,8 @@ private:
 
 class UninstallModuleWorker : public BaseWorker {
 public:
-    UninstallModuleWorker(RepositoryInterface& repoInterface, ModuleInstaller& moduleInstaller, const Napi::Function& callback, std::string moduleName, std::string repoName = "")
-        : BaseWorker(repoInterface, callback), _moduleInstaller(moduleInstaller), _moduleName(moduleName), _repoName(repoName) {}
+    UninstallModuleWorker(RepositoryInterface& repoInterface, ModuleInstaller& moduleInstaller, const Napi::Function& callback, std::string moduleName)
+        : BaseWorker(repoInterface, callback), _moduleInstaller(moduleInstaller), _moduleName(moduleName) {}
 
     void Execute(const ExecutionProgress& progress) {
         int ret = this->_moduleInstaller.uninstallModule(this->_moduleName);
@@ -162,7 +162,6 @@ private:
     ModuleInstaller& _moduleInstaller;
     bool _isSuccessful;
     std::string _moduleName;
-    std::string _repoName;
 };
 
 #endif // _WORKER
