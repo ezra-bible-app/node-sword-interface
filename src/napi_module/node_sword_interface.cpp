@@ -340,7 +340,7 @@ Napi::Value NodeSwordInterface::isModuleAvailableInRepo(const Napi::CallbackInfo
         return info.Env().Null();
     }
     
-    bool moduleAvailable = this->_repoInterface->isModuleAvailableInRepo(moduleName, repoName);
+    bool moduleAvailable = this->_repoInterface->isModuleAvailableInRepo(repoName, moduleName);
     unlockApi();
     return Napi::Boolean::New(info.Env(), moduleAvailable);
 }
