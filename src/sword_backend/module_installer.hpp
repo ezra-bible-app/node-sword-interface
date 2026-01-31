@@ -37,7 +37,6 @@ public:
     ModuleInstaller(RepositoryInterface& repoInterface, ModuleStore& moduleStore, std::string customHomeDir="");
     virtual ~ModuleInstaller();
 
-    int installModule(std::string moduleName);
     int installModule(std::string repoName, std::string moduleName);
     void cancelInstallation();
     int uninstallModule(std::string moduleName);

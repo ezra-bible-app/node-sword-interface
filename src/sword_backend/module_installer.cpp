@@ -57,18 +57,6 @@ void ModuleInstaller::resetAllMgrs()
     this->refreshMgr();
 }
 
-int ModuleInstaller::installModule(string moduleName)
-{
-    string repoName = this->_repoInterface.getModuleRepo(moduleName);
-
-    if (repoName == "") {
-        cerr << "Could not find repository for module " << moduleName << endl;
-        return -1;
-    }
-
-    return this->installModule(repoName, moduleName);
-}
-
 int ModuleInstaller::installModule(string repoName, string moduleName)
 {
     InstallSource* remoteSource = this->_repoInterface.getRemoteSource(repoName);
