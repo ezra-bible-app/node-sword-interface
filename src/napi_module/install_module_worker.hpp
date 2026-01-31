@@ -29,12 +29,14 @@ public:
                         ModuleInstaller& moduleInstaller,
                         const Napi::Function& jsProgressCallback,
                         const Napi::Function& callback,
+                        std::string repoName,
                         std::string moduleName)
 
         : ProgressWorker(repoInterface,
                          jsProgressCallback,
                          callback),
                          _moduleInstaller(moduleInstaller),
+                         _repoName(repoName),
                          _moduleName(moduleName) {}
 
     void swordPreStatusCB(long totalBytes, long completedBytes, const char *message);
@@ -46,6 +48,7 @@ private:
     ModuleInstaller& _moduleInstaller;
     int _result;
     std::string _moduleName;
+    std::string _repoName;
     long _completedBytes = 0;
     long _totalBytes = 0;
     int _totalPercent = 0;

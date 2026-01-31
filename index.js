@@ -213,11 +213,12 @@ class NodeSwordInterface {
   /**
    * Returns an object representation of a SWORD module from a repository.
    *
+   * @param {String} repositoryName - The name of the repository to search in.
    * @param {String} moduleCode - The module code of the SWORD module.
    * @return {ModuleObject}
    */
-  getRepoModule(moduleCode) {
-    return this.nativeInterface.getRepoModule(moduleCode);
+  getRepoModule(repositoryName, moduleCode) {
+    return this.nativeInterface.getRepoModule(repositoryName, moduleCode);
   }
 
   /**
@@ -253,8 +254,8 @@ class NodeSwordInterface {
   }
 
   /**
-   * Installs a module. The repository is automatically determined. The module is downloaded
-   * from the corresponding repository and then installed in the local SWORD directory.
+   * Installs a module. The module is downloaded from the corresponding repository 
+   * and then installed in the local SWORD directory.
    * This operation may take some time depending on the available bandwidth and geographical
    * distance to the SWORD repository server.
    *
@@ -264,17 +265,18 @@ class NodeSwordInterface {
    * -1: General installation issue
    * -9: Installation cancelled by user or internet connection suddenly interrupted
    *
+   * @param {String} repositoryName - The name of the repository from which to install.
    * @param {String} moduleCode - The module code of the SWORD module that shall be installed.
    * @param {Function} progressCB - Callback function that is called on progress events.
    * @return {Promise}
    */
-  async installModule(moduleCode, progressCB=undefined) {
+  async installModule(repositoryName, moduleCode, progressCB=undefined) {
     if (progressCB === undefined) {
       progressCB = function(progress) {};
     }
 
     return new Promise((resolve, reject) => {
-      this.nativeInterface.installModule(moduleCode, progressCB, function(result) {
+      this.nativeInterface.installModule(repositoryName, moduleCode, progressCB, function(result) {
         if (result == 0) {
           resolve();
         } else {
@@ -343,11 +345,12 @@ class NodeSwordInterface {
   /**
    * Returns the description of a module.
    *
+   * @param {String} repositoryName - The name of the repository to search in.
    * @param {String} moduleCode - The module code of the SWORD module.
    * @return {String} The description of the respective module.
    */
-  getModuleDescription(moduleCode) {
-    return this.nativeInterface.getModuleDescription(moduleCode);
+  getModuleDescription(repositoryName, moduleCode) {
+    return this.nativeInterface.getModuleDescription(repositoryName, moduleCode);
   }
 
   /**
@@ -730,13 +733,14 @@ class NodeSwordInterface {
   }
 
   /**
-   * Checks whether the module is available in any repository.
+   * Checks whether the module is available in any repository (default) or in a specific repository.
    *
    * @param {String} moduleCode - The module code of the SWORD module.
+   * @param {String} repositoryName - The name of the repository to check.
    * @return {Boolean}
    */
-  isModuleAvailableInRepo(moduleCode) {
-    return this.nativeInterface.isModuleAvailableInRepo(moduleCode);
+  isModuleAvailableInRepo(moduleCode, repositoryName="all") {
+    return this.nativeInterface.isModuleAvailableInRepo(moduleCode, repositoryName);
   }
 
   /**

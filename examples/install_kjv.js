@@ -27,7 +27,7 @@ async function installKJV() {
 
   console.log("Installing King James module");
   // Install the King James Version (Uses the internet connection to download and install the module)
-  await interface.installModule('KJV');
+  await interface.installModule('CrossWire', 'KJV');
 }
 
 installKJV().then(() => {

@@ -157,7 +157,7 @@ void get_dict_key_list(DictHelper& dict_helper)
 void test_unlock_key(ModuleInstaller& module_installer, ModuleStore& module_store, TextProcessor& text_processor)
 {
     module_installer.uninstallModule("NA28");
-    module_installer.installModule("NA28");
+    module_installer.installModule("Deutsche Bibelgesellschaft", "NA28");
     module_installer.saveModuleUnlockKey("NA28", "");
     SWModule* m = module_store.getLocalModule("NA28");
     cout << "Module readable: " << text_processor.isModuleReadable(m) << endl;
@@ -243,7 +243,7 @@ int main(int argc, char** argv)
 
     //get_module_text(textProcessor);
 
-    get_reference_text(moduleStore, textProcessor);
+    //get_reference_text(moduleStore, textProcessor);
 
     //get_book_intro(textProcessor);
 
