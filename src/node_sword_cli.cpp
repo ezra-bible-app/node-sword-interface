@@ -130,7 +130,7 @@ void get_book_intro(TextProcessor& text_processor)
 {
     cout << "Text:" << endl;
     text_processor.enableMarkup();
-    string bookIntro = text_processor.getBookIntroduction("GerNeUe", "John");
+    string bookIntro = text_processor.getBookIntroduction("NET", "Luke");
     cout << bookIntro << endl;
 }
 
@@ -226,11 +226,11 @@ int main(int argc, char** argv)
         cout << "Error installing module (write permissions?)\n";
     }*/
     
-    int error = moduleInstaller.uninstallModule("YLT");
+    /*int error = moduleInstaller.uninstallModule("YLT");
 
     if (error) {
         cout << "Error uninstalling module (write permissions?)\n";
-    }
+    }*/
 
     /*get_local_module(moduleStore);
     
@@ -241,11 +241,11 @@ int main(int argc, char** argv)
 
     //get_strongs_entry(textProcessor);
 
-    get_module_text(textProcessor);
+    //get_module_text(textProcessor);
 
     //get_reference_text(moduleStore, textProcessor);
 
-    //get_book_intro(textProcessor);
+    get_book_intro(textProcessor);
 
     //get_book_list(moduleHelper);
 
