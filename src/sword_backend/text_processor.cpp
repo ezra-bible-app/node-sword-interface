@@ -71,7 +71,7 @@ string TextProcessor::getFileUrl(const string& nativePath)
 #endif
 }
 
-string TextProcessor::getFilteredText(const string& text, int chapter, int verseNr, bool hasStrongs, bool hasInconsistentClosingEndDivs, const string& moduleDataPath)
+string TextProcessor::getFilteredText(const string& text, int chapter, int verseNr, bool hasStrongs, bool hasInconsistentClosingEndDivs, const string& moduleFileUrl)
 {
     static string chapterFilter = "<chapter";
     static regex pbElement = regex("<pb .*?/> ");
@@ -244,18 +244,17 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
         filteredText = this->replaceSpacesInStrongs(filteredText);
     }
 
-    // Prefix img src attributes starting with "/" with the module data path as a file:// URL
-    if (!moduleDataPath.empty()) {
-        string fileUrl = this->getFileUrl(moduleDataPath);
+    // Prefix img src attributes starting with "/" with the module file URL
+    if (!moduleFileUrl.empty()) {
         static string imgSrcSlash = "src=\"/";
-        string imgSrcReplacement = "src=\"" + fileUrl + "/";
+        string imgSrcReplacement = "src=\"" + moduleFileUrl + "/";
         this->findAndReplaceAll(filteredText, imgSrcSlash, imgSrcReplacement);
     }
 
     return filteredText;
 }
 
-string TextProcessor::getCurrentChapterHeading(sword::SWModule* module)
+string TextProcessor::getCurrentChapterHeading(sword::SWModule* module, const string& moduleFileUrl)
 {
     string currentModuleName = string(module->getName());
     string chapterHeading = "";
@@ -288,8 +287,7 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module)
             // Therefore we do not render chapter headings for the first verse of the chapter in this case.
             chapterHeading = "";
         } else {
-            string moduleDataPath = this->_moduleStore.getModuleDataPath(module);
-            chapterHeading = this->getFilteredText(chapterHeading, currentChapter, currentVerseNr, false, false, moduleDataPath);
+            chapterHeading = this->getFilteredText(chapterHeading, currentChapter, currentVerseNr, false, false, moduleFileUrl);
         }
     }
 
@@ -297,6 +295,12 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module)
 }
 
 string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool hasInconsistentClosingEndDivs, bool forceNoMarkup)
+{
+    string moduleFileUrl = this->getFileUrl(this->_moduleStore.getModuleDataPath(module));
+    return this->getCurrentVerseText(module, hasStrongs, hasInconsistentClosingEndDivs, forceNoMarkup, moduleFileUrl);
+}
+
+string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool hasInconsistentClosingEndDivs, bool forceNoMarkup, const string& moduleFileUrl)
 {
     string verseText;
     string filteredText;
@@ -310,8 +314,7 @@ string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStron
         filteredText = verseText;
 
         if (!this->_rawMarkupEnabled) {
-            string moduleDataPath = this->_moduleStore.getModuleDataPath(module);
-            filteredText = this->getFilteredText(verseText, currentChapter, currentVerseNr, hasStrongs, hasInconsistentClosingEndDivs, moduleDataPath);
+            filteredText = this->getFilteredText(verseText, currentChapter, currentVerseNr, hasStrongs, hasInconsistentClosingEndDivs, moduleFileUrl);
         }
     } else {
         verseText = string(module->stripText());
@@ -394,6 +397,9 @@ vector<Verse> TextProcessor::getVersesFromReferences(string moduleName, vector<s
     bool moduleMarkupIsBroken = this->_moduleHelper.isBrokenMarkupModule(moduleName);
     bool hasInconsistentClosingEndDivs = this->_moduleHelper.isInconsistentClosingEndDivModule(moduleName);
 
+    // Compute file URL once for the entire module
+    string moduleFileUrl = this->getFileUrl(this->_moduleStore.getModuleDataPath(module));
+
     for (unsigned int i = 0; i < references.size(); i++) {
         string currentReference = references[i];
         string currentVerseText = "";
@@ -402,7 +408,7 @@ vector<Verse> TextProcessor::getVersesFromReferences(string moduleName, vector<s
         bool entryExisting = module->hasEntry(module->getKey());
 
         if (entryExisting) {
-          currentVerseText = this->getCurrentVerseText(module, false, hasInconsistentClosingEndDivs, moduleMarkupIsBroken);
+          currentVerseText = this->getCurrentVerseText(module, false, hasInconsistentClosingEndDivs, moduleMarkupIsBroken, moduleFileUrl);
         }
 
         Verse currentVerse;
@@ -450,6 +456,9 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
     } else {
         bool hasStrongs = this->_moduleHelper.moduleHasGlobalOption(module, "Strongs");
 
+        // Compute file URL once for the entire module
+        string moduleFileUrl = this->getFileUrl(this->_moduleStore.getModuleDataPath(module));
+
         module->setKey(key.c_str());
 
         if (startVerseNumber >= 1) {
@@ -486,7 +495,7 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
             // and if the module markup is not broken
             // and if the requested verse count is more than one or the default (-1 / all verses).
             if (firstVerseInChapter && !moduleMarkupIsBroken && (verseCount > 1 || verseCount == -1)) {
-                string chapterHeading = this->getCurrentChapterHeading(module);
+                string chapterHeading = this->getCurrentChapterHeading(module, moduleFileUrl);
                 verseText += chapterHeading;
             }
 
@@ -496,7 +505,8 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
                                                    hasInconsistentClosingEndDivs,
                                                    // Note that if markup is broken this will enforce
                                                    // the usage of the "stripped" / non-markup variant of the text
-                                                   moduleMarkupIsBroken);
+                                                   moduleMarkupIsBroken,
+                                                   moduleFileUrl);
 
             // If the current verse does not have any content and if it is the first verse in this book
             // we assume that the book is not existing.
@@ -559,12 +569,11 @@ string TextProcessor::getBookIntroduction(string moduleName, string bookCode)
         filteredText = regex_replace(filteredText, headEndElementFilter, "</div>");
         filteredText = regex_replace(filteredText, chapterDivFilter, "");
 
-        // Prefix img src attributes starting with "/" with the module data path as a file:// URL
-        string moduleDataPath = this->_moduleStore.getModuleDataPath(module);
-        if (!moduleDataPath.empty()) {
-            string fileUrl = this->getFileUrl(moduleDataPath);
+        // Prefix img src attributes starting with "/" with the module file URL
+        string moduleFileUrl = this->getFileUrl(this->_moduleStore.getModuleDataPath(module));
+        if (!moduleFileUrl.empty()) {
             static string imgSrcSlash = "src=\"/";
-            string imgSrcReplacement = "src=\"" + fileUrl + "/";
+            string imgSrcReplacement = "src=\"" + moduleFileUrl + "/";
             this->findAndReplaceAll(filteredText, imgSrcSlash, imgSrcReplacement);
         }
     }

@@ -63,8 +63,9 @@ private:
                                int startVerseNr=-1,
                                int verseCount=-1);
 
-    std::string getCurrentChapterHeading(sword::SWModule* module);
-    std::string getFilteredText(const std::string& text, int chapter, int verseNr, bool hasStrongs=false, bool hasInconsistentClosingEndDivs=false, const std::string& moduleDataPath="");
+    std::string getCurrentChapterHeading(sword::SWModule* module, const std::string& moduleFileUrl);
+    std::string getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool hasInconsistentClosingEndDivs, bool forceNoMarkup, const std::string& moduleFileUrl);
+    std::string getFilteredText(const std::string& text, int chapter, int verseNr, bool hasStrongs, bool hasInconsistentClosingEndDivs, const std::string& moduleFileUrl);
     std::string getFileUrl(const std::string& nativePath);
     std::string replaceSpacesInStrongs(const std::string& text);
     unsigned int findAndReplaceAll(std::string & data, std::string toSearch, std::string replaceStr);
