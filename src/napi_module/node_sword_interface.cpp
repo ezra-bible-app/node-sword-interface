@@ -928,8 +928,8 @@ Napi::Value NodeSwordInterface::installModule(const Napi::CallbackInfo& info)
                                                           *(this->_moduleInstaller),
                                                           progressCallback,
                                                           callback,
-                                                          moduleName,
-                                                          repoName);
+                                                          repoName,
+                                                          moduleName);
     worker->Queue();
     return info.Env().Undefined();
 }

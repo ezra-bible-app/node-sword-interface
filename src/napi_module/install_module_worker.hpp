@@ -29,15 +29,15 @@ public:
                         ModuleInstaller& moduleInstaller,
                         const Napi::Function& jsProgressCallback,
                         const Napi::Function& callback,
-                        std::string moduleName,
-                        std::string repoName)
+                        std::string repoName,
+                        std::string moduleName)
 
         : ProgressWorker(repoInterface,
                          jsProgressCallback,
                          callback),
                          _moduleInstaller(moduleInstaller),
-                         _moduleName(moduleName),
-                         _repoName(repoName) {}
+                         _repoName(repoName),
+                         _moduleName(moduleName) {}
 
     void swordPreStatusCB(long totalBytes, long completedBytes, const char *message);
     void swordUpdateCB(double dltotal, double dlnow);
