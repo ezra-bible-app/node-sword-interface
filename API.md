@@ -628,14 +628,14 @@ Checks whether the module resides in the user directory.
 <a name="NodeSwordInterface+isModuleAvailableInRepo"></a>
 
 ### nodeSwordInterface.isModuleAvailableInRepo(moduleCode, repositoryName) ⇒ <code>Boolean</code>
-Checks whether the module is available in any repository.
+Checks whether the module is available in any repository (default) or in a specific repository.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| moduleCode | <code>String</code> | The module code of the SWORD module. |
-| repositoryName | <code>String</code> | The name of the repository to check. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| moduleCode | <code>String</code> |  | The module code of the SWORD module. |
+| repositoryName | <code>String</code> | <code>all</code> | The name of the repository to check. |
 
 <a name="NodeSwordInterface+getSwordTranslation"></a>
 
