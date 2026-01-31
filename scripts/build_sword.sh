@@ -132,4 +132,4 @@ else
   fi
 fi
 
-make -j4 sword_static
+make -j8 sword_static
