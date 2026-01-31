@@ -265,8 +265,30 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module, const st
     if (currentVerseKey.getVerse() == 1) { // X:1, set key to X:0
         // Include chapter/book/testament/module intros
         currentVerseKey.setIntros(true);
-        currentVerseKey.setVerse(0);
 
+        // For chapter 1, check if the book intro (0:0) is empty.
+        // If so, chapter 1:0 content is being used as book intro in getBookIntroduction()
+        // and should be skipped here to avoid duplication.
+        if (currentChapter == 1) {
+            VerseKey bookIntroKey = currentVerseKey;
+            bookIntroKey.setChapter(0);
+            bookIntroKey.setVerse(0);
+            module->setKey(bookIntroKey);
+            
+            string bookIntro = string(module->getRawEntry());
+            StringHelper::trim(bookIntro);
+            
+            // Restore the key
+            module->setKey(currentVerseKey);
+            
+            // If book intro is empty, chapter 1:0 is used as book intro
+            // so we should not include it here as chapter heading
+            if (bookIntro.empty()) {
+                return "";
+            }
+        }
+
+        currentVerseKey.setVerse(0);
         module->setKey(currentVerseKey);
         
         chapterHeading = string(module->getRawEntry());
