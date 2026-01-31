@@ -294,48 +294,6 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module, const st
     return chapterHeading;
 }
 
-string TextProcessor::getCurrentPreverseHeading(sword::SWModule* module, const string& moduleFileUrl)
-{
-    string preverse = "";
-    VerseKey currentVerseKey = module->getKey();
-    int currentChapter = currentVerseKey.getChapter();
-    int currentVerseNr = currentVerseKey.getVerse();
-
-    // First, we need to access the rendered text to populate entry attributes
-    // The entry attributes are only available after rendering/stripping
-    module->renderText();
-
-    // Get the entry attributes map
-    sword::AttributeTypeList& attributes = module->getEntryAttributes();
-
-    // Look for Heading/Preverse entries (indexed 0, 1, 2, ...)
-    auto headingIt = attributes.find("Heading");
-    if (headingIt != attributes.end()) {
-        auto preverseIt = headingIt->second.find("Preverse");
-        if (preverseIt != headingIt->second.end()) {
-            // Iterate through all preverse entries (0, 1, 2, ...)
-            for (auto& entry : preverseIt->second) {
-                string preverseContent = string(entry.second.c_str());
-                StringHelper::trim(preverseContent);
-                
-                if (!preverseContent.empty()) {
-                    // Render the preverse content through the module
-                    sword::SWBuf renderedBuf = module->renderText(preverseContent.c_str());
-                    string rendered = string(renderedBuf.c_str());
-                    
-                    if (this->_markupEnabled && !this->_rawMarkupEnabled) {
-                        rendered = this->getFilteredText(rendered, currentChapter, currentVerseNr, false, false, moduleFileUrl);
-                    }
-                    
-                    preverse += rendered;
-                }
-            }
-        }
-    }
-
-    return preverse;
-}
-
 string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool hasInconsistentClosingEndDivs, bool forceNoMarkup)
 {
     string moduleFileUrl = this->getFileUrl(this->_moduleStore.getModuleDataPath(module));
@@ -450,13 +408,7 @@ vector<Verse> TextProcessor::getVersesFromReferences(string moduleName, vector<s
         bool entryExisting = module->hasEntry(module->getKey());
 
         if (entryExisting) {
-          // Add preverse heading before verse text
-          if (!moduleMarkupIsBroken) {
-              string preverseHeading = this->getCurrentPreverseHeading(module, moduleFileUrl);
-              currentVerseText += preverseHeading;
-          }
-          
-          currentVerseText += this->getCurrentVerseText(module, false, hasInconsistentClosingEndDivs, moduleMarkupIsBroken, moduleFileUrl);
+          currentVerseText = this->getCurrentVerseText(module, false, hasInconsistentClosingEndDivs, moduleMarkupIsBroken, moduleFileUrl);
         }
 
         Verse currentVerse;
@@ -547,13 +499,6 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
                 verseText += chapterHeading;
             }
 
-            // Preverse heading (introductory material attached to this verse via entry attributes)
-            // This includes intro images and other material that should appear before the verse text
-            if (!moduleMarkupIsBroken) {
-                string preverseHeading = this->getCurrentPreverseHeading(module, moduleFileUrl);
-                verseText += preverseHeading;
-            }
-
             // Current verse text
             verseText += this->getCurrentVerseText(module,
                                                    hasStrongs,
@@ -595,17 +540,36 @@ string TextProcessor::getBookIntroduction(string moduleName, string bookCode)
     if (module == 0) {
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
+        // Get module data path BEFORE manipulating the module key
+        string moduleDataPath = this->_moduleStore.getModuleDataPath(module);
+        string moduleFileUrl = this->getFileUrl(moduleDataPath);
+
         module->setKeyText(bookCode.c_str());
-        VerseKey *verseKey = (VerseKey *)module->getKey();
+        
+        // Create a local VerseKey copy to avoid pointer invalidation issues
+        VerseKey verseKey = module->getKey();
 
         // Include chapter/book/testament/module intros
-        verseKey->setIntros(true);
-        verseKey->setChapter(0);
-        verseKey->setVerse(0);
+        verseKey.setIntros(true);
+        
+        // First try to get book intro from chapter 0, verse 0
+        verseKey.setChapter(0);
+        verseKey.setVerse(0);
         module->setKey(verseKey);
 
         bookIntroText = string(module->getRawEntry());
         StringHelper::trim(bookIntroText);
+
+        // If book intro (0:0) is empty, also fetch chapter 1:0
+        // Some modules (like NET) store book-level intro content in chapter 1:0
+        if (bookIntroText.empty()) {
+            verseKey.setChapter(1);
+            verseKey.setVerse(0);
+            module->setKey(verseKey);
+
+            bookIntroText = string(module->getRawEntry());
+            StringHelper::trim(bookIntroText);
+        }
 
         static regex titleStartElementFilter = regex("<title");
         static regex titleEndElementFilter = regex("</title>");
@@ -625,7 +589,6 @@ string TextProcessor::getBookIntroduction(string moduleName, string bookCode)
         filteredText = regex_replace(filteredText, chapterDivFilter, "");
 
         // Prefix img src attributes starting with "/" with the module file URL
-        string moduleFileUrl = this->getFileUrl(this->_moduleStore.getModuleDataPath(module));
         if (!moduleFileUrl.empty()) {
             static string imgSrcSlash = "src=\"/";
             string imgSrcReplacement = "src=\"" + moduleFileUrl + "/";

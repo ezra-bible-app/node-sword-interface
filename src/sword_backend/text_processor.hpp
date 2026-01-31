@@ -64,7 +64,6 @@ private:
                                int verseCount=-1);
 
     std::string getCurrentChapterHeading(sword::SWModule* module, const std::string& moduleFileUrl);
-    std::string getCurrentPreverseHeading(sword::SWModule* module, const std::string& moduleFileUrl);
     std::string getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool hasInconsistentClosingEndDivs, bool forceNoMarkup, const std::string& moduleFileUrl);
     std::string getFilteredText(const std::string& text, int chapter, int verseNr, bool hasStrongs, bool hasInconsistentClosingEndDivs, const std::string& moduleFileUrl);
     std::string getFileUrl(const std::string& nativePath);
