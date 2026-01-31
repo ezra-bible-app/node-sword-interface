@@ -266,26 +266,11 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module, const st
         // Include chapter/book/testament/module intros
         currentVerseKey.setIntros(true);
 
-        // For chapter 1, check if the book intro (0:0) is empty.
-        // If so, chapter 1:0 content is being used as book intro in getBookIntroduction()
-        // and should be skipped here to avoid duplication.
+        // For chapter 1, always skip chapter 1:0 content here.
+        // getBookIntroduction() now always includes chapter 1:0 as part of the book intro,
+        // so we must not duplicate it here.
         if (currentChapter == 1) {
-            VerseKey bookIntroKey = currentVerseKey;
-            bookIntroKey.setChapter(0);
-            bookIntroKey.setVerse(0);
-            module->setKey(bookIntroKey);
-            
-            string bookIntro = string(module->getRawEntry());
-            StringHelper::trim(bookIntro);
-            
-            // Restore the key
-            module->setKey(currentVerseKey);
-            
-            // If book intro is empty, chapter 1:0 is used as book intro
-            // so we should not include it here as chapter heading
-            if (bookIntro.empty()) {
-                return "";
-            }
+            return "";
         }
 
         currentVerseKey.setVerse(0);
@@ -574,7 +559,8 @@ string TextProcessor::getBookIntroduction(string moduleName, string bookCode)
         // Include chapter/book/testament/module intros
         verseKey.setIntros(true);
         
-        // First try to get book intro from chapter 0, verse 0
+        // Get book intro from chapter 0, verse 0
+        // This may contain testament intro for first books (Genesis, Matthew)
         verseKey.setChapter(0);
         verseKey.setVerse(0);
         module->setKey(verseKey);
@@ -582,15 +568,23 @@ string TextProcessor::getBookIntroduction(string moduleName, string bookCode)
         bookIntroText = string(module->getRawEntry());
         StringHelper::trim(bookIntroText);
 
-        // If book intro (0:0) is empty, also fetch chapter 1:0
-        // Some modules (like NET) store book-level intro content in chapter 1:0
-        if (bookIntroText.empty()) {
-            verseKey.setChapter(1);
-            verseKey.setVerse(0);
-            module->setKey(verseKey);
+        // Also fetch chapter 1:0 content and append it
+        // Many modules store book-level intro content (images, titles) in chapter 1:0
+        // We always include this to handle both cases:
+        // - Modules where 0:0 is empty and 1:0 has book intro
+        // - First books of testaments where 0:0 has testament intro and 1:0 has book intro
+        verseKey.setChapter(1);
+        verseKey.setVerse(0);
+        module->setKey(verseKey);
 
-            bookIntroText = string(module->getRawEntry());
-            StringHelper::trim(bookIntroText);
+        string chapter1Intro = string(module->getRawEntry());
+        StringHelper::trim(chapter1Intro);
+        
+        if (!chapter1Intro.empty()) {
+            if (!bookIntroText.empty()) {
+                bookIntroText += "\n";
+            }
+            bookIntroText += chapter1Intro;
         }
 
         static regex titleStartElementFilter = regex("<title");
