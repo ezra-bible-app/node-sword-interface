@@ -30,6 +30,7 @@
 
 // Own includes
 #include "text_processor.hpp"
+#include "module_store.hpp"
 #include "module_helper.hpp"
 #include "string_helper.hpp"
 #include "strongs_entry.hpp"
@@ -45,7 +46,32 @@ TextProcessor::TextProcessor(ModuleStore& moduleStore, ModuleHelper& moduleHelpe
     this->_rawMarkupEnabled = false;
 }
 
-string TextProcessor::getFilteredText(const string& text, int chapter, int verseNr, bool hasStrongs, bool hasInconsistentClosingEndDivs)
+string TextProcessor::getFileUrl(const string& nativePath)
+{
+    if (nativePath.empty()) {
+        return "";
+    }
+
+    string path = nativePath;
+
+    // Strip trailing slash or backslash
+    if (!path.empty() && (path.back() == '/' || path.back() == '\\')) {
+        path.pop_back();
+    }
+
+    // Convert backslashes to forward slashes for URL compatibility
+    static regex backslash("\\\\");
+    path = regex_replace(path, backslash, "/");
+
+    // Build file:// URL (Windows needs extra slash for drive letter)
+#if _WIN32
+    return "file:///" + path;
+#else
+    return "file://" + path;
+#endif
+}
+
+string TextProcessor::getFilteredText(const string& text, int chapter, int verseNr, bool hasStrongs, bool hasInconsistentClosingEndDivs, const string& moduleDataPath)
 {
     static string chapterFilter = "<chapter";
     static regex pbElement = regex("<pb .*?/> ");
@@ -218,6 +244,14 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
         filteredText = this->replaceSpacesInStrongs(filteredText);
     }
 
+    // Prefix img src attributes starting with "/" with the module data path as a file:// URL
+    if (!moduleDataPath.empty()) {
+        string fileUrl = this->getFileUrl(moduleDataPath);
+        static string imgSrcSlash = "src=\"/";
+        string imgSrcReplacement = "src=\"" + fileUrl + "/";
+        this->findAndReplaceAll(filteredText, imgSrcSlash, imgSrcReplacement);
+    }
+
     return filteredText;
 }
 
@@ -254,7 +288,8 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module)
             // Therefore we do not render chapter headings for the first verse of the chapter in this case.
             chapterHeading = "";
         } else {
-            chapterHeading = this->getFilteredText(chapterHeading, currentChapter, currentVerseNr);
+            string moduleDataPath = this->_moduleStore.getModuleDataPath(module);
+            chapterHeading = this->getFilteredText(chapterHeading, currentChapter, currentVerseNr, false, false, moduleDataPath);
         }
     }
 
@@ -275,7 +310,8 @@ string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStron
         filteredText = verseText;
 
         if (!this->_rawMarkupEnabled) {
-            filteredText = this->getFilteredText(verseText, currentChapter, currentVerseNr, hasStrongs, hasInconsistentClosingEndDivs);
+            string moduleDataPath = this->_moduleStore.getModuleDataPath(module);
+            filteredText = this->getFilteredText(verseText, currentChapter, currentVerseNr, hasStrongs, hasInconsistentClosingEndDivs, moduleDataPath);
         }
     } else {
         verseText = string(module->stripText());
@@ -522,6 +558,15 @@ string TextProcessor::getBookIntroduction(string moduleName, string bookCode)
         filteredText = regex_replace(filteredText, headStartElementFilter, "<div class=\"sword-markup sword-head\"");
         filteredText = regex_replace(filteredText, headEndElementFilter, "</div>");
         filteredText = regex_replace(filteredText, chapterDivFilter, "");
+
+        // Prefix img src attributes starting with "/" with the module data path as a file:// URL
+        string moduleDataPath = this->_moduleStore.getModuleDataPath(module);
+        if (!moduleDataPath.empty()) {
+            string fileUrl = this->getFileUrl(moduleDataPath);
+            static string imgSrcSlash = "src=\"/";
+            string imgSrcReplacement = "src=\"" + fileUrl + "/";
+            this->findAndReplaceAll(filteredText, imgSrcSlash, imgSrcReplacement);
+        }
     }
 
     return filteredText;
