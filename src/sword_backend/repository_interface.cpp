@@ -574,7 +574,7 @@ string RepositoryInterface::getModuleRepo(string moduleName)
     return "";
 }
 
-bool RepositoryInterface::isModuleAvailableInRepo(string repoName, string moduleName)
+bool RepositoryInterface::isModuleAvailableInRepo(string moduleName, string repoName)
 {
     vector<string> moduleIds;
     

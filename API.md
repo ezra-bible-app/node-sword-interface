@@ -77,7 +77,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.getStrongsEntry(strongsKey)](#NodeSwordInterface+getStrongsEntry) ⇒ [<code>StrongsEntry</code>](#StrongsEntry)
     * [.getLocalModule(moduleCode)](#NodeSwordInterface+getLocalModule) ⇒ [<code>ModuleObject</code>](#ModuleObject)
     * [.isModuleInUserDir(moduleCode)](#NodeSwordInterface+isModuleInUserDir) ⇒ <code>Boolean</code>
-    * [.isModuleAvailableInRepo(repositoryName, moduleCode)](#NodeSwordInterface+isModuleAvailableInRepo) ⇒ <code>Boolean</code>
+    * [.isModuleAvailableInRepo(moduleCode, repositoryName)](#NodeSwordInterface+isModuleAvailableInRepo) ⇒ <code>Boolean</code>
     * [.getSwordTranslation(originalString, localeCode)](#NodeSwordInterface+getSwordTranslation)
     * [.getBookAbbreviation(moduleName, bookCode, localeCode)](#NodeSwordInterface+getBookAbbreviation)
     * [.unTarGZ(filePath, destPath)](#NodeSwordInterface+unTarGZ) ⇒ <code>Boolean</code>
@@ -627,15 +627,15 @@ Checks whether the module resides in the user directory.
 
 <a name="NodeSwordInterface+isModuleAvailableInRepo"></a>
 
-### nodeSwordInterface.isModuleAvailableInRepo(repositoryName, moduleCode) ⇒ <code>Boolean</code>
+### nodeSwordInterface.isModuleAvailableInRepo(moduleCode, repositoryName) ⇒ <code>Boolean</code>
 Checks whether the module is available in any repository.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| repositoryName | <code>String</code> | The name of the repository to check. |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
+| repositoryName | <code>String</code> | The name of the repository to check. |
 
 <a name="NodeSwordInterface+getSwordTranslation"></a>
 

@@ -735,12 +735,12 @@ class NodeSwordInterface {
   /**
    * Checks whether the module is available in any repository.
    *
-   * @param {String} repositoryName - The name of the repository to check.
    * @param {String} moduleCode - The module code of the SWORD module.
+   * @param {String} repositoryName - The name of the repository to check.
    * @return {Boolean}
    */
-  isModuleAvailableInRepo(repositoryName, moduleCode) {
-    return this.nativeInterface.isModuleAvailableInRepo(repositoryName, moduleCode);
+  isModuleAvailableInRepo(moduleCode, repositoryName) {
+    return this.nativeInterface.isModuleAvailableInRepo(moduleCode, repositoryName);
   }
 
   /**

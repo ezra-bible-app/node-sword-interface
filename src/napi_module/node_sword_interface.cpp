@@ -325,22 +325,22 @@ Napi::Value NodeSwordInterface::isModuleAvailableInRepo(const Napi::CallbackInfo
 {
     lockApi();
     INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
-    Napi::String repoName = info[0].As<Napi::String>();
-    Napi::String moduleName = info[1].As<Napi::String>();
-
-    if (string(repoName).empty()) {
-        Napi::TypeError::New(info.Env(), "Repository name cannot be empty").ThrowAsJavaScriptException();
-        unlockApi();
-        return info.Env().Null();
-    }
+    Napi::String moduleName = info[0].As<Napi::String>();
+    Napi::String repoName = info[1].As<Napi::String>();
 
     if (string(moduleName).empty()) {
         Napi::TypeError::New(info.Env(), "Module name cannot be empty").ThrowAsJavaScriptException();
         unlockApi();
         return info.Env().Null();
     }
+
+    if (string(repoName).empty()) {
+        Napi::TypeError::New(info.Env(), "Repository name cannot be empty").ThrowAsJavaScriptException();
+        unlockApi();
+        return info.Env().Null();
+    }
     
-    bool moduleAvailable = this->_repoInterface->isModuleAvailableInRepo(repoName, moduleName);
+    bool moduleAvailable = this->_repoInterface->isModuleAvailableInRepo(moduleName, repoName);
     unlockApi();
     return Napi::Boolean::New(info.Env(), moduleAvailable);
 }

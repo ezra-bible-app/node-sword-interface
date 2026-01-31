@@ -67,7 +67,7 @@ public:
     unsigned int getRepoModuleCount(std::string repoName, ModuleType moduleType=ModuleType::bible);
     std::vector<std::string> getRepoLanguages(std::string repoName, ModuleType moduleType=ModuleType::bible);
     unsigned int getRepoLanguageModuleCount(std::string repoName, std::string languageCode, ModuleType moduleType=ModuleType::bible);
-    bool isModuleAvailableInRepo(std::string repoName, std::string moduleName);
+    bool isModuleAvailableInRepo(std::string moduleName, std::string repoName="all");
     std::string getModuleRepo(std::string moduleName);
     sword::InstallSource* getRemoteSource(std::string remoteSourceName);
 
