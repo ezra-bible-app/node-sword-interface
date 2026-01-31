@@ -105,11 +105,11 @@ void get_module_text(TextProcessor& text_processor)
 {
     cout << "Text:" << endl;
     text_processor.enableMarkup();
-    vector<Verse> verses = text_processor.getBookText("NASB", "Ps");
+    vector<Verse> verses = text_processor.getBookText("NET", "Luke");
     cout << "Got " << verses.size() << " verses!" << endl;
-    /*for (int i = 0; i < verses.size(); i++) {
+    for (int i = 0; i < 10; i++) {
         cout << verses[i].reference << "|" << verses[i].content << endl;
-    }*/
+    }
 }
 
 void get_reference_text(ModuleStore& module_store, TextProcessor& text_processor)
@@ -220,17 +220,17 @@ int main(int argc, char** argv)
 
     show_modules(repoInterface);
 
-    /*int error = moduleInstaller.installModule("UKJV");
+    /*int error = moduleInstaller.installModule("CrossWire", "UKJV");
 
     if (error) {
         cout << "Error installing module (write permissions?)\n";
-    }
+    }*/
     
-    error = moduleInstaller.uninstallModule("UKJV");
+    int error = moduleInstaller.uninstallModule("YLT");
 
     if (error) {
         cout << "Error uninstalling module (write permissions?)\n";
-    }*/
+    }
 
     /*get_local_module(moduleStore);
     
@@ -241,7 +241,7 @@ int main(int argc, char** argv)
 
     //get_strongs_entry(textProcessor);
 
-    //get_module_text(textProcessor);
+    get_module_text(textProcessor);
 
     //get_reference_text(moduleStore, textProcessor);
 
