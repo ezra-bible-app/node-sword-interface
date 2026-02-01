@@ -1246,6 +1246,9 @@ extern int ZEXPORT unzLocateFile (unzFile file, const char *szFileName, int iCas
     if (file==NULL)
         return UNZ_PARAMERROR;
 
+    if (szFileName==NULL)
+        return UNZ_PARAMERROR;
+
     if (strlen(szFileName)>=UNZ_MAXFILENAMEINZIP)
         return UNZ_PARAMERROR;
 
