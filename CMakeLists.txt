@@ -5,6 +5,7 @@ project(node_sword_cli)
 set(CMAKE_CXX_FLAGS "-g -rdynamic -std=c++11")
 
 include_directories(${CMAKE_SOURCE_DIR}/src/sword_backend)
+include_directories(${CMAKE_SOURCE_DIR}/src/lib)
 
 include_directories(${CMAKE_SOURCE_DIR}/sword/include)
 
@@ -46,8 +47,8 @@ ${CMAKE_SOURCE_DIR}/src/sword_backend/module_installer.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/text_processor.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/module_search.cpp
 ${CMAKE_SOURCE_DIR}/src/sword_backend/mutex.cpp
-${CMAKE_SOURCE_DIR}/src/sword_backend/unzip/ioapi.c
-${CMAKE_SOURCE_DIR}/src/sword_backend/unzip/unzip.c
+${CMAKE_SOURCE_DIR}/src/lib/unzip/ioapi.c
+${CMAKE_SOURCE_DIR}/src/lib/unzip/unzip.c
 )
 
 add_executable(node_sword_cli ${SOURCES})

@@ -88,8 +88,8 @@
             "src/sword_backend/module_installer.cpp",
             "src/sword_backend/sword_status_reporter.cpp",
             "src/sword_backend/text_processor.cpp",
-            "src/sword_backend/unzip/unzip.c",
-            "src/sword_backend/unzip/ioapi.c",
+            "src/lib/unzip/unzip.c",
+            "src/lib/unzip/ioapi.c",
             "src/napi_module/install_module_worker.cpp",
             "src/napi_module/module_search_worker.cpp",
             "src/napi_module/napi_sword_helper.cpp",
@@ -102,6 +102,7 @@
                 "type": "shared_library",
                 'include_dirs': [
                     "<(module_root_dir)/src/sword_backend",
+                    "<(module_root_dir)/src/lib",
                     "<!@(node -p \"require('node-addon-api').include\")",
                     "<!@(./scripts/get_sword_include_path.sh)"
                 ],
@@ -131,6 +132,7 @@
             ["OS=='linux'", {
                 'include_dirs': [
                     "<(module_root_dir)/src/sword_backend",
+                    "<(module_root_dir)/src/lib",
                     "<!@(node -p \"require('node-addon-api').include\")",
                     "<!@(./scripts/get_sword_include_path.sh)"
                 ],
@@ -146,6 +148,7 @@
             ["OS=='android'", {
                 'include_dirs': [
                     "<(module_root_dir)/src/sword_backend",
+                    "<(module_root_dir)/src/lib",
                     "<!@(node -p \"require('node-addon-api').include\")",
                     "<!@(./scripts/get_sword_include_path.sh)"
                 ],
@@ -163,6 +166,7 @@
             ["OS=='mac'", {
                 'include_dirs': [
                     "<(module_root_dir)/src/sword_backend",
+                    "<(module_root_dir)/src/lib",
                     "<!@(node -p \"require('node-addon-api').include\")",
                     "<!@(./scripts/get_sword_include_path.sh)"
                 ],
@@ -178,6 +182,7 @@
             ["OS=='win'", {
                 'include_dirs': [
                     "<(module_root_dir)/src/sword_backend",
+                    "<(module_root_dir)/src/lib",
                     "<!@(node -p \"require('node-addon-api').include\")",
                     "<(module_root_dir)/build/sword-build-win32/include"
                 ],
