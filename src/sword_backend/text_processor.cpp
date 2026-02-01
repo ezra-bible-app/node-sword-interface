@@ -117,6 +117,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     static string hiItalic = "<hi type=\"italic";
     static string hiSuper = "<hi type=\"super";
 
+    static regex milestoneLineFilter = regex("<milestone[^>]*type=\"line\"[^>]*/>");
     static regex milestoneFilter = regex("<milestone.*?/>");
     static regex segStartElementFilter = regex("<seg.*?>");
     static regex divSectionElementFilter = regex("<div type=\"section\".*?>");
@@ -160,6 +161,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     this->findAndReplaceAll(filteredText, rtxtStartElementFilter2, "<div class=\"sword-markup sword-rtxt\" rend=");
     this->findAndReplaceAll(filteredText, rtxtEndElementFilter, "</div>");
     this->findAndReplaceAll(filteredText, pbElementFilter, "<pb class=\"sword-markup sword-pb\"");
+    filteredText = regex_replace(filteredText, milestoneLineFilter, "<br/>");
     filteredText = regex_replace(filteredText, milestoneFilter, "");
     filteredText = regex_replace(filteredText, segStartElementFilter, "");
     filteredText = regex_replace(filteredText, divSectionElementFilter, "");
