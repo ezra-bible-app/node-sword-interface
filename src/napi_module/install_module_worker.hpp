@@ -47,8 +47,8 @@ public:
 private:
     ModuleInstaller& _moduleInstaller;
     int _result;
-    std::string _moduleName;
     std::string _repoName;
+    std::string _moduleName;
     long _completedBytes = 0;
     long _totalBytes = 0;
     int _totalPercent = 0;
