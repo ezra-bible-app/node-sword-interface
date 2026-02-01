@@ -437,6 +437,15 @@ bool FileSystemHelper::unZip(std::string filePath, std::string destPath)
 
         if (err != UNZ_OK) break;
 
+        // Ensure null-termination for safety
+        filename[sizeof(filename) - 1] = '\0';
+        size_t filenameLen = strlen(filename);
+
+        if (filenameLen == 0) {
+            err = unzGoToNextFile(uf);
+            continue;
+        }
+
         string fullPath = destPath;
         if (fullPath.back() != '/' && fullPath.back() != '\\') {
             fullPath += '/';
@@ -444,7 +453,6 @@ bool FileSystemHelper::unZip(std::string filePath, std::string destPath)
         fullPath += filename;
 
         // Check if directory
-        size_t filenameLen = strlen(filename);
         if (filename[filenameLen - 1] == '/') {
             // Create directory
             string dummy = fullPath + "dummy";
