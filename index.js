@@ -112,7 +112,7 @@ class NodeSwordInterface {
    * @param {Number} timeoutMillis - Optional timeout in milliseconds for repository operations (default: 20000).
    */
   constructor(customHomeDir=undefined, localesBasePath=__dirname, timeoutMillis=20000) {
-    var localesDir = path.join(localesBasePath, './locales.d');
+    const localesDir = path.join(localesBasePath, './locales.d');
     this.nativeInterface = new nodeSwordInterfaceModule.NodeSwordInterface(customHomeDir, localesDir, timeoutMillis);
   }
 
