@@ -74,7 +74,6 @@ string TextProcessor::getFileUrl(const string& nativePath)
 string TextProcessor::getFilteredText(const string& text, int chapter, int verseNr, bool hasStrongs, bool hasInconsistentClosingEndDivs, const string& moduleFileUrl)
 {
     static string chapterFilter = "<chapter";
-    static regex pbElement = regex("<pb .*?/> ");
 
     static string lbBeginParagraph = "<lb type=\"x-begin-paragraph\"/>";
     static string lbEndParagraph = "<lb type=\"x-end-paragraph\"/>";
@@ -117,12 +116,6 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     static string hiItalic = "<hi type=\"italic";
     static string hiSuper = "<hi type=\"super";
 
-    static regex milestoneLineFilter = regex("<milestone[^>]*type=\"line\"[^>]*/>");
-    static regex milestoneFilter = regex("<milestone.*?/>");
-    static regex segStartElementFilter = regex("<seg.*?>");
-    static regex divSectionElementFilter = regex("<div type=\"section\".*?>");
-    static regex selfClosingElement = regex("(<)([wdiv]{1,3}) ([\\w:=\"\\- ]*?)(/>)");
-
     static string fullStopWithoutSpace = ".<";
     static string questionMarkWithoutSpace = "?<";
     static string exclamationMarkWithoutSpace = "!<";
@@ -131,9 +124,9 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     static string colonWithoutSpace = ":<";
 
     string filteredText = text;
-
+    
     // Remove the first pbElement, because it prevents correctly replacing the first note in the next step
-    filteredText = regex_replace(filteredText, pbElement, "");
+    this->removePbElementsWithSpace(filteredText);
 
     // Remove <note type="variant"> if it occurs in the beginning of the verse (applicable for NA28), because it has
     // been observed that the note is not properly closed.
@@ -161,10 +154,11 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     this->findAndReplaceAll(filteredText, rtxtStartElementFilter2, "<div class=\"sword-markup sword-rtxt\" rend=");
     this->findAndReplaceAll(filteredText, rtxtEndElementFilter, "</div>");
     this->findAndReplaceAll(filteredText, pbElementFilter, "<pb class=\"sword-markup sword-pb\"");
-    filteredText = regex_replace(filteredText, milestoneLineFilter, "<br/>");
-    filteredText = regex_replace(filteredText, milestoneFilter, "");
-    filteredText = regex_replace(filteredText, segStartElementFilter, "");
-    filteredText = regex_replace(filteredText, divSectionElementFilter, "");
+    
+    this->replaceMilestoneLineElements(filteredText);
+    this->removeMilestoneElements(filteredText);
+    this->removeSegStartElements(filteredText);
+    this->removeDivSectionElements(filteredText);
 
     stringstream sectionTitleElement;
     sectionTitleElement << "<div class=\"sword-markup sword-section-title\" ";
@@ -206,7 +200,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     this->findAndReplaceAll(filteredText, hiItalic, "<hi class=\"italic");
     this->findAndReplaceAll(filteredText, hiSuper, "<hi class=\"super");
 
-    filteredText = regex_replace(filteredText, selfClosingElement, "<$2 $3></$2>");
+    this->expandSelfClosingElements(filteredText);
 
     this->findAndReplaceAll(filteredText, fullStopWithoutSpace, ". <");
     this->findAndReplaceAll(filteredText, questionMarkWithoutSpace, "? <");
@@ -318,6 +312,7 @@ string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStron
         VerseKey currentVerseKey = module->getKey();
         int currentChapter = currentVerseKey.getChapter();
         int currentVerseNr = currentVerseKey.getVerse();
+        
         verseText = string(module->getRawEntry());
         StringHelper::trim(verseText);
         filteredText = verseText;
@@ -475,7 +470,7 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
         } else {
           startVerseNumber = 1;
         }
-
+        
         for (;;) {
             VerseKey currentVerseKey(module->getKey());
             string currentBookName(currentVerseKey.getBookAbbrev());
@@ -507,7 +502,7 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
                 string chapterHeading = this->getCurrentChapterHeading(module, moduleFileUrl);
                 verseText += chapterHeading;
             }
-
+            
             // Current verse text
             verseText += this->getCurrentVerseText(module,
                                                    hasStrongs,
@@ -532,7 +527,9 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
             lastKey = currentKey;
             lastBookName = currentBookName;
             lastChapter = currentChapter;
+            
             module->increment();
+            
             index++;
         }
     }
@@ -728,4 +725,133 @@ unsigned int TextProcessor::findAndReplaceAll(std::string & data, std::string to
     }
 
     return count;
+}
+
+// Remove elements matching pattern: <prefix ... suffix>
+// This is a string-based replacement for regex patterns like "<prefix.*?suffix>"
+void TextProcessor::removeElementsByPrefixSuffix(std::string& data, const std::string& prefix, const std::string& suffix)
+{
+    size_t pos = 0;
+    while ((pos = data.find(prefix, pos)) != std::string::npos) {
+        size_t endPos = data.find(suffix, pos + prefix.size());
+        if (endPos != std::string::npos) {
+            data.erase(pos, endPos + suffix.size() - pos);
+        } else {
+            break;
+        }
+    }
+}
+
+// Remove milestone elements with type="line" and replace with <br/>
+void TextProcessor::replaceMilestoneLineElements(std::string& data)
+{
+    static const std::string milestoneStart = "<milestone";
+    static const std::string typeLine = "type=\"line\"";
+    static const std::string milestoneEnd = "/>";
+    
+    size_t pos = 0;
+    while ((pos = data.find(milestoneStart, pos)) != std::string::npos) {
+        size_t endPos = data.find(milestoneEnd, pos);
+        if (endPos != std::string::npos) {
+            size_t elementEnd = endPos + milestoneEnd.size();
+            std::string element = data.substr(pos, elementEnd - pos);
+            
+            if (element.find(typeLine) != std::string::npos) {
+                data.replace(pos, elementEnd - pos, "<br/>");
+                pos += 5; // length of "<br/>"
+            } else {
+                pos = elementEnd;
+            }
+        } else {
+            break;
+        }
+    }
+}
+
+// Remove all milestone elements (those not already replaced)
+void TextProcessor::removeMilestoneElements(std::string& data)
+{
+    removeElementsByPrefixSuffix(data, "<milestone", "/>");
+}
+
+// Remove seg start elements: <seg...>
+void TextProcessor::removeSegStartElements(std::string& data)
+{
+    removeElementsByPrefixSuffix(data, "<seg", ">");
+}
+
+// Remove div section elements: <div type="section"...>
+void TextProcessor::removeDivSectionElements(std::string& data)
+{
+    static const std::string divSection = "<div type=\"section\"";
+    
+    size_t pos = 0;
+    while ((pos = data.find(divSection, pos)) != std::string::npos) {
+        size_t endPos = data.find(">", pos + divSection.size());
+        if (endPos != std::string::npos) {
+            data.erase(pos, endPos + 1 - pos);
+        } else {
+            break;
+        }
+    }
+}
+
+// Expand self-closing elements: <w .../> -> <w ...></w> and <div .../> -> <div ...></div>
+void TextProcessor::expandSelfClosingElements(std::string& data)
+{
+    size_t pos = 0;
+    while (pos < data.size()) {
+        // Find next '<'
+        size_t startPos = data.find('<', pos);
+        if (startPos == std::string::npos) break;
+        
+        // Check if it's <w or <div followed by space
+        bool isW = (data.compare(startPos, 3, "<w ") == 0);
+        bool isDiv = (data.compare(startPos, 5, "<div ") == 0);
+        
+        if (isW || isDiv) {
+            // Find the end of the tag
+            size_t endPos = data.find('>', startPos);
+            if (endPos != std::string::npos && endPos > startPos + 1) {
+                // Check if it's self-closing (ends with />)
+                if (data[endPos - 1] == '/') {
+                    // It's self-closing, expand it
+                    std::string tagName = isW ? "w" : "div";
+                    std::string closingTag = "</" + tagName + ">";
+                    
+                    // Remove the / before >
+                    data.erase(endPos - 1, 1);
+                    endPos--; // Adjust for removed character
+                    
+                    // Insert closing tag after >
+                    data.insert(endPos + 1, closingTag);
+                    
+                    pos = endPos + 1 + closingTag.size();
+                } else {
+                    pos = endPos + 1;
+                }
+            } else {
+                pos = startPos + 1;
+            }
+        } else {
+            pos = startPos + 1;
+        }
+    }
+}
+
+// Remove pb elements with trailing space: "<pb .../> "
+void TextProcessor::removePbElementsWithSpace(std::string& data)
+{
+    static const std::string pbStart = "<pb ";
+    static const std::string pbEnd = "/> ";
+    
+    size_t pos = 0;
+    while ((pos = data.find(pbStart, pos)) != std::string::npos) {
+        size_t endPos = data.find(pbEnd, pos);
+        if (endPos != std::string::npos) {
+            data.erase(pos, endPos + pbEnd.size() - pos);
+        } else {
+            break;
+        }
+    }
 }

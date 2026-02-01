@@ -70,6 +70,15 @@ private:
     std::string replaceSpacesInStrongs(const std::string& text);
     unsigned int findAndReplaceAll(std::string & data, std::string toSearch, std::string replaceStr);
 
+    // String-based replacements for regex operations (performance optimization)
+    void removeElementsByPrefixSuffix(std::string& data, const std::string& prefix, const std::string& suffix);
+    void replaceMilestoneLineElements(std::string& data);
+    void removeMilestoneElements(std::string& data);
+    void removeSegStartElements(std::string& data);
+    void removeDivSectionElements(std::string& data);
+    void expandSelfClosingElements(std::string& data);
+    void removePbElementsWithSpace(std::string& data);
+
     std::string getBookFromReference(std::string reference);
     std::vector<std::string> getBookListFromReferences(std::vector<std::string>& references);
 
