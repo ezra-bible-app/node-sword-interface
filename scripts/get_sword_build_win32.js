@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* This file is part of node-sword-interface.
 
-   Copyright (C) 2019 - 2025 Tobias Klein <contact@tklein.info>
+   Copyright (C) 2019 - 2026 Tobias Klein <contact@tklein.info>
 
    node-sword-interface is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
