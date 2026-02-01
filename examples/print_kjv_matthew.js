@@ -23,19 +23,19 @@ const nsi = new NodeSwordInterface();
 
 function printKjvInfo() {
   // Print some module information
-  var kjv = nsi.getLocalModule('KJV');
+  const kjv = nsi.getLocalModule('KJV');
   console.log(kjv.description);
   console.log(kjv.about);
 }
 
 function printMatthew() {
   // Get the verses of the Gospel of Matthew
-  var verses = nsi.getBookText('KJV', 'Mat');
+  const verses = nsi.getBookText('KJV', 'Mat');
 
   // Do something with the verses
-  for (var i = 0; i < verses.length; i++) {
-    var currentVerse = verses[i];
-    var verseReference = currentVerse.chapter + ':' + currentVerse.verseNr;
+  for (let i = 0; i < verses.length; i++) {
+    const currentVerse = verses[i];
+    const verseReference = currentVerse.chapter + ':' + currentVerse.verseNr;
     console.log(verseReference + ' '  + currentVerse.content);
   }
 }
