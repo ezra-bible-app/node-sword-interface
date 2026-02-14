@@ -138,7 +138,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     this->findAndReplaceAll(filteredText, chapterFilter, "<chapter class=\"sword-markup sword-chapter\"");
     this->findAndReplaceAll(filteredText, lbBeginParagraph, "");
     this->findAndReplaceAll(filteredText, lbEndParagraph, "&nbsp;<div class=\"sword-markup sword-paragraph-end\"><br></div>");
-    this->findAndReplaceAll(filteredText, emptyParagraphElement, "");
+    this->findAndReplaceAll(filteredText, emptyParagraphElement, "<br/><br/>");
     this->findAndReplaceAll(filteredText, lbElementFilter, "<div class=\"sword-markup sword-lb\" ");
     this->findAndReplaceAll(filteredText, lElementFilter, "<div class=\"sword-markup sword-l\" ");
     this->findAndReplaceAll(filteredText, lgElementFilter, "<div class=\"sword-markup sword-lg\" ");
