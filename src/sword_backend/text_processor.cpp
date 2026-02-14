@@ -22,6 +22,10 @@
 #include <regex>
 #include <iomanip>
 
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#endif
+
 // Sword includes
 #include <versekey.h>
 #include <listkey.h>
@@ -66,6 +70,8 @@ string TextProcessor::getFileUrl(const string& nativePath)
     // Build file:// URL (Windows needs extra slash for drive letter)
 #if _WIN32
     return "file:///" + path;
+#elif TARGET_OS_IOS
+    return "app://localhost/_app_file_/" + path;
 #else
     return "file://" + path;
 #endif
