@@ -141,7 +141,7 @@
                     '<!@(pkg-config --libs libcurl)'
                 ],
                 "dependencies": [
-                    "<!(node -p \"require('node-addon-api').gyp\")",
+
                     'sword'
                 ]
             }],
@@ -156,7 +156,7 @@
                     '<!@(./scripts/get_sword_library.sh \"../sword_build/libsword.a\")'
                 ],
                 "dependencies": [
-                    "<!(node -p \"require('node-addon-api').gyp\")",
+
                     'sword'
                 ],
                 'ldflags': [
@@ -175,7 +175,6 @@
                     '<!@(pkg-config --libs libcurl)'
                 ],
                 "dependencies": [
-                    "<!(node -p \"require('node-addon-api').gyp\")",
                     'sword'
                 ]
             }],
