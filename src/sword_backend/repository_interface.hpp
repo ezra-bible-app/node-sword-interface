@@ -91,6 +91,12 @@ public:
             case ModuleType::commentary:
                 moduleTypeFilter = "Commentaries";
                 break;
+            case ModuleType::images:
+                moduleTypeFilter = "Images";
+                break;
+            case ModuleType::maps:
+                moduleTypeFilter = "Maps";
+                break;
             default:
                 moduleTypeFilter = "ANY";
         }

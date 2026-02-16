@@ -375,6 +375,10 @@ ModuleType NodeSwordInterface::getModuleTypeFromString(std::string moduleTypeStr
         return ModuleType::dict;
     } else if (moduleTypeString == "COMMENTARY") {
         return ModuleType::commentary;
+    } else if (moduleTypeString == "IMAGES") {
+        return ModuleType::images;
+    } else if (moduleTypeString == "MAPS") {
+        return ModuleType::maps;
     } else {
         return ModuleType::any;
     }

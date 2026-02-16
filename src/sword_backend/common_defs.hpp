@@ -31,6 +31,8 @@ enum class ModuleType {
     bible,
     dict,
     commentary,
+    images,
+    maps,
     any
 };
 
