@@ -599,16 +599,11 @@ Napi::Value NodeSwordInterface::enableStrongsWithNbsp(const Napi::CallbackInfo& 
 Napi::Value NodeSwordInterface::getRawModuleEntry(const Napi::CallbackInfo& info)
 {
     lockApi();
-    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string);
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::boolean);
     Napi::Env env = info.Env();
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String key = info[1].As<Napi::String>();
-
-    // Optional 3rd parameter - default to false
-    bool processImageUrls = false;
-    if (info.Length() > 2 && info[2].IsBoolean()) {
-        processImageUrls = info[2].As<Napi::Boolean>().Value();
-    }
+    Napi::Boolean processImageUrls = info[2].As<Napi::Boolean>();
 
     ASSERT_SW_MODULE_EXISTS(moduleName);
 
