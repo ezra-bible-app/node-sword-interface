@@ -603,6 +603,13 @@ Napi::Value NodeSwordInterface::getRawModuleEntry(const Napi::CallbackInfo& info
     Napi::Env env = info.Env();
     Napi::String moduleName = info[0].As<Napi::String>();
     Napi::String key = info[1].As<Napi::String>();
+
+    // Optional 3rd parameter - default to false
+    bool processImageUrls = false;
+    if (info.Length() > 2 && info[2].IsBoolean()) {
+        processImageUrls = info[2].As<Napi::Boolean>().Value();
+    }
+
     ASSERT_SW_MODULE_EXISTS(moduleName);
 
     SWModule* swordModule = this->_moduleStore->getLocalModule(moduleName);
@@ -610,7 +617,13 @@ Napi::Value NodeSwordInterface::getRawModuleEntry(const Napi::CallbackInfo& info
     bool entryExisting = swordModule->hasEntry(swordModule->getKey());
 
     if (entryExisting) {
-      Napi::String entryText = Napi::String::New(env, swordModule->getRawEntry());
+      string rawEntry = swordModule->getRawEntry();
+
+      if (processImageUrls) {
+          this->_textProcessor->processImageUrls(rawEntry, swordModule);
+      }
+
+      Napi::String entryText = Napi::String::New(env, rawEntry);
       unlockApi();
       return entryText;
     } else {

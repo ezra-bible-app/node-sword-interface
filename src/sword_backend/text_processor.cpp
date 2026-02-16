@@ -247,11 +247,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     }
 
     // Prefix img src attributes starting with "/" with the module file URL
-    if (!moduleFileUrl.empty()) {
-        static string imgSrcSlash = "src=\"/";
-        string imgSrcReplacement = "src=\"" + moduleFileUrl + "/";
-        this->findAndReplaceAll(filteredText, imgSrcSlash, imgSrcReplacement);
-    }
+    this->processImageUrls(filteredText, moduleFileUrl);
 
     return filteredText;
 }
@@ -610,14 +606,25 @@ string TextProcessor::getBookIntroduction(string moduleName, string bookCode)
         filteredText = regex_replace(filteredText, chapterDivFilter, "");
 
         // Prefix img src attributes starting with "/" with the module file URL
-        if (!moduleFileUrl.empty()) {
-            static string imgSrcSlash = "src=\"/";
-            string imgSrcReplacement = "src=\"" + moduleFileUrl + "/";
-            this->findAndReplaceAll(filteredText, imgSrcSlash, imgSrcReplacement);
-        }
+        this->processImageUrls(filteredText, moduleFileUrl);
     }
 
     return filteredText;
+}
+
+void TextProcessor::processImageUrls(string& text, const string& moduleFileUrl)
+{
+    if (!moduleFileUrl.empty()) {
+        static string imgSrcSlash = "src=\"/";
+        string imgSrcReplacement = "src=\"" + moduleFileUrl + "/";
+        this->findAndReplaceAll(text, imgSrcSlash, imgSrcReplacement);
+    }
+}
+
+void TextProcessor::processImageUrls(string& text, sword::SWModule* module)
+{
+    string moduleFileUrl = this->getFileUrl(this->_moduleStore.getModuleDataPath(module));
+    this->processImageUrls(text, moduleFileUrl);
 }
 
 string TextProcessor::replaceSpacesInStrongs(const string& text)

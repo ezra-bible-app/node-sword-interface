@@ -382,10 +382,11 @@ class NodeSwordInterface {
    *
    * @param {String} moduleCode - The module code of the SWORD module.
    * @param {String} key - The key of the entry.
+   * @param {Boolean} processImageUrls - Whether to pre-process image URLs with platform-specific file paths (Optional, default: false).
    * @return {String}
    */
-  getRawModuleEntry(moduleCode, key) {
-    return this.nativeInterface.getRawModuleEntry(moduleCode, key);
+  getRawModuleEntry(moduleCode, key, processImageUrls = false) {
+    return this.nativeInterface.getRawModuleEntry(moduleCode, key, processImageUrls);
   }
 
   /**

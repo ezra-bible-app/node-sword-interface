@@ -53,7 +53,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
     * [.disableMarkup()](#NodeSwordInterface+disableMarkup)
     * [.enableStrongsWithNbsp()](#NodeSwordInterface+enableStrongsWithNbsp)
-    * [.getRawModuleEntry(moduleCode, key)](#NodeSwordInterface+getRawModuleEntry) ⇒ <code>String</code>
+    * [.getRawModuleEntry(moduleCode, key, processImageUrls)](#NodeSwordInterface+getRawModuleEntry) ⇒ <code>String</code>
     * [.getReferenceText(moduleCode, key)](#NodeSwordInterface+getReferenceText) ⇒ [<code>VerseObject</code>](#VerseObject)
     * [.getChapterText(moduleCode, bookCode, chapter)](#NodeSwordInterface+getChapterText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
     * [.getBookText(moduleCode, bookCode, startVerseNr, verseCount)](#NodeSwordInterface+getBookText) ⇒ [<code>Array.&lt;VerseObject&gt;</code>](#VerseObject)
@@ -346,7 +346,7 @@ Enables rendering of Strongs elements with non-breaking spaces.
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 <a name="NodeSwordInterface+getRawModuleEntry"></a>
 
-### nodeSwordInterface.getRawModuleEntry(moduleCode, key) ⇒ <code>String</code>
+### nodeSwordInterface.getRawModuleEntry(moduleCode, key, processImageUrls) ⇒ <code>String</code>
 Returns the raw text of an entry for the given module and key.
 If no entry exists for the given key the return value is undefined.
 
@@ -356,6 +356,7 @@ If no entry exists for the given key the return value is undefined.
 | --- | --- | --- |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
 | key | <code>String</code> | The key of the entry. |
+| processImageUrls | <code>Boolean</code> | Whether to pre-process image URLs with platform-specific file paths (Optional, default: false). |
 
 <a name="NodeSwordInterface+getReferenceText"></a>
 

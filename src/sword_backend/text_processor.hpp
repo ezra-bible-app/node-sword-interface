@@ -51,6 +51,9 @@ public:
 
     StrongsEntry* getStrongsEntry(std::string key);
 
+    void processImageUrls(std::string& text, const std::string& moduleFileUrl);
+    void processImageUrls(std::string& text, sword::SWModule* module);
+
     bool moduleHasStrongsZeroPrefixes(sword::SWModule* module);
     bool moduleHasStrongsPaddedZeroPrefixes(sword::SWModule* module);
     std::string padStrongsNumber(const std::string strongsNumber);
