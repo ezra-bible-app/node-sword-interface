@@ -870,7 +870,7 @@ void TextProcessor::removePbElementsWithSpace(std::string& data)
     }
 }
 
-string TextProcessor::mapVerseReference(string sourceOsisRef, string sourceModuleName, string targetModuleName)
+string TextProcessor::mapVerseReference(string sourceOsisRef, string sourceModuleName, string targetModuleName, bool allowRange)
 {
     // Look up both modules to read their versification systems
     SWModule* sourceModule = this->_moduleStore.getLocalModule(sourceModuleName);
@@ -926,7 +926,7 @@ string TextProcessor::mapVerseReference(string sourceOsisRef, string sourceModul
     stringstream result;
     result << book << "." << chapter << "." << verse;
 
-    if (verseEnd > verse) {
+    if (allowRange && verseEnd > verse) {
         result << "-" << book << "." << chapter << "." << verseEnd;
     }
 

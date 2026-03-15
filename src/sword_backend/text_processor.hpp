@@ -59,7 +59,7 @@ public:
     std::string padStrongsNumber(const std::string strongsNumber);
     bool isModuleReadable(sword::SWModule* module, std::string key="John 1:1");
 
-    std::string mapVerseReference(std::string sourceOsisRef, std::string sourceModuleName, std::string targetModuleName);
+    std::string mapVerseReference(std::string sourceOsisRef, std::string sourceModuleName, std::string targetModuleName, bool allowRange = false);
 
 private:
     std::vector<Verse> getText(std::string moduleName,

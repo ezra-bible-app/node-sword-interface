@@ -1104,12 +1104,34 @@ Napi::Value NodeSwordInterface::mapVerseReference(const Napi::CallbackInfo& info
 {
     lockApi();
     Napi::Env env = info.Env();
-    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::string);
+    Napi::HandleScope scope(env);
+
+    if (info.Length() < 3 || info.Length() > 4) {
+        Napi::TypeError::New(env, "Expected 3 or 4 parameters!").ThrowAsJavaScriptException();
+        unlockApi();
+        return env.Null();
+    }
+    if (!info[0].IsString() || !info[1].IsString() || !info[2].IsString()) {
+        Napi::TypeError::New(env, "First 3 arguments must be strings!").ThrowAsJavaScriptException();
+        unlockApi();
+        return env.Null();
+    }
+
     Napi::String sourceOsisRef = info[0].As<Napi::String>();
     Napi::String sourceModuleName = info[1].As<Napi::String>();
     Napi::String targetModuleName = info[2].As<Napi::String>();
 
-    string result = this->_textProcessor->mapVerseReference(sourceOsisRef, sourceModuleName, targetModuleName);
+    bool allowRange = false;
+    if (info.Length() == 4) {
+        if (!info[3].IsBoolean()) {
+            Napi::TypeError::New(env, "Boolean expected for argument 4").ThrowAsJavaScriptException();
+            unlockApi();
+            return env.Null();
+        }
+        allowRange = info[3].As<Napi::Boolean>().Value();
+    }
+
+    string result = this->_textProcessor->mapVerseReference(sourceOsisRef, sourceModuleName, targetModuleName, allowRange);
 
     unlockApi();
     return Napi::String::New(env, result);

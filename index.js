@@ -343,6 +343,19 @@ class NodeSwordInterface {
   }
 
   /**
+   * Maps a verse reference from one module's versification to another module's versification.
+   *
+   * @param {String} sourceOsisRef - The OSIS reference in the source module's versification (e.g. "Ps.13.1").
+   * @param {String} sourceModuleName - The module code of the source SWORD module.
+   * @param {String} targetModuleName - The module code of the target SWORD module.
+   * @param {Boolean} [allowRange=false] - If true, may return a verse range (e.g. "Ps.50.1-Ps.50.3"). If false, returns only the first verse of a possible range.
+   * @return {String} The mapped OSIS reference in the target module's versification.
+   */
+  mapVerseReference(sourceOsisRef, sourceModuleName, targetModuleName, allowRange = false) {
+    return this.nativeInterface.mapVerseReference(sourceOsisRef, sourceModuleName, targetModuleName, allowRange);
+  }
+
+  /**
    * Returns the description of a module.
    *
    * @param {String} repositoryName - The name of the repository to search in.

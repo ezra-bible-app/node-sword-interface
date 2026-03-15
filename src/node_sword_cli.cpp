@@ -230,13 +230,21 @@ void test_verse_reference_mapping(ModuleInstaller& module_installer, ModuleStore
     string result2 = text_processor.mapVerseReference("Ps.13.1", "KJV", "RusSynodal");
     cout << "KJV Ps.13.1 -> RusSynodal (Synodal): " << result2 << endl;
 
-    // Test 3: KJV to Vulg (Psalm 51 -> Psalm 50 with range)
+    // Test 3: KJV to Vulg (Psalm 51 -> Psalm 50, default allowRange=false returns first verse only)
     string result3 = text_processor.mapVerseReference("Ps.51.1", "KJV", "VulgClementine");
-    cout << "KJV Ps.51.1 -> VulgClementine (Vulg): " << result3 << endl;
+    cout << "KJV Ps.51.1 -> VulgClementine (Vulg, no range): " << result3 << endl;
+
+    // Test 3b: Same mapping with allowRange=true (returns full range)
+    string result3b = text_processor.mapVerseReference("Ps.51.1", "KJV", "VulgClementine", true);
+    cout << "KJV Ps.51.1 -> VulgClementine (Vulg, with range): " << result3b << endl;
+
+    // Test 3c: Reverse - take the second verse of the range (Ps.50.3) and map back to KJV
+    string result3c = text_processor.mapVerseReference("Ps.50.3", "VulgClementine", "KJV");
+    cout << "VulgClementine Ps.50.3 -> KJV: " << result3c << endl;
 
     // Test 4: Synodal to KJV (reverse mapping)
     string result4 = text_processor.mapVerseReference("Ps.12.2", "RusSynodal", "KJV");
-    cout << "KJV Ps.12.2 -> KJV: " << result4 << endl;
+    cout << "RusSynodal Ps.12.2 -> KJV: " << result4 << endl;
 
     // Test 5: Synodal to Vulg (non-KJV to non-KJV, routes through KJVA hub)
     string result5 = text_processor.mapVerseReference("Ps.50.1", "RusSynodal", "VulgClementine");
@@ -245,9 +253,17 @@ void test_verse_reference_mapping(ModuleInstaller& module_installer, ModuleStore
     // --- NT mapping tests ---
     cout << endl << "--- NT Mapping Tests ---" << endl;
 
-    // Test 6: KJV Rev.13.1 -> Vulg (Vulg splits Rev 12:17 / 13:1 differently: KJV 13:1 = Vulg 12:18)
+    // Test 6: KJV Rev.13.1 -> Vulg (default: first verse only)
     string result6 = text_processor.mapVerseReference("Rev.13.1", "KJV", "VulgClementine");
-    cout << "KJV Rev.13.1 -> VulgClementine (Vulg): " << result6 << endl;
+    cout << "KJV Rev.13.1 -> VulgClementine (Vulg, no range): " << result6 << endl;
+
+    // Test 6b: Same with allowRange=true
+    string result6b = text_processor.mapVerseReference("Rev.13.1", "KJV", "VulgClementine", true);
+    cout << "KJV Rev.13.1 -> VulgClementine (Vulg, with range): " << result6b << endl;
+
+    // Test 6c: Reverse - take the second verse of the range (Rev.12.19) and map back to KJV
+    string result6c = text_processor.mapVerseReference("Rev.12.19", "VulgClementine", "KJV");
+    cout << "VulgClementine Rev.12.19 -> KJV: " << result6c << endl;
 
     // Test 7: KJV Mark.9.1 -> Vulg (Vulg has Mark 9:1 as Mark 8:39)
     string result7 = text_processor.mapVerseReference("Mark.9.1", "KJV", "VulgClementine");
@@ -257,9 +273,17 @@ void test_verse_reference_mapping(ModuleInstaller& module_installer, ModuleStore
     string result8 = text_processor.mapVerseReference("Acts.19.41", "KJV", "VulgClementine");
     cout << "KJV Acts.19.41 -> VulgClementine (Vulg): " << result8 << endl;
 
-    // Test 9: KJV 3John.1.14 -> Synodal (Synodal splits 3 John 1:14 into 14-15)
+    // Test 9: KJV 3John.1.14 -> Synodal (default: first verse only)
     string result9 = text_processor.mapVerseReference("3John.1.14", "KJV", "RusSynodal");
-    cout << "KJV 3John.1.14 -> RusSynodal (Synodal): " << result9 << endl;
+    cout << "KJV 3John.1.14 -> RusSynodal (Synodal, no range): " << result9 << endl;
+
+    // Test 9b: Same with allowRange=true (Synodal splits 3 John 1:14 into 14-15)
+    string result9b = text_processor.mapVerseReference("3John.1.14", "KJV", "RusSynodal", true);
+    cout << "KJV 3John.1.14 -> RusSynodal (Synodal, with range): " << result9b << endl;
+
+    // Test 9c: Reverse - take the second verse of the range (3John.1.15) and map back to KJV
+    string result9c = text_processor.mapVerseReference("3John.1.15", "RusSynodal", "KJV");
+    cout << "RusSynodal 3John.1.15 -> KJV: " << result9c << endl;
 
     // Test 10: KJV Rom.16.25 -> Synodal (Synodal moves the doxology to Rom.14.24)
     string result10 = text_processor.mapVerseReference("Rom.16.25", "KJV", "RusSynodal");

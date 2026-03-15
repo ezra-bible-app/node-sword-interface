@@ -49,6 +49,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [.refreshLocalModules()](#NodeSwordInterface+refreshLocalModules)
     * [.saveModuleUnlockKey(moduleCode, key)](#NodeSwordInterface+saveModuleUnlockKey)
     * [.isModuleReadable(moduleCode)](#NodeSwordInterface+isModuleReadable) ⇒ <code>Boolean</code>
+    * [.mapVerseReference(sourceOsisRef, sourceModuleName, targetModuleName, [allowRange])](#NodeSwordInterface+mapVerseReference) ⇒ <code>String</code>
     * [.getModuleDescription(repositoryName, moduleCode)](#NodeSwordInterface+getModuleDescription) ⇒ <code>String</code>
     * [.enableMarkup()](#NodeSwordInterface+enableMarkup)
     * [.disableMarkup()](#NodeSwordInterface+disableMarkup)
@@ -310,6 +311,21 @@ Checks whether the module is readable.
 | Param | Type | Description |
 | --- | --- | --- |
 | moduleCode | <code>String</code> | The module code of the SWORD module. |
+
+<a name="NodeSwordInterface+mapVerseReference"></a>
+
+### nodeSwordInterface.mapVerseReference(sourceOsisRef, sourceModuleName, targetModuleName, [allowRange]) ⇒ <code>String</code>
+Maps a verse reference from one module's versification to another module's versification.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: <code>String</code> - The mapped OSIS reference in the target module's versification.  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| sourceOsisRef | <code>String</code> |  | The OSIS reference in the source module's versification (e.g. "Ps.13.1"). |
+| sourceModuleName | <code>String</code> |  | The module code of the source SWORD module. |
+| targetModuleName | <code>String</code> |  | The module code of the target SWORD module. |
+| [allowRange] | <code>Boolean</code> | <code>false</code> | If true, may return a verse range (e.g. "Ps.50.1-Ps.50.3"). If false, returns only the first verse of a possible range. |
 
 <a name="NodeSwordInterface+getModuleDescription"></a>
 
