@@ -98,6 +98,8 @@ private:
     Napi::Value isModuleReadable(const Napi::CallbackInfo& info);
     Napi::Value refreshLocalModules(const Napi::CallbackInfo& info);
 
+    Napi::Value mapVerseReference(const Napi::CallbackInfo& info);
+
     Napi::Value getSwordTranslation(const Napi::CallbackInfo& info);
     Napi::Value getBookAbbreviation(const Napi::CallbackInfo& info);
     Napi::Value getSwordVersion(const Napi::CallbackInfo& info);

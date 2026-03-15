@@ -114,6 +114,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod("refreshLocalModules", &NodeSwordInterface::refreshLocalModules),
         InstanceMethod("saveModuleUnlockKey", &NodeSwordInterface::saveModuleUnlockKey),
         InstanceMethod("isModuleReadable", &NodeSwordInterface::isModuleReadable),
+        InstanceMethod("mapVerseReference", &NodeSwordInterface::mapVerseReference),
         InstanceMethod("getSwordTranslation", &NodeSwordInterface::getSwordTranslation),
         InstanceMethod("getBookAbbreviation", &NodeSwordInterface::getBookAbbreviation),
         InstanceMethod("getSwordVersion", &NodeSwordInterface::getSwordVersion),
@@ -1097,6 +1098,21 @@ Napi::Value NodeSwordInterface::getSwordPath(const Napi::CallbackInfo& info)
     Napi::String swordPath = Napi::String::New(env, fsHelper.getUserSwordDir());
     unlockApi();
     return swordPath;
+}
+
+Napi::Value NodeSwordInterface::mapVerseReference(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    Napi::Env env = info.Env();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::string, ParamType::string);
+    Napi::String sourceOsisRef = info[0].As<Napi::String>();
+    Napi::String sourceModuleName = info[1].As<Napi::String>();
+    Napi::String targetModuleName = info[2].As<Napi::String>();
+
+    string result = this->_textProcessor->mapVerseReference(sourceOsisRef, sourceModuleName, targetModuleName);
+
+    unlockApi();
+    return Napi::String::New(env, result);
 }
 
 Napi::Value NodeSwordInterface::unTarGZ(const Napi::CallbackInfo& info)

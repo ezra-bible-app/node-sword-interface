@@ -352,11 +352,11 @@ If no entry exists for the given key the return value is undefined.
 
 **Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| moduleCode | <code>String</code> | The module code of the SWORD module. |
-| key | <code>String</code> | The key of the entry. |
-| processImageUrls | <code>Boolean</code> | Whether to pre-process image URLs with platform-specific file paths (Optional, default: false). |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| moduleCode | <code>String</code> |  | The module code of the SWORD module. |
+| key | <code>String</code> |  | The key of the entry. |
+| processImageUrls | <code>Boolean</code> | <code>false</code> | Whether to pre-process image URLs with platform-specific file paths (Optional, default: false). |
 
 <a name="NodeSwordInterface+getReferenceText"></a>
 

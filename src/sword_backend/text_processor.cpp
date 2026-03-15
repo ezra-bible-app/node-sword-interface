@@ -31,6 +31,7 @@
 #include <listkey.h>
 #include <swmodule.h>
 #include <swkey.h>
+#include <versificationmgr.h>
 
 // Own includes
 #include "text_processor.hpp"
@@ -867,4 +868,67 @@ void TextProcessor::removePbElementsWithSpace(std::string& data)
             break;
         }
     }
+}
+
+string TextProcessor::mapVerseReference(string sourceOsisRef, string sourceModuleName, string targetModuleName)
+{
+    // Look up both modules to read their versification systems
+    SWModule* sourceModule = this->_moduleStore.getLocalModule(sourceModuleName);
+    SWModule* targetModule = this->_moduleStore.getLocalModule(targetModuleName);
+
+    // Determine versification system names (default to KJV if not specified)
+    string sourceV11n = "KJV";
+    string targetV11n = "KJV";
+
+    if (sourceModule != 0) {
+        const char* v11nEntry = sourceModule->getConfigEntry("Versification");
+        if (v11nEntry != 0) {
+            sourceV11n = v11nEntry;
+        }
+    }
+
+    if (targetModule != 0) {
+        const char* v11nEntry = targetModule->getConfigEntry("Versification");
+        if (v11nEntry != 0) {
+            targetV11n = v11nEntry;
+        }
+    }
+
+    // If both modules use the same versification, no mapping is needed
+    if (sourceV11n == targetV11n) {
+        return sourceOsisRef;
+    }
+
+    // Get the versification systems from VersificationMgr
+    VersificationMgr* vMgr = VersificationMgr::getSystemVersificationMgr();
+    const VersificationMgr::System* sourceSys = vMgr->getVersificationSystem(sourceV11n.c_str());
+    const VersificationMgr::System* targetSys = vMgr->getVersificationSystem(targetV11n.c_str());
+
+    if (sourceSys == 0 || targetSys == 0) {
+        return sourceOsisRef;
+    }
+
+    // Parse the source OSIS reference using a VerseKey with the source versification
+    VerseKey sourceKey;
+    sourceKey.setVersificationSystem(sourceV11n.c_str());
+    sourceKey.setText(sourceOsisRef.c_str());
+
+    // Extract the components for translateVerse
+    const char* book = sourceKey.getOSISBookName();
+    int chapter = sourceKey.getChapter();
+    int verse = sourceKey.getVerse();
+    int verseEnd = verse;
+
+    // Perform the mapping
+    sourceSys->translateVerse(targetSys, &book, &chapter, &verse, &verseEnd);
+
+    // Build the mapped OSIS reference
+    stringstream result;
+    result << book << "." << chapter << "." << verse;
+
+    if (verseEnd > verse) {
+        result << "-" << book << "." << chapter << "." << verseEnd;
+    }
+
+    return result.str();
 }

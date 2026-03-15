@@ -191,6 +191,87 @@ void get_strongs_entry(TextProcessor& text_processor)
     }
 }
 
+void install_if_missing(ModuleInstaller& module_installer, ModuleStore& module_store, const string& repo, const string& moduleName)
+{
+    SWModule* m = module_store.getLocalModule(moduleName);
+    if (m == 0) {
+        cout << "Installing module " << moduleName << " from " << repo << " ..." << endl;
+        int error = module_installer.installModule(repo, moduleName);
+        if (error) {
+            cout << "  ERROR: Failed to install " << moduleName << endl;
+        } else {
+            cout << "  Successfully installed " << moduleName << endl;
+            module_store.refreshMgr();
+        }
+    } else {
+        cout << "Module " << moduleName << " already installed." << endl;
+    }
+}
+
+void test_verse_reference_mapping(ModuleInstaller& module_installer, ModuleStore& module_store, TextProcessor& text_processor)
+{
+    cout << "=== Verse Reference Mapping Test ===" << endl;
+
+    // Install required modules for the tests
+    // KJV uses KJV versification
+    install_if_missing(module_installer, module_store, "CrossWire", "KJV");
+    // RusSynodal uses Synodal versification
+    install_if_missing(module_installer, module_store, "CrossWire", "RusSynodal");
+    // VulgClementine uses Vulg versification
+    install_if_missing(module_installer, module_store, "CrossWire", "VulgClementine");
+
+    cout << endl;
+
+    // Test 1: Same versification (should return unchanged)
+    string result1 = text_processor.mapVerseReference("Gen.1.1", "KJV", "KJV");
+    cout << "KJV Gen.1.1 -> KJV: " << result1 << endl;
+
+    // Test 2: KJV to Synodal (Psalm numbering and superscription shift)
+    string result2 = text_processor.mapVerseReference("Ps.13.1", "KJV", "RusSynodal");
+    cout << "KJV Ps.13.1 -> RusSynodal (Synodal): " << result2 << endl;
+
+    // Test 3: KJV to Vulg (Psalm 51 -> Psalm 50 with range)
+    string result3 = text_processor.mapVerseReference("Ps.51.1", "KJV", "VulgClementine");
+    cout << "KJV Ps.51.1 -> VulgClementine (Vulg): " << result3 << endl;
+
+    // Test 4: Synodal to KJV (reverse mapping)
+    string result4 = text_processor.mapVerseReference("Ps.12.2", "RusSynodal", "KJV");
+    cout << "KJV Ps.12.2 -> KJV: " << result4 << endl;
+
+    // Test 5: Synodal to Vulg (non-KJV to non-KJV, routes through KJVA hub)
+    string result5 = text_processor.mapVerseReference("Ps.50.1", "RusSynodal", "VulgClementine");
+    cout << "RusSynodal Ps.50.1 -> VulgClementine (Vulg): " << result5 << endl;
+
+    // --- NT mapping tests ---
+    cout << endl << "--- NT Mapping Tests ---" << endl;
+
+    // Test 6: KJV Rev.13.1 -> Vulg (Vulg splits Rev 12:17 / 13:1 differently: KJV 13:1 = Vulg 12:18)
+    string result6 = text_processor.mapVerseReference("Rev.13.1", "KJV", "VulgClementine");
+    cout << "KJV Rev.13.1 -> VulgClementine (Vulg): " << result6 << endl;
+
+    // Test 7: KJV Mark.9.1 -> Vulg (Vulg has Mark 9:1 as Mark 8:39)
+    string result7 = text_processor.mapVerseReference("Mark.9.1", "KJV", "VulgClementine");
+    cout << "KJV Mark.9.1 -> VulgClementine (Vulg): " << result7 << endl;
+
+    // Test 8: KJV Acts.19.41 -> Vulg (Vulg merges Acts 19:40-41)
+    string result8 = text_processor.mapVerseReference("Acts.19.41", "KJV", "VulgClementine");
+    cout << "KJV Acts.19.41 -> VulgClementine (Vulg): " << result8 << endl;
+
+    // Test 9: KJV 3John.1.14 -> Synodal (Synodal splits 3 John 1:14 into 14-15)
+    string result9 = text_processor.mapVerseReference("3John.1.14", "KJV", "RusSynodal");
+    cout << "KJV 3John.1.14 -> RusSynodal (Synodal): " << result9 << endl;
+
+    // Test 10: KJV Rom.16.25 -> Synodal (Synodal moves the doxology to Rom.14.24)
+    string result10 = text_processor.mapVerseReference("Rom.16.25", "KJV", "RusSynodal");
+    cout << "KJV Rom.16.25 -> RusSynodal (Synodal): " << result10 << endl;
+
+    // Test 11: KJV Mark.4.41 -> Vulg (Vulg merges Mark 4:40-41 into one verse)
+    string result11 = text_processor.mapVerseReference("Mark.4.41", "KJV", "VulgClementine");
+    cout << "KJV Mark.4.41 -> VulgClementine (Vulg): " << result11 << endl;
+
+    cout << "=== End of Mapping Test ===" << endl;
+}
+
 int main(int argc, char** argv)
 {
     ModuleStore moduleStore;
@@ -218,7 +299,9 @@ int main(int argc, char** argv)
 
     /*show_repos(repoInterface);*/
 
-    show_modules(repoInterface);
+    //show_modules(repoInterface);
+
+    test_verse_reference_mapping(moduleInstaller, moduleStore, textProcessor);
 
     /*int error = moduleInstaller.installModule("CrossWire", "UKJV");
 
@@ -245,7 +328,7 @@ int main(int argc, char** argv)
 
     //get_reference_text(moduleStore, textProcessor);
 
-    get_book_intro(textProcessor);
+    //get_book_intro(textProcessor);
 
     //get_book_list(moduleHelper);
 
