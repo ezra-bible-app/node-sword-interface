@@ -109,6 +109,13 @@ int RepositoryInterface::refreshRemoteSources(bool force, map<string, bool>* rep
             return -1;
         }
 
+        // Force eBible.org to use HTTPS instead of FTP
+        InstallSource* eBibleSource = this->getRemoteSource("eBible.org");
+        if (eBibleSource != 0) {
+            eBibleSource->type = "HTTPS";
+            eBibleSource->source = "ebible.org";
+        }
+
         vector<string> sourceNames = this->getRepoNames();
         this->_remoteSourceCount = sourceNames.size();
 
