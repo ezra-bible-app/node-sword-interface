@@ -133,3 +133,12 @@ else
 fi
 
 make -j8 sword_static
+
+# For iOS: remove SWORD's bundled minizip objects from libsword.a to avoid
+# duplicate symbols when -all_load is used in the dylib link step.
+if [ "$1" = "--ios" ] ; then
+  echo "-- Stripping SWORD's bundled minizip objects from libsword.a"
+  ar -t libsword.a | grep -iE 'unzip|ioapi' | while IFS= read -r obj; do
+    ar -d libsword.a "$obj"
+  done
+fi

@@ -100,12 +100,6 @@
         "conditions":[
             ["is_ios==1", {
                 "type": "shared_library",
-                # Exclude unzip sources from iOS build, because these symbols otherwise
-                # get duplicated with the unzip symbols in the static libsword.a.
-                "sources!": [
-                    "src/lib/unzip/unzip.c",
-                    "src/lib/unzip/ioapi.c"
-                ],
                 'include_dirs': [
                     "<(module_root_dir)/src/sword_backend",
                     "<(module_root_dir)/src/lib",
