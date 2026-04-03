@@ -29,6 +29,10 @@
 #include <fstream>
 #endif
 
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#endif
+
 #include <regex>
 
 // Own includes
@@ -220,7 +224,17 @@ vector<string> RepositoryInterface::getRepoNames()
         if (source != "STEP Bible") {
         #endif
 
+        #if TARGET_OS_IOS
+        // eBible.org repository is excluded on iOS / iPadOS, because we could not reliably
+        // get it to a working state on these platforms (as of 2026-04-03).
+        if (source != "eBible.org") {
+        #endif
+
         sourceNames.push_back(source);
+
+        #if TARGET_OS_IOS
+        }
+        #endif
 
         #if defined(__ANDROID__) || defined(__APPLE__)
         }
