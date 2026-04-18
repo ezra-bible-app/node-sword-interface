@@ -153,9 +153,15 @@ int RepositoryInterface::refreshIndividualRemoteSource(string remoteSourceName, 
 {
     //cout << "Refreshing source " << remoteSourceName << endl << flush;
     InstallSource* source = this->getRemoteSource(remoteSourceName);
-    int result = this->_installMgr->refreshRemoteSource(source);
-    if (result != 0) {
-        cerr << "Failed to refresh source " << remoteSourceName << endl << flush;
+    int result = -1;
+
+    if (source == nullptr) {
+        cerr << "refreshIndividualRemoteSource: Remote source '" << remoteSourceName << "' does not exist - skipping!" << endl << flush;
+    } else {
+        result = this->_installMgr->refreshRemoteSource(source);
+        if (result != 0) {
+            cerr << "Failed to refresh source " << remoteSourceName << endl << flush;
+        }
     }
 
     remoteSourceUpdateMutex.lock();
