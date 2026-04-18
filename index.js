@@ -152,6 +152,20 @@ class NodeSwordInterface {
   }
 
   /**
+   * Refreshes the repository configuration for a single repository.
+   *
+   * @param {String} repoName - The name of the repository to refresh.
+   * @return {Promise} - Resolves with a boolean indicating whether the update was successful.
+   */
+  async updateSingleRepositoryConfig(repoName) {
+    return new Promise((resolve, reject) => {
+      this.nativeInterface.updateSingleRepositoryConfig(repoName, function(isSuccessful) {
+        resolve(isSuccessful);
+      });
+    });
+  }
+
+  /**
    * Returns the names of all available SWORD repositories.
    *
    * @return {String[]} An array of strings with the names of the available SWORD repositories.

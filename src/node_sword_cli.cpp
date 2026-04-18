@@ -208,6 +208,20 @@ void install_if_missing(ModuleInstaller& module_installer, ModuleStore& module_s
     }
 }
 
+void test_update_single_repository_config(RepositoryInterface& repoInterface)
+{
+    string repo = "CrossWire";
+    cout << "=== Update Single Repository Config Test ===" << endl;
+    cout << "Refreshing remote source: " << repo << " ..." << endl;
+    int ret = repoInterface.refreshIndividualRemoteSource(repo, nullptr);
+    if (ret == 0) {
+        cout << "Successfully refreshed " << repo << endl;
+    } else {
+        cout << "ERROR: Failed to refresh " << repo << " (return code: " << ret << ")" << endl;
+    }
+    cout << "=== End of Update Single Repository Config Test ===" << endl;
+}
+
 void test_verse_reference_mapping(ModuleInstaller& module_installer, ModuleStore& module_store, TextProcessor& text_processor)
 {
     cout << "=== Verse Reference Mapping Test ===" << endl;
@@ -325,7 +339,9 @@ int main(int argc, char** argv)
 
     //show_modules(repoInterface);
 
-    test_verse_reference_mapping(moduleInstaller, moduleStore, textProcessor);
+    test_update_single_repository_config(repoInterface);
+
+    //test_verse_reference_mapping(moduleInstaller, moduleStore, textProcessor);
 
     /*int error = moduleInstaller.installModule("CrossWire", "UKJV");
 

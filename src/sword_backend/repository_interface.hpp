@@ -52,6 +52,7 @@ public:
 
     int refreshRepositoryConfig();
     int refreshRemoteSources(bool force=false, std::map<std::string, bool>* repoUpdateStatus=0, std::function<void(unsigned int progress)>* progressCallback=0);
+    int refreshIndividualRemoteSource(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
 
     std::vector<std::string> getRepoNames();
     sword::SWModule* getRepoModule(std::string moduleName, std::string repoName="all");
@@ -105,7 +106,6 @@ public:
     }
 
 private:
-    int refreshIndividualRemoteSource(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
     std::future<int> getRemoteSourceRefreshFuture(std::string remoteSourceName, std::function<void(unsigned int progress)>* progressCallback=0);
 
     int getRepoCount();

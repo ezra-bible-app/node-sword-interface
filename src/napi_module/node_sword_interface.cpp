@@ -75,6 +75,7 @@ Napi::Object NodeSwordInterface::Init(Napi::Env env, Napi::Object exports)
 
     Napi::Function func = DefineClass(env, "NodeSwordInterface", {
         InstanceMethod("updateRepositoryConfig", &NodeSwordInterface::updateRepositoryConfig),
+        InstanceMethod("updateSingleRepositoryConfig", &NodeSwordInterface::updateSingleRepositoryConfig),
         InstanceMethod("repositoryConfigExisting", &NodeSwordInterface::repositoryConfigExisting),
         InstanceMethod("getRepoNames", &NodeSwordInterface::getRepoNames),
         InstanceMethod("getAllRepoModules", &NodeSwordInterface::getAllRepoModules),
@@ -264,6 +265,19 @@ Napi::Value NodeSwordInterface::updateRepositoryConfig(const Napi::CallbackInfo&
                                                                         progressCallback,
                                                                         callback,
                                                                         force.Value());
+    worker->Queue();
+    return info.Env().Undefined();
+}
+
+Napi::Value NodeSwordInterface::updateSingleRepositoryConfig(const Napi::CallbackInfo& info)
+{
+    lockApi();
+    INIT_SCOPE_AND_VALIDATE(ParamType::string, ParamType::function);
+    Napi::String repoName = info[0].As<Napi::String>();
+    Napi::Function callback = info[1].As<Napi::Function>();
+    RefreshSingleRemoteSourceWorker* worker = new RefreshSingleRemoteSourceWorker(*(this->_repoInterface),
+                                                                                  callback,
+                                                                                  string(repoName));
     worker->Queue();
     return info.Env().Undefined();
 }

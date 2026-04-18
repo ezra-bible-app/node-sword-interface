@@ -141,6 +141,30 @@ private:
     map<string, bool> _repoUpdateStatus;
 };
 
+class RefreshSingleRemoteSourceWorker : public BaseWorker {
+public:
+    RefreshSingleRemoteSourceWorker(RepositoryInterface& repoInterface,
+                                    const Napi::Function& callback,
+                                    std::string repoName)
+        : BaseWorker(repoInterface, callback), _repoName(repoName) {}
+
+    void Execute(const ExecutionProgress& progress) {
+        int ret = this->_repoInterface.refreshIndividualRemoteSource(this->_repoName, nullptr);
+        this->_isSuccessful = (ret == 0);
+        unlockApi();
+    }
+
+    void OnOK() {
+        Napi::HandleScope scope(this->Env());
+        Napi::Boolean isSuccessful = Napi::Boolean::New(this->Env(), this->_isSuccessful);
+        Callback().Call({ isSuccessful });
+    }
+
+private:
+    bool _isSuccessful;
+    std::string _repoName;
+};
+
 class UninstallModuleWorker : public BaseWorker {
 public:
     UninstallModuleWorker(RepositoryInterface& repoInterface, ModuleInstaller& moduleInstaller, const Napi::Function& callback, std::string moduleName)
