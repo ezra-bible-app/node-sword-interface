@@ -34,6 +34,7 @@ This is the main class of node-sword-interface and it provides a set of static f
     * [new NodeSwordInterface(customHomeDir, localesBasePath, timeoutMillis)](#new_NodeSwordInterface_new)
     * [.repositoryConfigExisting()](#NodeSwordInterface+repositoryConfigExisting) ⇒ <code>Boolean</code>
     * [.updateRepositoryConfig(progressCB)](#NodeSwordInterface+updateRepositoryConfig) ⇒ <code>Promise</code>
+    * [.updateSingleRepositoryConfig(repoName)](#NodeSwordInterface+updateSingleRepositoryConfig) ⇒ <code>Promise</code>
     * [.getRepoNames()](#NodeSwordInterface+getRepoNames) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getRepoLanguages(repositoryName, moduleType)](#NodeSwordInterface+getRepoLanguages) ⇒ <code>Array.&lt;String&gt;</code>
     * [.getAllRepoModules(repositoryName, moduleType)](#NodeSwordInterface+getAllRepoModules) ⇒ [<code>Array.&lt;ModuleObject&gt;</code>](#ModuleObject)
@@ -123,6 +124,18 @@ entry for each of the repositories of the master repo list as well as one result
 | Param | Type | Description |
 | --- | --- | --- |
 | progressCB | <code>function</code> | Optional callback function that is called on progress events. |
+
+<a name="NodeSwordInterface+updateSingleRepositoryConfig"></a>
+
+### nodeSwordInterface.updateSingleRepositoryConfig(repoName) ⇒ <code>Promise</code>
+Refreshes the repository configuration for a single repository.
+
+**Kind**: instance method of [<code>NodeSwordInterface</code>](#NodeSwordInterface)  
+**Returns**: <code>Promise</code> - - Resolves with a boolean indicating whether the update was successful.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| repoName | <code>String</code> | The name of the repository to refresh. |
 
 <a name="NodeSwordInterface+getRepoNames"></a>
 
