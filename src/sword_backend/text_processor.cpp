@@ -78,7 +78,7 @@ string TextProcessor::getFileUrl(const string& nativePath)
 #endif
 }
 
-string TextProcessor::getFilteredText(const string& text, int chapter, int verseNr, bool hasStrongs, bool hasInconsistentClosingEndDivs, const string& moduleFileUrl)
+string TextProcessor::getFilteredText(const string& text, int chapter, int verseNr, bool hasStrongs, bool hasInconsistentClosingEndDivs, const string& moduleFileUrl, bool hasThMLVariants)
 {
     static string chapterFilter = "<chapter";
 
@@ -208,6 +208,9 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     this->findAndReplaceAll(filteredText, hiSuper, "<hi class=\"super");
 
     this->expandSelfClosingElements(filteredText);
+    if (hasThMLVariants) {
+        this->normalizeVariantClasses(filteredText);
+    }
 
     this->findAndReplaceAll(filteredText, fullStopWithoutSpace, ". <");
     this->findAndReplaceAll(filteredText, questionMarkWithoutSpace, "? <");
@@ -253,7 +256,7 @@ string TextProcessor::getFilteredText(const string& text, int chapter, int verse
     return filteredText;
 }
 
-string TextProcessor::getCurrentChapterHeading(sword::SWModule* module, const string& moduleFileUrl)
+string TextProcessor::getCurrentChapterHeading(sword::SWModule* module, const string& moduleFileUrl, bool hasThMLVariants)
 {
     string currentModuleName = string(module->getName());
     string chapterHeading = "";
@@ -293,7 +296,7 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module, const st
             // Therefore we do not render chapter headings for the first verse of the chapter in this case.
             chapterHeading = "";
         } else {
-            chapterHeading = this->getFilteredText(chapterHeading, currentChapter, currentVerseNr, false, false, moduleFileUrl);
+            chapterHeading = this->getFilteredText(chapterHeading, currentChapter, currentVerseNr, false, false, moduleFileUrl, hasThMLVariants);
         }
     }
 
@@ -303,10 +306,11 @@ string TextProcessor::getCurrentChapterHeading(sword::SWModule* module, const st
 string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool hasInconsistentClosingEndDivs, bool forceNoMarkup)
 {
     string moduleFileUrl = this->getFileUrl(this->_moduleStore.getModuleDataPath(module));
-    return this->getCurrentVerseText(module, hasStrongs, hasInconsistentClosingEndDivs, forceNoMarkup, moduleFileUrl);
+    bool hasThMLVariants = this->_moduleHelper.moduleHasGlobalOption(module, "ThMLVariants");
+    return this->getCurrentVerseText(module, hasStrongs, hasInconsistentClosingEndDivs, forceNoMarkup, moduleFileUrl, hasThMLVariants);
 }
 
-string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool hasInconsistentClosingEndDivs, bool forceNoMarkup, const string& moduleFileUrl)
+string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStrongs, bool hasInconsistentClosingEndDivs, bool forceNoMarkup, const string& moduleFileUrl, bool hasThMLVariants)
 {
     string verseText;
     string filteredText;
@@ -321,7 +325,7 @@ string TextProcessor::getCurrentVerseText(sword::SWModule* module, bool hasStron
         filteredText = verseText;
 
         if (!this->_rawMarkupEnabled) {
-            filteredText = this->getFilteredText(verseText, currentChapter, currentVerseNr, hasStrongs, hasInconsistentClosingEndDivs, moduleFileUrl);
+            filteredText = this->getFilteredText(verseText, currentChapter, currentVerseNr, hasStrongs, hasInconsistentClosingEndDivs, moduleFileUrl, hasThMLVariants);
         }
     } else {
         verseText = string(module->stripText());
@@ -403,6 +407,7 @@ vector<Verse> TextProcessor::getVersesFromReferences(string moduleName, vector<s
     map<string, int> absoluteVerseNumbers = this->_moduleHelper.getAbsoluteVerseNumberMap(module, bookList);
     bool moduleMarkupIsBroken = this->_moduleHelper.isBrokenMarkupModule(moduleName);
     bool hasInconsistentClosingEndDivs = this->_moduleHelper.isInconsistentClosingEndDivModule(moduleName);
+    bool hasThMLVariants = this->_moduleHelper.moduleHasGlobalOption(module, "ThMLVariants");
 
     // Compute file URL once for the entire module
     string moduleFileUrl = this->getFileUrl(this->_moduleStore.getModuleDataPath(module));
@@ -415,7 +420,7 @@ vector<Verse> TextProcessor::getVersesFromReferences(string moduleName, vector<s
         bool entryExisting = module->hasEntry(module->getKey());
 
         if (entryExisting) {
-          currentVerseText = this->getCurrentVerseText(module, false, hasInconsistentClosingEndDivs, moduleMarkupIsBroken, moduleFileUrl);
+                    currentVerseText = this->getCurrentVerseText(module, false, hasInconsistentClosingEndDivs, moduleMarkupIsBroken, moduleFileUrl, hasThMLVariants);
         }
 
         Verse currentVerse;
@@ -462,6 +467,7 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
         cerr << "getLocalModule returned zero pointer for " << moduleName << endl;
     } else {
         bool hasStrongs = this->_moduleHelper.moduleHasGlobalOption(module, "Strongs");
+        bool hasThMLVariants = this->_moduleHelper.moduleHasGlobalOption(module, "ThMLVariants");
 
         // Compute file URL once for the entire module
         string moduleFileUrl = this->getFileUrl(this->_moduleStore.getModuleDataPath(module));
@@ -502,7 +508,7 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
             // and if the module markup is not broken
             // and if the requested verse count is more than one or the default (-1 / all verses).
             if (firstVerseInChapter && !moduleMarkupIsBroken && (verseCount > 1 || verseCount == -1)) {
-                string chapterHeading = this->getCurrentChapterHeading(module, moduleFileUrl);
+                string chapterHeading = this->getCurrentChapterHeading(module, moduleFileUrl, hasThMLVariants);
                 verseText += chapterHeading;
             }
             
@@ -513,7 +519,8 @@ vector<Verse> TextProcessor::getText(string moduleName, string key, QueryLimit q
                                                    // Note that if markup is broken this will enforce
                                                    // the usage of the "stripped" / non-markup variant of the text
                                                    moduleMarkupIsBroken,
-                                                   moduleFileUrl);
+                                                   moduleFileUrl,
+                                                   hasThMLVariants);
 
             // If the current verse does not have any content and if it is the first verse in this book
             // we assume that the book is not existing.
@@ -850,6 +857,46 @@ void TextProcessor::expandSelfClosingElements(std::string& data)
         } else {
             pos = startPos + 1;
         }
+    }
+}
+
+// Normalize numeric classes used by variant readings to semantic class names.
+void TextProcessor::normalizeVariantClasses(std::string& data)
+{
+    static const std::string divStart = "<div ";
+    static const std::string tagEnd = ">";
+    static const std::string variantType = "type=\"variant\"";
+    static const std::string classOne = "class=\"1\"";
+    static const std::string classTwo = "class=\"2\"";
+    static const std::string primaryClass = "class=\"primary-variant\"";
+    static const std::string secondaryClass = "class=\"secondary-variant\"";
+
+    size_t pos = 0;
+    while ((pos = data.find(divStart, pos)) != std::string::npos) {
+        size_t endPos = data.find(tagEnd, pos + divStart.size());
+        if (endPos == std::string::npos) {
+            break;
+        }
+
+        const size_t variantPos = data.find(variantType, pos);
+        if (variantPos == std::string::npos || variantPos > endPos) {
+            pos = endPos + 1;
+            continue;
+        }
+
+        size_t classPos = data.find(classOne, pos);
+        if (classPos != std::string::npos && classPos <= endPos) {
+            data.replace(classPos, classOne.size(), primaryClass);
+            endPos += primaryClass.size() - classOne.size();
+        }
+
+        classPos = data.find(classTwo, pos);
+        if (classPos != std::string::npos && classPos <= endPos) {
+            data.replace(classPos, classTwo.size(), secondaryClass);
+            endPos += secondaryClass.size() - classTwo.size();
+        }
+
+        pos = endPos + 1;
     }
 }
 
