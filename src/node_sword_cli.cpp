@@ -310,6 +310,37 @@ void test_verse_reference_mapping(ModuleInstaller& module_installer, ModuleStore
     cout << "=== End of Mapping Test ===" << endl;
 }
 
+int test_net_1sam_1_5(ModuleInstaller& module_installer, ModuleStore& module_store, TextProcessor& text_processor)
+{
+    cout << "=== NET Passage Test (1Sam.1.5) ===" << endl;
+
+    install_if_missing(module_installer, module_store, "Xiphos", "NET");
+
+    SWModule* netModule = module_store.getLocalModule("NET");
+    if (netModule == 0) {
+        cout << "ERROR: NET module is unavailable after install attempt." << endl;
+        return 1;
+    }
+
+    text_processor.enableMarkup();
+    Verse verse = text_processor.getReferenceText("NET", "1Sam.1.5");
+
+    cout << "Requested Reference: 1Sam.1.5" << endl;
+    cout << "Resolved Reference: " << verse.reference << endl;
+
+    if (verse.content.empty()) {
+        cout << "ERROR: Empty verse content for NET 1Sam.1.5" << endl;
+        return 2;
+    }
+
+    cout << "Verse Content Start" << endl;
+    cout << verse.content << endl;
+    cout << "Verse Content End" << endl;
+    cout << "=== End NET Passage Test ===" << endl;
+
+    return 0;
+}
+
 int main(int argc, char** argv)
 {
     ModuleStore moduleStore;
@@ -339,7 +370,10 @@ int main(int argc, char** argv)
 
     //show_modules(repoInterface);
 
-    test_update_single_repository_config(repoInterface);
+    int result = test_net_1sam_1_5(moduleInstaller, moduleStore, textProcessor);
+    if (result != 0) {
+        return result;
+    }
 
     //test_verse_reference_mapping(moduleInstaller, moduleStore, textProcessor);
 
