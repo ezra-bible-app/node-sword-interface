@@ -101,7 +101,8 @@ void NapiSwordHelper::swordModuleToNapiObject(const Napi::Env& env, SWModule* sw
         std::string configInstallSize = string(swModule->getConfigEntry("InstallSize"));
 
         int moduleSize = -1;
-        if (configInstallSize.length() > 0) {
+        if (configInstallSize.length() > 0 &&
+            configInstallSize.find_first_not_of("0123456789") == std::string::npos) {
             moduleSize = std::stoi(configInstallSize);
         }
 
@@ -156,12 +157,18 @@ void NapiSwordHelper::verseTextToNapiObject(string moduleCode, Verse rawVerse, N
     string verseText = rawVerse.content;
 
     vector<string> splittedReference = StringHelper::split(reference, " ");
-    string book = splittedReference[0];
-    string chapterVerseReference = splittedReference[1];
+    string book = splittedReference.size() > 0 ? splittedReference[0] : "";
+    string chapterVerseReference = splittedReference.size() > 1 ? splittedReference[1] : "";
 
     vector<string> splittedChapterVerseReference = StringHelper::split(chapterVerseReference, ":");
-    int chapter = std::stoi(splittedChapterVerseReference[0]);
-    int verseNr = std::stoi(splittedChapterVerseReference[1]);
+    int chapter = (splittedChapterVerseReference.size() > 0 &&
+                   splittedChapterVerseReference[0].find_first_not_of("0123456789") == std::string::npos &&
+                   !splittedChapterVerseReference[0].empty())
+                  ? std::stoi(splittedChapterVerseReference[0]) : 0;
+    int verseNr = (splittedChapterVerseReference.size() > 1 &&
+                   splittedChapterVerseReference[1].find_first_not_of("0123456789") == std::string::npos &&
+                   !splittedChapterVerseReference[1].empty())
+                  ? std::stoi(splittedChapterVerseReference[1]) : 0;
 
     object["moduleCode"] = moduleCode;
     object["bibleBookShortTitle"] = book;
