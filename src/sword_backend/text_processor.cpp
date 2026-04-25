@@ -689,8 +689,14 @@ string TextProcessor::padStrongsNumber(const string strongsNumber) {
         return strongsNumber;
     }
 
+    // Skip any leading non-digit characters (e.g. 'H', 'G' prefixes)
+    size_t numStart = strongsNumber.find_first_of("0123456789");
+    if (numStart == string::npos) {
+        return strongsNumber;
+    }
+
     // Convert to int
-    int numericValue = stoi(strongsNumber);
+    int numericValue = stoi(strongsNumber.substr(numStart));
 
     // Use stringstream and i/o manipulators to pad with zeros
     std::ostringstream padded;
