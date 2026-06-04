@@ -55,11 +55,9 @@ if (fs.existsSync(installedPackageJsonPath)) {
     fail(`Installed node-addon-api version '${installedVersion}' is not a supported semver string.`);
   }
 
-  const installedMajor = Number.parseInt(installedVersion.split('.')[0], 10);
-
-  if (Number.isNaN(installedMajor) || installedMajor > 7) {
+  if (installedVersion !== expectedVersion) {
     fail(
-      `Installed node-addon-api version ${installedVersion} is not compatible with the C++11 build.`
+      `Installed node-addon-api version ${installedVersion} does not match the required ${expectedVersion}.`
     );
   }
 }
