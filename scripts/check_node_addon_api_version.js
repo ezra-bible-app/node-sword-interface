@@ -45,11 +45,17 @@ if (declaredVersion !== expectedVersion) {
 
 if (fs.existsSync(installedPackageJsonPath)) {
   const installedPackageJson = readJson(installedPackageJsonPath);
-  const installedMajor = Number.parseInt(installedPackageJson.version.split('.')[0], 10);
+  const installedVersion = installedPackageJson.version;
+
+  if (typeof installedVersion !== 'string') {
+    fail('Installed node-addon-api package metadata is missing a valid version string.');
+  }
+
+  const installedMajor = Number.parseInt(installedVersion.split('.')[0], 10);
 
   if (Number.isNaN(installedMajor) || installedMajor > 7) {
     fail(
-      `Installed node-addon-api version ${installedPackageJson.version} is not compatible with the C++11 build.`
+      `Installed node-addon-api version ${installedVersion} is not compatible with the C++11 build.`
     );
   }
 }
