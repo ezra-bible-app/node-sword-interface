@@ -51,10 +51,6 @@ if (fs.existsSync(installedPackageJsonPath)) {
     fail('Installed node-addon-api package metadata is missing a valid version string.');
   }
 
-  if (!/^\d+\.\d+\.\d+([-.].+)?$/.test(installedVersion)) {
-    fail(`Installed node-addon-api version '${installedVersion}' is not a supported semver string.`);
-  }
-
   if (installedVersion !== expectedVersion) {
     fail(
       `Installed node-addon-api version ${installedVersion} does not match the required ${expectedVersion}.`
