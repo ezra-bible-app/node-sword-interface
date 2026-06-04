@@ -98,7 +98,7 @@ Before installing node-sword-interface you need to make sure that the following 
     - CURL library with development headers
     - CMake (for building the SWORD library)
 
-For development, keep `node-addon-api` pinned to `7.1.1`. Version 8 and newer require C++17 headers, while this project intentionally stays on a C++11 toolchain.
+For development, keep `node-addon-api` pinned to `7.1.1`. The `8.x` release line introduces C++17-only header usage (for example `std::string_view`), while this project intentionally stays on a C++11 toolchain.
 
 Below you find the OS-specific instructions for installing the dependencies.
 
