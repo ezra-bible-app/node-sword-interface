@@ -647,7 +647,7 @@ class NodeSwordInterface {
    * @param {String} searchTerm - The term to search for.
    * @param {Function} progressCB - Optional callback function that is called on progress events.
    * @param {String} searchType - Options: phrase, multiWord, strongsNumber
-   * @param {String} searchScope - Options: BIBLE, OT, NT
+   * @param {String} searchScope - Options: BIBLE, OT, NT, or an individual book abbreviation such as "Gen" or "John"
    * @param {Boolean} isCaseSensitive - Whether the search is case sensitive
    * @param {Boolean} useExtendedVerseBoundaries - Whether the search should use extended verse boundaries (Two verses instead of one) in case of a multi word search.
    * @param {Boolean} filterOnWordBoundaries - Whether to filter results based on word boundaries.

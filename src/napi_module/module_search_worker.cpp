@@ -36,6 +36,7 @@ void ModuleSearchWorker::Execute(const ExecutionProgress& progress)
                                                                          this->_searchTerm,
                                                                          this->_searchType,
                                                                          this->_searchScope,
+                                                                         this->_customBookScope,
                                                                          this->_isCaseSensitive,
                                                                          this->_useExtendedVerseBoundaries,
                                                                          this->_filterOnWordBoundaries); // Pass the parameter

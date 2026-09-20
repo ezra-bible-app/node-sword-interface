@@ -41,7 +41,8 @@ enum class SearchType {
 enum class SearchScope {
     BIBLE = 0,
     OT = 1,
-    NT = 2
+    NT = 2,
+    BOOK = 3
 };
 
 class ModuleStore;
@@ -59,6 +60,7 @@ public:
                                               std::string searchTerm,
                                               SearchType searchType=SearchType::multiWord,
                                               SearchScope searchScope=SearchScope::BIBLE,
+                                              std::string customBookScope="",
                                               bool isCaseSensitive=false,
                                               bool useExtendedVerseBoundaries=false,
                                               bool filterOnWordBoundaries=false);
@@ -66,7 +68,7 @@ public:
     void terminate();
 
 private:
-    sword::ListKey getScopeKey(sword::SWModule* module, SearchScope scope);
+    sword::ListKey getScopeKey(sword::SWModule* module, SearchScope scope, const std::string& customBookScope = "");
     
     bool validateSearchParameters(sword::SWModule* module, const std::string& searchTerm);
     int getSearchFlags(bool isCaseSensitive, bool useExtendedVerseBoundaries);

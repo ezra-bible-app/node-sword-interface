@@ -370,10 +370,10 @@ int main(int argc, char** argv)
 
     //show_modules(repoInterface);
 
-    int result = test_net_1sam_1_5(moduleInstaller, moduleStore, textProcessor);
+    /*int result = test_net_1sam_1_5(moduleInstaller, moduleStore, textProcessor);
     if (result != 0) {
         return result;
-    }
+    }*/
 
     //test_verse_reference_mapping(moduleInstaller, moduleStore, textProcessor);
 
@@ -416,6 +416,17 @@ int main(int argc, char** argv)
     for (unsigned int i=0; i < searchResults.size(); i++) {
         cout << searchResults[i].reference << endl;
     }*/
+
+    vector<Verse> searchResults = moduleSearch.getModuleSearchResults("GerNeUe",
+                                                                     "Glaube",
+                                                                     SearchType::multiWord,
+                                                                     SearchScope::BOOK,
+                                                                     "Joh",
+                                                                     true);
+    cout << "Got " << searchResults.size() << " results in book scope!" << endl;
+    for (unsigned int i=0; i < searchResults.size(); i++) {
+        cout << searchResults[i].reference << endl;
+    }
 
     //get_updated_repo_modules(repoInterface);
 

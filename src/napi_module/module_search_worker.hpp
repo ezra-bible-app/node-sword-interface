@@ -37,6 +37,7 @@ public:
                        std::string searchTerm,
                        SearchType searchType,
                        SearchScope searchScope,
+                       std::string customBookScope="",
                        bool isCaseSensitive=false,
                        bool useExtendedVerseBoundaries=false,
                        bool filterOnWordBoundaries=false)
@@ -48,6 +49,7 @@ public:
         _searchTerm(searchTerm),
         _searchType(searchType),
         _searchScope(searchScope),
+        _customBookScope(customBookScope),
         _isCaseSensitive(isCaseSensitive),
         _useExtendedVerseBoundaries(useExtendedVerseBoundaries),
         _filterOnWordBoundaries(filterOnWordBoundaries),
@@ -71,6 +73,7 @@ private:
     std::string _searchTerm;
     SearchType _searchType;
     SearchScope _searchScope;
+    std::string _customBookScope;
     bool _isCaseSensitive;
     bool _useExtendedVerseBoundaries;
     bool _filterOnWordBoundaries; // New member variable

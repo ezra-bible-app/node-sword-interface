@@ -867,6 +867,7 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
     }
 
     SearchScope searchScope = SearchScope::BIBLE;
+    string customBookScope = "";
 
     if (searchScopeString == "BIBLE") {
         searchScope = SearchScope::BIBLE;
@@ -874,6 +875,9 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
         searchScope = SearchScope::OT;
     } else if (searchScopeString == "NT") {
         searchScope = SearchScope::NT;
+    } else if (!searchScopeString.empty()) {
+        searchScope = SearchScope::BOOK;
+        customBookScope = searchScopeString;
     } else {
         THROW_JS_EXCEPTION("Unknown search scope!");
     }
@@ -889,6 +893,7 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
                                                               searchTerm,
                                                               searchType,
                                                               searchScope,
+                                                              customBookScope,
                                                               isCaseSensitive,
                                                               useExtendedVerseBoundaries,
                                                               filterOnWordBoundaries); // Pass the new parameter
