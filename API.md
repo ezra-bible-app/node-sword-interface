@@ -591,7 +591,7 @@ Returns the results of a module search.
 | searchTerm | <code>String</code> |  | The term to search for. |
 | progressCB | <code>function</code> |  | Optional callback function that is called on progress events. |
 | searchType | <code>String</code> | <code>phrase</code> | Options: phrase, multiWord, strongsNumber |
-| searchScope | <code>String</code> | <code>BIBLE</code> | Options: BIBLE, OT, NT |
+| searchScope | <code>String</code> | <code>BIBLE</code> | Options: BIBLE, OT, NT, or an individual book abbreviation such as "Gen" or "John" |
 | isCaseSensitive | <code>Boolean</code> | <code>false</code> | Whether the search is case sensitive |
 | useExtendedVerseBoundaries | <code>Boolean</code> | <code>false</code> | Whether the search should use extended verse boundaries (Two verses instead of one) in case of a multi word search. |
 | filterOnWordBoundaries | <code>Boolean</code> | <code>false</code> | Whether to filter results based on word boundaries. |
