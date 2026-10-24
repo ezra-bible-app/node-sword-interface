@@ -16,6 +16,7 @@
     "clean": "node-gyp clean",
     "doc": "jsdoc2md index.js > API.md",
     "pub": "rm -rf build node_modules sword sword_build test && npm publish ./",
+    "stage": "rm -rf build node_modules sword sword_build test && npm stage publish ./",
     "deploy": "scripts/deploy_local.sh",
     "postinstall": "node scripts/postinstall.js",
     "test": "jest",
@@ -27,7 +28,8 @@
     "async-mutex": "^0.5.0",
     "glob": "^8.0.3",
     "node-addon-api": "^8.2.2",
-    "node-html-parser": "^6.1.13"
+    "node-html-parser": "^6.1.13",
+    "npm": "^12.2.1"
   },
   "repository": {
     "type": "git",
