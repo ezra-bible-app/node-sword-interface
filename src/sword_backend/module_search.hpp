@@ -64,6 +64,8 @@ public:
                                               bool isCaseSensitive=false,
                                               bool useExtendedVerseBoundaries=false,
                                               bool filterOnWordBoundaries=false);
+
+    bool isValidBookScope(const std::string& moduleName, const std::string& customBookScope);
     
     void terminate();
 

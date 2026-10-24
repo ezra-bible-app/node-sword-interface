@@ -878,6 +878,10 @@ Napi::Value NodeSwordInterface::getModuleSearchResults(const Napi::CallbackInfo&
     } else if (!searchScopeString.empty()) {
         searchScope = SearchScope::BOOK;
         customBookScope = searchScopeString;
+        ASSERT_SW_MODULE_EXISTS(moduleName);
+        if (!this->_moduleSearch->isValidBookScope(string(moduleName), customBookScope)) {
+            THROW_JS_EXCEPTION("Unknown or unsupported book search scope!");
+        }
     } else {
         THROW_JS_EXCEPTION("Unknown search scope!");
     }

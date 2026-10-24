@@ -54,4 +54,32 @@ describe('NodeSwordInterface', () => {
     const search_results = await firstResult; // Wait for the first result to resolve
     expect(search_results.length).toBeGreaterThan(0);
   });
+
+  test('should preserve results when switching search scopes', async () => {
+    const search = (scope) => nsi.getModuleSearchResults('KJV', 'God', undefined, 'phrase', scope);
+    const hasReference = (results, book) => results.some((verse) =>
+      verse.bibleBookShortTitle === book && verse.chapter === 1 && verse.verseNr === 1);
+
+    const bibleResults = await search('BIBLE');
+    const oldTestamentResults = await search('OT');
+    const newTestamentResults = await search('NT');
+    const genesisResults = await search('Gen');
+
+    expect(hasReference(bibleResults, 'Gen')).toBe(true);
+    expect(hasReference(bibleResults, 'John')).toBe(true);
+    expect(hasReference(oldTestamentResults, 'Gen')).toBe(true);
+    expect(hasReference(oldTestamentResults, 'John')).toBe(false);
+    expect(hasReference(newTestamentResults, 'John')).toBe(true);
+    expect(hasReference(newTestamentResults, 'Gen')).toBe(false);
+    expect(hasReference(genesisResults, 'Gen')).toBe(true);
+    expect(genesisResults.every((verse) => verse.bibleBookShortTitle === 'Gen')).toBe(true);
+  }, 30000);
+
+  test('should reject unknown book scopes and allow the next search', async () => {
+    await expect(nsi.getModuleSearchResults('KJV', 'God', undefined, 'phrase', 'NotABook'))
+      .rejects.toThrow('Unknown or unsupported book search scope!');
+
+    const results = await nsi.getModuleSearchResults('KJV', 'God');
+    expect(results.length).toBeGreaterThan(0);
+  }, 30000);
 });

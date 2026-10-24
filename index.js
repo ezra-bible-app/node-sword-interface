@@ -674,18 +674,31 @@ class NodeSwordInterface {
 
     try {
       return new Promise((resolve, reject) => {
-        this.nativeInterface.getModuleSearchResults(moduleCode,
-                                                    searchTerm,
-                                                    searchType,
-                                                    searchScope,
-                                                    isCaseSensitive,
-                                                    useExtendedVerseBoundaries,
-                                                    filterOnWordBoundaries,
-                                                    progressCB,
-                                                    function(searchResults) {
-          release();
-          resolve(searchResults);
-        });
+        let released = false;
+        const releaseSearchLock = () => {
+          if (!released) {
+            released = true;
+            release();
+          }
+        };
+
+        try {
+          this.nativeInterface.getModuleSearchResults(moduleCode,
+                                                      searchTerm,
+                                                      searchType,
+                                                      searchScope,
+                                                      isCaseSensitive,
+                                                      useExtendedVerseBoundaries,
+                                                      filterOnWordBoundaries,
+                                                      progressCB,
+                                                      function(searchResults) {
+            releaseSearchLock();
+            resolve(searchResults);
+          });
+        } catch (error) {
+          releaseSearchLock();
+          reject(error);
+        }
       });
     } catch (error) {
       release();

@@ -119,6 +119,16 @@ ListKey ModuleSearch::getScopeKey(SWModule* module, SearchScope scope,
      return key;
  }
 
+bool ModuleSearch::isValidBookScope(const string& moduleName, const string& customBookScope)
+{
+     SWModule* module = this->_moduleStore.getSearchSwMgr()->getModule(moduleName.c_str());
+     if (module == 0) {
+         return false;
+     }
+
+     return this->getScopeKey(module, SearchScope::BOOK, customBookScope).getCount() > 0;
+}
+
 inline bool isDisallowedCharacter(char c) {
      static const string disallowedPunctuation = ",;.:'´‘’\"“”?!()-=<>/";
      return disallowedPunctuation.find(c) != string::npos;
