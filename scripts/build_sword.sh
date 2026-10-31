@@ -30,8 +30,8 @@ else
 fi
 
 # CLONE SWORD
-git clone https://github.com/ezra-bible-app/crosswire-sword-mirror sword
-git -C sword checkout 1.9.0-2025-12-30
+git clone https://github.com/ezra-bible-app/crosswire-sword sword
+git -C sword checkout sword-1-9-0-bugfix-2026-10-31
 patch --batch --forward -d sword -p 0 < patch/sword_globconf.patch
 
 # PATCHES
