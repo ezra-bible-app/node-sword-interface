@@ -34,6 +34,9 @@
 #endif
 
 #include <regex>
+#include <thread>
+#include <chrono>
+#include <cstdlib>
 
 // Own includes
 #include "repository_interface.hpp"
@@ -53,6 +56,29 @@ using namespace std;
 using namespace sword;
 
 static Mutex remoteSourceUpdateMutex;
+
+// Debug tracing for refresh operations. Enable with environment variable NSI_DEBUG_REFRESH=1
+static bool refreshDebugEnabled()
+{
+    static const bool enabled = getenv("NSI_DEBUG_REFRESH") != nullptr;
+    return enabled;
+}
+
+static long long refreshTraceElapsedMs()
+{
+    static const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
+}
+
+#define REFRESH_TRACE(expr) \
+    do { \
+        if (refreshDebugEnabled()) { \
+            std::ostringstream _trace; \
+            _trace << "[refresh-debug +" << refreshTraceElapsedMs() << "ms][thread " \
+                   << std::this_thread::get_id() << "] " << expr << "\n"; \
+            std::cerr << _trace.str() << std::flush; \
+        } \
+    } while (0)
 
 RepositoryInterface::RepositoryInterface(SwordStatusReporter& statusReporter,
                                          ModuleHelper& moduleHelper,
@@ -107,30 +133,55 @@ int RepositoryInterface::refreshRemoteSources(bool force, map<string, bool>* rep
     this->_remoteSourceUpdateCount = 0;
     bool refreshSuccessful = true;
 
+    REFRESH_TRACE("refreshRemoteSources: enter force=" << force
+                  << " installMgr=" << (const void*)this->_installMgr
+                  << " repoUpdateStatus=" << (const void*)repoUpdateStatus
+                  << " progressCallback=" << (const void*)progressCallback);
+
     if (this->getRepoNames().size() == 0 || force) {
+        REFRESH_TRACE("refreshRemoteSources: refreshing repository config");
         int ret = this->refreshRepositoryConfig();
+        REFRESH_TRACE("refreshRemoteSources: refreshRepositoryConfig returned " << ret);
         if (ret != 0) {
             return -1;
         }
 
         // Force eBible.org to use HTTPS instead of FTP
-        InstallSource* eBibleSource = this->getRemoteSource("eBible.org");
+        /*InstallSource* eBibleSource = this->getRemoteSource("eBible.org");
         if (eBibleSource != 0) {
             eBibleSource->type = "HTTPS";
             eBibleSource->source = "ebible.org";
-        }
+        }*/
 
         vector<string> sourceNames = this->getRepoNames();
         this->_remoteSourceCount = sourceNames.size();
+        REFRESH_TRACE("refreshRemoteSources: " << sourceNames.size() << " sources");
 
         // Create worker threads
         for (unsigned int i = 0; i < sourceNames.size(); i++) {
+            REFRESH_TRACE("refreshRemoteSources: launching refresh for source " << i << " '" << sourceNames[i] << "'");
             refreshFutures.push_back(this->getRemoteSourceRefreshFuture(sourceNames[i], progressCallback));
         }
 
         // Wait for threads to finish
         for (unsigned int i = 0; i < refreshFutures.size(); i++) {
+            REFRESH_TRACE("refreshRemoteSources: waiting for source " << i << " '" << sourceNames[i] << "'");
+
+            if (refreshDebugEnabled()) {
+                while (refreshFutures[i].wait_for(std::chrono::seconds(5)) != std::future_status::ready) {
+                    string pending;
+                    for (unsigned int j = i; j < refreshFutures.size(); j++) {
+                        if (refreshFutures[j].wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
+                            pending += " '" + sourceNames[j] + "'";
+                        }
+                    }
+                    REFRESH_TRACE("refreshRemoteSources: STILL WAITING for source " << i << " '" << sourceNames[i]
+                                  << "'; unfinished:" << pending);
+                }
+            }
+
             ret = refreshFutures[i].get();
+            REFRESH_TRACE("refreshRemoteSources: source '" << sourceNames[i] << "' finished with " << ret);
 
             if (ret != 0) {
               refreshSuccessful = false;
@@ -141,6 +192,8 @@ int RepositoryInterface::refreshRemoteSources(bool force, map<string, bool>* rep
             }
         }
     }
+
+    REFRESH_TRACE("refreshRemoteSources: exit successful=" << refreshSuccessful);
 
     if (refreshSuccessful) {
       return 0;
@@ -158,13 +211,20 @@ int RepositoryInterface::refreshIndividualRemoteSource(string remoteSourceName, 
     if (source == nullptr) {
         cerr << "refreshIndividualRemoteSource: Remote source '" << remoteSourceName << "' does not exist - skipping!" << endl << flush;
     } else {
+        REFRESH_TRACE("refreshIndividualRemoteSource: start '" << remoteSourceName
+                      << "' type=" << source->type.c_str()
+                      << " host=" << source->source.c_str()
+                      << " dir=" << source->directory.c_str());
         result = this->_installMgr->refreshRemoteSource(source);
+        REFRESH_TRACE("refreshIndividualRemoteSource: refreshRemoteSource done '" << remoteSourceName << "' result=" << result);
         if (result != 0) {
             cerr << "Failed to refresh source " << remoteSourceName << endl << flush;
         }
     }
 
+    REFRESH_TRACE("refreshIndividualRemoteSource: acquiring update mutex for '" << remoteSourceName << "'");
     remoteSourceUpdateMutex.lock();
+    REFRESH_TRACE("refreshIndividualRemoteSource: acquired update mutex for '" << remoteSourceName << "'");
     this->_remoteSourceUpdateCount++;
     unsigned int totalPercent = (unsigned int)calculateIntPercentage<double>(this->_remoteSourceUpdateCount,
                                                                      this->_remoteSourceCount);
@@ -173,6 +233,7 @@ int RepositoryInterface::refreshIndividualRemoteSource(string remoteSourceName, 
         (*progressCallback)(totalPercent);
     }
     remoteSourceUpdateMutex.unlock();
+    REFRESH_TRACE("refreshIndividualRemoteSource: released update mutex for '" << remoteSourceName << "'");
 
     return result;
 }
@@ -224,27 +285,7 @@ vector<string> RepositoryInterface::getRepoNames()
 
         string source = string(it->second->caption);
 
-        #if defined(__ANDROID__) || defined(__APPLE__)
-        // Since August/September 2024 there have been issues observed with the access to the STEP Bible repository.
-        // We filter it out here, since it is currently dysfunctional.
-        if (source != "STEP Bible") {
-        #endif
-
-        #if TARGET_OS_IOS || defined(__ANDROID__)
-        // eBible.org repository is excluded on iOS / iPadOS and Android, because we could not reliably
-        // get it to a working state on these platforms (as of 2026-04-03).
-        if (source != "eBible.org") {
-        #endif
-
         sourceNames.push_back(source);
-
-        #if TARGET_OS_IOS || defined(__ANDROID__)
-        }
-        #endif
-
-        #if defined(__ANDROID__) || defined(__APPLE__)
-        }
-        #endif
     }
 
     return sourceNames;
