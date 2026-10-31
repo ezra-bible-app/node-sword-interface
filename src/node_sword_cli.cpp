@@ -359,10 +359,9 @@ int main(int argc, char** argv)
         cout << module->getName() << endl;
     }*/
 
-    /*for (unsigned int i = 0; i < 20; i++) {
-        cout << "Refreshing remote sources [" << i << "]" << endl;
-        repoInterface.refreshRemoteSources(true);
-    }*/
+    cout << "Refreshing remote sources..." << endl;
+    repoInterface.refreshRemoteSources(true);
+    cout << "Remote sources refreshed." << endl;
 
     //test_unlock_key(moduleInstaller, moduleStore, textProcessor);
 
