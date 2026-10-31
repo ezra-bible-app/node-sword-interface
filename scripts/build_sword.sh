@@ -70,7 +70,7 @@ if [ "$1" = "--android" ] ; then
 
   cd sword_build
 
-  # Override stale aliases from a previous CMake configure; use Android's 64-bit stdio APIs.
+  # Android's public stdio headers do not expose these minizip *64 APIs on all API levels.
   cmake -DLIBSWORD_LIBRARY_TYPE=Static -DCMAKE_CXX_STANDARD=11 \
   -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
   -DANDROID_NDK=$ANDROID_NDK_HOME \
@@ -79,7 +79,7 @@ if [ "$1" = "--android" ] ; then
   -DCMAKE_EXE_LINKER_FLAGS="-Wl,-z,max-page-size=16384" \
   -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-z,max-page-size=16384" \
   -DNODYNCAST=1 \
-  -DCMAKE_C_FLAGS="-D_LARGEFILE64_SOURCE" \
+  -DCMAKE_C_FLAGS="-DUSE_FILE32API" \
   ../sword
 elif [ "$1" = "--ios" ] ; then
   git clone https://github.com/karlkleinpaste/biblesync.git
