@@ -78,6 +78,7 @@ if [ "$1" = "--android" ] ; then
   -DCMAKE_EXE_LINKER_FLAGS="-Wl,-z,max-page-size=16384" \
   -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-z,max-page-size=16384" \
   -DNODYNCAST=1 \
+  -DCMAKE_C_FLAGS="-Dfopen64=fopen -Dftello64=ftello -Dfseeko64=fseeko" \
   ../sword
 elif [ "$1" = "--ios" ] ; then
   git clone https://github.com/karlkleinpaste/biblesync.git
