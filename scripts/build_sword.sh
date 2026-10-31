@@ -31,7 +31,7 @@ fi
 
 # CLONE SWORD
 git clone https://github.com/ezra-bible-app/crosswire-sword sword
-git -C sword checkout sword-1-9-0-bugfix-2026-10-31
+git -C sword checkout sword-1-9-0-bugfix-5
 patch --batch --forward -d sword -p 0 < patch/sword_globconf.patch
 
 # PATCHES
